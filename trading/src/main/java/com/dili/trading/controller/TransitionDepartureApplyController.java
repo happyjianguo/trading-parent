@@ -3,7 +3,7 @@ package com.dili.trading.controller;
 
 import com.dili.order.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
-import com.dili.trading.rpc.AssetsRpc;
+import com.dili.trading.rpc.OrderServiceRpc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/transitionDepartureApplyController")
 public class TransitionDepartureApplyController {
     @Autowired
-    private AssetsRpc assetsRpc;
+    private OrderServiceRpc assetsRpc;
 
     /**
      * getOneByCustomerID
