@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.dili</groupId>
 	<artifactId>trading-parent</artifactId>
-	<name>order-service-parent</name>
+	<name>trading-parent</name>
 	<version>1.0.0-SNAPSHOT</version>
 	<!--<version>1.0.0.RELEASE</version>-->
 	<description>父项目</description>
@@ -23,15 +23,15 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
+		<java.version>13</java.version>
 		<!-- MyBatis Generator -->
 		<!-- Java接口和实体类 -->
 		<targetJavaProject>${basedir}/src/main/java</targetJavaProject>
-		<targetMapperPackage>com.dili.order.mapper</targetMapperPackage>
-		<targetModelPackage>com.dili.order.domain</targetModelPackage>
-		<targetServicePackage>com.dili.order.service</targetServicePackage>
-		<targetProviderPackage>com.dili.order.provider</targetProviderPackage>
-		<targetControllerPackage>com.dili.order.api</targetControllerPackage>
+		<targetMapperPackage>com.dili.trading.mapper</targetMapperPackage>
+		<targetModelPackage>com.dili.trading.domain</targetModelPackage>
+		<targetServicePackage>com.dili.trading.service</targetServicePackage>
+		<targetProviderPackage>com.dili.trading.provider</targetProviderPackage>
+		<targetControllerPackage>com.dili.trading.api</targetControllerPackage>
 		<templateRootDir>${basedir}/mbg-templates</templateRootDir>
 		<projectdir>${basedir}</projectdir>
 
@@ -58,8 +58,8 @@
 				<version>3.8.1</version>
 				<!-- 编译JDK版本 -->
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>13</source>
+					<target>13</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>

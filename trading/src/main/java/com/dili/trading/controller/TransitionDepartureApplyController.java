@@ -130,5 +130,4 @@ public class TransitionDepartureApplyController {
             return BaseOutput.failure("查询失败" + e.getMessage());
         }
     }
-
 }
