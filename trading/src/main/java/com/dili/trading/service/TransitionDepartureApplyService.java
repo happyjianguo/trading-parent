@@ -3,6 +3,9 @@ package com.dili.trading.service;
 import com.dili.order.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
 
+/**
+ * 申请单service
+ */
 public interface TransitionDepartureApplyService {
     /**
      * 插入一条新的申请单

@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * 结算单接口
+ */
 @Controller
 @RequestMapping("/transitionDepartureSettlement")
 public class TransitionDepartureSettlementController {

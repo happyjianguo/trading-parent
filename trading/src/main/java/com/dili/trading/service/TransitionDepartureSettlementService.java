@@ -3,6 +3,9 @@ package com.dili.trading.service;
 import com.dili.order.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
 
+/**
+ * 结算单service
+ */
 public interface TransitionDepartureSettlementService {
     /**
      * 新增结算单，新增的时候需要调用支付系统获取支付单，并且更改对应申请单的状态为未结算
