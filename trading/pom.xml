@@ -44,18 +44,18 @@
                 <version>3.8.1</version>
                 <!-- 编译JDK版本 -->
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>13</source>
+                    <target>13</target>
                     <encoding>UTF-8</encoding>
                     <parameters>true</parameters>
 <!--                    <compilerArgument>-proc:none</compilerArgument>-->
-                    <!-- <compilerArgs> -->
-                    <!-- <arg>&#45;&#45;add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg> -->
-                    <!-- <arg>&#45;&#45;add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg> -->
-                    <!-- <arg>&#45;&#45;add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg> -->
-                    <!-- <arg>&#45;&#45;add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg> -->
-                    <!-- <arg>&#45;&#45;add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg> -->
-                    <!-- </compilerArgs> -->
+                     <compilerArgs>
+                     <arg>--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                     <arg>--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                     <arg>--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                     <arg>--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                     <arg>--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                     </compilerArgs>
                 </configuration>
             </plugin>
 
@@ -117,6 +117,12 @@
             <groupId>com.dili</groupId>
             <artifactId>ss-processor</artifactId>
             <version>${sharp-sword.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun</groupId>
+                    <artifactId>tools</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- if you enable json support in spring mvc. -->
         <dependency>

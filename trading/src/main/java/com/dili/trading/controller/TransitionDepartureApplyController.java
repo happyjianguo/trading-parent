@@ -10,12 +10,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+/**
+ * TransitionDepartureApplyController
+ */
 @Controller
 @RequestMapping("/transitionDepartureApplyController")
 public class TransitionDepartureApplyController {
     @Autowired
     private AssetsRpc assetsRpc;
 
+    /**
+     * getOneByCustomerID
+     * @param transitionDepartureApply
+     * @return
+     */
     @RequestMapping(value = "/getOneByCustomerID", method = {RequestMethod.GET, RequestMethod.POST})
     BaseOutput<TransitionDepartureApply> getOneByCustomerID(@RequestBody TransitionDepartureApply transitionDepartureApply) {
         return assetsRpc.getOneByCustomerID(transitionDepartureApply);
