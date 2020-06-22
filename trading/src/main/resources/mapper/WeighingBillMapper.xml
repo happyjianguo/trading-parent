@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dili.order.mapper.WeighingBillMapper">
+  <resultMap id="BaseResultMap" type="com.dili.order.domain.WeighingBill">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="measure_type" jdbcType="VARCHAR" property="measureType" />
+    <result column="trade_type" jdbcType="VARCHAR" property="tradeType" />
+    <result column="buyer_id" jdbcType="BIGINT" property="buyerId" />
+    <result column="buyer_card_number" jdbcType="VARCHAR" property="buyerCardNumber" />
+    <result column="buyer_account" jdbcType="VARCHAR" property="buyerAccount" />
+    <result column="buyer_name" jdbcType="VARCHAR" property="buyerName" />
+    <result column="seller_id" jdbcType="BIGINT" property="sellerId" />
+    <result column="seller_card_number" jdbcType="VARCHAR" property="sellerCardNumber" />
+    <result column="seller_account" jdbcType="VARCHAR" property="sellerAccount" />
+    <result column="seller_name" jdbcType="VARCHAR" property="sellerName" />
+    <result column="goods_id" jdbcType="BIGINT" property="goodsId" />
+    <result column="goods_origin" jdbcType="BIGINT" property="goodsOrigin" />
+    <result column="unit_amount" jdbcType="INTEGER" property="unitAmount" />
+    <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
+    <result column="unit_weight" jdbcType="DECIMAL" property="unitWeight" />
+    <result column="fetched_weight" jdbcType="DECIMAL" property="fetchedWeight" />
+    <result column="fetch_weight_time" jdbcType="TIMESTAMP" property="fetchWeightTime" />
+    <result column="rough_weight" jdbcType="DECIMAL" property="roughWeight" />
+    <result column="net_weight" jdbcType="DECIMAL" property="netWeight" />
+    <result column="plate_number" jdbcType="VARCHAR" property="plateNumber" />
+    <result column="tare_weight" jdbcType="DECIMAL" property="tareWeight" />
+    <result column="subtraction_rate" jdbcType="DECIMAL" property="subtractionRate" />
+    <result column="subtraction_weight" jdbcType="DECIMAL" property="subtractionWeight" />
+    <result column="estimated_net_weight" jdbcType="DECIMAL" property="estimatedNetWeight" />
+    <result column="frozen_amount" jdbcType="DECIMAL" property="frozenAmount" />
+    <result column="tare_bill_number" jdbcType="VARCHAR" property="tareBillNumber" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="settlement_time" jdbcType="TIMESTAMP" property="settlementTime" />
+    <result column="creator_id" jdbcType="BIGINT" property="creatorId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, measure_type, trade_type, buyer_id, buyer_card_number, buyer_account, buyer_name, 
+    seller_id, seller_card_number, seller_account, seller_name, goods_id, goods_origin, 
+    unit_amount, unit_price, unit_weight, fetched_weight, fetch_weight_time, rough_weight, 
+    net_weight, plate_number, tare_weight, subtraction_rate, subtraction_weight, estimated_net_weight, 
+    frozen_amount, tare_bill_number, state, created_time, modified_time, settlement_time, 
+    creator_id
+  </sql>
+  <select id="selectBy" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    select 
+    <include refid="Base_Column_List" />
+    from weighing_bill
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <update id="updateBy" parameterType="com.dili.order.domain.WeighingBill">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    update weighing_bill
+    <set>
+      <if test="measureType != null">
+        measure_type = #{measureType,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeType != null">
+        trade_type = #{tradeType,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerId != null">
+        buyer_id = #{buyerId,jdbcType=BIGINT},
+      </if>
+      <if test="buyerCardNumber != null">
+        buyer_card_number = #{buyerCardNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerAccount != null">
+        buyer_account = #{buyerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerName != null">
+        buyer_name = #{buyerName,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerId != null">
+        seller_id = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerCardNumber != null">
+        seller_card_number = #{sellerCardNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerAccount != null">
+        seller_account = #{sellerAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerName != null">
+        seller_name = #{sellerName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null">
+        goods_id = #{goodsId,jdbcType=BIGINT},
+      </if>
+      <if test="goodsOrigin != null">
+        goods_origin = #{goodsOrigin,jdbcType=BIGINT},
+      </if>
+      <if test="unitAmount != null">
+        unit_amount = #{unitAmount,jdbcType=INTEGER},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="unitWeight != null">
+        unit_weight = #{unitWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="fetchedWeight != null">
+        fetched_weight = #{fetchedWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="fetchWeightTime != null">
+        fetch_weight_time = #{fetchWeightTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="roughWeight != null">
+        rough_weight = #{roughWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="netWeight != null">
+        net_weight = #{netWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="plateNumber != null">
+        plate_number = #{plateNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="tareWeight != null">
+        tare_weight = #{tareWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="subtractionRate != null">
+        subtraction_rate = #{subtractionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="subtractionWeight != null">
+        subtraction_weight = #{subtractionWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="estimatedNetWeight != null">
+        estimated_net_weight = #{estimatedNetWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="frozenAmount != null">
+        frozen_amount = #{frozenAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="tareBillNumber != null">
+        tare_bill_number = #{tareBillNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedTime != null">
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="settlementTime != null">
+        settlement_time = #{settlementTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creatorId != null">
+        creator_id = #{creatorId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

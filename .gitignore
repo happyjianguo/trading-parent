@@ -1,0 +1,16 @@
+.idea/
+*/target/
+*.iml
+*.log
+.classpath
+*/webapp/WEB-INF/classes
+*/webapp/WEB-INF/lib
+*.MF
+**/WEB-INF/classes/
+**/WEB-INF/lib
+**/.settings/
+**/.classpath
+**/.project
+**/.fileupload
+**/.factorypath
+**/transaction-logs

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dili.order.mapper.TransitionDepartureSettlementMapper">
+    <resultMap id="BaseResultMap" type="com.dili.order.domain.TransitionDepartureSettlement">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="apply_id" jdbcType="BIGINT" property="applyId"/>
+        <result column="customer_id" jdbcType="BIGINT" property="customerId"/>
+        <result column="customer_code" jdbcType="VARCHAR" property="customerCode"/>
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
+        <result column="customer_card_no" jdbcType="VARCHAR" property="customerCardNo"/>
+        <result column="customer_department_id" jdbcType="BIGINT" property="customerDepartmentId"/>
+        <result column="customer_department_name" jdbcType="VARCHAR" property="customerDepartmentName"/>
+        <result column="trans_type_id" jdbcType="BIGINT" property="transTypeId"/>
+        <result column="category_id" jdbcType="BIGINT" property="categoryId"/>
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="plate" jdbcType="VARCHAR" property="plate"/>
+        <result column="biz_type" jdbcType="INTEGER" property="bizType"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="gross_weight" jdbcType="INTEGER" property="grossWeight"/>
+        <result column="tare_weight" jdbcType="INTEGER" property="tareWeight"/>
+        <result column="net_weight" jdbcType="INTEGER" property="netWeight"/>
+        <result column="charge_amount" jdbcType="BIGINT" property="chargeAmount"/>
+        <result column="pay_status" jdbcType="INTEGER" property="payStatus"/>
+        <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
+        <result column="operator_name" jdbcType="VARCHAR" property="operatorName"/>
+        <result column="operator_code" jdbcType="VARCHAR" property="operatorCode"/>
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime"/>
+        <result column="revocator_id" jdbcType="BIGINT" property="revocatorId"/>
+        <result column="revocator_name" jdbcType="VARCHAR" property="revocatorName"/>
+        <result column="revocator_time" jdbcType="TIMESTAMP" property="revocatorTime"/>
+        <result column="revocator_reason" jdbcType="VARCHAR" property="revocatorReason"/>
+        <result column="payment_no" jdbcType="VARCHAR" property="paymentNo"/>
+        <result column="del" jdbcType="INTEGER" property="del"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        id, code, apply_id, customer_id, customer_code, customer_name, customer_card_no,
+        customer_department_id, customer_department_name, trans_type_id, category_id, category_name,
+        plate, biz_type, modify_time, create_time, gross_weight, tare_weight, net_weight,
+        charge_amount, pay_status, operator_id, operator_name, operator_code, pay_time, revocator_id,
+        revocator_name, revocator_time, revocator_reason, payment_no, del
+    </sql>
+    <select id="selectBy" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        select
+        <include refid="Base_Column_List"/>
+        from transition_departure_settlement
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <update id="updateBy" parameterType="com.dili.order.domain.TransitionDepartureSettlement">
+        update transition_departure_settlement
+        <set>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="applyId != null">
+                apply_id = #{applyId,jdbcType=BIGINT},
+            </if>
+            <if test="customerId != null">
+                customer_id = #{customerId,jdbcType=BIGINT},
+            </if>
+            <if test="customerCode != null">
+                customer_code = #{customerCode,jdbcType=VARCHAR},
+            </if>
+            <if test="customerName != null">
+                customer_name = #{customerName,jdbcType=VARCHAR},
+            </if>
+            <if test="customerCardNo != null">
+                customer_card_no = #{customerCardNo,jdbcType=VARCHAR},
+            </if>
+            <if test="customerDepartmentId != null">
+                customer_department_id = #{customerDepartmentId,jdbcType=BIGINT},
+            </if>
+            <if test="customerDepartmentName != null">
+                customer_department_name = #{customerDepartmentName,jdbcType=VARCHAR},
+            </if>
+            <if test="transTypeId != null">
+                trans_type_id = #{transTypeId,jdbcType=BIGINT},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId,jdbcType=BIGINT},
+            </if>
+            <if test="categoryName != null">
+                category_name = #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="plate != null">
+                plate = #{plate,jdbcType=VARCHAR},
+            </if>
+            <if test="bizType != null">
+                biz_type = #{bizType,jdbcType=INTEGER},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="grossWeight != null">
+                gross_weight = #{grossWeight,jdbcType=INTEGER},
+            </if>
+            <if test="tareWeight != null">
+                tare_weight = #{tareWeight,jdbcType=INTEGER},
+            </if>
+            <if test="netWeight != null">
+                net_weight = #{netWeight,jdbcType=INTEGER},
+            </if>
+            <if test="chargeAmount != null">
+                charge_amount = #{chargeAmount,jdbcType=BIGINT},
+            </if>
+            <if test="payStatus != null">
+                pay_status = #{payStatus,jdbcType=INTEGER},
+            </if>
+            <if test="operatorId != null">
+                operator_id = #{operatorId,jdbcType=BIGINT},
+            </if>
+            <if test="operatorName != null">
+                operator_name = #{operatorName,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorCode != null">
+                operator_code = #{operatorCode,jdbcType=VARCHAR},
+            </if>
+            <if test="payTime != null">
+                pay_time = #{payTime},
+            </if>
+            <if test="revocatorId != null">
+                revocator_id = #{revocatorId,jdbcType=BIGINT},
+            </if>
+            <if test="revocatorName != null">
+                revocator_name = #{revocatorName,jdbcType=VARCHAR},
+            </if>
+            <if test="revocatorTime != null">
+                revocator_time = #{revocatorTime},
+            </if>
+            <if test="revocatorReason != null">
+                revocator_reason = #{revocatorReason,jdbcType=VARCHAR},
+            </if>
+            <if test="paymentNo != null">
+                payment_no = #{paymentNo,jdbcType=VARCHAR},
+            </if>
+            <if test="del != null">
+                del = #{del,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="listByQueryParams" resultType="com.dili.order.domain.TransitionDepartureSettlement">
+        SELECT
+        *
+        FROM transition_departure_settlement s
+        WHERE 1 = 1
+        AND pay_status in (2,3)
+        <if test="bizType != null">
+            AND biz_type = #{bizType}
+        </if>
+        <if test="payStatus != null">
+            AND pay_status = #{payStatus}
+        </if>
+        <if test="customer != null and customer != ''">
+            AND (customer_name like concat('%',#{customer},'%') or customer_code like concat('%',#{customer},'%'))
+        </if>
+        <if test="plate != null and plate != ''">
+            AND plate like concat('%',#{plate},'%')
+        </if>
+        <if test="operator != null and operator != ''">
+            AND (operator_code like concat('%',#{operator},'%') or operator_name like concat('%',#{operator},'%'))
+        </if>
+        <if test="beginTime != null">
+            AND pay_time  <![CDATA[>=]]> #{beginTime}
+        </if>
+        <if test="endTime != null">
+            AND pay_time  <![CDATA[<=]]> #{endTime}
+        </if>
+    </select>
+    <select id="scheduleUpdateSelect" resultType="com.dili.order.domain.TransitionDepartureSettlement">
+        SELECT
+        *
+        FROM transition_departure_settlement s
+        WHERE 1 = 1
+          AND s.pay_status=1
+        <if test="beginTime != null">
+          AND pay_time  <![CDATA[>=]]> #{beginTime}
+        </if>
+        <if test="endTime != null">
+          AND pay_time  <![CDATA[<=]]> #{endTime}
+        </if>
+    </select>
+    <update id="scheduleUpdate" parameterType="java.util.Set">
+        UPDATE transition_departure_settlement
+        SET pay_status=4
+        WHERE id IN
+        (
+        <foreach item="item" index="index" collection="set" open="" separator="," close="">
+            #{item}
+        </foreach>
+        )
+    </update>
+</mapper>
