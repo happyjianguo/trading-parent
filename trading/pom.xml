@@ -87,6 +87,12 @@
 	</build>
 
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/javax.persistence/persistence-api -->
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+		</dependency>
 		<dependency>
 			<groupId>com.dili</groupId>
 			<artifactId>order-service-sdk</artifactId>
