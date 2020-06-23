@@ -19,7 +19,7 @@ import com.dili.ss.retrofitful.annotation.RestfulScan;
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.dili.ss", "com.dili.trading"})
 @RestfulScan({"com.dili.trading.rpc"})
-@DTOScan(value = {"com.dili.ss"})
+//@DTOScan(value = {"com.dili.ss"})
 @EnableDiscoveryClient
 @EnableFeignClients
 public class Application extends SpringBootServletInitializer {
