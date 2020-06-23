@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * TransitionDepartureApplyController
  */
@@ -103,7 +107,12 @@ public class TransitionDepartureApplyController {
         }
         try {
             BaseOutput<TransitionDepartureApply> oneByCustomerID = transitionDepartureApplyRpc.getOneByCustomerID(transitionDepartureApply);
-            return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(oneByCustomerID.getData(), Lists.newArrayList(oneByCustomerID)));
+            if (oneByCustomerID.isSuccess()) {
+                if (oneByCustomerID.getData() != null) {
+                    return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(oneByCustomerID)));
+                }
+            }
+            return oneByCustomerID;
         } catch (Exception e) {
             e.printStackTrace();
             return BaseOutput.failure("查询失败" + e.getMessage());
@@ -118,13 +127,18 @@ public class TransitionDepartureApplyController {
      */
     @RequestMapping(value = "/getOneByID.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput getOneByID(Long id) {
-        if (id == null) {
+    public BaseOutput getOneByID(TransitionDepartureApply transitionDepartureApply) {
+        if (transitionDepartureApply.getId() == null) {
             return BaseOutput.failure("查询失败，申请单主键不能为空");
         }
         try {
-            BaseOutput<TransitionDepartureApply> oneByID = transitionDepartureApplyRpc.getOneByID(id);
-            return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(oneByID.getData(), Lists.newArrayList(oneByID)));
+            BaseOutput<TransitionDepartureApply> oneByID = transitionDepartureApplyRpc.getOneByID(transitionDepartureApply.getId());
+            if (oneByID.isSuccess()) {
+                if (Objects.nonNull(oneByID.getData())) {
+                    return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(oneByID)));
+                }
+            }
+            return oneByID;
         } catch (Exception e) {
             e.printStackTrace();
             return BaseOutput.failure("查询失败" + e.getMessage());

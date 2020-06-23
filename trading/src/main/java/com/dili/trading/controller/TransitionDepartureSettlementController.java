@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 结算单接口
  */
@@ -44,6 +47,7 @@ public class TransitionDepartureSettlementController {
     @RequestMapping(value = "/listPage.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String listPage(TransitionDepartureSettlement transitionDepartureSettlement) {
+
         return transitionDepartureSettlementRpc.listPage(transitionDepartureSettlement);
     }
 
@@ -62,6 +66,7 @@ public class TransitionDepartureSettlementController {
 
     /**
      * 新增TransitionDepartureSettlement
+     * 需要调用卡务，暂未接入
      *
      * @param transitionDepartureSettlement
      * @return BaseOutput
