@@ -1,5 +1,8 @@
 package com.dili.trading.service.impl;
 
+import com.dili.logger.sdk.annotation.BusinessLogger;
+import com.dili.logger.sdk.base.LoggerContext;
+import com.dili.logger.sdk.glossary.LoggerConstant;
 import com.dili.order.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
@@ -22,6 +25,7 @@ public class TransitionDepartureApplyServiceImpl implements TransitionDepartureA
     private UidRpc uidRpc;
 
     @Override
+    @BusinessLogger(businessType = "trading_orders", content = "新增转离场申请单", operationType = "add", systemCode = "ORDERS")
     public BaseOutput insert(TransitionDepartureApply transitionDepartureApply) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //设置code编号
@@ -33,11 +37,21 @@ public class TransitionDepartureApplyServiceImpl implements TransitionDepartureA
         //设置申请员工用户名
         transitionDepartureApply.setOriginatorName(userTicket.getRealName());
         //设置申请员工的工号即为登录用户名
+
         transitionDepartureApply.setOriginatorCode(userTicket.getUserName());
+        BaseOutput<TransitionDepartureApply> insert = transitionDepartureApplyRpc.insert(transitionDepartureApply);
+        if (insert.isSuccess()) {
+            TransitionDepartureApply data = insert.getData();
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, data.getCode());
+            LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
+            LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
+        }
         return transitionDepartureApplyRpc.insert(transitionDepartureApply);
     }
 
     @Override
+    @BusinessLogger(businessType = "trading_orders", content = "转离场申请单审批", operationType = "update", systemCode = "ORDERS")
     public BaseOutput approval(TransitionDepartureApply transitionDepartureApply) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //设置审批时间
@@ -48,7 +62,14 @@ public class TransitionDepartureApplyServiceImpl implements TransitionDepartureA
         transitionDepartureApply.setApprovalName(userTicket.getRealName());
         //设置审批人工号
         transitionDepartureApply.setApprovalCode(userTicket.getUserName());
-        return transitionDepartureApplyRpc.update(transitionDepartureApply);
+        BaseOutput update = transitionDepartureApplyRpc.update(transitionDepartureApply);
+        if (update.isSuccess()) {
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, transitionDepartureApply.getId());
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, transitionDepartureApply.getCode());
+            LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
+            LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
+        }
+        return update;
     }
 
 }

@@ -2,6 +2,7 @@ package com.dili.trading.controller;
 
 import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.rpc.CustomerRpc;
+import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.order.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
@@ -10,6 +11,7 @@ import com.dili.trading.rpc.AccountRpc;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
 import com.dili.trading.service.TransitionDepartureApplyService;
 import com.dili.uap.sdk.rpc.DepartmentRpc;
+import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +37,8 @@ public class TransitionDepartureApplyController {
     @Autowired
     private TransitionDepartureApplyRpc transitionDepartureApplyRpc;
 
-//    @Autowired
-//    private AccountRpc accountRpc;
+    @Autowired
+    private AccountRpc accountRpc;
 
     @Autowired
     private CustomerRpc customerRpc;
@@ -100,7 +102,6 @@ public class TransitionDepartureApplyController {
      */
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-//    @BusinessLogger(businessType = "",content = "新增转离场申请单",operationType = "add",systemCode = "")
     public BaseOutput insert(TransitionDepartureApply transitionDepartureApply) {
         return transitionDepartureApplyService.insert(transitionDepartureApply);
     }
@@ -178,47 +179,50 @@ public class TransitionDepartureApplyController {
      * @param cardNo
      * @return
      */
-//    @RequestMapping("/getCustomerByCardNo")
-//    @ResponseBody
-//    public BaseOutput getCustomerByCardNo(String cardNo) {
-//        BaseOutput<Customer> customerBaseOutput = null;
-//        if (StringUtils.isBlank(cardNo)) {
-//            return BaseOutput.failure("卡号不能为空");
-//        }
-//        //根据卡号id拿到对应的账号信息
-//        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getOneAccountCard(cardNo);
-//        //判断请求是否成功
-//        if (oneAccountCard.isSuccess()) {
-//            //判断账户是否为空
-//            if (Objects.nonNull(oneAccountCard.getData())) {
-//                //如果账户信息不为空，则发起请求，根据用户id和市场id去拿到客户相关信息
-//                customerBaseOutput = customerRpc.get(oneAccountCard.getData().getCustomerId(), oneAccountCard.getData().getFirmId());
-//            } else {
-//                //没有查询到相关的账号信息
-//                return BaseOutput.failure("没有查询到相关账户信息");
-//            }
-//        } else {
-//            //不成功则直接返回根据卡号id查询对应账号的返回信息
-//            return oneAccountCard;
-//        }
-//        //判断客户rpc请求是否成功
-//        if (Objects.isNull(customerBaseOutput) || !customerBaseOutput.isSuccess() || Objects.isNull(customerBaseOutput.getData())) {
-//            return BaseOutput.failure("查询不到相关客户信息");
-//        }
-//        //如果存在相关客户信息,则返回客户信息
-//        return BaseOutput.successData(customerBaseOutput.getData());
-//    }
+    @RequestMapping("/getCustomerByCardNo.action")
+    @ResponseBody
+    public BaseOutput getCustomerByCardNo(String cardNo) {
+        BaseOutput<Customer> customerBaseOutput = null;
+        if (StringUtils.isBlank(cardNo)) {
+            return BaseOutput.failure("卡号不能为空");
+        }
+        //根据卡号id拿到对应的账号信息
+        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getOneAccountCard(cardNo);
+        //判断请求是否成功
+        if (oneAccountCard.isSuccess()) {
+            //判断账户是否为空
+            if (Objects.nonNull(oneAccountCard.getData())) {
+                //如果账户信息不为空，则发起请求，根据用户id和市场id去拿到客户相关信息
+                customerBaseOutput = customerRpc.get(oneAccountCard.getData().getCustomerId(), oneAccountCard.getData().getFirmId());
+            } else {
+                //没有查询到相关的账号信息
+                return BaseOutput.failure("没有查询到相关账户信息");
+            }
+        } else {
+            //不成功则直接返回根据卡号id查询对应账号的返回信息
+            return oneAccountCard;
+        }
+        //判断客户rpc请求是否成功
+        if (Objects.isNull(customerBaseOutput) || !customerBaseOutput.isSuccess() || Objects.isNull(customerBaseOutput.getData())) {
+            return BaseOutput.failure("查询不到相关客户信息");
+        }
+        //如果存在相关客户信息,则返回客户信息
+        return BaseOutput.successData(customerBaseOutput.getData());
+    }
 
     /**
      * 第二步：根据卡号获取客户信息
      *
-     * @param customerId
+     * @param departmentId
      * @return
      */
-    @RequestMapping("/getDepartmentByCustomerId")
+    @RequestMapping("/getDepartmentByCustomerId.action")
     @ResponseBody
-    public BaseOutput getDepartmentByCustomerId(Long customerId) {
-        return departmentRpc.findByUserId(customerId);
+    public BaseOutput getDepartmentByCustomerId(Long departmentId) {
+        if (departmentId == null) {
+            return BaseOutput.failure("部门主键不存在");
+        }
+        return departmentRpc.get(departmentId);
     }
 
 }

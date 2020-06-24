@@ -1,5 +1,8 @@
 package com.dili.trading.service.impl;
 
+import com.dili.logger.sdk.annotation.BusinessLogger;
+import com.dili.logger.sdk.base.LoggerContext;
+import com.dili.logger.sdk.glossary.LoggerConstant;
 import com.dili.order.domain.TransitionDepartureApply;
 import com.dili.order.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
@@ -30,6 +33,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
      * @return
      */
     @Override
+    @BusinessLogger(businessType = "trading_orders", content = "转离场申请单审批", operationType = "update", systemCode = "ORDERS")
     public BaseOutput insert(TransitionDepartureSettlement transitionDepartureSettlement) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //设置创建时间
@@ -65,11 +69,16 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         /**
          * 申请支付单号还没有接入
          */
-        BaseOutput update = transitionDepartureSettlementRpc.update(transitionDepartureSettlement);
+        BaseOutput<TransitionDepartureSettlement> update = transitionDepartureSettlementRpc.update(transitionDepartureSettlement);
         //更新结算单不成功的时候
         if (!update.isSuccess()) {
             throw new RuntimeException();
         }
+        TransitionDepartureSettlement data = update.getData();
+        LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
+        LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, data.getCode());
+        LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
+        LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
         return BaseOutput.success();
     }
 

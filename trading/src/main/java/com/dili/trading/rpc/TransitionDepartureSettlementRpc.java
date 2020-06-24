@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc",url = "localhost:8185")
+@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc", url = "localhost:8185")
 public interface TransitionDepartureSettlementRpc {
 
 
@@ -37,7 +37,7 @@ public interface TransitionDepartureSettlementRpc {
      * @return BaseOutput
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/insert", method = {RequestMethod.POST})
-    BaseOutput insert(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
+    BaseOutput<TransitionDepartureSettlement> insert(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
 
     /**
      * 修改TransitionDepartureSettlement
