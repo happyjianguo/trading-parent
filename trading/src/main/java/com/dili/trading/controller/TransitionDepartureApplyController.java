@@ -1,11 +1,17 @@
 package com.dili.trading.controller;
 
+import com.dili.customer.sdk.domain.Customer;
+import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.order.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.trading.domain.UserAccountCardResponseDto;
+import com.dili.trading.rpc.AccountRpc;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
 import com.dili.trading.service.TransitionDepartureApplyService;
+import com.dili.uap.sdk.rpc.DepartmentRpc;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -13,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -24,11 +28,21 @@ import java.util.Objects;
 @RequestMapping("/transitionDepartureApplyController")
 public class TransitionDepartureApplyController {
 
-    @Autowired
-    private TransitionDepartureApplyRpc transitionDepartureApplyRpc;
 
     @Autowired
     private TransitionDepartureApplyService transitionDepartureApplyService;
+
+    @Autowired
+    private TransitionDepartureApplyRpc transitionDepartureApplyRpc;
+
+//    @Autowired
+//    private AccountRpc accountRpc;
+
+    @Autowired
+    private CustomerRpc customerRpc;
+
+    @Autowired
+    private DepartmentRpc departmentRpc;
 
     /**
      * 跳转到转离场申请单页面
@@ -39,6 +53,18 @@ public class TransitionDepartureApplyController {
     @RequestMapping(value = "/list.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
         return "transitionDepartureApply/list";
+    }
+
+
+    /**
+     * 跳转到转离场申请单详情页面
+     *
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value = "/applyDetailPage.html", method = RequestMethod.GET)
+    public String applyDetailPage(ModelMap modelMap) {
+        return "transitionDepartureApply/applyDetailPage";
     }
 
     /**
@@ -74,6 +100,7 @@ public class TransitionDepartureApplyController {
      */
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
+//    @BusinessLogger(businessType = "",content = "新增转离场申请单",operationType = "add",systemCode = "")
     public BaseOutput insert(TransitionDepartureApply transitionDepartureApply) {
         return transitionDepartureApplyService.insert(transitionDepartureApply);
     }
@@ -108,7 +135,7 @@ public class TransitionDepartureApplyController {
         try {
             BaseOutput<TransitionDepartureApply> oneByCustomerID = transitionDepartureApplyRpc.getOneByCustomerID(transitionDepartureApply);
             if (oneByCustomerID.isSuccess()) {
-                if (oneByCustomerID.getData() != null) {
+                if (Objects.nonNull(oneByCustomerID.getData())) {
                     return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(oneByCustomerID)));
                 }
             }
@@ -122,7 +149,7 @@ public class TransitionDepartureApplyController {
     /**
      * 根据id获取申请单，并且使用provider
      *
-     * @param id
+     * @param transitionDepartureApply
      * @return
      */
     @RequestMapping(value = "/getOneByID.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -144,4 +171,54 @@ public class TransitionDepartureApplyController {
             return BaseOutput.failure("查询失败" + e.getMessage());
         }
     }
+
+    /**
+     * 第一步：根据卡号获取客户信息
+     *
+     * @param cardNo
+     * @return
+     */
+//    @RequestMapping("/getCustomerByCardNo")
+//    @ResponseBody
+//    public BaseOutput getCustomerByCardNo(String cardNo) {
+//        BaseOutput<Customer> customerBaseOutput = null;
+//        if (StringUtils.isBlank(cardNo)) {
+//            return BaseOutput.failure("卡号不能为空");
+//        }
+//        //根据卡号id拿到对应的账号信息
+//        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getOneAccountCard(cardNo);
+//        //判断请求是否成功
+//        if (oneAccountCard.isSuccess()) {
+//            //判断账户是否为空
+//            if (Objects.nonNull(oneAccountCard.getData())) {
+//                //如果账户信息不为空，则发起请求，根据用户id和市场id去拿到客户相关信息
+//                customerBaseOutput = customerRpc.get(oneAccountCard.getData().getCustomerId(), oneAccountCard.getData().getFirmId());
+//            } else {
+//                //没有查询到相关的账号信息
+//                return BaseOutput.failure("没有查询到相关账户信息");
+//            }
+//        } else {
+//            //不成功则直接返回根据卡号id查询对应账号的返回信息
+//            return oneAccountCard;
+//        }
+//        //判断客户rpc请求是否成功
+//        if (Objects.isNull(customerBaseOutput) || !customerBaseOutput.isSuccess() || Objects.isNull(customerBaseOutput.getData())) {
+//            return BaseOutput.failure("查询不到相关客户信息");
+//        }
+//        //如果存在相关客户信息,则返回客户信息
+//        return BaseOutput.successData(customerBaseOutput.getData());
+//    }
+
+    /**
+     * 第二步：根据卡号获取客户信息
+     *
+     * @param customerId
+     * @return
+     */
+    @RequestMapping("/getDepartmentByCustomerId")
+    @ResponseBody
+    public BaseOutput getDepartmentByCustomerId(Long customerId) {
+        return departmentRpc.findByUserId(customerId);
+    }
+
 }
