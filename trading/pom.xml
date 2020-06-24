@@ -108,11 +108,6 @@
 			<artifactId>logger-sdk</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<artifactId>uap-sdk</artifactId>
-			<groupId>com.dili</groupId>
-			<version>2.8.0-SNAPSHOT</version>
-		</dependency>
 		<!-- spring boot 基类 -->
 		<dependency>
 			<groupId>com.dili</groupId>
