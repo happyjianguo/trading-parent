@@ -33,7 +33,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
      * @return
      */
     @Override
-    @BusinessLogger(businessType = "trading_orders", content = "转离场申请单审批", operationType = "update", systemCode = "ORDERS")
+    @BusinessLogger(businessType = "trading_orders", content = "转离场结算单新增", operationType = "update", systemCode = "ORDERS")
     public BaseOutput insert(TransitionDepartureSettlement transitionDepartureSettlement) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //设置创建时间
@@ -72,7 +72,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         BaseOutput<TransitionDepartureSettlement> update = transitionDepartureSettlementRpc.update(transitionDepartureSettlement);
         //更新结算单不成功的时候
         if (!update.isSuccess()) {
-            throw new RuntimeException();
+            throw new RuntimeException("转离场结算单新增-->结算单更新失败");
         }
         TransitionDepartureSettlement data = update.getData();
         LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
@@ -83,6 +83,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
     }
 
     @Override
+    @BusinessLogger(businessType = "trading_orders", content = "转离场结算单撤销", operationType = "update", systemCode = "ORDERS")
     public BaseOutput revocator(TransitionDepartureSettlement transitionDepartureSettlement) {
         //判断结算单的支付状态是否为2（已结算）,不是则直接返回
         if (transitionDepartureSettlement.getPayStatus() != 1) {
@@ -104,18 +105,28 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         //先更新申请单，判断是否更新成功，没有更新成功则抛出异常
         BaseOutput update = transitionDepartureApplyRpc.update(data);
         if (!update.isSuccess()) {
-            throw new RuntimeException();
+            throw new RuntimeException("转离场结算单撤销-->申请单更新失败");
         }
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //修改结算单的支付状态
+        //设置撤销人员相关信息
+        transitionDepartureSettlement.setRevocatorId(userTicket.getId());
+        transitionDepartureSettlement.setRevocatorName(userTicket.getRealName());
+        transitionDepartureSettlement.setRevocatorTime(LocalDateTime.now());
         BaseOutput update1 = transitionDepartureSettlementRpc.update(transitionDepartureSettlement);
         //判断结算单修改是否成功，不成功则抛出异常
         if (!update1.isSuccess()) {
-            throw new RuntimeException();
+            throw new RuntimeException("转离场结算单撤销-->结算单更新失败");
         }
+        LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, transitionDepartureSettlement.getId());
+        LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, transitionDepartureSettlement.getCode());
+        LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
+        LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
         return BaseOutput.success();
     }
 
     @Override
+    @BusinessLogger(businessType = "trading_orders", content = "转离场结算单支付", operationType = "update", systemCode = "ORDERS")
     public BaseOutput pay(TransitionDepartureSettlement transitionDepartureSettlement) {
         //判断结算单的支付状态是否为1（未结算）,不是则直接返回
         if (transitionDepartureSettlement.getPayStatus() != 1) {
@@ -140,14 +151,19 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         BaseOutput update = transitionDepartureApplyRpc.update(data);
         //如果申请单更新失败，则抛出异常
         if (!update.isSuccess()) {
-            throw new RuntimeException();
+            throw new RuntimeException("转离场结算单支付-->申请单更新失败");
         }
         //修改结算单的支付状态
         BaseOutput update1 = transitionDepartureSettlementRpc.update(transitionDepartureSettlement);
         //如果结算单修改失败，则抛出异常
         if (!update1.isSuccess()) {
-            throw new RuntimeException();
+            throw new RuntimeException("转离场结算单支付-->结算单更新失败");
         }
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, transitionDepartureSettlement.getId());
+        LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, transitionDepartureSettlement.getCode());
+        LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
+        LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
         return BaseOutput.success();
     }
 
