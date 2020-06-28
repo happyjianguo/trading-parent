@@ -6,7 +6,7 @@ import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.ValuePairImpl;
 import com.dili.ss.metadata.ValueProvider;
-import com.dili.trading.rpc.AssetsRpc;
+import com.dili.trading.rpc.TruckRpc;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -27,7 +27,7 @@ public class CarTypeProvider implements ValueProvider {
     private static final List<ValuePair<?>> BUFFER = new ArrayList<>();
 
     @Autowired
-    AssetsRpc assetsRpc;
+    TruckRpc assetsRpc;
 
 
     @Override
