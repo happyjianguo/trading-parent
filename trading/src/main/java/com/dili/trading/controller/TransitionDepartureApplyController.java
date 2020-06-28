@@ -10,9 +10,11 @@ import com.dili.trading.domain.UserAccountCardResponseDto;
 import com.dili.trading.rpc.AccountRpc;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
 import com.dili.trading.service.TransitionDepartureApplyService;
+import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.rpc.DepartmentRpc;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -91,6 +96,22 @@ public class TransitionDepartureApplyController {
     @RequestMapping(value = "/listByQueryParams.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String listByQueryParams(TransitionDepartureApply transitionDepartureApply) {
+        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
+        String value = (String) ranges.get(0).get("value");
+        //如果value为0，则为个人
+        if (value.equals("0")) {
+            transitionDepartureApply.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
+        }
+        //数据权限，根据部门查询
+//        List<Integer> arryList = null;
+//        if (CollectionUtils.isNotEmpty(departments)) {
+//            arryList = new ArrayList<>();
+//            for (int i = 0; i < departments.size(); i++) {
+//                Map map = departments.get(i);
+//                arryList.add(Integer.valueOf((String) map.get("value")));
+//            }
+//            transitionDepartureApply.setDepartments(arryList);
+//        }
         return transitionDepartureApplyRpc.listByQueryParams(transitionDepartureApply);
     }
 
@@ -213,16 +234,13 @@ public class TransitionDepartureApplyController {
     /**
      * 第二步：根据卡号获取客户信息
      *
-     * @param departmentId
+     * @param
      * @return
      */
-    @RequestMapping("/getDepartmentByCustomerId.action")
+    @RequestMapping("/getUserNameInSession.action")
     @ResponseBody
-    public BaseOutput getDepartmentByCustomerId(Long departmentId) {
-        if (departmentId == null) {
-            return BaseOutput.failure("部门主键不存在");
-        }
-        return departmentRpc.get(departmentId);
+    public BaseOutput getUserNameInSession() {
+        return BaseOutput.successData(SessionContext.getSessionContext().getUserTicket());
     }
 
 }
