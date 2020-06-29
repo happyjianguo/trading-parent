@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
-@FeignClient(name = "truckRpc-service", contextId = "truckRpc")
+@FeignClient(name = "assets-service", contextId = "truckRpc")
 public interface TruckRpc {
     /**
      * 获取车型

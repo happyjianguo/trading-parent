@@ -2,10 +2,14 @@ package com.dili.trading.rpc;
 
 import com.dili.order.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.EasyuiPageOutput;
+import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 @FeignClient(name = "order-service", contextId = "transitionDepartureApplyRpc", url = "localhost:8185")
 public interface TransitionDepartureApplyRpc {
@@ -58,5 +62,5 @@ public interface TransitionDepartureApplyRpc {
      * @return String
      */
     @RequestMapping(value = "/api/transitionDepartureApply/listByQueryParams", method = {RequestMethod.POST})
-    String listByQueryParams(@RequestBody TransitionDepartureApply transitionDepartureApply);
+    PageOutput<List<TransitionDepartureApply>> listByQueryParams(@RequestBody TransitionDepartureApply transitionDepartureApply);
 }

@@ -2,9 +2,10 @@ package com.dili.trading.controller;
 
 import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.rpc.CustomerRpc;
-import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.order.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.EasyuiPageOutput;
+import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.domain.UserAccountCardResponseDto;
 import com.dili.trading.rpc.AccountRpc;
@@ -14,7 +15,6 @@ import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.rpc.DepartmentRpc;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -95,7 +94,7 @@ public class TransitionDepartureApplyController {
      */
     @RequestMapping(value = "/listByQueryParams.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public String listByQueryParams(TransitionDepartureApply transitionDepartureApply) {
+    public String listByQueryParams(TransitionDepartureApply transitionDepartureApply) throws Exception {
         List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
         String value = (String) ranges.get(0).get("value");
         //如果value为0，则为个人
@@ -112,7 +111,8 @@ public class TransitionDepartureApplyController {
 //            }
 //            transitionDepartureApply.setDepartments(arryList);
 //        }
-        return transitionDepartureApplyRpc.listByQueryParams(transitionDepartureApply);
+        PageOutput<List<TransitionDepartureApply>> output = transitionDepartureApplyRpc.listByQueryParams(transitionDepartureApply);
+        return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(transitionDepartureApply, output.getData())).toString();
     }
 
     /**
