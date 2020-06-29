@@ -5,6 +5,7 @@
             elem: this
             , trigger: 'click'
             , range: false
+            ,type: 'datetime'
         });
     });
 
@@ -14,6 +15,40 @@
     let _grid = $('#grid');
     let _form = $('#_form');
     let _modal = $('#_modal');
+
+
+    // 客户名称
+    var customerNameAutoCompleteOption = {
+        serviceUrl: '/customer/listNormal.action',
+        paramName: 'likeName',
+        displayFieldName: 'name',
+        showNoSuggestionNotice: true,
+        noSuggestionNotice: '不存在，请重新输入！',
+        transformResult: function (result) {
+            if(result.success){
+                let data = result.data;
+                return {
+                    suggestions: $.map(data, function (dataItem) {
+                        debugger
+                        return $.extend(dataItem, {
+                                value: dataItem.name + '（' + dataItem.contactsPhone + '，' + dataItem.certificateNumber.substr(-4) + '，' + dataItem.certificateAddr +'）'
+
+
+                            }
+                        );
+                    })
+                }
+            }else{
+                bs4pop.alert(result.message, {type: 'error'});
+                return false;
+            }
+        },
+        selectFn: function (suggestion) {
+            $('#certificateNumber, #_certificateNumber').val(suggestion.certificateNumber);
+            $('#customerCellphone').val(suggestion.contactsPhone);
+            $('#certificateNumber, #_certificateNumber, #customerCellphone').valid();
+        }
+    };
 
     /*********************变量定义区 end***************/
 
