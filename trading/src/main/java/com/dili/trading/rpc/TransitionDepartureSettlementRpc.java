@@ -2,10 +2,13 @@ package com.dili.trading.rpc;
 
 import com.dili.order.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 @FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc", url = "localhost:8185")
 public interface TransitionDepartureSettlementRpc {
@@ -28,7 +31,7 @@ public interface TransitionDepartureSettlementRpc {
      * @throws Exception
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/listByQueryParams", method = {RequestMethod.POST})
-    String listByQueryParams(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
+    PageOutput<List<TransitionDepartureSettlement>> listByQueryParams(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
 
     /**
      * 新增TransitionDepartureSettlement

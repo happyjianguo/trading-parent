@@ -2,6 +2,9 @@ package com.dili.trading.controller;
 
 import com.dili.order.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.EasyuiPageOutput;
+import com.dili.ss.domain.PageOutput;
+import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.rpc.TransitionDepartureSettlementRpc;
 import com.dili.trading.service.TransitionDepartureSettlementService;
 import com.dili.uap.sdk.glossary.DataAuthType;
@@ -67,7 +70,7 @@ public class TransitionDepartureSettlementController {
      */
     @RequestMapping(value = "/listByQueryParams.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public String listByQueryParams(TransitionDepartureSettlement transitionDepartureSettlement) {
+    public String listByQueryParams(TransitionDepartureSettlement transitionDepartureSettlement) throws Exception {
         //拿到数据权限，个人或全部
         List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
         String value = (String) ranges.get(0).get("value");
@@ -75,7 +78,9 @@ public class TransitionDepartureSettlementController {
         if (value.equals("0")) {
             transitionDepartureSettlement.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
         }
-        return transitionDepartureSettlementRpc.listByQueryParams(transitionDepartureSettlement);
+
+        PageOutput<List<TransitionDepartureSettlement>> output = transitionDepartureSettlementRpc.listByQueryParams(transitionDepartureSettlement);
+        return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(transitionDepartureSettlement, output.getData())).toString();
     }
 
     /**
