@@ -74,37 +74,22 @@
     <div class="row">
         <div class="col-12">
             <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
-                <#resource code="carTypePublic_add">
-	                <button id="btn_add" type="button" class="btn btn-primary" onclick="openUpdateHandler()"><i
-	                        class="fa fa-plus"></i> 业务属性设置
+                <#resource code="transitionDepartureApply_add">
+	                <button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()"><i
+	                        class="fa fa-plus"></i> 申请
 	                </button>
                 </#resource>
-                <#resource code="carTypePublic_edit">
+                <#resource code="transitionDepartureApply_update">
 	                <button type="button" class="btn btn-primary" onclick="openUpdateHandler()">
-	                    <i class="fa fa-pencil-square-o"></i> 修改
+	                    <i class="fa fa-pencil-square-o"></i> 审批
 	                </button>
                 </#resource>
-                <#resource code="carTypePublic_del">
-	                <button type="button" class="btn btn-primary" onclick="openDeleteHandler()">
-	                    <i class="fa fa-trash-o"></i> 删除
-	                </button>
+                <#resource code="transitionDepartureApply_see">
+                    <button id="btn_view" type="button" class="btn btn-primary" onclick="openViewHandler()"><i class="fa fa-eye"></i> 查看</button>
                 </#resource>
-                <#resource code="carTypePublic_on">
-	                <button type="button" class="btn btn-primary btn_css_disabled" id="btn_enabled" onclick="doEnableHandler(1)">
-	                    <i class="fa fa-play"></i> 启用
-	                </button>
+                <#resource code="transitionDepartureApply_export">
+                    <button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')"><i class="fa fa-download"></i> 导出</button>
                 </#resource>
-                <#resource code="carTypePublic_off">
-	                <button type="button" class="btn btn-primary btn_css_disabled" id="btn_disabled" onclick="doEnableHandler(2)">
-	                    <i class="fa fa-stop"></i> 禁用
-	                </button>
-                </#resource>
-            </div>
-            <br />
-            <div class="btn-group mt-3 mb-3 queryBtn">
-                <button type="button" class="btn btn-outline-primary queryBtnCss" onclick="updateStatus('', this)">&nbsp;&nbsp;全部&nbsp;&nbsp;</button>
-                <button type="button" class="btn btn-outline-primary" onclick="updateStatus(1, this)">&nbsp;&nbsp;启用&nbsp;&nbsp;</button>
-                <button type="button" class="btn btn-outline-primary" onclick="updateStatus(2, this)">&nbsp;&nbsp;禁用&nbsp;&nbsp;</button>
             </div>
             <table id="grid" data-toggle="table" data-id-field="id" data-tree-show-field="name" data-parent-id-field="parentId" data-query-params="queryParams" data-sort-name="id"
                    data-sort-order="desc" data-pagination="true" data-page-number="1" data-page-size="10" data-side-pagination="server" data-single-select="true" data-click-to-select="true" data-ignore-click-to-select-on="ignoreExpandClick">

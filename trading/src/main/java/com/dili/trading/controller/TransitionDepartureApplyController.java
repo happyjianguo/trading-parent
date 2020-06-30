@@ -63,6 +63,17 @@ public class TransitionDepartureApplyController {
 
 
     /**
+     * 跳转到转离场申请单新增页面
+     *
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value = "/add.html", method = RequestMethod.GET)
+    public String add(ModelMap modelMap) {
+        return "transitionDepartureApply/add";
+    }
+
+    /**
      * 跳转到转离场申请单详情页面
      *
      * @param modelMap

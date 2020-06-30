@@ -72,8 +72,8 @@
     function openInsertHandler() {
         $("#_modal").modal();
 
-        $('#_modal .modal-body').load("/carTypePublic/add.html");
-        _modal.find('.modal-title').text('车型新增');
+        $('#_modal .modal-body').load("/transitionDepartureApplyController/add.html");
+        _modal.find('.modal-title').text('转离场申请');
 
     }
 
