@@ -136,8 +136,8 @@
                     if (res.code == "200") {
                         bs4pop.alert('成功', {type: 'success'}, function () {
                             /* 应该要带条件刷新 */
+                            parent.dia.hide();
                             window.location.reload();
-                            parent.closeDialog(parent.dia);
                         });
                     } else {
                         bui.loading.hide();
