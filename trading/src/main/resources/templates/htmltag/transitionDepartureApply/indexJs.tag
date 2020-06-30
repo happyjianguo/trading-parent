@@ -1,4 +1,12 @@
 <script>
+    /*********************变量定义区 begin*************/
+        //行索引计数器
+        //如 let itemIndex = 0;
+    let _grid = $('#grid');
+    let _form = $('#_form');
+    var dia;
+
+
     //时间范围
     lay('.laydatetime').each(function () {
         laydate.render({
@@ -9,12 +17,7 @@
         });
     });
 
-    /*********************变量定义区 begin*************/
-        //行索引计数器
-        //如 let itemIndex = 0;
-    let _grid = $('#grid');
-    let _form = $('#_form');
-    let _modal = $('#_modal');
+
 
 
     // 客户名称
@@ -32,8 +35,6 @@
                         debugger
                         return $.extend(dataItem, {
                                 value: dataItem.name + '（' + dataItem.contactsPhone + '，' + dataItem.certificateNumber.substr(-4) + '，' + dataItem.certificateAddr +'）'
-
-
                             }
                         );
                     })
@@ -70,17 +71,32 @@
      * 打开新增窗口
      */
     function openInsertHandler() {
-        $("#_modal").modal();
+        dia = bs4pop.dialog({
+            title: '转离场申请',//对话框title
+            content: '${contextPath}/transitionDepartureApplyController/add.html', //对话框内容，可以是 string、element，$object
+            width: '60%',//宽度
+            height: '600px',//高度
+            isIframe: true,//默认是页面层，非iframe
+            btns: [{label: '取消',className: 'btn btn-secondary',onClick(e, $iframe){
 
-        $('#_modal .modal-body').load("/transitionDepartureApplyController/add.html");
-        _modal.find('.modal-title').text('转离场申请');
+                }
+            }, {label: '确定',className: 'btn btn-primary',onClick(e, $iframe){
+                    let diaWindow = $iframe[0].contentWindow;
+                    bui.util.debounce(diaWindow.saveOrUpdateHandler,1000,true)()
+                    return false;
+                }
+            }]
+        });
 
     }
+
+
+
 
     /**
      * 打开修改窗口
      */
-    function openUpdateHandler(id) {
+   /* function openUpdateHandler(id) {
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
@@ -94,7 +110,7 @@
         }
 		
         _modal.find('.modal-title').text('业务属性设置');
-    }
+    }*/
 
     function openDeleteHandler(id) {
         let rows = _grid.bootstrapTable('getSelections');
@@ -134,7 +150,7 @@
      * @param enable 是否启用:true-启用
      * @param id
      */
-    function doEnableHandler(enable, id) {
+   /* function doEnableHandler(enable, id) {
         var opType ="";
         if(enable == 1){
             opType = "enable";
@@ -177,7 +193,7 @@
                 });
             }
         })
-    }
+    }*/
 
 
     /**
@@ -204,29 +220,4 @@
 
     /*****************************************函数区 end**************************************/
 
-    /*****************************************自定义事件区 begin************************************/
-    //表单弹框关闭事件
-    _modal.on('hidden.bs.modal', function () {
-        _form[0].reset();
-        //重置表单验证到初始状态
-        $(this).find('input,select,textarea').removeClass('is-invalid is-valid');
-        $(this).find('input,select,textarea').removeAttr('disabled readonly');
-        $(this).find('.invalid-feedback').css('display', 'none');
-    });
-
-    _grid.on('post-body.bs.table', function (e,data){
-        var columns = _grid.bootstrapTable('getOptions').columns;
-        if (columns && columns[0][0].visible) {
-            _grid.treegrid({
-                treeColumn: 0,
-                expanderExpandedClass: 'fa fa-minus',
-                expanderCollapsedClass: 'fa fa-plus',
-                onChange: function() {
-                    console.log($(this).treegrid('getDepth'))
-                }
-            })
-        }
-    });
-
-    /*****************************************自定义事件区 end**************************************/
 </script>

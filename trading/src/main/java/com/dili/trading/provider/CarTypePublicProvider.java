@@ -1,23 +1,22 @@
 package com.dili.trading.provider;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import com.dili.trading.rpc.TruckRpc;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.dili.assets.sdk.dto.CarTypeDTO;
 import com.dili.assets.sdk.dto.CarTypePublicDTO;
 import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.ValuePairImpl;
 import com.dili.ss.metadata.ValueProvider;
+import com.dili.trading.rpc.AssetsRpc;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.session.SessionContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class CarTypePublicProvider implements ValueProvider {
@@ -25,7 +24,7 @@ public class CarTypePublicProvider implements ValueProvider {
     private static final List<ValuePair<?>> BUFFER = new ArrayList<>();
 
     @Autowired
-    TruckRpc truckRpc;
+    AssetsRpc assetsRpc;
 
     @Override
     public List<ValuePair<?>> getLookupList(Object val, Map metaMap, FieldMeta fieldMeta) {
@@ -40,7 +39,8 @@ public class CarTypePublicProvider implements ValueProvider {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         CarTypePublicDTO carTypePublicDTO = new CarTypePublicDTO();
         carTypePublicDTO.setMarketId(userTicket.getFirmId());
-        List<CarTypeDTO> list = truckRpc.listCarType(carTypePublicDTO).getData();
+        carTypePublicDTO.setKeyword(object.toString());
+        List<CarTypeDTO> list = assetsRpc.listCarType(carTypePublicDTO).getData();
         BUFFER.addAll(Stream.of(list.toArray(new CarTypeDTO[list.size()]))
                 .map(e -> new ValuePairImpl<>(e.getName(), e.getId().toString()))
                 .collect(Collectors.toList()));
