@@ -24,6 +24,12 @@ public class WeighingBillController {
 	@Autowired
 	private WeighingBillRpc weighingBillRpc;
 
+	/**
+	 * 新增过磅单
+	 * 
+	 * @param weighingBill
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("/add.action")
 	public BaseOutput<String> add(@RequestBody WeighingBill weighingBill) {
@@ -35,6 +41,12 @@ public class WeighingBillController {
 		return this.weighingBillRpc.add(weighingBill);
 	}
 
+	/**
+	 * 修改过磅单
+	 * 
+	 * @param weighingBill
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("/update.action")
 	public BaseOutput<String> update(@RequestBody WeighingBill weighingBill) {
@@ -46,6 +58,14 @@ public class WeighingBillController {
 		return this.weighingBillRpc.add(weighingBill);
 	}
 
+	/**
+	 * 结算
+	 * 
+	 * @param serialNo
+	 * @param buyerPassword
+	 * @param sellerPassword
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("/settle.action")
 	public BaseOutput<Object> settle(String serialNo, String buyerPassword, String sellerPassword) {
@@ -56,6 +76,14 @@ public class WeighingBillController {
 		return this.weighingBillRpc.settle(serialNo, buyerPassword, sellerPassword, user.getId());
 	}
 
+	/**
+	 * 撤销
+	 * 
+	 * @param serialNo
+	 * @param buyerPassword
+	 * @param sellerPassword
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("/withdraw.action")
 	public BaseOutput<Object> withdraw(String serialNo, String buyerPassword, String sellerPassword) {
@@ -66,6 +94,14 @@ public class WeighingBillController {
 		return this.weighingBillRpc.withdraw(serialNo, buyerPassword, sellerPassword, user.getId());
 	}
 
+	/**
+	 * 作废
+	 * 
+	 * @param serialNo
+	 * @param buyerPassword
+	 * @param sellerPassword
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("/invalidate.action")
 	public BaseOutput<Object> invalidate(String serialNo, String buyerPassword, String sellerPassword) {
@@ -76,6 +112,12 @@ public class WeighingBillController {
 		return this.weighingBillRpc.invalidate(serialNo, buyerPassword, sellerPassword, user.getId());
 	}
 
+	/**
+	 * 查询列表
+	 * 
+	 * @param dto
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("/listByExample.action")
 	public BaseOutput<Object> listByExample(@RequestBody WeighingBillQueryDto dto) {
