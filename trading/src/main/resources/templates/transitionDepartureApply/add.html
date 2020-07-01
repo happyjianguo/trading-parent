@@ -86,10 +86,9 @@
         $('#payByCard').on('click',function (e) {
             $.ajax({
                 type: "POST",
-                // data:{"cardNo":"888800034671"},
-                url: "/transitionDepartureApplyController/getCustomerByCardNo.action?cardNo=888800034671",
-                processData: false,
-                contentType: false,
+                data: {cardNo: $('[name="customerCardNo"]').val()},
+                url: "/transitionDepartureApplyController/getCustomerByCardNo.action",
+                dataType:"json",
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
