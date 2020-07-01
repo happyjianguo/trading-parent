@@ -4,64 +4,80 @@
         <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
         <form id="saveForm" role="form" novalidate>
             <div class="row">
-                <div class="form-group col-4">
+                <div class="form-group col-3">
                     <label for="">卡号</label>
-                    <input id="customerCardNo" readonly="true" class="form-control" name="customerCardNo"  maxlength="100">
-                    <input type="button" value="刷卡" id="payByCard">
+                    <input type="text" class="form-control" value="${transitionDepartureApply.customerCardNo!}" disabled />
                 </div>
-                <div class="form-group col-6">
+                <div class="form-group col-3">
                     <label for="">客户编号</label>
-                    <input id="customerCode" readonly="true" class="form-control" name="customerCode"  maxlength="100">
-                    <input id="customerId" class="form-control" name="customerId" hidden="true" maxlength="100">
+                    <input type="text" class="form-control" value="${transitionDepartureApply.customerCode!}" disabled />
                 </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-6">
+                <div class="form-group col-3">
                     <label for="">客户名称</label>
-                    <input id="customerName" readonly="true" class="form-control" name="customerName"  maxlength="100">
+                    <input type="text" class="form-control" value="${transitionDepartureApply.customerName!}" disabled />
                 </div>
-                <div class="form-group col-6">
+                <div class="form-group col-3">
                     <label for="">申请部门</label>
-                    <input id="originatorName" readonly="true" class="form-control" name="originatorName"  maxlength="100">
+                    <input type="text" class="form-control" value="${transitionDepartureApply.originatorName!}" disabled />
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-6">
-                    <label for="">车辆类型<i class="red">*</i></label>
-                    <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="carTypeId" _hiddenDomainName="carTypeId" _displayDomainId="_carTypeId" _displayDomainName="_carTypeId" _placeholder="" _provider="carTypeProvider" _validatorMethod="isSelected" _value="" _text="" _required="true"/>
+                <div class="form-group col-3">
+                    <label for="">车辆类型</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.carTypeId!}" disabled />
                 </div>
-                <div class="form-group col-6">
-                    <label for="">车牌号<i class="red">*</i></label>
-                    <input id="plate" class="form-control" name="plate"  maxlength="100" required>
+                <div class="form-group col-3">
+                    <label for="">车牌号</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.plate!}" disabled />
+                </div>
+                <div class="form-group col-3">
+                    <label for="">交易类型</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.transTypeId!}" disabled />
+                </div>
+                <div class="form-group col-3">
+                    <label for="">商品名称</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.categoryId!}" disabled />
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-6">
-                    <label for="">交易类型<i class="red">*</i></label>
-                    <input id="1" class="form-control" name="transTypeId"  maxlength="100">
+                <div class="form-group col-3">
+                    <label for="">办理业务</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.bizType!}" disabled />
                 </div>
-                <div class="form-group col-6">
-                    <label for="">商品名称<i class="red">*</i></label>
-                    <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="categoryId" _hiddenDomainName="categoryId" _displayDomainId="_categoryId" _displayDomainName="_categoryId" _placeholder="" _provider="categoryProvider" _validatorMethod="isSelected" _value="" _text="" _required="true"/>
+                <div class="form-group col-3">
+                    <label for="">发起人</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.originatorName!}" disabled />
                 </div>
-                </div>
-            </div>
-            <div class="form-group col">
-                <label for="">办理业务<i class="red">*</i></label>
-                <div class="mt-2" id="stateRadioDiv">
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="r_stateRadioDiv1" value="1" name="bizType" required class="custom-control-input">
-                        <label class="custom-control-label" for="r_stateRadioDiv1">转场</label>
-                    </div>
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="r_stateRadioDiv2" value="2" name="bizType" required class="custom-control-input">
-                        <label class="custom-control-label" for="r_stateRadioDiv2">离场</label>
-                    </div>
+                <div class="form-group col-3">
+                    <label for="">发起时间</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.originatorTime!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" disabled />
                 </div>
             </div>
-            <div class="form-group col-12">
-                <label for="transitionDepartureReason">转离场理由<i class="red">*</i></label>
-                <textarea id="transitionDepartureReason" class="form-control" name="transitionDepartureReason" rows="3" maxlength="100" required></textarea>
+            <div class="row">
+                <div class="form-group col-12">
+                    <label for="">转离场理由</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.transitionDepartureReason!}" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-3">
+                    <label for="">审批结果</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.approvalState!}" disabled />
+                </div>
+                <div class="form-group col-3">
+                    <label for="">审批人</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.approvalName!}" disabled />
+                </div>
+                <div class="form-group col-3">
+                    <label for="">审批时间</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.approvalTime!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-12">
+                    <label for="">审批说明</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.approvalReason!}" disabled />
+                </div>
             </div>
         </form>
     </div>
