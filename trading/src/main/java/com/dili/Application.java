@@ -16,7 +16,7 @@ import com.dili.ss.retrofitful.annotation.RestfulScan;
  * 由MyBatis Generator工具自动生成
  */
 @SpringBootApplication
-@ComponentScan(basePackages = { "com.dili.ss", "com.dili.trading", "com.dili.uap.sdk" })
+@ComponentScan(basePackages = { "com.dili.ss", "com.dili.trading", "com.dili.uap.sdk", "com.dili.logger.sdk" })
 @RestfulScan({ "com.dili.trading.rpc", "com.dili.uap.sdk.rpc" })
 //@DTOScan(value = {"com.dili.ss"})
 @EnableDiscoveryClient
