@@ -47,7 +47,7 @@ public class TransitionDepartureApplyServiceImpl implements TransitionDepartureA
             LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
             LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
         }
-        return transitionDepartureApplyRpc.insert(transitionDepartureApply);
+        return insert;
     }
 
     @Override

@@ -1,0 +1,151 @@
+<#bs4Body>
+
+<div class="container-fluid">
+        <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
+        <form id="saveForm" role="form" novalidate>
+            <div class="row">
+                <div class="form-group col-4">
+                    <label for="notes">卡号</label>
+                    <input id="customerCardNo" readonly="true" class="form-control" name="customerCardNo"  maxlength="100">
+                    <input type="button" value="刷卡" id="payByCard">
+                </div>
+                <div class="form-group col-6">
+                    <label for="notes">客户编号</label>
+                    <input id="customerCode" readonly="true" class="form-control" name="customerCode"  maxlength="100">
+                    <input id="customerId" class="form-control" name="customerId" hidden="true" maxlength="100">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label for="notes">客户名称</label>
+                    <input id="customerName" readonly="true" class="form-control" name="customerName"  maxlength="100">
+                </div>
+                <div class="form-group col-6">
+                    <label for="notes">申请部门</label>
+                    <input id="originatorName" readonly="true" class="form-control" name="originatorName"  maxlength="100">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label for="carTypeId">车辆类型<i class="red">*</i></label>
+                    <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="carTypeId" _hiddenDomainName="carTypeId" _displayDomainId="_carTypeId" _displayDomainName="_carTypeId" _placeholder="" _provider="carTypeProvider" _validatorMethod="isSelected" _value="" _text="" _required="true"/>
+                </div>
+                <div class="form-group col-6">
+                    <label for="notes">车牌号<i class="red">*</i></label>
+                    <input id="plate" class="form-control" name="plate"  maxlength="100" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label for="notes">交易类型<i class="red">*</i></label>
+                    <input id="1" class="form-control" name="plate"  maxlength="100">
+                </div>
+                <div class="form-group col-6">
+                    <label for="notes">商品名称<i class="red">*</i></label>
+                    <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="categoryId" _hiddenDomainName="categoryId" _displayDomainId="_categoryId" _displayDomainName="_categoryId" _placeholder="" _provider="categoryProvider" _validatorMethod="isSelected" _value="" _text="" _required="true"/>
+                </div>
+                </div>
+            </div>
+            <div class="form-group col">
+                <label for="bizType">办理业务<i class="red">*</i></label>
+                <div class="mt-2" id="stateRadioDiv">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="r_stateRadioDiv1" value="1" name="bizType" required class="custom-control-input">
+                        <label class="custom-control-label" for="r_stateRadioDiv1">转场</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="r_stateRadioDiv2" value="2" name="bizType" required class="custom-control-input">
+                        <label class="custom-control-label" for="r_stateRadioDiv2">离场</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-12">
+                <label for="transitionDepartureReason">转离场理由<i class="red">*</i></label>
+                <textarea id="transitionDepartureReason" class="form-control" name="transitionDepartureReason" rows="3" maxlength="100" required></textarea>
+            </div>
+        </form>
+    </div>
+</#bs4Body>
+
+
+
+<#js_customerAutocompleteJs/>
+
+<script  id="boothItem"  type="text/html">
+    <tr data-index="{{index}}">
+        <td class="text-center align-middle"><a href="javascript:;" class="item-del" style="padding: 8px 18px;"><i class="fa fa-minus-square fa-lg"></i></a></td>
+        <td style="padding: .25rem!important;">
+            <#bautoCompleteProvider _escape="true" _hiddenDomainId="assetsId_{{index}}" _hiddenDomainName="assetsId_{{index}}" _displayDomainId="assetsName_{{index}}" _displayDomainName="assetsName_{{index}}" _value="{{boothId}}" _text="{{boothName}}"   _placeholder="" _validatorMethod="isSelected"  _optionVariable="boothAutoCompleteOption" />
+        </td>
+
+    </tr>
+
+</script>
+
+    <script>
+        $('#payByCard').on('click',function (e) {
+            $.ajax({
+                type: "POST",
+                data: {cardNo: $('[name="customerCardNo"]').val()},
+                url: "/transitionDepartureApplyController/getCustomerByCardNo.action",
+                dataType:"json",
+                async: true,
+                success: function (res) {
+                    if (res.code == "200") {
+                        $('#customerCardNo').val('888800034671');
+                        $('#customerCode').val(res.data.code);
+                        $('#customerId').val(res.data.id);
+                        $('#customerName').val(res.data.name);
+                    }
+                },
+            });
+
+
+            $.ajax({
+                type: "POST",
+                url: "/transitionDepartureApplyController/getUserNameInSession.action",
+                processData: false,
+                contentType: false,
+                async: true,
+                success: function (res) {
+                    if (res.code == "200") {
+                        $('#originatorName').val(res.data.realName);
+                    }
+                },
+            });
+        });
+
+        function saveOrUpdateHandler() {
+            // 提交保存
+            if (!$('#saveForm').validate().form()) {
+                return false;
+            }
+            bui.loading.show('努力提交中，请稍候。。。');
+            let _formData = new FormData($('#saveForm')[0]);
+            $.ajax({
+                type: "POST",
+                url: "/transitionDepartureApplyController/insert.action",
+                data: _formData,
+                processData: false,
+                contentType: false,
+                async: true,
+                success: function (res) {
+                    bui.loading.hide();
+                    if (res.code == "200") {
+                        bs4pop.alert('成功', {type: 'success'}, function () {
+                            /* 应该要带条件刷新 */
+                            parent.dia.hide();
+                            window.location.reload();
+                        });
+                    } else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.result, {type: 'error'});
+                    }
+                },
+                error: function (error) {
+                    bui.loading.hide();
+                    bs4pop.alert(error.result, {type: 'error'});
+                }
+            });
+        }
+    </script>

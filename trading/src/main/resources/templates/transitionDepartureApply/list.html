@@ -1,263 +1,61 @@
 <#bs4Body>
-<link href="https://cdn.bootcss.com/select2/4.0.12/css/select2.css" rel="stylesheet">
-<script src="https://cdn.bootcss.com/select2/4.0.12/js/select2.min.js"></script>
-<script src="https://cdn.bootcss.com/select2/4.0.12/js/i18n/zh-CN.js"></script>
-<style>
 
-    .boothname {
-        text-indent: 20px;
-    }
-    tr[class*="treegrid-parent"] .boothname{
-        text-indent: 40px;
-    }
-
-     .select2-container--default .select2-selection--single {
-         border: 1px solid #DBDDE1;
-         height: 33.5px;
-
-     }
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        line-height: 33.5px;
-    }
-
-    .select2-container--bootstrap4 .select2-selection--single {
-        height: calc(2.25rem + 2px) !important
-    }
-
-    .select2-container--bootstrap4 .select2-selection--single .select2-selection__placeholder {
-        color: #757575;
-        line-height: 2.25rem
-    }
-
-    .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
-        position: absolute;
-        top: 50%;
-        right: 3px;
-        width: 20px
-    }
-
-    .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow b {
-        top: 60%;
-        border-color: #343a40 transparent transparent;
-        border-style: solid;
-        border-width: 5px 4px 0;
-        width: 0;
-        height: 0;
-        left: 50%;
-        margin-left: -4px;
-        margin-top: -2px;
-        position: absolute
-    }
-
-    .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
-        line-height: 2.25rem
-    }
-
-    .select2-search--dropdown .select2-search__field {
-        border: 1px solid #ced4da;
-        border-radius: .25rem
-    }
-
-    .select2-results__message {
-        color: #6c757d
-    }
-
-    .select2-container--bootstrap4 .select2-selection--multiple {
-        min-height: calc(2.25rem + 2px) !important
-    }
-
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__rendered {
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        list-style: none;
-        margin: 0;
-        padding: 0 5px;
-        width: 100%
-    }
-
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
-        color: #343a40;
-        border: 1px solid #bdc6d0;
-        border-radius: .2rem;
-        padding: 0 5px 0 0;
-        cursor: pointer;
-        float: left;
-        margin-top: .3em;
-        margin-right: 5px
-    }
-
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove {
-        color: #bdc6d0;
-        font-weight: 700;
-        margin-left: 3px;
-        margin-right: 1px;
-        padding-right: 3px;
-        padding-left: 3px;
-        float: left
-    }
-
-    .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove:hover {
-        color: #343a40
-    }
-
-    .select2-container {
-        display: block
-    }
-
-    .select2-container :focus {
-        outline: 0
-    }
-
-    .input-group .select2-container--bootstrap4 {
-        -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-        flex-grow: 1
-    }
-
-    .input-group-prepend ~ .select2-container--bootstrap4 .select2-selection {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0
-    }
-
-    .input-group > .select2-container--bootstrap4:not(:last-child) .select2-selection {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0
-    }
-
-    .select2-container--bootstrap4 .select2-selection {
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: .25rem;
-        -webkit-transition: border-color .15s ease-in-out, -webkit-box-shadow .15s ease-in-out;
-        transition: border-color .15s ease-in-out, -webkit-box-shadow .15s ease-in-out;
-        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out, -webkit-box-shadow .15s ease-in-out;
-        width: 100%
-    }
-
-    @media screen and (prefers-reduced-motion: reduce) {
-        .select2-container--bootstrap4 .select2-selection {
-            -webkit-transition: none;
-            transition: none
-        }
-    }
-
-    .select2-container--bootstrap4.select2-container--focus .select2-selection {
-        border-color: #80bdff;
-        -webkit-box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25);
-        box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25)
-    }
-
-    .select2-container--bootstrap4.select2-container--focus.select2-container--open .select2-selection {
-        border-bottom: none;
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0
-    }
-
-    .select2-container--bootstrap4.select2-container--disabled.select2-container--focus .select2-selection, .select2-container--bootstrap4.select2-container--disabled .select2-selection {
-        background-color: #e9ecef;
-        cursor: not-allowed;
-        border-color: #ced4da;
-        -webkit-box-shadow: none;
-        box-shadow: none
-    }
-
-    .select2-container--bootstrap4.select2-container--disabled.select2-container--focus .select2-search__field, .select2-container--bootstrap4.select2-container--disabled .select2-search__field {
-        background-color: transparent
-    }
-
-    form.was-validated select:invalid ~ .select2-container--bootstrap4 .select2-selection, select.is-invalid ~ .select2-container--bootstrap4 .select2-selection {
-        border-color: #dc3545
-    }
-
-    form.was-validated select:valid ~ .select2-container--bootstrap4 .select2-selection, select.is-valid ~ .select2-container--bootstrap4 .select2-selection {
-        border-color: #28a745
-    }
-
-    .select2-container--bootstrap4 .select2-dropdown {
-        border-color: #ced4da;
-        border-top: none;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0
-    }
-
-    .select2-container--bootstrap4 .select2-dropdown.select2-dropdown--above {
-        border-top: 1px solid #ced4da;
-        border-top-left-radius: .25rem;
-        border-top-right-radius: .25rem
-    }
-
-    .select2-container--bootstrap4 .select2-dropdown .select2-results__option[aria-selected=true] {
-        background-color: #e9ecef
-    }
-
-    .select2-container--bootstrap4 .select2-results__option--highlighted, .select2-container--bootstrap4 .select2-results__option--highlighted.select2-results__option[aria-selected=true] {
-        background-color: #007bff;
-        color: #f8f9fa
-    }
-
-    .select2-container--bootstrap4 .select2-results__option[role=group] {
-        padding: 0
-    }
-
-    .select2-container--bootstrap4 .select2-results > .select2-results__options {
-        max-height: 15em;
-        overflow-y: auto
-    }
-
-    .select2-container--bootstrap4 .select2-results__group {
-        padding: 6px;
-        display: list-item;
-        color: #6c757d
-    }
-
-    .select2-container--bootstrap4 .select2-selection__clear {
-        width: 1.2em;
-        height: 1.2em;
-        line-height: 1.15em;
-        padding-left: .3em;
-        margin-top: .5em;
-        border-radius: 100%;
-        background-color: #6c757d;
-        color: #f8f9fa;
-        float: right;
-        margin-right: .3em
-    }
-
-    .select2-container--bootstrap4 .select2-selection__clear:hover {
-        background-color: #343a40
-    }
-    .queryBtnCss{
-    	color: #ffffff;
-    	background: #007bff;
-    }
-    .btn_css_disabled{
-    	cursor: not-allowed;
-    }
-</style>
 <div class="container-fluid">
     <#bs4nav>
     <form class="form collapse show" id="queryForm" role="form" >
         <div class="row  row-cols-6">
-        	<input type="hidden" name="status" value="">
             <div class="form-group col">
-                <label for="">车型编号</label>
-                <select id="bizType" name="tag" class="form-control w-200px">
+                <label for="">审批状态</label>
+                <select id="approvalState" name="approvalState" class="form-control">
                     <option value="">--全部--</option>
-                    <option value="">--全部--</option>
+                    <option value="1">待审批</option>
+                    <option value="2">通过</option>
+                    <option value="3">拒绝</option>
                 </select>
             </div>
             <div class="form-group col">
-                <label for="">车型名称</label>
-                <input type="text" class="form-control isNaturalNum" name="name" placeholder="">
+                <label for="">类型</label>
+                <select id="bizType" name="bizType" class="form-control">
+                    <option value="">--全部--</option>
+                    <option value="1">转场</option>
+                    <option value="2">离场</option>
+                </select>
+            </div>
+            <div class="form-group col-12">
+                <label for="customerId">客户</label>
+                <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"  _validatorMethod="isSelected" _value="" _text="" />
+
             </div>
             <div class="form-group col">
-                <label for="">标签</label>
-                <#bcomboProvider _id="tag" _provider="dataDictionaryValueProvider" _queryParams='{dd_code:"cartype_tag",market_id:"${market_id!}", required:true}'/>
+                <label for="">车牌</label>
+                <input type="text" class="form-control isNaturalNum" name="plate" placeholder="">
             </div>
             <div class="form-group col">
-                <label for="">快捷编码</label>
-                <input type="text" class="form-control isNaturalNum" name="code" placeholder="">
+                <label for="_originatorId" class="">审批人员</label>
+                <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="originatorId" _hiddenDomainName="originatorId" _displayDomainId="_originatorId" _displayDomainName="_originatorId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
+            </div>
+        </div>
+        <div class="row  row-cols-6">
+            <div class="form-group col-auto">
+                <label for="createdStart" >发起时间</label>
+                <div class="form-inline">
+                    <div class="input-group">
+                        <input type="text" name="beginTime" id="createdStart" class="form-control laydatetime laystart"/>
+                        <div class="input-group-append">
+                            <label for=""  class="input-group-text fa fa-calendar"></label>
+                        </div>
+                    </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                    <div class="input-group">
+                        <input type="text" name="endTime" id="createdEnd" class="form-control laydatetime layend" value=""/>
+                        <div class="input-group-append">
+                            <label for=""  class="input-group-text fa fa-calendar"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col">
+                <label for="_approvalId" class="">审批人员</label>
+                <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="approvalId" _hiddenDomainName="approvalId" _displayDomainId="_approvalId" _displayDomainName="_approvalId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
             </div>
             <div class="col align-self-center mt-3">
                 <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
@@ -273,37 +71,22 @@
     <div class="row">
         <div class="col-12">
             <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
-                <#resource code="carTypePublic_add">
-	                <button id="btn_add" type="button" class="btn btn-primary" onclick="openUpdateHandler()"><i
-	                        class="fa fa-plus"></i> 业务属性设置
+                <#resource code="transitionDepartureApply_add">
+	                <button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()"><i
+	                        class="fa fa-plus"></i> 申请
 	                </button>
                 </#resource>
-                <#resource code="carTypePublic_edit">
+                <#resource code="transitionDepartureApply_update">
 	                <button type="button" class="btn btn-primary" onclick="openUpdateHandler()">
-	                    <i class="fa fa-pencil-square-o"></i> 修改
+	                    <i class="fa fa-pencil-square-o"></i> 审批
 	                </button>
                 </#resource>
-                <#resource code="carTypePublic_del">
-	                <button type="button" class="btn btn-primary" onclick="openDeleteHandler()">
-	                    <i class="fa fa-trash-o"></i> 删除
-	                </button>
+                <#resource code="transitionDepartureApply_see">
+                    <button id="btn_view" type="button" class="btn btn-primary" onclick="openViewHandler()"><i class="fa fa-eye"></i> 查看</button>
                 </#resource>
-                <#resource code="carTypePublic_on">
-	                <button type="button" class="btn btn-primary btn_css_disabled" id="btn_enabled" onclick="doEnableHandler(1)">
-	                    <i class="fa fa-play"></i> 启用
-	                </button>
+                <#resource code="transitionDepartureApply_export">
+                    <button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')"><i class="fa fa-download"></i> 导出</button>
                 </#resource>
-                <#resource code="carTypePublic_off">
-	                <button type="button" class="btn btn-primary btn_css_disabled" id="btn_disabled" onclick="doEnableHandler(2)">
-	                    <i class="fa fa-stop"></i> 禁用
-	                </button>
-                </#resource>
-            </div>
-            <br />
-            <div class="btn-group mt-3 mb-3 queryBtn">
-                <button type="button" class="btn btn-outline-primary queryBtnCss" onclick="updateStatus('', this)">&nbsp;&nbsp;全部&nbsp;&nbsp;</button>
-                <button type="button" class="btn btn-outline-primary" onclick="updateStatus(1, this)">&nbsp;&nbsp;启用&nbsp;&nbsp;</button>
-                <button type="button" class="btn btn-outline-primary" onclick="updateStatus(2, this)">&nbsp;&nbsp;禁用&nbsp;&nbsp;</button>
             </div>
             <table id="grid" data-toggle="table" data-id-field="id" data-tree-show-field="name" data-parent-id-field="parentId" data-query-params="queryParams" data-sort-name="id"
                    data-sort-order="desc" data-pagination="true" data-page-number="1" data-page-size="10" data-side-pagination="server" data-single-select="true" data-click-to-select="true" data-ignore-click-to-select-on="ignoreExpandClick">
@@ -325,10 +108,10 @@
                     <th data-field="transTypeId" data-align="center"  data-sortable="true">
                         交易类型
                     </th>
-                    <th data-field="categoryName" data-align="center" data-sortable="true">
+                    <th data-field="categoryId" data-align="center" data-provider="categoryProvider"  data-sortable="true" data-sort-name="category_id">
                         商品名称
                     </th>
-                    <th data-field="carTypeId" data-align="center" data-provider="carTypePublicProvider" data-sortable="true">
+                    <th data-field="carTypeId" data-align="center" data-provider="carTypeProvider" data-sortable="true">
                         车型
                     </th>
                     <th data-field="plate" data-align="center"  data-sortable="true">
@@ -343,7 +126,7 @@
                     <th data-field="originatorName" data-align="center" data-sortable="true">
                         发起人
                     </th>
-                    <th data-field="originatorTime" data-align="center" data-sortable="true">
+                    <th data-field="originatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true">
                         发起时间
                     </th>
                     <th data-field="approvalName" data-align="center" data-sortable="true">
@@ -361,23 +144,7 @@
 
 </#bs4Body>
 <#btreegrid/>
-<div class="modal fade" id="_modal" data-backdrop="static" tabindex="-1" role="dialog"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <!--modal-lg modal-sm(默认) 通过设置mw大小调整宽度（如mw-100） modal-dialog-centered垂直居中-->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <!-- 标题 -->
-                <h5 class="modal-title" id="exampleModalLabel">车型新增</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-            </div>
-        </div>
-    </div>
-</div>
+
 <script>
     function updateStatus(status, queryBtn){
 		var inputval = $("input[name=status]").val();
@@ -415,5 +182,4 @@
     }
 
 </script>
-
 <#transitionDepartureApply_indexJs />
