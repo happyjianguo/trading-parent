@@ -1,6 +1,6 @@
 package com.dili.trading.rpc;
 
-import com.dili.assets.sdk.dto.CarTypeDTO;
+import com.dili.assets.sdk.dto.CarTypeForJmsfDTO;
 import com.dili.assets.sdk.dto.CarTypePublicDTO;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.ss.domain.BaseOutput;
@@ -15,10 +15,11 @@ public interface AssetsRpc {
     /**
      * 获取车型
      */
-    @RequestMapping(value = "/api/carType/listCarType", method = RequestMethod.POST)
-    BaseOutput<List<CarTypeDTO>> listCarType(CarTypePublicDTO carTypePublicDTO);
+    @RequestMapping(value = "/api/carTypePublic/listCarTypePublicByBusiness", method = RequestMethod.POST)
+    BaseOutput<List<CarTypeForJmsfDTO>> listCarType(CarTypeForJmsfDTO carTypeForJmsfDTO);
 
     @RequestMapping(value = "/api/customCategory/getTree", method = RequestMethod.POST)
     BaseOutput<List<CategoryDTO>> list(CategoryDTO categoryDTO);
+
 
 }
