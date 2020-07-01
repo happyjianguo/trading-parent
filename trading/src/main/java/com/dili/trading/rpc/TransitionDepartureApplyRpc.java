@@ -4,6 +4,7 @@ import com.dili.order.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,8 +52,8 @@ public interface TransitionDepartureApplyRpc {
     BaseOutput update(@RequestBody TransitionDepartureApply transitionDepartureApply);
 
 
-    @RequestMapping(value = "/api/transitionDepartureApply/getOneByID", method = {RequestMethod.POST})
-    BaseOutput<TransitionDepartureApply> getOneByID(Long id);
+    @RequestMapping(value = "/api/transitionDepartureApply/getOneByID/{id}", method = {RequestMethod.POST})
+    BaseOutput<TransitionDepartureApply> getOneByID(@PathVariable(value = "id") Long id);
 
     /**
      * 根据参数查询数据

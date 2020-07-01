@@ -1,11 +1,13 @@
 package com.dili.trading.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.order.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
+import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.domain.UserAccountCardResponseDto;
 import com.dili.trading.rpc.AccountRpc;
@@ -15,6 +17,7 @@ import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.rpc.DepartmentRpc;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,9 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * TransitionDepartureApplyController
@@ -169,7 +170,7 @@ public class TransitionDepartureApplyController {
             BaseOutput<TransitionDepartureApply> oneByCustomerID = transitionDepartureApplyRpc.getOneByCustomerID(transitionDepartureApply);
             if (oneByCustomerID.isSuccess()) {
                 if (Objects.nonNull(oneByCustomerID.getData())) {
-                    return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(oneByCustomerID)));
+                    return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(oneByCustomerID.getData())).get(0));
                 }
             }
             return oneByCustomerID;
@@ -186,23 +187,29 @@ public class TransitionDepartureApplyController {
      * @return
      */
     @RequestMapping(value = "/getOneByID.action", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public BaseOutput getOneByID(TransitionDepartureApply transitionDepartureApply) {
+    public String getOneByID(ModelMap modelMap, TransitionDepartureApply transitionDepartureApply) throws Exception {
         if (transitionDepartureApply.getId() == null) {
-            return BaseOutput.failure("查询失败，申请单主键不能为空");
+            return "查询失败，申请单主键不能为空";
         }
-        try {
-            BaseOutput<TransitionDepartureApply> oneByID = transitionDepartureApplyRpc.getOneByID(transitionDepartureApply.getId());
-            if (oneByID.isSuccess()) {
-                if (Objects.nonNull(oneByID.getData())) {
-                    return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(oneByID)));
-                }
+        Map<Object, Object> map = new HashMap<>();
+        //设置审批状态提供者
+        map.put("approvalState", getProvider("applyProvider", "approvalState"));
+        //设置业务类型提供者
+        map.put("bizType", getProvider("bizTypeProvider", "bizType"));
+        //设置商品提供者
+        map.put("categoryId", getProvider("categoryProvider", "categoryId"));
+        //设置交易类型提供者
+        map.put("transTypeId", getProvider("transTypeProvider", "transTypeId"));
+        //设置车类型提供者
+        map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
+        transitionDepartureApply.setMetadata(map);
+        BaseOutput<TransitionDepartureApply> oneByID = transitionDepartureApplyRpc.getOneByID(transitionDepartureApply.getId());
+        if (oneByID.isSuccess()) {
+            if (Objects.nonNull(oneByID.getData())) {
+                modelMap.put("transitionDepartureApply", ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(oneByID.getData())).get(0));
             }
-            return oneByID;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return BaseOutput.failure("查询失败" + e.getMessage());
         }
+        return "transitionDepartureApply/view";
     }
 
     /**
@@ -252,6 +259,19 @@ public class TransitionDepartureApplyController {
     @ResponseBody
     public BaseOutput getUserNameInSession() {
         return BaseOutput.successData(SessionContext.getSessionContext().getUserTicket());
+    }
+
+    /**
+     * 获取provider 的JSONObject 对象
+     * @param providerName
+     * @param field
+     * @return
+     */
+    private JSONObject getProvider(String providerName, String field) {
+        JSONObject provider = new JSONObject();
+        provider.put("provider", providerName);
+        provider.put(ValueProvider.FIELD_KEY, field);
+        return provider;
     }
 
 }

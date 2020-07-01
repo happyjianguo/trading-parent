@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @Scope("prototype")
-public class TransType extends BatchDisplayTextProviderSupport {
+public class TransTypeProvider extends BatchDisplayTextProviderSupport {
 
     @Autowired
     DataDictionaryRpc dataDictionaryRpc;
