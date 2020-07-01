@@ -75,6 +75,38 @@ public class TransitionDepartureApplyController {
     }
 
     /**
+     * 跳转到转离场申请单修改页面
+     *
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value = "/update.html", method = RequestMethod.GET)
+    public String update(ModelMap modelMap, TransitionDepartureApply transitionDepartureApply) throws Exception {
+        if (transitionDepartureApply.getId() == null) {
+            return "查询失败，申请单主键不能为空";
+        }
+        Map<Object, Object> map = new HashMap<>();
+        //设置审批状态提供者
+        map.put("approvalState", getProvider("applyProvider", "approvalState"));
+        //设置业务类型提供者
+        map.put("bizType", getProvider("bizTypeProvider", "bizType"));
+        //设置商品提供者
+        map.put("categoryId", getProvider("categoryProvider", "categoryId"));
+        //设置交易类型提供者
+        map.put("transTypeId", getProvider("transTypeProvider", "transTypeId"));
+        //设置车类型提供者
+        map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
+        transitionDepartureApply.setMetadata(map);
+        BaseOutput<TransitionDepartureApply> oneByID = transitionDepartureApplyRpc.getOneByID(transitionDepartureApply.getId());
+        if (oneByID.isSuccess()) {
+            if (Objects.nonNull(oneByID.getData())) {
+                modelMap.put("transitionDepartureApply", ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(oneByID.getData())).get(0));
+            }
+        }
+        return "transitionDepartureApply/update";
+    }
+
+    /**
      * 跳转到转离场申请单详情页面
      *
      * @param modelMap
@@ -263,6 +295,7 @@ public class TransitionDepartureApplyController {
 
     /**
      * 获取provider 的JSONObject 对象
+     *
      * @param providerName
      * @param field
      * @return

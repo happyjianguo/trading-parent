@@ -13,11 +13,9 @@
             elem: this
             , trigger: 'click'
             , range: false
-            ,type: 'datetime'
+            , type: 'datetime'
         });
     });
-
-
 
 
     // 客户名称
@@ -28,18 +26,18 @@
         showNoSuggestionNotice: true,
         noSuggestionNotice: '不存在，请重新输入！',
         transformResult: function (result) {
-            if(result.success){
+            if (result.success) {
                 let data = result.data;
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         debugger
                         return $.extend(dataItem, {
-                                value: dataItem.name + '（' + dataItem.contactsPhone + '，' + dataItem.certificateNumber.substr(-4) + '，' + dataItem.certificateAddr +'）'
+                                value: dataItem.name + '（' + dataItem.contactsPhone + '，' + dataItem.certificateNumber.substr(-4) + '，' + dataItem.certificateAddr + '）'
                             }
                         );
                     })
                 }
-            }else{
+            } else {
                 bs4pop.alert(result.message, {type: 'error'});
                 return false;
             }
@@ -61,7 +59,10 @@
         });
         let size = ($(window).height() - $('#queryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
-        _grid.bootstrapTable('refreshOptions', {url: '/transitionDepartureApplyController/listByQueryParams.action', pageSize: parseInt(size)});
+        _grid.bootstrapTable('refreshOptions', {
+            url: '/transitionDepartureApplyController/listByQueryParams.action',
+            pageSize: parseInt(size)
+        });
     });
 
     /******************************驱动执行区 end****************************/
@@ -75,14 +76,16 @@
             title: '转离场申请',//对话框title
             content: '${contextPath}/transitionDepartureApplyController/add.html', //对话框内容，可以是 string、element，$object
             width: '60%',//宽度
-            height: '600px',//高度
+            height: '95%',//高度
             isIframe: true,//默认是页面层，非iframe
-            btns: [{label: '取消',className: 'btn btn-secondary',onClick(e, $iframe){
+            btns: [{
+                label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
 
                 }
-            }, {label: '确定',className: 'btn btn-primary',onClick(e, $iframe){
+            }, {
+                label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
                     let diaWindow = $iframe[0].contentWindow;
-                    bui.util.debounce(diaWindow.saveOrUpdateHandler,1000,true)()
+                    bui.util.debounce(diaWindow.saveOrUpdateHandler, 1000, true)()
                     return false;
                 }
             }]
@@ -95,7 +98,7 @@
      * @param id
      */
     function openViewHandler(id) {
-        if(!id){
+        if (!id) {
             //获取选中行的数据
             let rows = _grid.bootstrapTable('getSelections');
             if (null == rows || rows.length == 0) {
@@ -108,35 +111,60 @@
 
         dia = bs4pop.dialog({
             title: '申请单详情',
-            content: '/transitionDepartureApplyController/getOneByID.action?id='+id,
-            isIframe : true,
+            content: '/transitionDepartureApplyController/getOneByID.action?id=' + id,
+            isIframe: true,
             closeBtn: true,
-            backdrop : 'static',
-            width: '80%',
-            height : '95%',
-            btns: [{label: '关闭', className: 'btn-secondary', onClick(e) {}}]
+            backdrop: 'static',
+            width: '60%',
+            height: '95%',
+            btns: [{
+                label: '关闭', className: 'btn-secondary', onClick(e) {
+                }
+            }]
         });
     }
 
 
     /**
-     * 打开修改窗口
+     打开更新窗口:iframe
      */
-   /* function openUpdateHandler(id) {
+    function openUpdateHandler() {
+        //获取选中行的数据
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
-            return;
+            return false;
         }
-        $("#_modal").modal("show");
-        if(rows[0].id){
-			$('#_modal .modal-body').load("/carTypePublic/update.html?id=" + rows[0].id + "&carTypeId=" + rows[0].car_type_id + "&name=" + rows[0].carTypeName + "&number=" + rows[0].carTypeNumber);
-        }else{
-        	$('#_modal .modal-body').load("/carTypePublic/update.html?" + "carTypeId=" + rows[0].car_type_id + "&name=" + rows[0].carTypeName + "&number=" + rows[0].carTypeNumber);
+        if (rows[0].$_approvalState != 1) {
+            bs4pop.alert('只有待审批的申请单可以审批');
+            return false;
         }
-		
-        _modal.find('.modal-title').text('业务属性设置');
-    }*/
+        dia = bs4pop.dialog({
+            title: '转离场申请--审核',//对话框title
+            content: '${contextPath}/transitionDepartureApplyController/update.html?id=' + rows[0].id, //对话框内容，可以是 string、element，$object
+            width: '60%',//宽度
+            height: '95%',//高度
+            isIframe: true,//默认是页面层，非iframe
+            btns: [ {
+                label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
+                    let diaWindow = $iframe[0].contentWindow;
+                    bui.util.debounce(diaWindow.updateHandler(2), 1000, true)()
+                    return false;
+                }
+            },{
+                label: '拒绝', className: 'btn btn-primary', onClick(e, $iframe) {
+                    let diaWindow = $iframe[0].contentWindow;
+                    bui.util.debounce(diaWindow.updateHandler(3), 1000, true)()
+                    return false;
+                }
+            },{
+                label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
+
+                }
+            },]
+
+        });
+    }
 
     function openDeleteHandler(id) {
         let rows = _grid.bootstrapTable('getSelections');
@@ -176,27 +204,27 @@
      * @param enable 是否启用:true-启用
      * @param id
      */
-   /* function doEnableHandler(enable, id) {
-        var opType ="";
-        if(enable == 1){
-            opType = "enable";
-        }
-        if(enable == 2){
-            opType = "disable";
-        }
-        let rows = _grid.bootstrapTable('getSelections');
-        if (null == rows || rows.length == 0) {
-            bs4pop.alert('请选中一条数据');
-            return;
-        }
-        //table选择模式是单选时可用
-        let msg = enable == 1 ? '确定要启用该车型吗？' : '确定要禁用该车型吗？';
-        bs4pop.confirm(msg, undefined, function (sure) {
-            if (sure) {
-                bui.loading.show('努力提交中，请稍候。。。');
-                $.ajax({
-                    type: "POST",
-                    url: "${contextPath}/carTypePublic/updateStatus.action",
+    /* function doEnableHandler(enable, id) {
+         var opType ="";
+         if(enable == 1){
+             opType = "enable";
+         }
+         if(enable == 2){
+             opType = "disable";
+         }
+         let rows = _grid.bootstrapTable('getSelections');
+         if (null == rows || rows.length == 0) {
+             bs4pop.alert('请选中一条数据');
+             return;
+         }
+         //table选择模式是单选时可用
+         let msg = enable == 1 ? '确定要启用该车型吗？' : '确定要禁用该车型吗？';
+         bs4pop.confirm(msg, undefined, function (sure) {
+             if (sure) {
+                 bui.loading.show('努力提交中，请稍候。。。');
+                 $.ajax({
+                     type: "POST",
+                     url: "${contextPath}/carTypePublic/updateStatus.action",
                     data: {id: rows[0].id, status: enable,opType:opType, "carType.name": rows[0].carTypeName},
                     processData: true,
                     dataType: "json",

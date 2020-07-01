@@ -1,0 +1,129 @@
+<#bs4Body>
+
+<div class="container-fluid">
+        <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
+        <form id="updateForm" role="form" novalidate>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label for="">客户编号</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.customerCode!}" disabled />
+                    <input type="text" class="form-control" value="${transitionDepartureApply.id!}" name="id" hidden />
+                </div>
+                <div class="form-group col-6">
+                    <label for="">卡号</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.customerCardNo!}" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label for="">客户名称</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.customerName!}" disabled />
+                </div>
+                <div class="form-group col-6">
+                    <label for="">申请部门</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.originatorName!}" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label for="">车辆类型</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.carTypeId!}" disabled />
+                </div>
+                <div class="form-group col-6">
+                    <label for="">车牌号</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.plate!}" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label for="">交易类型</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.transTypeId!}" disabled />
+                </div>
+                <div class="form-group col-6">
+                    <label for="">商品名称</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.categoryId!}" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label for="">办理业务</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.bizType!}" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-12">
+                    <label for="">转离场理由</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.transitionDepartureReason!}" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label for="">发起人</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.originatorName!}" disabled />
+                </div>
+                <div class="form-group col-6">
+                    <label for="">发起时间</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.originatorTime!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-12">
+                    <label for="">审核说明<i class="red">*</i></label>
+                    <input type="text" class="form-control" hidden="true" id="approvalState" name="approvalState" />
+                    <textarea id="approvalReason" class="form-control" name="approvalReason" rows="3" maxlength="100" required></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+</#bs4Body>
+
+
+
+<#js_customerAutocompleteJs/>
+
+<script  id="boothItem"  type="text/html">
+    <tr data-index="{{index}}">
+        <td class="text-center align-middle"><a href="javascript:;" class="item-del" style="padding: 8px 18px;"><i class="fa fa-minus-square fa-lg"></i></a></td>
+        <td style="padding: .25rem!important;">
+            <#bautoCompleteProvider _escape="true" _hiddenDomainId="assetsId_{{index}}" _hiddenDomainName="assetsId_{{index}}" _displayDomainId="assetsName_{{index}}" _displayDomainName="assetsName_{{index}}" _value="{{boothId}}" _text="{{boothName}}"   _placeholder="" _validatorMethod="isSelected"  _optionVariable="boothAutoCompleteOption" />
+        </td>
+
+    </tr>
+
+</script>
+
+    <script>
+        function updateHandler(value) {
+            // 提交保存
+            if (!$('#updateForm').validate().form()) {
+                return false;
+            }
+            bui.loading.show('努力提交中，请稍候。。。');
+            $('#approvalState').val(value);
+            let _formData = new FormData($('#updateForm')[0]);
+            $.ajax({
+                type: "POST",
+                url: "/transitionDepartureApplyController/approval.action",
+                data: _formData,
+                processData: false,
+                contentType: false,
+                async: true,
+                success: function (res) {
+                    bui.loading.hide();
+                    if (res.code == "200") {
+                        bs4pop.alert('成功', {type: 'success'}, function () {
+                            parent.dia.hide();
+                            parent.location.reload();
+                        });
+                    } else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.result, {type: 'error'});
+                    }
+                },
+                error: function (error) {
+                    bui.loading.hide();
+                    bs4pop.alert(error.result, {type: 'error'});
+                }
+            });
+        }
+    </script>
