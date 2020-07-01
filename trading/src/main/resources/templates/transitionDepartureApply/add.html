@@ -86,10 +86,9 @@
         $('#payByCard').on('click',function (e) {
             $.ajax({
                 type: "POST",
-                // data:{"cardNo":"888800034671"},
-                url: "/transitionDepartureApplyController/getCustomerByCardNo.action?cardNo=888800034671",
-                processData: false,
-                contentType: false,
+                data:{cardNo:"888800034671"},
+                dataType:"json",
+                url: "/transitionDepartureApplyController/getCustomerByCardNo.action",
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
@@ -136,7 +135,7 @@
                         bs4pop.alert('成功', {type: 'success'}, function () {
                             /* 应该要带条件刷新 */
                             parent.dia.hide();
-                            window.location.reload();
+                            parent.location.reload();
                         });
                     } else {
                         bui.loading.hide();
