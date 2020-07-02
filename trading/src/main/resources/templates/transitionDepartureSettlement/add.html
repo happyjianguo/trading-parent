@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
     <form id="saveForm" role="form" novalidate>
-        <div class="row">
+        <div class="row row-cols-4">
             <div class="form-group col-4">
                 <label for="">卡号</label>
                 <input id="customerCardNo" readonly="true" class="form-control" name="customerCardNo" maxlength="100">
@@ -11,67 +11,55 @@
                 <input id="code" readonly="true" class="form-control" name="applyCode" maxlength="100" hidden>
                 <input type="button" value="刷卡" id="payByCard">
             </div>
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">客户编号</label>
                 <input id="customerCode" readonly="true" class="form-control" name="customerCode" maxlength="100">
                 <input id="customerId" class="form-control" name="customerId" hidden="true" maxlength="100">
             </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">客户名称</label>
                 <input id="customerName" readonly="true" class="form-control" name="customerName" maxlength="100">
             </div>
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">办理业务</label>
                 <input id="bizType" readonly="true" class="form-control" maxlength="100">
                 <input id="bizTypeId" readonly="true" name="bizType" class="form-control" maxlength="100" hidden="true">
             </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">车辆类型</label>
                 <input id="carTypeName" class="form-control" name="carTypeName" readonly="true" maxlength="100" required>
                 <input id="carTypeId" class="form-control" readonly="true" name="carTypeId" maxlength="100" required hidden>
             </div>
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">车牌号</label>
                 <input id="plate" class="form-control" readonly="true" name="plate" maxlength="100" required>
             </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">交易类型</label>
                 <input id="transTypeId" class="form-control" readonly="true" name="transTypeId" maxlength="100">
             </div>
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">商品名称</label>
                 <input id="categoryName" class="form-control" readonly="true" name="categoryName" maxlength="100">
                 <input id="categoryId" class="form-control" readonly="true" name="categoryId" maxlength="100" hidden>
             </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">毛重<i class="red">*</i></label>
                 <input id="grossWeight" class="form-control" name="grossWeight" maxlength="100">
             </div>
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">皮重<i class="red">*</i></label>
                 <input id="tareWeight" class="form-control" name="tareWeight" maxlength="100">
             </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">净重</label>
                 <input id="netWeight" class="form-control" readonly="true" name="netWeight" maxlength="100">
             </div>
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">可用余额</label>
                 <input id="balance" class="form-control" readonly="true" name="balance" maxlength="100">
             </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">缴费金额</label>
                 <input id="chargeAmount" class="form-control" readonly="true" name="chargeAmount" maxlength="100">
             </div>
@@ -81,22 +69,9 @@
 </#bs4Body>
 
 
-<#js_customerAutocompleteJs/>
 
-<script id="boothItem" type="text/html">
-    <tr data-index="{{index}}">
-        <td class="text-center align-middle"><a href="javascript:;" class="item-del" style="padding: 8px 18px;"><i
-                class="fa fa-minus-square fa-lg"></i></a></td>
-        <td style="padding: .25rem!important;">
-            <#bautoCompleteProvider _escape="true" _hiddenDomainId="assetsId_{{index}}"
-            _hiddenDomainName="assetsId_{{index}}" _displayDomainId="assetsName_{{index}}"
-            _displayDomainName="assetsName_{{index}}" _value="{{boothId}}" _text="{{boothName}}" _placeholder=""
-            _validatorMethod="isSelected" _optionVariable="boothAutoCompleteOption" />
-        </td>
 
-    </tr>
 
-</script>
 
 <script>
     $('#payByCard').on('click', function (e) {

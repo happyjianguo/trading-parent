@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
-@FeignClient(name = "order-service", contextId = "transitionDepartureApplyRpc", url = "localhost:8185")
+@FeignClient(name = "order-service", contextId = "transitionDepartureApplyRpc")
 public interface TransitionDepartureApplyRpc {
 
     /**
