@@ -323,6 +323,9 @@ public class TransitionDepartureApplyController {
         JSONObject provider = new JSONObject();
         provider.put("provider", providerName);
         provider.put(ValueProvider.FIELD_KEY, field);
+        if (providerName.equals("dataDictionaryValueProvider")) {
+            provider.put("queryParams", "{dd_code:\"trade_type\"}");
+        }
         return provider;
     }
 

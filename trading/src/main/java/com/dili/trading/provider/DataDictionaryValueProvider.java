@@ -46,7 +46,7 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
             return Lists.newArrayList();
         }
         List<ValuePair<?>> valuePairs = Lists.newArrayList();
-        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode("trade_type");
+        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode(getDdCode(queryParams.toString()));
         if (output.isSuccess() && CollectionUtils.isNotEmpty(output.getData())) {
             valuePairs = output.getData().stream().filter(Objects::nonNull).filter(f -> f.getCode().contains(val.toString()) || f.getName().contains(val.toString())).sorted(Comparator.comparing(DataDictionaryValue::getOrderNumber)).map(t -> {
                 ValuePairImpl<?> vp = new ValuePairImpl<>(t.getName(), t.getCode());
@@ -58,7 +58,11 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
 
     @Override
     protected List getFkList(List<String> ddvIds, Map metaMap) {
-        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode("trade_type");
+        Object queryParams = metaMap.get(QUERY_PARAMS_KEY);
+        if (queryParams == null) {
+            return Lists.newArrayList();
+        }
+        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode(getDdCode(queryParams.toString()));
         if (output.isSuccess() && CollectionUtils.isNotEmpty(output.getData())) {
             return output.getData();
         }
