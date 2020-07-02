@@ -60,7 +60,7 @@
         let size = ($(window).height() - $('#queryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
         _grid.bootstrapTable('refreshOptions', {
-            url: '/transitionDepartureApply/listByQueryParams.action',
+            url: '/transitionDepartureSettlement/listByQueryParams.action',
             pageSize: parseInt(size)
         });
     });
@@ -74,19 +74,20 @@
     function openInsertHandler() {
         dia = bs4pop.dialog({
             title: '转离场申请',//对话框title
-            content: '${contextPath}/transitionDepartureApply/add.html', //对话框内容，可以是 string、element，$object
+            content: '${contextPath}/transitionDepartureSettlement/add.html', //对话框内容，可以是 string、element，$object
             width: '60%',//宽度
             height: '95%',//高度
             isIframe: true,//默认是页面层，非iframe
-            btns: [{
+            btns: [
+                {
+                    label: '保存', className: 'btn btn-primary', onClick(e, $iframe) {
+                        let diaWindow = $iframe[0].contentWindow;
+                        bui.util.debounce(diaWindow.saveOrUpdateHandler, 1000, true)()
+                        return false;
+                    }
+                },{
                 label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
 
-                }
-            }, {
-                label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
-                    let diaWindow = $iframe[0].contentWindow;
-                    bui.util.debounce(diaWindow.saveOrUpdateHandler, 1000, true)()
-                    return false;
                 }
             }]
         });
@@ -111,7 +112,7 @@
 
         dia = bs4pop.dialog({
             title: '申请单详情',
-            content: '/transitionDepartureApply/getOneByID.action?id=' + id,
+            content: '/transitionDepartureSettlement/getOneByID.action?id=' + id,
             isIframe: true,
             closeBtn: true,
             backdrop: 'static',
@@ -141,7 +142,7 @@
         }
         dia = bs4pop.dialog({
             title: '转离场申请--审核',//对话框title
-            content: '${contextPath}/transitionDepartureApply/update.html?id=' + rows[0].id, //对话框内容，可以是 string、element，$object
+            content: '${contextPath}/transitionDepartureSettlement/update.html?id=' + rows[0].id, //对话框内容，可以是 string、element，$object
             width: '60%',//宽度
             height: '95%',//高度
             isIframe: true,//默认是页面层，非iframe

@@ -17,7 +17,6 @@ import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.rpc.DepartmentRpc;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
-import com.google.common.collect.MapMaker;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,13 +25,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * TransitionDepartureApplyController
  */
 @Controller
-@RequestMapping("/transitionDepartureApplyController")
+@RequestMapping("/transitionDepartureApply")
 public class TransitionDepartureApplyController {
 
 
@@ -93,7 +95,7 @@ public class TransitionDepartureApplyController {
         //设置商品提供者
         map.put("categoryId", getProvider("categoryProvider", "categoryId"));
         //设置交易类型提供者
-        map.put("transTypeId", getProvider("transTypeProvider", "transTypeId"));
+        map.put("transTypeId", getProvider("dataDictionaryValueProvider", "transTypeId"));
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
         transitionDepartureApply.setMetadata(map);
@@ -192,14 +194,26 @@ public class TransitionDepartureApplyController {
      * @param transitionDepartureApply
      * @return
      */
-    @RequestMapping(value = "/getOneByCustomerID.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/getOneByCustomerCardNo.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput getOneByCustomerID(TransitionDepartureApply transitionDepartureApply) {
-        if (transitionDepartureApply.getCustomerId() == null) {
-            return BaseOutput.failure("查询失败，客户主键不能为空");
+    public BaseOutput getOneByCustomerCardNo(TransitionDepartureApply transitionDepartureApply) {
+        if (transitionDepartureApply.getCustomerCardNo() == null) {
+            return BaseOutput.failure("查询失败，客户卡号不能为空");
         }
         try {
-            BaseOutput<TransitionDepartureApply> oneByCustomerID = transitionDepartureApplyRpc.getOneByCustomerID(transitionDepartureApply);
+            Map<Object, Object> map = new HashMap<>();
+            //设置审批状态提供者
+            map.put("approvalState", getProvider("applyProvider", "approvalState"));
+            //设置业务类型提供者
+            map.put("bizType", getProvider("bizTypeProvider", "bizType"));
+            //设置商品提供者
+            map.put("categoryId", getProvider("categoryProvider", "categoryId"));
+            //设置交易类型提供者
+            map.put("transTypeId", getProvider("dataDictionaryValueProvider", "transTypeId"));
+            //设置车类型提供者
+            map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
+            transitionDepartureApply.setMetadata(map);
+            BaseOutput<TransitionDepartureApply> oneByCustomerID = transitionDepartureApplyRpc.getOneByCustomerCardNo(transitionDepartureApply);
             if (oneByCustomerID.isSuccess()) {
                 if (Objects.nonNull(oneByCustomerID.getData())) {
                     return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(oneByCustomerID.getData())).get(0));
@@ -231,7 +245,7 @@ public class TransitionDepartureApplyController {
         //设置商品提供者
         map.put("categoryId", getProvider("categoryProvider", "categoryId"));
         //设置交易类型提供者
-        map.put("transTypeId", getProvider("transTypeProvider", "transTypeId"));
+        map.put("transTypeId", getProvider("dataDictionaryValueProvider", "transTypeId"));
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
         transitionDepartureApply.setMetadata(map);

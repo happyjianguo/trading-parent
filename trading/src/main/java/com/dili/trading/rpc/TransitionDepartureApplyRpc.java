@@ -29,8 +29,8 @@ public interface TransitionDepartureApplyRpc {
      * @param transitionDepartureApply
      * @return
      */
-    @RequestMapping(value = "/api/transitionDepartureApply/getOneByCustomerID", method = {RequestMethod.POST})
-    BaseOutput<TransitionDepartureApply> getOneByCustomerID(@RequestBody TransitionDepartureApply transitionDepartureApply);
+    @RequestMapping(value = "/api/transitionDepartureApply/getOneByCustomerCardNo", method = {RequestMethod.POST})
+    BaseOutput<TransitionDepartureApply> getOneByCustomerCardNo(@RequestBody TransitionDepartureApply transitionDepartureApply);
 
     /**
      * 新增TransitionDepartureApply

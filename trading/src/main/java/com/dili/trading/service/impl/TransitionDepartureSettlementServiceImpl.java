@@ -8,6 +8,7 @@ import com.dili.order.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
 import com.dili.trading.rpc.TransitionDepartureSettlementRpc;
+import com.dili.trading.rpc.UidRpc;
 import com.dili.trading.service.TransitionDepartureSettlementService;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.session.SessionContext;
@@ -25,6 +26,9 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
 
     @Autowired
     private TransitionDepartureSettlementRpc transitionDepartureSettlementRpc;
+
+    @Autowired
+    private UidRpc uidRpc;
 
     /**
      * 根据申请单信息，新增一条结算单信息
@@ -69,7 +73,8 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         /**
          * 申请支付单号还没有接入
          */
-        BaseOutput<TransitionDepartureSettlement> update = transitionDepartureSettlementRpc.update(transitionDepartureSettlement);
+        transitionDepartureSettlement.setCode(uidRpc.getFirmCode().getData());
+        BaseOutput<TransitionDepartureSettlement> update = transitionDepartureSettlementRpc.insert(transitionDepartureSettlement);
         //更新结算单不成功的时候
         if (!update.isSuccess()) {
             throw new RuntimeException("转离场结算单新增-->结算单更新失败");

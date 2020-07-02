@@ -38,7 +38,7 @@
             <div class="row">
                 <div class="form-group col-6">
                     <label for="">交易类型<i class="red">*</i></label>
-                    <input id="1" class="form-control" name="transTypeId"  maxlength="100">
+                    <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="transTypeId" _hiddenDomainName="transTypeId" _displayDomainId="_transTypeId" _displayDomainName="_transTypeId" _placeholder="" _provider="dataDictionaryValueProvider" _validatorMethod="isSelected" _value="" _text="" _required="true"/>
                 </div>
                 <div class="form-group col-6">
                     <label for="">商品名称<i class="red">*</i></label>
@@ -88,7 +88,7 @@
                 type: "POST",
                 data:{cardNo:"888800034671"},
                 dataType:"json",
-                url: "/transitionDepartureApplyController/getCustomerByCardNo.action",
+                url: "/transitionDepartureApply/getCustomerByCardNo.action",
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
@@ -103,7 +103,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/transitionDepartureApplyController/getUserNameInSession.action",
+                url: "/transitionDepartureApply/getUserNameInSession.action",
                 processData: false,
                 contentType: false,
                 async: true,
@@ -124,7 +124,7 @@
             let _formData = new FormData($('#saveForm')[0]);
             $.ajax({
                 type: "POST",
-                url: "/transitionDepartureApplyController/insert.action",
+                url: "/transitionDepartureApply/insert.action",
                 data: _formData,
                 processData: false,
                 contentType: false,

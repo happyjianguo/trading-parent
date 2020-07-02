@@ -43,6 +43,18 @@ public class TransitionDepartureSettlementController {
         return "transitionDepartureSettlement/list";
     }
 
+
+    /**
+     * 跳转到转离场申请单新增页面
+     *
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value = "/add.html", method = RequestMethod.GET)
+    public String add(ModelMap modelMap) {
+        return "transitionDepartureSettlement/add";
+    }
+
     /**
      * 分页查询
      *

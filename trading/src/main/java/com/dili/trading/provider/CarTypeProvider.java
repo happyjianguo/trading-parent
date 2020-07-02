@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -35,7 +36,9 @@ public class CarTypeProvider extends BatchDisplayTextProviderSupport {
     public List<ValuePair<?>> getLookupList(Object obj, Map metaMap, FieldMeta fieldMeta) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         CarTypeForJmsfDTO carTypeForJmsfDTO = new CarTypeForJmsfDTO();
-        carTypeForJmsfDTO.setKeyword(obj.toString());
+        if (Objects.nonNull(obj)) {
+            carTypeForJmsfDTO.setKeyword(obj.toString());
+        }
         carTypeForJmsfDTO.setBusinessCode("jmsf");
         carTypeForJmsfDTO.setMarketId(userTicket.getFirmId());
         List<CarTypeForJmsfDTO> list = assetsRpc.listCarType(carTypeForJmsfDTO).getData();

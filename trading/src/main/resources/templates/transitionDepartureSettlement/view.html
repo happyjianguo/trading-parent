@@ -2,52 +2,55 @@
 
 <div class="container-fluid">
         <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
-        <form id="updateForm" role="form" novalidate>
+        <form id="saveForm" role="form" novalidate>
             <div class="row">
-                <div class="form-group col-6">
-                    <label for="">客户编号</label>
-                    <input type="text" class="form-control" value="${transitionDepartureApply.customerCode!}" disabled />
-                    <input type="text" class="form-control" value="${transitionDepartureApply.id!}" name="id" hidden />
-                </div>
-                <div class="form-group col-6">
+                <div class="form-group col-3">
                     <label for="">卡号</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.customerCardNo!}" disabled />
                 </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-6">
+                <div class="form-group col-3">
+                    <label for="">客户编号</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.customerCode!}" disabled />
+                </div>
+                <div class="form-group col-3">
                     <label for="">客户名称</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.customerName!}" disabled />
                 </div>
-                <div class="form-group col-6">
+                <div class="form-group col-3">
                     <label for="">申请部门</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.originatorName!}" disabled />
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-6">
+                <div class="form-group col-3">
                     <label for="">车辆类型</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.carTypeId!}" disabled />
                 </div>
-                <div class="form-group col-6">
+                <div class="form-group col-3">
                     <label for="">车牌号</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.plate!}" disabled />
                 </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-6">
+                <div class="form-group col-3">
                     <label for="">交易类型</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.transTypeId!}" disabled />
                 </div>
-                <div class="form-group col-6">
+                <div class="form-group col-3">
                     <label for="">商品名称</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.categoryId!}" disabled />
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-6">
+                <div class="form-group col-3">
                     <label for="">办理业务</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.bizType!}" disabled />
+                </div>
+                <div class="form-group col-3">
+                    <label for="">发起人</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.originatorName!}" disabled />
+                </div>
+                <div class="form-group col-3">
+                    <label for="">发起时间</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.originatorTime!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" disabled />
                 </div>
             </div>
             <div class="row">
@@ -57,20 +60,23 @@
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-6">
-                    <label for="">发起人</label>
-                    <input type="text" class="form-control" value="${transitionDepartureApply.originatorName!}" disabled />
+                <div class="form-group col-3">
+                    <label for="">审批结果</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.approvalState!}" disabled />
                 </div>
-                <div class="form-group col-6">
-                    <label for="">发起时间</label>
-                    <input type="text" class="form-control" value="${transitionDepartureApply.originatorTime!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" disabled />
+                <div class="form-group col-3">
+                    <label for="">审批人</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.approvalName!}" disabled />
+                </div>
+                <div class="form-group col-3">
+                    <label for="">审批时间</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.approvalTime!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" disabled />
                 </div>
             </div>
             <div class="row">
                 <div class="form-group col-12">
-                    <label for="">审核说明<i class="red">*</i></label>
-                    <input type="text" class="form-control" hidden="true" id="approvalState" name="approvalState" />
-                    <textarea id="approvalReason" class="form-control" name="approvalReason" rows="3" maxlength="100" required></textarea>
+                    <label for="">审批说明</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.approvalReason!}" disabled />
                 </div>
             </div>
         </form>
@@ -93,17 +99,48 @@
 </script>
 
     <script>
-        function updateHandler(value) {
+        $('#payByCard').on('click',function (e) {
+            $.ajax({
+                type: "POST",
+                data:{cardNo:"888800034671"},
+                dataType:"json",
+                url: "/transitionDepartureApplyController/getCustomerByCardNo.action",
+                async: true,
+                success: function (res) {
+                    if (res.code == "200") {
+                        $('#customerCardNo').val('888800034671');
+                        $('#customerCode').val(res.data.code);
+                        $('#customerId').val(res.data.id);
+                        $('#customerName').val(res.data.name);
+                    }
+                },
+            });
+
+
+            $.ajax({
+                type: "POST",
+                url: "/transitionDepartureApplyController/getUserNameInSession.action",
+                processData: false,
+                contentType: false,
+                async: true,
+                success: function (res) {
+                    if (res.code == "200") {
+                        $('#originatorName').val(res.data.realName);
+                    }
+                },
+            });
+        });
+
+        function saveOrUpdateHandler() {
             // 提交保存
-            if (!$('#updateForm').validate().form()) {
+            if (!$('#saveForm').validate().form()) {
                 return false;
             }
             bui.loading.show('努力提交中，请稍候。。。');
-            $('#approvalState').val(value);
-            let _formData = new FormData($('#updateForm')[0]);
+            let _formData = new FormData($('#saveForm')[0]);
             $.ajax({
                 type: "POST",
-                url: "/transitionDepartureApply/approval.action",
+                url: "/transitionDepartureApplyController/insert.action",
                 data: _formData,
                 processData: false,
                 contentType: false,
@@ -112,6 +149,7 @@
                     bui.loading.hide();
                     if (res.code == "200") {
                         bs4pop.alert('成功', {type: 'success'}, function () {
+                            /* 应该要带条件刷新 */
                             parent.dia.hide();
                             parent.location.reload();
                         });
