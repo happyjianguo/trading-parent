@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.order.domain.TransitionDepartureApply;
+import com.dili.order.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
@@ -214,9 +215,13 @@ public class TransitionDepartureApplyController {
             map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
             transitionDepartureApply.setMetadata(map);
             BaseOutput<TransitionDepartureApply> oneByCustomerID = transitionDepartureApplyRpc.getOneByCustomerCardNo(transitionDepartureApply);
+            TransitionDepartureApply data = oneByCustomerID.getData();
+            if (Objects.isNull(data.getTransitionDepartureSettlement())) {
+                data.setTransitionDepartureSettlement(new TransitionDepartureSettlement());
+            }
             if (oneByCustomerID.isSuccess()) {
                 if (Objects.nonNull(oneByCustomerID.getData())) {
-                    return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(oneByCustomerID.getData())).get(0));
+                    return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(data)).get(0));
                 }
             }
             return oneByCustomerID;
