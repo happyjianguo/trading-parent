@@ -108,6 +108,19 @@ public class TransitionDepartureSettlementController {
         return transitionDepartureSettlementService.insert(transitionDepartureSettlement);
     }
 
+    /**
+     * 新增TransitionDepartureSettlement
+     * 需要调用卡务，暂未接入
+     *
+     * @param transitionDepartureSettlement
+     * @return BaseOutput
+     */
+    @RequestMapping(value = "/update.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput update(TransitionDepartureSettlement transitionDepartureSettlement) {
+        return transitionDepartureSettlementRpc.update(transitionDepartureSettlement);
+    }
+
 
     /**
      * 撤销TransitionDepartureSettlement
