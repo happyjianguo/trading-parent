@@ -51,15 +51,15 @@
             </div>
             <div class="form-group col">
                 <label for="">毛重<i class="red">*</i></label>
-                <input id="grossWeight" class="form-control" name="grossWeight" maxlength="100">
+                <input id="grossWeight" type="number" class="form-control" name="grossWeight" maxlength="100">
             </div>
             <div class="form-group col">
                 <label for="">皮重<i class="red">*</i></label>
-                <input id="tareWeight" class="form-control" name="tareWeight" maxlength="100">
+                <input id="tareWeight" type="number" class="form-control" name="tareWeight" maxlength="100">
             </div>
             <div class="form-group col">
                 <label for="">净重</label>
-                <input id="netWeight" class="form-control" readonly="true" name="netWeight" maxlength="100">
+                <input id="netWeight" type="number" class="form-control" readonly="true" name="netWeight" maxlength="100">
             </div>
             <div class="form-group col">
                 <label for="">可用余额</label>
@@ -74,82 +74,89 @@
 </div>
 </#bs4Body>
 
-
-
-
-
-
 <script>
-    $('#payByCard').on('click', function (e) {
-        $.ajax({
-            type: "POST",
-            data: {customerCardNo: "888800034671"},
-            dataType: "json",
-            url: "/transitionDepartureApply/getOneByCustomerCardNo.action",
-            async: true,
-            success: function (res) {
-                if (res.code == "200") {
-                    $('#aid').val(res.data.id);
-                    $('#code').val(res.data.code);
-                    $('#sid').val(res.data.transitionDepartureSettlement.id);
-                    $('#customerCardNo').val('888800034671');
-                    $('#customerCode').val(res.data.customerCode);
-                    $('#customerId').val(res.data.customerId);
-                    $('#customerName').val(res.data.customerName);
-                    $('#bizType').val(res.data.bizType);
-                    $('#bizTypeId').val(res.data.$_bizType);
-                    $('#carTypeName').val(res.data.carTypeId);
-                    $('#carTypeId').val(res.data.$_carTypeId);
-                    $('#plate').val(res.data.plate);
-                    $('#transTypeId').val(res.data.$_transTypeId);
-                    $('#transTypeName').val(res.data.transTypeId);
-                    $('#categoryName').val(res.data.categoryId);
-                    $('#categoryId').val(res.data.$_categoryId);
-                    $('#grossWeight').val(res.data.transitionDepartureSettlement.grossWeight);
-                    $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
-                    $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
-                    $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
-                }
-            },
-        });
-    });
+    $(function(){
+        $('#grossWeight').on('keyup',function (e) {
+            $('#netWeight').val(parseFloat($('#grossWeight').val())-parseFloat($('#tareWeight').val()));
+        })
+        $('#tareWeight').on('keyup',function (e) {
+            $('#netWeight').val(parseFloat($('#grossWeight').val())-parseFloat($('#tareWeight').val()));
+        })
 
-    function saveOrUpdateHandler() {
-        let url = 'insert';
-        // 提交保存
-        if (!$('#saveForm').validate().form()) {
-            return false;
-        }
-        if ($('#sid').val() != null&&$('#sid').val()!='') {
-            alert($('#sid').val());
-            url = "update";
-        }
-        let _formData = new FormData($('#saveForm')[0]);
-        bui.loading.show('努力提交中，请稍候。。。');
-        $.ajax({
-            type: "POST",
-            url: "/transitionDepartureSettlement/" + url + ".action",
-            data: _formData,
-            processData: false,
-            contentType: false,
-            async: true,
-            success: function (res) {
-                bui.loading.hide();
-                if (res.code == "200") {
-                    bs4pop.alert('成功', {type: 'success'}, function () {
-                        /* 应该要带条件刷新 */
-                        parent.dia.hide();
-                        parent.location.reload();
-                    });
-                } else {
-                    bui.loading.hide();
-                    bs4pop.alert(res.result, {type: 'error'});
-                }
-            },
-            error: function (error) {
-                bui.loading.hide();
-                bs4pop.alert(error.result, {type: 'error'});
-            }
+        $('#payByCard').on('click', function (e) {
+            $.ajax({
+                type: "POST",
+                data: {customerCardNo: "888800034671"},
+                dataType: "json",
+                url: "/transitionDepartureApply/getOneByCustomerCardNo.action",
+                async: true,
+                success: function (res) {
+                    if (res.code == "200") {
+                        $('#aid').val(res.data.id);
+                        $('#code').val(res.data.code);
+                        $('#sid').val(res.data.transitionDepartureSettlement.id);
+                        $('#customerCardNo').val('888800034671');
+                        $('#customerCode').val(res.data.customerCode);
+                        $('#customerId').val(res.data.customerId);
+                        $('#customerName').val(res.data.customerName);
+                        $('#bizType').val(res.data.bizType);
+                        $('#bizTypeId').val(res.data.$_bizType);
+                        $('#carTypeName').val(res.data.carTypeId);
+                        $('#carTypeId').val(res.data.$_carTypeId);
+                        $('#plate').val(res.data.plate);
+                        $('#transTypeId').val(res.data.$_transTypeId);
+                        $('#transTypeName').val(res.data.transTypeId);
+                        $('#categoryName').val(res.data.categoryId);
+                        $('#categoryId').val(res.data.$_categoryId);
+                        $('#grossWeight').val(res.data.transitionDepartureSettlement.grossWeight);
+                        $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
+                        $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
+                        $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
+                    }
+                },
+            });
         });
-    }
+
+        function saveOrUpdateHandler() {
+            let url = 'insert';
+            // 提交保存
+            if (!$('#saveForm').validate().form()) {
+                return false;
+            }
+            if ($('#sid').val() != null&&$('#sid').val()!='') {
+                alert($('#sid').val());
+                url = "update";
+            }
+            let _formData = new FormData($('#saveForm')[0]);
+            bui.loading.show('努力提交中，请稍候。。。');
+            $.ajax({
+                type: "POST",
+                url: "/transitionDepartureSettlement/" + url + ".action",
+                data: _formData,
+                processData: false,
+                contentType: false,
+                async: true,
+                success: function (res) {
+                    bui.loading.hide();
+                    if (res.code == "200") {
+                        bs4pop.alert('成功', {type: 'success'}, function () {
+                            /* 应该要带条件刷新 */
+                            parent.dia.hide();
+                            parent.location.reload();
+                        });
+                    } else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.result, {type: 'error'});
+                    }
+                },
+                error: function (error) {
+                    bui.loading.hide();
+                    bs4pop.alert(error.result, {type: 'error'});
+                }
+            });
+        }
+    })
+
+
+
 </script>
