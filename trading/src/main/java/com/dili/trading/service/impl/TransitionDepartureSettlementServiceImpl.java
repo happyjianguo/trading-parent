@@ -1,11 +1,13 @@
 package com.dili.trading.service.impl;
 
+import com.dili.jmsf.microservice.sdk.dto.VehicleAccessDTO;
 import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.glossary.LoggerConstant;
 import com.dili.order.domain.TransitionDepartureApply;
 import com.dili.order.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
+import com.dili.trading.rpc.JmsfRpc;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
 import com.dili.trading.rpc.TransitionDepartureSettlementRpc;
 import com.dili.trading.rpc.UidRpc;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 
 @Service
@@ -29,6 +32,9 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
 
     @Autowired
     private UidRpc uidRpc;
+
+    @Autowired
+    private JmsfRpc jmsfRpc;
 
     /**
      * 根据申请单信息，新增一条结算单信息
@@ -164,7 +170,29 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         if (!update1.isSuccess()) {
             throw new RuntimeException("转离场结算单支付-->结算单更新失败");
         }
+        //再调用支付，暂时没有对接
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        //设置进门收费相关信息，并调用
+        VehicleAccessDTO vehicleAccessDTO = new VehicleAccessDTO();
+        vehicleAccessDTO.setMarketId(userTicket.getFirmId());
+        vehicleAccessDTO.setPlateNumber(data.getPlate());
+        vehicleAccessDTO.setVehicleTypeId(data.getCarTypeId());
+        vehicleAccessDTO.setBarrierType(3);
+        vehicleAccessDTO.setEntryTime(new Date());
+        vehicleAccessDTO.setAmount(transitionDepartureSettlement.getChargeAmount());
+        vehicleAccessDTO.setPayType(3);
+        vehicleAccessDTO.setCasherId(userTicket.getId());
+        vehicleAccessDTO.setCasherName(userTicket.getRealName());
+        vehicleAccessDTO.setCasherDepartmentId(userTicket.getDepartmentId());
+        vehicleAccessDTO.setPayTime(new Date());
+        vehicleAccessDTO.setOperatorId(userTicket.getId());
+        vehicleAccessDTO.setOperatorName(userTicket.getRealName());
+        vehicleAccessDTO.setRemark(data.getTransitionDepartureReason());
+        vehicleAccessDTO.setCreated(new Date());
+        BaseOutput<VehicleAccessDTO> vehicleAccessDTOBaseOutput = jmsfRpc.add(vehicleAccessDTO);
+        if (!vehicleAccessDTOBaseOutput.isSuccess()) {
+            throw new RuntimeException("进门收费单-->新增失败");
+        }
         LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, transitionDepartureSettlement.getId());
         LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, transitionDepartureSettlement.getCode());
         LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
