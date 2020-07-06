@@ -7,8 +7,10 @@
             <div class="form-group col-4">
                 <label for="">卡号</label>
                 <div class="input-group-append">
-                    <input id="customerCardNo" readonly="true" class="form-control" name="customerCardNo" maxlength="100">
-                    <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;" >刷卡</a></span>
+                    <input id="customerCardNo" readonly="true" class="form-control" name="customerCardNo"
+                           maxlength="100">
+                    <span class="input-group-text card-bt text-primary" id="payByCard"><a
+                            href="javascript:;">刷卡</a></span>
                     <input id="id" readonly="true" class="form-control" name="applyId" maxlength="100" hidden>
                     <input id="code" readonly="true" class="form-control" name="applyCode" maxlength="100" hidden>
                     <input id="sid" readonly="true" class="form-control" name="id" maxlength="100" hidden>
@@ -59,7 +61,8 @@
             </div>
             <div class="form-group col">
                 <label for="">净重</label>
-                <input id="netWeight" type="number" class="form-control" readonly="true" name="netWeight" maxlength="100">
+                <input id="netWeight" type="number" class="form-control" readonly="true" name="netWeight"
+                       maxlength="100">
             </div>
             <div class="form-group col">
                 <label for="">可用余额</label>
@@ -75,13 +78,40 @@
 </#bs4Body>
 
 <script>
-    $(function(){
-        $('#grossWeight').on('keyup',function (e) {
-            $('#netWeight').val(parseFloat($('#grossWeight').val())-parseFloat($('#tareWeight').val()));
+    $(function () {
+        $('#grossWeight').on('keyup', function (e) {
+            $('#netWeight').val(parseFloat($('#grossWeight').val()) - parseFloat($('#tareWeight').val()));
+            let netWeight= $('#netWeight').val();
+            $.ajax({
+                type: "POST",
+                data: {netWeight: netWeight},
+                dataType: "json",
+                url: "/transitionDepartureSettlement/fee.action",
+                async: true,
+                success: function (res) {
+                    if (res.code == "200") {
+                        $('#chargeAmount').val(res.data.totalFee);
+                    }
+                },
+            });
         })
-        $('#tareWeight').on('keyup',function (e) {
-            $('#netWeight').val(parseFloat($('#grossWeight').val())-parseFloat($('#tareWeight').val()));
+        $('#tareWeight').on('keyup', function (e) {
+            $('#netWeight').val(parseFloat($('#grossWeight').val()) - parseFloat($('#tareWeight').val()));
+            let netWeight= $('#netWeight').val();
+            $.ajax({
+                type: "POST",
+                data: {netWeight: netWeight},
+                dataType: "json",
+                url: "/transitionDepartureSettlement/fee.action",
+                async: true,
+                success: function (res) {
+                    if (res.code == "200") {
+                        $('#chargeAmount').val(res.data.totalFee);
+                    }
+                },
+            });
         })
+
 
         $('#payByCard').on('click', function (e) {
             $.ajax({
@@ -123,8 +153,7 @@
             if (!$('#saveForm').validate().form()) {
                 return false;
             }
-            if ($('#sid').val() != null&&$('#sid').val()!='') {
-                alert($('#sid').val());
+            if ($('#sid').val() != null && $('#sid').val() != '') {
                 url = "update";
             }
             let _formData = new FormData($('#saveForm')[0]);
@@ -156,7 +185,6 @@
             });
         }
     })
-
 
 
 </script>

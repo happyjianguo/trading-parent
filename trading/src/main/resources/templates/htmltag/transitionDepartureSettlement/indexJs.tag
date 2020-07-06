@@ -73,7 +73,7 @@
      */
     function openInsertHandler() {
         dia = bs4pop.dialog({
-            title: '转离场申请',//对话框title
+            title: '转离场结算单',//对话框title
             content: '${contextPath}/transitionDepartureSettlement/add.html', //对话框内容，可以是 string、element，$object
             width: '60%',//宽度
             height: '95%',//高度
@@ -111,7 +111,7 @@
 
 
         dia = bs4pop.dialog({
-            title: '申请单详情',
+            title: '转离场结算单详情',
             content: '/transitionDepartureSettlement/getOneByID.action?id=' + id,
             isIframe: true,
             closeBtn: true,

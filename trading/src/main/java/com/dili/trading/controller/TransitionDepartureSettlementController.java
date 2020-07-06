@@ -1,6 +1,9 @@
 package com.dili.trading.controller;
 
 import com.dili.order.domain.TransitionDepartureSettlement;
+import com.dili.rule.sdk.domain.input.QueryFeeInput;
+import com.dili.rule.sdk.domain.output.QueryFeeOutput;
+import com.dili.rule.sdk.rpc.ChargeRuleRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
@@ -16,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * 结算单接口
@@ -31,6 +34,9 @@ public class TransitionDepartureSettlementController {
 
     @Autowired
     private TransitionDepartureSettlementService transitionDepartureSettlementService;
+
+    @Autowired
+    private ChargeRuleRpc chargeRuleRpc;
 
     /**
      * 跳转到转离场审批单页面
@@ -148,4 +154,29 @@ public class TransitionDepartureSettlementController {
         return transitionDepartureSettlementService.pay(transitionDepartureSettlement);
     }
 
+    /**
+     * 对接计费规则
+     *
+     * @return
+     */
+    @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput getFee(BigDecimal netWeight) {
+        QueryFeeInput queryFeeInput = new QueryFeeInput();
+        Map<String, Object> map = new HashMap<>();
+        //设置市场id
+        queryFeeInput.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+        //设置业务类型
+        queryFeeInput.setBusinessType("1");
+        //设置收费项id
+        queryFeeInput.setChargeItem(21L);
+        map.put("weight", netWeight);
+        queryFeeInput.setCalcParams(map);
+        //构建指标
+        Map<String, Object> map2 = new HashMap();
+        map2.put("id", 2);
+        map2.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
+        queryFeeInput.setConditionParams(map2);
+        return chargeRuleRpc.queryFee(queryFeeInput);
+    }
 }

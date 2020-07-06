@@ -15,7 +15,6 @@ import com.dili.trading.rpc.AccountRpc;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
 import com.dili.trading.service.TransitionDepartureApplyService;
 import com.dili.uap.sdk.glossary.DataAuthType;
-import com.dili.uap.sdk.rpc.DepartmentRpc;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -51,8 +50,6 @@ public class TransitionDepartureApplyController {
     @Autowired
     private CustomerRpc customerRpc;
 
-    @Autowired
-    private DepartmentRpc departmentRpc;
 
     /**
      * 跳转到转离场申请单页面
@@ -216,6 +213,9 @@ public class TransitionDepartureApplyController {
             transitionDepartureApply.setMetadata(map);
             BaseOutput<TransitionDepartureApply> oneByCustomerID = transitionDepartureApplyRpc.getOneByCustomerCardNo(transitionDepartureApply);
             TransitionDepartureApply data = oneByCustomerID.getData();
+            if (Objects.isNull(data)) {
+                return BaseOutput.failure("该卡号暂时未查询到已审批的申请单");
+            }
             if (Objects.isNull(data.getTransitionDepartureSettlement())) {
                 data.setTransitionDepartureSettlement(new TransitionDepartureSettlement());
             }
@@ -321,8 +321,11 @@ public class TransitionDepartureApplyController {
      */
     private JSONObject getProvider(String providerName, String field) {
         JSONObject provider = new JSONObject();
+        //构建提供者名称
         provider.put("provider", providerName);
+        //构建提供者的对应的字段，对哪个字段进行处理
         provider.put(ValueProvider.FIELD_KEY, field);
+        //如果是数据字典提供者，需要传入参数，dd_code
         if (providerName.equals("dataDictionaryValueProvider")) {
             provider.put("queryParams", "{dd_code:\"trade_type\"}");
         }
