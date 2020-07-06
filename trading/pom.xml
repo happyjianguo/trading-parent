@@ -30,6 +30,9 @@
     </parent>
 
     <build>
+        <finalName>
+            trading
+        </finalName>
         <!-- 资源文件过滤 -->
         <resources>
             <resource>
