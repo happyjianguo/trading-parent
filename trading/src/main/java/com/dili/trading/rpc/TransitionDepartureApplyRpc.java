@@ -52,7 +52,7 @@ public interface TransitionDepartureApplyRpc {
     BaseOutput update(@RequestBody TransitionDepartureApply transitionDepartureApply);
 
 
-    @RequestMapping(value = "/api/transitionDepartureApply/getOneByID/{id}", method = {RequestMethod.POST})
+    @RequestMapping(value = "/api/transitionDepartureApply/getOneByID/{id}", method = {RequestMethod.GET})
     BaseOutput<TransitionDepartureApply> getOneByID(@PathVariable(value = "id") Long id);
 
     /**
