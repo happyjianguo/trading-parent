@@ -1,6 +1,6 @@
 package com.dili.trading.service;
 
-import com.dili.order.domain.TransitionDepartureApply;
+import com.dili.orders.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
 
 /**

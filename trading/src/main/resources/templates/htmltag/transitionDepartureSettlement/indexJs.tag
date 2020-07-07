@@ -94,6 +94,29 @@
 
     }
 
+    function verificationUsernamePassword(id) {
+        dia = bs4pop.dialog({
+            title: '支付确认',//对话框title
+            content: '${contextPath}/transitionDepartureSettlement/verificationUsernamePassword.html?id='+id, //对话框内容，可以是 string、element，$object
+            width: '60%',//宽度
+            height: '95%',//高度
+            isIframe: true,//默认是页面层，非iframe
+            btns:
+                [{
+                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
+
+                    }
+                },{
+                    label: '保存', className: 'btn btn-primary', onClick(e, $iframe) {
+                        let diaWindow = $iframe[0].contentWindow;
+                        bui.util.debounce(diaWindow.pay, 1000, true)()
+                        return false;
+                    }
+                }]
+        });
+
+    }
+
     /**
      * 打开查看
      * @param id

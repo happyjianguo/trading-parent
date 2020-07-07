@@ -9,8 +9,7 @@
                 <div class="input-group-append">
                     <input id="customerCardNo" readonly="true" class="form-control" name="customerCardNo"
                            maxlength="100">
-                    <span class="input-group-text card-bt text-primary" id="payByCard"><a
-                            href="javascript:;">刷卡</a></span>
+                    <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;">刷卡</a></span>
                     <input id="id" readonly="true" class="form-control" name="applyId" maxlength="100" hidden>
                     <input id="code" readonly="true" class="form-control" name="applyCode" maxlength="100" hidden>
                     <input id="sid" readonly="true" class="form-control" name="id" maxlength="100" hidden>
@@ -143,6 +142,18 @@
                     }
                 },
             });
+            $.ajax({
+                type: "POST",
+                data: {customerCardNo: "888800034671"},
+                dataType: "json",
+                url: "/transitionDepartureSettlement/queryAccountBalance.action",
+                async: true,
+                success: function (res) {
+                    if (res.code == "200") {
+                        $('#balance').val(res.data.accountFund.balance);
+                    }
+                },
+            });
         });
 
 
@@ -170,8 +181,7 @@
                 if (res.code == "200") {
                     bs4pop.alert('成功', {type: 'success'}, function () {
                         parent.dia.hide();
-
-                        parent.location.reload();
+                        parent.verificationUsernamePassword(res.data.id);
                     });
                 } else {
                     bui.loading.hide();

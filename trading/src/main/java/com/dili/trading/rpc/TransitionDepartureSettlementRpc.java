@@ -1,9 +1,10 @@
 package com.dili.trading.rpc;
 
-import com.dili.order.domain.TransitionDepartureSettlement;
+import com.dili.orders.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,4 +61,15 @@ public interface TransitionDepartureSettlementRpc {
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/scheduleUpdate", method = {RequestMethod.POST})
     BaseOutput scheduleUpdate(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
+
+
+    /**
+     * 定时任务，每天凌晨12点更新当天为结算的单子，支付状态更改为已关闭状态
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/api/transitionDepartureSettlement/getOneById/{id}", method = {RequestMethod.GET})
+    BaseOutput<TransitionDepartureSettlement> getOneById(@PathVariable(value = "id") Long id);
+
 }

@@ -1,6 +1,6 @@
 package com.dili.trading.rpc;
 
-import com.dili.order.domain.TransitionDepartureApply;
+import com.dili.orders.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;

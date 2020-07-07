@@ -4,13 +4,19 @@ import com.dili.jmsf.microservice.sdk.dto.VehicleAccessDTO;
 import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.glossary.LoggerConstant;
-import com.dili.order.domain.TransitionDepartureApply;
-import com.dili.order.domain.TransitionDepartureSettlement;
+import com.dili.orders.domain.TransitionDepartureApply;
+import com.dili.orders.domain.TransitionDepartureSettlement;
+import com.dili.orders.dto.PaymentTradeCommitDto;
+import com.dili.orders.dto.PaymentTradeCommitResponseDto;
+import com.dili.orders.dto.PaymentTradePrepareDto;
+import com.dili.orders.dto.UserAccountCardResponseDto;
+import com.dili.orders.rpc.AccountRpc;
+import com.dili.orders.rpc.PayRpc;
+import com.dili.orders.rpc.UidRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.trading.rpc.JmsfRpc;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
 import com.dili.trading.rpc.TransitionDepartureSettlementRpc;
-import com.dili.trading.rpc.UidRpc;
 import com.dili.trading.service.TransitionDepartureSettlementService;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.session.SessionContext;
@@ -35,6 +41,12 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
 
     @Autowired
     private JmsfRpc jmsfRpc;
+
+    @Autowired
+    private AccountRpc accountRpc;
+
+    @Autowired
+    private PayRpc payRpc;
 
     /**
      * 根据申请单信息，新增一条结算单信息
@@ -76,10 +88,24 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
             return BaseOutput.failure("操作失败");
         }
         //更新完成之后，插入缴费单信息，必须在这之前发起请求，到支付系统，拿到支付单号
-        /**
-         * 申请支付单号还没有接入
-         */
-        transitionDepartureSettlement.setCode(uidRpc.getFirmCode().getData());
+        PaymentTradePrepareDto paymentTradePrepareDto = new PaymentTradePrepareDto();
+        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getOneAccountCard(transitionDepartureSettlement.getCustomerCardNo());
+        if (!oneAccountCard.isSuccess()) {
+            throw new RuntimeException("转离场结算单新增-->根据卡号获取账户信息失败");
+        }
+        //请求与支付，两边的账户id对应关系如下
+        paymentTradePrepareDto.setAccountId(oneAccountCard.getData().getFundAccountId());
+        paymentTradePrepareDto.setType(12);
+        paymentTradePrepareDto.setBusinessId(oneAccountCard.getData().getAccountId());
+        paymentTradePrepareDto.setAmount(transitionDepartureSettlement.getChargeAmount());
+        BaseOutput<String> prepare = payRpc.prepare(paymentTradePrepareDto);
+        if (!prepare.isSuccess()) {
+            throw new RuntimeException("转离场结算单新增-->创建交易失败");
+        }
+        //设置交易单号
+        transitionDepartureSettlement.setPaymentNo(prepare.getData());
+        //根据uid设置结算单的code
+        transitionDepartureSettlement.setCode(uidRpc.getCode().getData());
         BaseOutput<TransitionDepartureSettlement> update = transitionDepartureSettlementRpc.insert(transitionDepartureSettlement);
         //更新结算单不成功的时候
         if (!update.isSuccess()) {
@@ -138,7 +164,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
 
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "转离场结算单支付", operationType = "update", systemCode = "ORDERS")
-    public BaseOutput pay(TransitionDepartureSettlement transitionDepartureSettlement) {
+    public BaseOutput pay(TransitionDepartureSettlement transitionDepartureSettlement, String password) {
         //判断结算单的支付状态是否为1（未结算）,不是则直接返回
         if (transitionDepartureSettlement.getPayStatus() != 1) {
             return BaseOutput.failure("只有未结算的结算单可以结算");
@@ -170,9 +196,30 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         if (!update1.isSuccess()) {
             throw new RuntimeException("转离场结算单支付-->结算单更新失败");
         }
-        //再调用支付，暂时没有对接
+        //再调用支付
+        //首先根据卡号拿倒账户信息
+        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getOneAccountCard(transitionDepartureSettlement.getCustomerCardNo());
+        if (!oneAccountCard.isSuccess()) {
+            throw new RuntimeException("转离场结算单支付-->查询账户失败");
+        }
+        //构建支付对象
+        UserAccountCardResponseDto userAccountCardResponseDto = oneAccountCard.getData();
+        PaymentTradeCommitDto paymentTradeCommitDto = new PaymentTradeCommitDto();
+        //设置自己账户id
+        paymentTradeCommitDto.setAccountId(userAccountCardResponseDto.getFundAccountId());
+        //设置账户id
+        paymentTradeCommitDto.setBusinessId(userAccountCardResponseDto.getAccountId());
+        //设置密码
+        paymentTradeCommitDto.setPassword(password);
+        //设置交易单号
+        paymentTradeCommitDto.setTradeId(transitionDepartureSettlement.getPaymentNo());
+        //调用rpc支付
+        BaseOutput<PaymentTradeCommitResponseDto> pay = payRpc.pay(paymentTradeCommitDto);
+        if (!pay.isSuccess()) {
+            throw new RuntimeException("转离场结算单支付-->支付rpc请求失败");
+        }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        //设置进门收费相关信息，并调用
+        //设置进门收费相关信息，并调用新增
         VehicleAccessDTO vehicleAccessDTO = new VehicleAccessDTO();
         vehicleAccessDTO.setMarketId(userTicket.getFirmId());
         vehicleAccessDTO.setPlateNumber(data.getPlate());

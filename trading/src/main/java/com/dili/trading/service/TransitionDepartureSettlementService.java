@@ -1,6 +1,6 @@
 package com.dili.trading.service;
 
-import com.dili.order.domain.TransitionDepartureSettlement;
+import com.dili.orders.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
 
 /**
@@ -29,5 +29,5 @@ public interface TransitionDepartureSettlementService {
      * @param transitionDepartureSettlement
      * @return
      */
-    BaseOutput pay(TransitionDepartureSettlement transitionDepartureSettlement);
+    BaseOutput pay(TransitionDepartureSettlement transitionDepartureSettlement,String password);
 }

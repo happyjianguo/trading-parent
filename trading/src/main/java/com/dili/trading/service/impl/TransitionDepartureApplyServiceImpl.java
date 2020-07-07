@@ -3,10 +3,10 @@ package com.dili.trading.service.impl;
 import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.glossary.LoggerConstant;
-import com.dili.order.domain.TransitionDepartureApply;
+import com.dili.orders.domain.TransitionDepartureApply;
+import com.dili.orders.rpc.UidRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
-import com.dili.trading.rpc.UidRpc;
 import com.dili.trading.service.TransitionDepartureApplyService;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.session.SessionContext;
@@ -29,7 +29,7 @@ public class TransitionDepartureApplyServiceImpl implements TransitionDepartureA
     public BaseOutput insert(TransitionDepartureApply transitionDepartureApply) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //设置code编号
-        transitionDepartureApply.setCode(uidRpc.getFirmCode().getData());
+        transitionDepartureApply.setCode(uidRpc.getCode().getData());
         //设置申请时间
         transitionDepartureApply.setOriginatorTime(LocalDateTime.now());
         //设置申请员工id
