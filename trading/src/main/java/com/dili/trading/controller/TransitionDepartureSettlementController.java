@@ -182,14 +182,13 @@ public class TransitionDepartureSettlementController {
     /**
      * 撤销TransitionDepartureSettlement
      *
-     * @param transitionDepartureSettlement
      * @return BaseOutput
      */
     @RequestMapping(value = "/revocator.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput revocator(TransitionDepartureSettlement transitionDepartureSettlement, String passwrod) {
+    public BaseOutput revocator(Long id, String password) {
         //通过用户密码去uap验证，暂未对接
-        return transitionDepartureSettlementService.revocator(transitionDepartureSettlement);
+        return transitionDepartureSettlementService.revocator(transitionDepartureSettlementRpc.getOneById(id).getData());
     }
 
     /**
