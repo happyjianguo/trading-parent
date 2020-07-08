@@ -195,15 +195,12 @@ public class TransitionDepartureSettlementController {
     /**
      * 缴费TransitionDepartureSettlement
      *
-     * @param transitionDepartureSettlement
      * @return BaseOutput
      */
     @RequestMapping(value = "/pay.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput pay(TransitionDepartureSettlement transitionDepartureSettlement, String password) {
-        //前端只保存了一个id，所以要通过id查询到这条数据
-        TransitionDepartureSettlement data = transitionDepartureSettlementRpc.getOneById(transitionDepartureSettlement.getId()).getData();
-        return transitionDepartureSettlementService.pay(data, password);
+    public BaseOutput pay(Long id, String password) {
+        return transitionDepartureSettlementService.pay(id, password);
     }
 
     /**

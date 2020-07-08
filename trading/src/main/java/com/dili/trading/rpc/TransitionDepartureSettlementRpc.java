@@ -4,14 +4,11 @@ import com.dili.orders.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc",url = "localhost:8185")
+@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc", url = "localhost:8185")
 public interface TransitionDepartureSettlementRpc {
 
 
@@ -71,5 +68,31 @@ public interface TransitionDepartureSettlementRpc {
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/getOneById/{id}", method = {RequestMethod.GET})
     BaseOutput<TransitionDepartureSettlement> getOneById(@PathVariable(value = "id") Long id);
+
+
+    /**
+     * 新增结算单
+     *
+     * @param transitionDepartureSettlement
+     * @return
+     */
+    @RequestMapping(value = "/api/transitionDepartureSettlement/insertTransitionDepartureSettlement", method = {RequestMethod.POST})
+    BaseOutput<TransitionDepartureSettlement> insertTransitionDepartureSettlement(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
+
+    /**
+     * 结算单支付
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/transitionDepartureSettlement/pay", method = {RequestMethod.POST})
+    BaseOutput<TransitionDepartureSettlement> pay(@RequestParam(value = "id") Long id, @RequestParam(value = "password") String password);
+
+    /**
+     * 撤销
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/transitionDepartureSettlement/revocator", method = {RequestMethod.POST})
+    BaseOutput<TransitionDepartureSettlement> revocator(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
 
 }
