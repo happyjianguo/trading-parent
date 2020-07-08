@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
-@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc", url = "localhost:8185")
+@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc",url = "localhost:8185")
 public interface TransitionDepartureSettlementRpc {
 
 
@@ -32,7 +32,7 @@ public interface TransitionDepartureSettlementRpc {
      * @throws Exception
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/listByQueryParams", method = {RequestMethod.POST})
-    PageOutput<List<TransitionDepartureSettlement>> listByQueryParams(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
+    PageOutput<List<TransitionDepartureSettlement>> listByQueryParams(TransitionDepartureSettlement transitionDepartureSettlement);
 
     /**
      * 新增TransitionDepartureSettlement

@@ -1,8 +1,6 @@
 package com.dili.trading.controller;
 
 import com.dili.orders.domain.TransitionDepartureSettlement;
-import com.dili.orders.dto.AccountRequestDto;
-import com.dili.orders.dto.UserAccountCardResponseDto;
 import com.dili.orders.rpc.AccountRpc;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.orders.rpc.PayRpc;
@@ -103,6 +101,20 @@ public class TransitionDepartureSettlementController {
     }
 
     /**
+     * 跳转到转离场输入密码页面，撤销操作
+     *
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping(value = "/revocatorPage.html", method = RequestMethod.GET)
+    public String revocatorPage(ModelMap modelMap, Long id) {
+        BaseOutput oneById = transitionDepartureSettlementRpc.getOneById(id);
+        modelMap.put("transitionDepartureSettlement", oneById.getData());
+        modelMap.put("userTicket", SessionContext.getSessionContext().getUserTicket());
+        return "transitionDepartureSettlement/revocatorPage";
+    }
+
+    /**
      * 分页查询
      *
      * @param transitionDepartureSettlement
@@ -144,7 +156,6 @@ public class TransitionDepartureSettlementController {
 
     /**
      * 新增TransitionDepartureSettlement
-     * 需要调用卡务，暂未接入
      *
      * @param transitionDepartureSettlement
      * @return BaseOutput
@@ -156,8 +167,7 @@ public class TransitionDepartureSettlementController {
     }
 
     /**
-     * 新增TransitionDepartureSettlement
-     * 需要调用卡务，暂未接入
+     * 更新TransitionDepartureSettlement
      *
      * @param transitionDepartureSettlement
      * @return BaseOutput
@@ -171,20 +181,19 @@ public class TransitionDepartureSettlementController {
 
     /**
      * 撤销TransitionDepartureSettlement
-     * 需要调用卡务，暂未接入
      *
      * @param transitionDepartureSettlement
      * @return BaseOutput
      */
     @RequestMapping(value = "/revocator.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput revocator(TransitionDepartureSettlement transitionDepartureSettlement) {
+    public BaseOutput revocator(TransitionDepartureSettlement transitionDepartureSettlement, String passwrod) {
+        //通过用户密码去uap验证，暂未对接
         return transitionDepartureSettlementService.revocator(transitionDepartureSettlement);
     }
 
     /**
      * 缴费TransitionDepartureSettlement
-     * 需要调用卡务，暂未接入
      *
      * @param transitionDepartureSettlement
      * @return BaseOutput

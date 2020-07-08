@@ -1,0 +1,64 @@
+<#bs4Body>
+
+<div class="container-fluid">
+    <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
+    <form id="saveForm" role="form" novalidate>
+        <div class="row row-cols-12">
+            <div class="form-group col">
+                <label for=""><i class="red">输入正确的登录密码后，才能撤销。请谨慎操作。</i></label>
+                <input type="text" name="id" class="form-control" value="${transitionDepartureSettlement.id!}" hidden/>
+            </div>
+        </div>
+        <div class="row row-cols-4">
+            <div class="form-group col">
+                <label for="">用户账号</label>
+                <input type="text" class="form-control" value="${userTicket.userName!}" readonly/>
+            </div>
+        </div>
+        <div class="row row-cols-4">
+            <div class="form-group col">
+                <label for="">用户账号</label>
+                <input id="password" type="password" class="form-control" name="password"/>
+            </div>
+        </div>
+    </form>
+</div>
+</#bs4Body>
+
+<script>
+    $(function () {
+        $('#inputPassword').on('click', function (e) {
+            $('#password').val("123456");
+        });
+    })
+
+    function revocatorPage() {
+        let _formData = new FormData($('#saveForm')[0]);
+        bui.loading.show('努力提交中，请稍候。。。');
+        $.ajax({
+            type: "POST",
+            url: "/transitionDepartureSettlement/revocator.action",
+            data: _formData,
+            processData: false,
+            contentType: false,
+            async: true,
+            success: function (res) {
+                bui.loading.hide();
+                if (res.code == "200") {
+                    bs4pop.alert('成功', {type: 'success'}, function () {
+                        parent.dia.hide();
+                        parent.location.reload();
+                    });
+                } else {
+                    bui.loading.hide();
+                    bs4pop.alert(res.result, {type: 'error'});
+                }
+            },
+            error: function (error) {
+                bui.loading.hide();
+                bs4pop.alert(error.result, {type: 'error'});
+            }
+        });
+    }
+
+</script>

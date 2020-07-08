@@ -1,11 +1,15 @@
 package com.dili.trading.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dili.jmsf.microservice.sdk.dto.VehicleAccessDTO;
 import com.dili.logger.sdk.annotation.BusinessLogger;
@@ -14,6 +18,7 @@ import com.dili.logger.sdk.glossary.LoggerConstant;
 import com.dili.orders.domain.TransitionDepartureApply;
 import com.dili.orders.domain.TransitionDepartureSettlement;
 import com.dili.orders.dto.CreateTradeResponseDto;
+import com.dili.orders.dto.FeeDto;
 import com.dili.orders.dto.PaymentTradeCommitDto;
 import com.dili.orders.dto.PaymentTradeCommitResponseDto;
 import com.dili.orders.dto.PaymentTradePrepareDto;
@@ -58,6 +63,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
      */
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "转离场结算单新增", operationType = "update", systemCode = "ORDERS")
+    @Transactional(propagation = Propagation.REQUIRED)
     public BaseOutput insert(TransitionDepartureSettlement transitionDepartureSettlement) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //设置创建时间
@@ -123,6 +129,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
 
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "转离场结算单撤销", operationType = "update", systemCode = "ORDERS")
+    @Transactional(propagation = Propagation.REQUIRED)
     public BaseOutput revocator(TransitionDepartureSettlement transitionDepartureSettlement) {
         //判断结算单的支付状态是否为2（已结算）,不是则直接返回
         if (transitionDepartureSettlement.getPayStatus() != 1) {
@@ -157,6 +164,24 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         if (!update1.isSuccess()) {
             throw new RuntimeException("转离场结算单撤销-->结算单更新失败");
         }
+        //再掉卡务撤销交易
+        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getOneAccountCard(transitionDepartureSettlement.getCustomerCardNo());
+        //判断调用卡号拿到账户信息是否成功
+        if (!oneAccountCard.isSuccess()) {
+            throw new RuntimeException("转离场结算单撤销-->调用卡号拿到账户失败");
+        }
+        //设置撤销交易的dto
+        PaymentTradeCommitDto paymentTradeCommitDto = new PaymentTradeCommitDto();
+        //设置资金账户
+        paymentTradeCommitDto.setAccountId(oneAccountCard.getData().getFundAccountId());
+        //设置密码
+//        paymentTradeCommitDto.setPassword(password);
+        //设置交易号
+        paymentTradeCommitDto.setTradeId(transitionDepartureSettlement.getPaymentNo());
+        BaseOutput<PaymentTradeCommitResponseDto> paymentTradeCommitResponseDtoBaseOutput = payRpc.cancel(paymentTradeCommitDto);
+        if (!paymentTradeCommitResponseDtoBaseOutput.isSuccess()) {
+            throw new RuntimeException("转离场结算单撤销-->调用撤销交易rpc失败");
+        }
         LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, transitionDepartureSettlement.getId());
         LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, transitionDepartureSettlement.getCode());
         LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
@@ -166,6 +191,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
 
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "转离场结算单支付", operationType = "update", systemCode = "ORDERS")
+    @Transactional(propagation = Propagation.REQUIRED)
     public BaseOutput pay(TransitionDepartureSettlement transitionDepartureSettlement, String password) {
         //判断结算单的支付状态是否为1（未结算）,不是则直接返回
         if (transitionDepartureSettlement.getPayStatus() != 1) {
@@ -192,6 +218,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         if (!update.isSuccess()) {
             throw new RuntimeException("转离场结算单支付-->申请单更新失败");
         }
+        transitionDepartureSettlement.setPayTime(LocalDateTime.now());
         //修改结算单的支付状态
         BaseOutput update1 = transitionDepartureSettlementRpc.update(transitionDepartureSettlement);
         //如果结算单修改失败，则抛出异常
@@ -215,6 +242,14 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         paymentTradeCommitDto.setPassword(password);
         //设置交易单号
         paymentTradeCommitDto.setTradeId(transitionDepartureSettlement.getPaymentNo());
+        //设置费用
+        List<FeeDto> feeDtos = new ArrayList();
+        FeeDto feeDto = new FeeDto();
+        feeDto.setAmount(transitionDepartureSettlement.getChargeAmount());
+        feeDto.setType(31);
+        feeDto.setTypeName("转离场收费");
+        feeDtos.add(feeDto);
+        paymentTradeCommitDto.setFees(feeDtos);
         //调用rpc支付
         BaseOutput<PaymentTradeCommitResponseDto> pay = payRpc.pay(paymentTradeCommitDto);
         if (!pay.isSuccess()) {
