@@ -1,13 +1,13 @@
 package com.dili.trading.provider;
 
 import com.dili.assets.sdk.dto.CarTypeForJmsfDTO;
+import com.dili.orders.rpc.AssetsRpc;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.ValuePairImpl;
 import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
-import com.dili.trading.rpc.AssetsRpc;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.session.SessionContext;
 import org.apache.commons.collections.CollectionUtils;

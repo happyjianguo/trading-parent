@@ -1,31 +1,33 @@
 package com.dili.trading.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Objects;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.dili.jmsf.microservice.sdk.dto.VehicleAccessDTO;
 import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.glossary.LoggerConstant;
 import com.dili.orders.domain.TransitionDepartureApply;
 import com.dili.orders.domain.TransitionDepartureSettlement;
+import com.dili.orders.dto.CreateTradeResponseDto;
 import com.dili.orders.dto.PaymentTradeCommitDto;
 import com.dili.orders.dto.PaymentTradeCommitResponseDto;
 import com.dili.orders.dto.PaymentTradePrepareDto;
 import com.dili.orders.dto.UserAccountCardResponseDto;
 import com.dili.orders.rpc.AccountRpc;
+import com.dili.orders.rpc.JmsfRpc;
 import com.dili.orders.rpc.PayRpc;
 import com.dili.orders.rpc.UidRpc;
 import com.dili.ss.domain.BaseOutput;
-import com.dili.trading.rpc.JmsfRpc;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
 import com.dili.trading.rpc.TransitionDepartureSettlementRpc;
 import com.dili.trading.service.TransitionDepartureSettlementService;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.session.SessionContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Objects;
 
 @Service
 public class TransitionDepartureSettlementServiceImpl implements TransitionDepartureSettlementService {
@@ -98,12 +100,12 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         paymentTradePrepareDto.setType(12);
         paymentTradePrepareDto.setBusinessId(oneAccountCard.getData().getAccountId());
         paymentTradePrepareDto.setAmount(transitionDepartureSettlement.getChargeAmount());
-        BaseOutput<String> prepare = payRpc.prepare(paymentTradePrepareDto);
+        BaseOutput<CreateTradeResponseDto> prepare = payRpc.prepareTrade(paymentTradePrepareDto);
         if (!prepare.isSuccess()) {
             throw new RuntimeException("转离场结算单新增-->创建交易失败");
         }
         //设置交易单号
-        transitionDepartureSettlement.setPaymentNo(prepare.getData());
+        transitionDepartureSettlement.setPaymentNo(prepare.getData().getTradeId());
         //根据uid设置结算单的code
         transitionDepartureSettlement.setCode(uidRpc.getCode().getData());
         BaseOutput<TransitionDepartureSettlement> update = transitionDepartureSettlementRpc.insert(transitionDepartureSettlement);

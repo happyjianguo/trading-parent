@@ -1,9 +1,10 @@
 package com.dili.trading.provider;
 
+import com.dili.orders.rpc.AssetsRpc;
 import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.ValueProvider;
-import com.dili.trading.rpc.AssetsRpc;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

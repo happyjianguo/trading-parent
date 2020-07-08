@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.dili.order.domain.WeighingBill;
-import com.dili.order.dto.WeighingBillQueryDto;
-import com.dili.order.dto.WeighingBillUpdateDto;
+import com.dili.orders.domain.WeighingBill;
+import com.dili.orders.dto.WeighingBillQueryDto;
+import com.dili.orders.dto.WeighingBillUpdateDto;
 import com.dili.ss.domain.BaseOutput;
 
 @FeignClient(name = "order-service", contextId = "weighingBill", url = "localhost:8185")

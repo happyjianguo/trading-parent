@@ -1,5 +1,9 @@
 package com.dili.trading.controller;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,11 +11,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.dili.order.domain.WeighingBill;
-import com.dili.order.dto.WeighingBillQueryDto;
+import com.dili.assets.sdk.dto.CategoryDTO;
+import com.dili.orders.domain.WeighingBill;
+import com.dili.orders.dto.UserAccountCardResponseDto;
+import com.dili.orders.dto.WeighingBillQueryDto;
+import com.dili.orders.dto.WeighingBillUpdateDto;
+import com.dili.orders.rpc.AccountRpc;
+import com.dili.orders.rpc.CategoryRpc;
 import com.dili.ss.domain.BaseOutput;
+import com.dili.trading.constants.TradingConstans;
 import com.dili.trading.rpc.WeighingBillRpc;
+import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.domain.UserTicket;
+import com.dili.uap.sdk.rpc.FirmRpc;
 import com.dili.uap.sdk.session.SessionContext;
 
 /**
@@ -21,8 +33,15 @@ import com.dili.uap.sdk.session.SessionContext;
 @RequestMapping("/weighingBill")
 public class WeighingBillController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(WeighingBillController.class);
 	@Autowired
 	private WeighingBillRpc weighingBillRpc;
+	@Autowired
+	private CategoryRpc categoryRpc;
+	@Autowired
+	private FirmRpc firmRpc;
+	@Autowired
+	private AccountRpc accountRpc;
 
 	/**
 	 * 新增过磅单
@@ -49,13 +68,13 @@ public class WeighingBillController {
 	 */
 	@ResponseBody
 	@PostMapping("/update.action")
-	public BaseOutput<String> update(@RequestBody WeighingBill weighingBill) {
+	public BaseOutput<Object> update(@RequestBody WeighingBillUpdateDto weighingBill) {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
 		weighingBill.setModifierId(user.getId());
-		return this.weighingBillRpc.add(weighingBill);
+		return this.weighingBillRpc.update(weighingBill);
 	}
 
 	/**
@@ -124,4 +143,30 @@ public class WeighingBillController {
 		return this.weighingBillRpc.listByExample(dto);
 	}
 
+	/**
+	 * 根据快捷吗查询商品
+	 * 
+	 * @param keyword 快捷码
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/getGoodsByKeyword.action")
+	public BaseOutput<List<CategoryDTO>> getGoodsByKeyword(String keyword) {
+		BaseOutput<Firm> output = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
+		if (!output.isSuccess()) {
+			LOGGER.error(output.getMessage());
+			return BaseOutput.failure("查询市场信息失败");
+		}
+		if (output.getData() == null) {
+			return BaseOutput.failure("市场信息不存在");
+		}
+		CategoryDTO query = new CategoryDTO();
+		query.setMarketId(output.getData().getId());
+		query.setKeyword(keyword);
+		return this.categoryRpc.getTree(query);
+	}
+
+	public BaseOutput<UserAccountCardResponseDto> getCustomerInfoByCardNo() {
+		return null;
+	}
 }
