@@ -12,6 +12,7 @@ import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.rpc.TransitionDepartureSettlementRpc;
 import com.dili.trading.service.TransitionDepartureSettlementService;
+import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,21 +211,7 @@ public class TransitionDepartureSettlementController {
     @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput getFee(BigDecimal netWeight) {
-        QueryFeeInput queryFeeInput = new QueryFeeInput();
-        Map<String, Object> map = new HashMap<>();
-        //设置市场id
-        queryFeeInput.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-        //设置业务类型
-        queryFeeInput.setBusinessType("1");
-        //设置收费项id
-        queryFeeInput.setChargeItem(21L);
-        map.put("weight", netWeight);
-        queryFeeInput.setCalcParams(map);
-        //构建指标
-        Map<String, Object> map2 = new HashMap();
-        map2.put("id", 2);
-        map2.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
-        queryFeeInput.setConditionParams(map2);
-        return chargeRuleRpc.queryFee(queryFeeInput);
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        return transitionDepartureSettlementRpc.getFee(netWeight, userTicket.getFirmId(), userTicket.getDepartmentId());
     }
 }

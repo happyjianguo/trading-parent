@@ -6,6 +6,7 @@ import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc", url = "localhost:8185")
@@ -95,4 +96,7 @@ public interface TransitionDepartureSettlementRpc {
     @RequestMapping(value = "/api/transitionDepartureSettlement/revocator", method = {RequestMethod.POST})
     BaseOutput<TransitionDepartureSettlement> revocator(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
 
+
+    @RequestMapping(value = "/api/transitionDepartureSettlement/fee", method = {RequestMethod.POST})
+    BaseOutput getFee(@RequestParam(value = "netWeight") BigDecimal netWeight, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId);
 }
