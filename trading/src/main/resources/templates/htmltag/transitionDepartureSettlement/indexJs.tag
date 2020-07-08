@@ -118,38 +118,6 @@
     }
 
     /**
-     * 打开查看
-     * @param id
-     */
-    function openViewHandler(id) {
-        if (!id) {
-            //获取选中行的数据
-            let rows = _grid.bootstrapTable('getSelections');
-            if (null == rows || rows.length == 0) {
-                bs4pop.alert('请选中一条数据');
-                return;
-            }
-            id = rows[0].id;
-        }
-
-
-        dia = bs4pop.dialog({
-            title: '转离场结算单详情',
-            content: '/transitionDepartureSettlement/getOneByID.action?id=' + id,
-            isIframe: true,
-            closeBtn: true,
-            backdrop: 'static',
-            width: '60%',
-            height: '95%',
-            btns: [{
-                label: '关闭', className: 'btn-secondary', onClick(e) {
-                }
-            }]
-        });
-    }
-
-
-    /**
      打开更新窗口:iframe
      */
     function openUpdateHandler() {
@@ -159,33 +127,27 @@
             bs4pop.alert('请选中一条数据');
             return false;
         }
-        if (rows[0].$_approvalState != 1) {
-            bs4pop.alert('只有待审批的申请单可以审批');
+        if (rows[0].$_pay_status == 2) {
+            bs4pop.alert('只有已结算的单子可以撤销');
             return false;
         }
         dia = bs4pop.dialog({
-            title: '转离场申请--审核',//对话框title
-            content: '${contextPath}/transitionDepartureSettlement/update.html?id=' + rows[0].id, //对话框内容，可以是 string、element，$object
+            title: '撤销校验',//对话框title
+            content: '${contextPath}/transitionDepartureSettlement/revocatorPage.html?id=' + rows[0].id,
             width: '60%',//宽度
             height: '95%',//高度
             isIframe: true,//默认是页面层，非iframe
-            btns: [ {
-                label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
-                    let diaWindow = $iframe[0].contentWindow;
-                    bui.util.debounce(diaWindow.updateHandler(2), 1000, true)()
-                    return false;
-                }
-            },{
-                label: '拒绝', className: 'btn btn-primary', onClick(e, $iframe) {
-                    let diaWindow = $iframe[0].contentWindow;
-                    bui.util.debounce(diaWindow.updateHandler(3), 1000, true)()
-                    return false;
-                }
-            },{
+            btns: [{
                 label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
 
                 }
-            },]
+            },{
+                label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
+                    let diaWindow = $iframe[0].contentWindow;
+                    bui.util.debounce(diaWindow.revocator, 1000, true)()
+                    return false;
+                }
+            }]
 
         });
     }

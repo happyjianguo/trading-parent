@@ -89,13 +89,13 @@
         $('#payByCard').on('click',function (e) {
             $.ajax({
                 type: "POST",
-                data:{cardNo:"888800034671"},
+                data:{cardNo:"888889690048"},
                 dataType:"json",
                 url: "/transitionDepartureApplyController/getCustomerByCardNo.action",
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
-                        $('#customerCardNo').val('888800034671');
+                        $('#customerCardNo').val('888889690048');
                         $('#customerCode').val(res.data.code);
                         $('#customerId').val(res.data.id);
                         $('#customerName').val(res.data.name);

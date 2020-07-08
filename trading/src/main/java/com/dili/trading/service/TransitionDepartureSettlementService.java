@@ -29,5 +29,5 @@ public interface TransitionDepartureSettlementService {
      * @param transitionDepartureSettlement
      * @return
      */
-    BaseOutput pay(TransitionDepartureSettlement transitionDepartureSettlement,String password);
+    BaseOutput pay(TransitionDepartureSettlement transitionDepartureSettlement, String password);
 }

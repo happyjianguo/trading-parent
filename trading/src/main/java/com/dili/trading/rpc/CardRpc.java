@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 根据卡号获取账户信息
  */
-@FeignClient(name = "dili-card", contextId = "card", url = "10.28.1.185")
+@FeignClient(name = "dili-card", contextId = "card")
 public interface CardRpc {
     /**
      * 根据卡号获取账户信息
