@@ -128,10 +128,10 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         vehicleAccessDTO.setOperatorId(userTicket.getId());
         vehicleAccessDTO.setOperatorName(userTicket.getRealName());
         vehicleAccessDTO.setCreated(new Date());
-//        BaseOutput<VehicleAccessDTO> vehicleAccessDTOBaseOutput = jmsfRpc.add(vehicleAccessDTO);
-//        if (!vehicleAccessDTOBaseOutput.isSuccess()) {
-//            throw new RuntimeException("进门收费单-->新增失败");
-//        }
+        BaseOutput<VehicleAccessDTO> vehicleAccessDTOBaseOutput = jmsfRpc.add(vehicleAccessDTO);
+        if (!vehicleAccessDTOBaseOutput.isSuccess()) {
+            throw new RuntimeException("进门收费单-->新增失败");
+        }
         LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
         LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, data.getCode());
         LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
