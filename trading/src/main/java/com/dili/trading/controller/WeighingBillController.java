@@ -181,6 +181,11 @@ public class WeighingBillController {
 		return output;
 	}
 
+	/**
+	 * 分页查询
+	 * @param query
+	 * @return
+	 */
 	@PostMapping("/listPage.action")
 	public String listPage(@RequestBody WeighingBill query) {
 		PageOutput<List<WeighingBill>> output = this.weighingBillRpc.listPage(query);
