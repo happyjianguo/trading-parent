@@ -12,6 +12,7 @@ import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.rpc.TransitionDepartureSettlementRpc;
 import com.dili.trading.service.TransitionDepartureSettlementService;
+import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -182,28 +183,24 @@ public class TransitionDepartureSettlementController {
     /**
      * 撤销TransitionDepartureSettlement
      *
-     * @param transitionDepartureSettlement
      * @return BaseOutput
      */
     @RequestMapping(value = "/revocator.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput revocator(TransitionDepartureSettlement transitionDepartureSettlement, String passwrod) {
+    public BaseOutput revocator(Long id, String password) {
         //通过用户密码去uap验证，暂未对接
-        return transitionDepartureSettlementService.revocator(transitionDepartureSettlement);
+        return transitionDepartureSettlementService.revocator(transitionDepartureSettlementRpc.getOneById(id).getData());
     }
 
     /**
      * 缴费TransitionDepartureSettlement
      *
-     * @param transitionDepartureSettlement
      * @return BaseOutput
      */
     @RequestMapping(value = "/pay.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput pay(TransitionDepartureSettlement transitionDepartureSettlement, String password) {
-        //前端只保存了一个id，所以要通过id查询到这条数据
-        TransitionDepartureSettlement data = transitionDepartureSettlementRpc.getOneById(transitionDepartureSettlement.getId()).getData();
-        return transitionDepartureSettlementService.pay(data, password);
+    public BaseOutput pay(Long id, String password) {
+        return transitionDepartureSettlementService.pay(id, password);
     }
 
     /**
@@ -214,21 +211,7 @@ public class TransitionDepartureSettlementController {
     @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput getFee(BigDecimal netWeight) {
-        QueryFeeInput queryFeeInput = new QueryFeeInput();
-        Map<String, Object> map = new HashMap<>();
-        //设置市场id
-        queryFeeInput.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-        //设置业务类型
-        queryFeeInput.setBusinessType("1");
-        //设置收费项id
-        queryFeeInput.setChargeItem(21L);
-        map.put("weight", netWeight);
-        queryFeeInput.setCalcParams(map);
-        //构建指标
-        Map<String, Object> map2 = new HashMap();
-        map2.put("id", 2);
-        map2.put("marketId", SessionContext.getSessionContext().getUserTicket().getFirmId());
-        queryFeeInput.setConditionParams(map2);
-        return chargeRuleRpc.queryFee(queryFeeInput);
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        return transitionDepartureSettlementRpc.getFee(netWeight, userTicket.getFirmId(), userTicket.getDepartmentId());
     }
 }

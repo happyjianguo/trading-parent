@@ -26,8 +26,7 @@ public interface TransitionDepartureSettlementService {
     /**
      * 缴费，需要调用支付系统收钱，并且更改对应申请单的支付状态为已支付
      *
-     * @param transitionDepartureSettlement
      * @return
      */
-    BaseOutput pay(TransitionDepartureSettlement transitionDepartureSettlement, String password);
+    BaseOutput pay(Long id, String password);
 }
