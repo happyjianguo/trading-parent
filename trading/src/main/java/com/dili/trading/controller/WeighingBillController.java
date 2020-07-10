@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.orders.domain.WeighingBill;
-import com.dili.orders.dto.UserAccountCardResponseDto;
+import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.dto.WeighingBillQueryDto;
 import com.dili.orders.dto.WeighingBillUpdateDto;
-import com.dili.orders.rpc.AccountRpc;
+import com.dili.orders.rpc.CardRpc;
 import com.dili.orders.rpc.CategoryRpc;
 import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.EasyuiPageOutput;
+import com.dili.ss.domain.PageOutput;
 import com.dili.trading.constants.TradingConstans;
 import com.dili.trading.rpc.WeighingBillRpc;
 import com.dili.uap.sdk.domain.Firm;
@@ -41,7 +43,7 @@ public class WeighingBillController {
 	@Autowired
 	private FirmRpc firmRpc;
 	@Autowired
-	private AccountRpc accountRpc;
+	private CardRpc cardRpc;
 
 	/**
 	 * 新增过磅单
@@ -166,7 +168,22 @@ public class WeighingBillController {
 		return this.categoryRpc.getTree(query);
 	}
 
-	public BaseOutput<UserAccountCardResponseDto> getCustomerInfoByCardNo() {
-		return null;
+	/**
+	 * 根据卡号查询客户信息
+	 * 
+	 * @param cardNo 卡号
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getCustomerInfoByCardNo.action")
+	public BaseOutput<AccountSimpleResponseDto> getCustomerInfoByCardNo(String cardNo) {
+		BaseOutput<AccountSimpleResponseDto> output = this.cardRpc.getOneAccountCard(cardNo);
+		return output;
+	}
+
+	@PostMapping("/listPage.action")
+	public String listPage(@RequestBody WeighingBill query) {
+		PageOutput<List<WeighingBill>> output = this.weighingBillRpc.listPage(query);
+		return new EasyuiPageOutput(output.getTotal(), output.getData()).toString();
 	}
 }

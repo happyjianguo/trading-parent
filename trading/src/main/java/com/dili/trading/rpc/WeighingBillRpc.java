@@ -1,5 +1,7 @@
 package com.dili.trading.rpc;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +12,7 @@ import com.dili.orders.domain.WeighingBill;
 import com.dili.orders.dto.WeighingBillQueryDto;
 import com.dili.orders.dto.WeighingBillUpdateDto;
 import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.domain.PageOutput;
 
 @FeignClient(name = "order-service", contextId = "weighingBill", url = "localhost:8185")
 public interface WeighingBillRpc {
@@ -34,4 +37,7 @@ public interface WeighingBillRpc {
 
 	@RequestMapping(value = "/api/weighingBill/listByExample", method = RequestMethod.POST)
 	BaseOutput<Object> listByExample(@RequestBody WeighingBillQueryDto queryDto);
+
+	@RequestMapping(value = "/api/weighingBill/listPage", method = RequestMethod.POST)
+	PageOutput<List<WeighingBill>> listPage(@RequestBody WeighingBill query);
 }
