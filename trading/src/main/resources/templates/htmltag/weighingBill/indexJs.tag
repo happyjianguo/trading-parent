@@ -1,0 +1,215 @@
+    /**
+     *
+     * @Date 2019-11-06 17:30:00
+     * @author jiangchengyong
+     *
+     ***/
+
+
+    //时间范围
+    lay('.laydatetime').each(function () {
+        laydate.render({
+            elem: this
+            , trigger: 'click'
+            , range: false
+            , type: 'datetime'
+        });
+    });
+
+    /*********************变量定义区 begin*************/
+        //行索引计数器
+        //如 let itemIndex = 0;
+    let _grid = $('#grid');
+    let _form = $('#_form');
+    let _modal = $('#_modal');
+
+    /*********************变量定义区 end***************/
+
+
+    /******************************驱动执行区 begin***************************/
+    $(function () {
+        $(window).resize(function () {
+            _grid.bootstrapTable('resetView')
+        });
+        let size = ($(window).height() - $('#queryForm').height() - 210) / 40;
+        size = size > 10 ? size : 10;
+        _grid.bootstrapTable('refreshOptions', {url: '/weighingBill/listPage.action', pageSize: parseInt(size)});
+    });
+
+    /******************************驱动执行区 end****************************/
+
+    /*****************************************函数区 begin************************************/
+    /**
+     * 打开新增窗口
+     */
+    function openInsertHandler() {
+        $("#_modal").modal();
+
+        $('#_modal .modal-body').load("/truck/add.html");
+        _modal.find('.modal-title').text('新增注册车辆');
+
+    }
+
+    /**
+     * 打开修改窗口
+     */
+    function openUpdateHandler(id) {
+        let rows = _grid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        $("#_modal").modal("show");
+
+        $('#_modal .modal-body').load("/truck/edit.html?id=" + rows[0].id);
+        _modal.find('.modal-title').text('修改注册车辆');
+    }
+    /**
+     * 打开查看窗口
+     */
+    function openViewHandler(id) {
+        let rows = _grid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        $("#_modal").modal("show");
+
+        $('#_modal .modal-body').load("/truck/view.html?id=" + rows[0].id);
+        _modal.find('.modal-title').text('查看图片');
+    }
+
+    function openDeleteHandler(id) {
+        let rows = _grid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        bs4pop.confirm("确定要删除吗", {title: "确认提示"}, function (sure) {
+            if (sure) {
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: '/truck/delete.action',
+                    data: {id: rows[0].id},
+                    success: function (data) {
+                        bui.loading.hide();
+                        if (data.code != '200') {
+                            bs4pop.alert(data.message, {type: 'error'});
+                            return;
+                        }
+                        // bs4pop.alert('成功', {type: 'success '}, function () {
+                        //     window.location.reload();
+                        // });
+                        window.location.reload();
+                    },
+                    error: function () {
+                        bui.loading.hide();
+                        bs4pop.alert("车型删除失败!", {type: 'error'});
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     *  保存及更新表单数据
+     */
+    function saveOrUpdateHandler() {
+        var form = $("#_form");
+        if (form.validate().form() != true) {
+            return false;
+        }
+
+        bui.loading.show('努力提交中，请稍候。。。');
+        let _formData = bui.util.removeKeyStartWith(form.serializeObject(), "_");
+        let _url = null;
+        //没有id就新增
+        if (_formData.id == null || _formData.id == "") {
+            _url = "${contextPath}/booth/insert";
+        } else {//有id就修改
+            _url = "${contextPath}/booth/update.action";
+        }
+        $.ajax({
+            type: "POST",
+            url: _url,
+            data: _formData,
+            processData: true,
+            dataType: "json",
+            async: true,
+            success: function (data) {
+                bui.loading.hide();
+                if (data.code == "200") {
+                    _grid.bootstrapTable('refresh');
+                    _modal.modal('hide');
+                } else {
+                    bs4pop.alert(data.result, {type: 'error'});
+                }
+            },
+            error: function (a, b, c) {
+                bui.loading.hide();
+                bs4pop.alert('远程访问失败', {type: 'error'});
+            }
+        });
+    }
+
+
+    /**
+     * 查询处理
+     */
+    function queryDataHandler() {
+        _grid.bootstrapTable('refresh');
+    }
+
+    /**
+     * table参数组装
+     * 可修改queryParams向服务器发送其余的参数
+     * @param params
+     */
+    function queryParams(params) {
+        let temp = {
+            rows: params.limit,   //页面大小
+            page: ((params.offset / params.limit) + 1) || 1, //页码
+            sort: params.sort,
+            order: params.order
+        };
+        return $.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
+    }
+
+    /*****************************************函数区 end**************************************/
+
+    /*****************************************自定义事件区 begin************************************/
+
+
+    function updateStatus(status, queryBtn){
+        var inputval = $("input[name=status]").val();
+        if(status == inputval){
+            return;
+        }else{
+            $(".queryBtn .queryBtnCss").removeClass("queryBtnCss");
+            $(queryBtn).addClass("queryBtnCss");
+        }
+        $("input[name=status]").val(status);
+        queryDataHandler();
+    }
+    $(function(){
+        $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
+            if(row.$_status == 1){
+                $("#btn_enabled").attr("disabled", "disabled");
+                $("#btn_disabled").attr("disabled", false);
+                $("#btn_enabled").addClass("btn_css_disabled");
+                $("#btn_disabled").removeClass("btn_css_disabled");
+            }else if(row.$_status == 2){
+                $("#btn_disabled").attr("disabled", "disabled");
+                $("#btn_enabled").removeClass("btn_css_disabled");
+                $("#btn_disabled").addClass("btn_css_disabled");
+                $("#btn_enabled").attr("disabled", false);
+            }else{
+                $("#btn_disabled").attr("disabled", "disabled");
+                $("#btn_enabled").attr("disabled", "disabled");
+                $("#btn_disabled").addClass("btn_css_disabled");
+                $("#btn_enabled").addClass("btn_css_disabled");
+            }
+        })
+    })
+    /*****************************************自定义事件区 end**************************************/

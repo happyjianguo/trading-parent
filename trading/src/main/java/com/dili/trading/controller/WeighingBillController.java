@@ -1,19 +1,27 @@
 package com.dili.trading.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.orders.domain.WeighingBill;
+import com.dili.orders.domain.WeighingBillOperationRecord;
+import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.dto.AccountSimpleResponseDto;
+import com.dili.orders.dto.WeighingBillListPageDto;
 import com.dili.orders.dto.WeighingBillQueryDto;
 import com.dili.orders.dto.WeighingBillUpdateDto;
 import com.dili.orders.rpc.CardRpc;
@@ -21,6 +29,8 @@ import com.dili.orders.rpc.CategoryRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
+import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.ss.retrofitful.annotation.GET;
 import com.dili.trading.constants.TradingConstans;
 import com.dili.trading.rpc.WeighingBillRpc;
 import com.dili.uap.sdk.domain.Firm;
@@ -44,6 +54,11 @@ public class WeighingBillController {
 	private FirmRpc firmRpc;
 	@Autowired
 	private CardRpc cardRpc;
+
+	@GetMapping("/index.html")
+	public String index() {
+		return "weighingBill/index";
+	}
 
 	/**
 	 * 新增过磅单
@@ -183,12 +198,42 @@ public class WeighingBillController {
 
 	/**
 	 * 分页查询
+	 * 
 	 * @param query
 	 * @return
 	 */
+	@ResponseBody
 	@PostMapping("/listPage.action")
-	public String listPage(@RequestBody WeighingBill query) {
-		PageOutput<List<WeighingBill>> output = this.weighingBillRpc.listPage(query);
-		return new EasyuiPageOutput(output.getTotal(), output.getData()).toString();
+	public String listPage(WeighingBillQueryDto query) {
+		PageOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listPage(query);
+
+		Map<Object, Object> metadata = new HashMap<Object, Object>();
+		metadata.put("roughWeight", "weightProvider");
+		metadata.put("netWeight", "weightProvider");
+		metadata.put("unitWeight", "weightProvider");
+		metadata.put("roughWeight", "weightProvider");
+
+		metadata.put("unitPrice", "moneyProvider");
+		metadata.put("statement.tradeAmount", "moneyProvider");
+		metadata.put("statement.buyerPoundage", "moneyProvider");
+		metadata.put("statement.buyerActualAmount", "moneyProvider");
+		metadata.put("statement.sellerPoundage", "moneyProvider");
+		metadata.put("statement.sellerActualAmount", "moneyProvider");
+		
+		metadata.put("operationRecord.operationTime", "datetimeProvider");
+		
+		metadata.put("tradeType", "tradeTypeProvider");
+		
+		query.setMetadata(metadata);
+		try {
+			List<Map> list = ValueProviderUtils.buildDataByProvider(query, output.getData());
+			List<WeighingStatement> wsList = new ArrayList<WeighingStatement>(output.getData().size());
+			output.getData().forEach(v -> wsList.add(v.getStatement()));
+
+			return new EasyuiPageOutput(output.getTotal(), list).toString();
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+			return null;
+		}
 	}
 }

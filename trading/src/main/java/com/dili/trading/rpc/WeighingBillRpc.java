@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dili.orders.domain.WeighingBill;
+import com.dili.orders.dto.WeighingBillListPageDto;
 import com.dili.orders.dto.WeighingBillQueryDto;
 import com.dili.orders.dto.WeighingBillUpdateDto;
 import com.dili.ss.domain.BaseOutput;
@@ -39,5 +40,5 @@ public interface WeighingBillRpc {
 	BaseOutput<Object> listByExample(@RequestBody WeighingBillQueryDto queryDto);
 
 	@RequestMapping(value = "/api/weighingBill/listPage", method = RequestMethod.POST)
-	PageOutput<List<WeighingBill>> listPage(@RequestBody WeighingBill query);
+	PageOutput<List<WeighingBillListPageDto>> listPage(@RequestBody WeighingBillQueryDto query);
 }

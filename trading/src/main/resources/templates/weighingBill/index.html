@@ -1,0 +1,144 @@
+<#bs4Body>
+<div class="container-fluid">
+	<#bs4nav>
+	<form class="form" id="queryForm" role="form">
+		<div class="row  row-cols-6">
+			<div class="form-group col">
+				<label for="">车型</label> <select id="vehicleTypeId" name="carType" class="form-control">
+				</select>
+				<#bcomboProvider _id="vehicleTypeId" _provider="carTypeProvider" _queryParams='{required:false}' />
+			</div>
+			<div class="form-group col">
+				<label for="">车型状态</label> <select id="carTypeStatus" name="carTypeStatus" class="form-control">
+					<option value="">--请选择--</option>
+					<option value="1">启用</option>
+					<option value="2">禁用</option>
+				</select>
+			</div>
+			<div class="form-group col-auto">
+				<label for="createdStart">创建时间</label>
+				<div class="form-inline">
+					<div class="input-group">
+						<input type="text" name="startDate" id="createdStart" class="form-control laydatetime laystart" />
+						<div class="input-group-append">
+							<label for="createdStart" class="input-group-text fa fa-calendar"></label>
+						</div>
+					</div>
+					&nbsp;&nbsp;至&nbsp;&nbsp;
+					<div class="input-group">
+						<input type="text" name="endDate" id="createdEnd" class="form-control laydatetime layend" value="" />
+						<div class="input-group-append">
+							<label for="createdEnd" class="input-group-text fa fa-calendar"></label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group col">
+				<label for="">车牌号</label> <input type="text" class="form-control isNaturalNum" name="plate" placeholder="">
+			</div>
+			<div class="col-auto align-self-center mt-3">
+				<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm .form-control').val('');">
+					<i class="fa fa-refresh"></i> 清空
+				</button>
+				<button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()">
+					<i class="fa fa-search"></i> 查询
+				</button>
+			</div>
+		</div>
+	</form>
+	</#bs4nav>
+	<hr>
+	<div class="row">
+		<div class="col-12">
+			<div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
+				<#resource code="truck_add">
+				<button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()">
+					<i class="fa fa-plus"></i> 新增
+				</button>
+				</#resource>
+				<#resource code="truck_edit">
+				<button type="button" class="btn btn-primary" onclick="openUpdateHandler()">
+					<i class="fa fa-pencil-square-o"></i> 修改
+				</button>
+				</#resource>
+				<#resource code="truck_del">
+				<button type="button" class="btn btn-primary" onclick="openDeleteHandler()">
+					<i class="fa fa-trash-o"></i> 删除
+				</button>
+				</#resource>
+				<#resource code="truck_view">
+				<button type="button" class="btn btn-primary" onclick="openViewHandler()">
+					<i class="fa fa-eye"></i> 查看图片
+				</button>
+				</#resource>
+				<#resource code="truck_on">
+				<button type="button" class="btn btn-primary btn_css_disabled" id="btn_enabled" onclick="doEnableHandler(1)">
+					<i class="fa fa-play"></i> 启用
+				</button>
+				</#resource>
+				<#resource code="truck_off">
+				<button type="button" class="btn btn-primary btn_css_disabled" id="btn_disabled" onclick="doEnableHandler(2)">
+					<i class="fa fa-stop"></i> 禁用
+				</button>
+				</#resource>
+			</div>
+			<table id="grid" data-toggle="table" data-title="注册车辆列表" class="table" data-toolbar="#toolbar" data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
+				data-side-pagination="server" data-method="POST" data-content-type="application/x-www-form-urlencoded" data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
+				data-unique-id="id" data-sort-name="id" data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary" data-show-refresh="true" data-show-fullscreen="true"
+				data-show-columns="true">
+				<thead>
+					<tr>
+						<th data-radio="true"></th>
+						<th data-field="serialNo" data-align="center" data-sortable="true">过磅单号</th>
+						<th data-field="statement.serialNo" data-align="center" data-sortable="true">结算单号</th>
+						<th data-field="buyerCode" data-align="center" data-sortable="true">买方编号</th>
+						<th data-field="buyerName" data-align="center" data-sortable="true">买方名称</th>
+						<th data-field="buyerCardNo" data-align="center" data-sortable="true">买方卡号</th>
+						<th data-field="sellerCode" data-align="center" data-sortable="true">卖方编号</th>
+						<th data-field="sellerName" data-align="center" data-sortable="true">卖方名称</th>
+						<th data-field="sellerCardNo" data-align="center" data-sortable="true">卖方卡号</th>
+						<th data-field="goodsName" data-align="center" data-sortable="true">商品</th>
+						<!-- <th data-field="goodsName" data-align="center" data-sort-name="created" data-provider="datetimeProvider" data-sortable="true">商品</th> -->
+						<th data-field="roughWeight" data-align="center" data-sortable="true" data-provider="weightProvider">毛重</th>
+						<th data-field="tareWeight" data-align="center" data-sortable="true">皮重</th>
+						<th data-field="netWeight" data-align="center" data-sortable="true" data-provider="weightProvider">净重</th>
+						<th data-field="unitAmount" data-align="center" data-sortable="true">件数</th>
+						<th data-field="unitWeight" data-align="center" data-sortable="true" data-provider="weightProvider">件重</th>
+						<th data-field="unitPrice" data-align="center" data-sortable="true" data-provider="moneyProvider">件价(元/件)</th>
+						<th data-field="unitPrice" data-align="center" data-sortable="true" data-provider="moneyProvider">单价(元/公斤)</th>
+						<th data-field="statement.tradeAmount" data-align="center" data-sortable="true" data-provider="moneyProvider">交易金额</th>
+						<th data-field="statement.buyerPoundage" data-align="center" data-sortable="true" data-provider="moneyProvider">买方手续费</th>
+						<th data-field="statement.buyerActualAmount" data-align="center" data-sortable="true" data-provider="moneyProvider">卖方实收</th>
+						<th data-field="statement.sellerPoundage" data-align="center" data-sortable="true" data-provider="moneyProvider">卖方手续费</th>
+						<th data-field="statement.sellerActualAmount" data-align="center" data-sortable="true" data-provider="moneyProvider">卖方实收</th>
+						<th data-field="tradeType" data-align="center" data-sortable="true" data-provider="tradeTypeProvider">交易类型</th>
+						<th data-field="state" data-align="center" data-sortable="true" data-provider="weighingBillStateProvider">单据状态</th>
+						<th data-field="operationRecord.operatorId" data-align="center" data-sortable="true">结算员工号</th>
+						<th data-field="operationRecord.operatorName" data-align="center" data-sortable="true">结算员名称</th>
+						<th data-field="operationRecord.operationTime" data-align="center" data-sortable="true" data-provider="datetimeProvider">结算时间</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</div>
+</div>
+
+</#bs4Body>
+<div class="modal fade" id="_modal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<!--modal-lg modal-sm(默认) 通过设置mw大小调整宽度（如mw-100） modal-dialog-centered垂直居中-->
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<!-- 标题 -->
+				<h5 class="modal-title" id="exampleModalLabel">车型新增</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body"></div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+<#weighingBill_indexJs />
+</script>
