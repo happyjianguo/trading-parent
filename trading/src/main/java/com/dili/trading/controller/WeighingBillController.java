@@ -29,6 +29,7 @@ import com.dili.orders.rpc.CategoryRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
+import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.retrofitful.annotation.GET;
 import com.dili.trading.constants.TradingConstans;
@@ -55,6 +56,11 @@ public class WeighingBillController {
 	@Autowired
 	private CardRpc cardRpc;
 
+	/**
+	 * 列表页
+	 * 
+	 * @return
+	 */
 	@GetMapping("/index.html")
 	public String index() {
 		return "weighingBill/index";
@@ -219,11 +225,13 @@ public class WeighingBillController {
 		metadata.put("statement.buyerActualAmount", "moneyProvider");
 		metadata.put("statement.sellerPoundage", "moneyProvider");
 		metadata.put("statement.sellerActualAmount", "moneyProvider");
-		
+
 		metadata.put("operationRecord.operationTime", "datetimeProvider");
-		
-		metadata.put("tradeType", "tradeTypeProvider");
-		
+
+		JSONObject ddProvider = new JSONObject();
+		ddProvider.put(ValueProvider.FIELD_KEY, "dataDictionaryValueProvider");
+		metadata.put(ValueProvider.QUERY_PARAMS_KEY, "\"dd_code\":\"trade_type\"}");
+
 		query.setMetadata(metadata);
 		try {
 			List<Map> list = ValueProviderUtils.buildDataByProvider(query, output.getData());
