@@ -1,12 +1,94 @@
-    /**
-     *
-     * @Date 2019-11-06 17:30:00
-     * @author jiangchengyong
-     *
-     ***/
+    /***************************************************************************
+	 * 
+	 * @Date 2019-11-06 17:30:00
+	 * @author jiangchengyong
+	 * 
+	 **************************************************************************/
 
 
-    //时间范围
+  var customerNameQueryAutoCompleteOption = {
+        serviceUrl: '/weighingBill/listCustomerByKeyword.action',
+        paramName: 'keyword',
+        displayFieldName: 'code',
+        showNoSuggestionNotice: true,
+        minChars: 2,
+        width: 'flex',
+        noSuggestionNotice: '无此客户, 请重新输入',
+        transformResult: function (result) {
+            if(result.success){
+                let data = result.data;
+                return {
+                    suggestions: $.map(data, function (dataItem) {
+                        return $.extend(dataItem, {
+                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
+                            }
+                        );
+                    })
+                }
+            }else{
+                // bs4pop.alert(result.message, {type: 'error'});
+                return false;
+            }
+        },
+        selectFn: function (suggestion) {
+            $('#show_customer_name').val(suggestion.name);
+        }
+    };
+
+    function queryCustomerByCardNo(cardNo, domId) {
+        $('#' + domId).val('');
+        if (!cardNo || $.trim(cardNo).length !== 12) {
+            return;
+        }
+        $.ajax({
+            type:'GET',
+            url:'/customer/infoByCardNo.action?cardNo=' + cardNo,
+            dataType:'json',
+            success:function(result) {
+                if (result.success) {
+                    $('#' + domId).val(result.data.name);
+                } else {
+
+                }
+            },
+            error:function(){
+
+            }
+        });
+    }
+    
+    
+    // 结算员名称
+    var operatorNameAutoCompleteOption = {
+        serviceUrl: '/weighingBill/listOrperatorByKeyword.action',
+        paramName: 'likeName',
+        displayFieldName: 'name',
+        showNoSuggestionNotice: true,
+        noSuggestionNotice: '操作员不存在',
+        transformResult: function (result) {
+            if(result.success){
+                let data = result.data;
+                return {
+                    suggestions: $.map(data, function (dataItem) {
+                        return $.extend(dataItem, {
+                                value: dataItem.realName + '（' + dataItem.serialNumber + '）'
+                            }
+                        );
+                    })
+                }
+            }else{
+                bs4pop.alert(result.message, {type: 'error'});
+                return false;
+            }
+        },
+        selectFn: function (suggestion) {
+            $('#certificateNumber, #_certificateNumber').val(suggestion.certificateNumber);
+            $('#customerCellphone').val(suggestion.contactsPhone);
+            $('#certificateNumber, #_certificateNumber, #customerCellphone').valid();
+        }
+    };
+
+    // 时间范围
     lay('.laydatetime').each(function () {
         laydate.render({
             elem: this
@@ -16,17 +98,17 @@
         });
     });
 
-    /*********************变量定义区 begin*************/
-        //行索引计数器
-        //如 let itemIndex = 0;
+    /** *******************变量定义区 begin************ */
+        // 行索引计数器
+        // 如 let itemIndex = 0;
     let _grid = $('#grid');
     let _form = $('#_form');
     let _modal = $('#_modal');
 
-    /*********************变量定义区 end***************/
+    /** *******************变量定义区 end************** */
 
 
-    /******************************驱动执行区 begin***************************/
+    /** ****************************驱动执行区 begin************************** */
     $(function () {
         $(window).resize(function () {
             _grid.bootstrapTable('resetView')
@@ -36,12 +118,15 @@
         _grid.bootstrapTable('refreshOptions', {url: '/weighingBill/listPage.action', pageSize: parseInt(size)});
     });
 
-    /******************************驱动执行区 end****************************/
+    /** ****************************驱动执行区 end*************************** */
 
-    /*****************************************函数区 begin************************************/
     /**
-     * 打开新增窗口
-     */
+	 * ***************************************函数区
+	 * begin***********************************
+	 */
+    /**
+	 * 打开新增窗口
+	 */
     function openInsertHandler() {
         $("#_modal").modal();
 
@@ -51,8 +136,8 @@
     }
 
     /**
-     * 打开修改窗口
-     */
+	 * 打开修改窗口
+	 */
     function openUpdateHandler(id) {
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
@@ -65,8 +150,8 @@
         _modal.find('.modal-title').text('修改注册车辆');
     }
     /**
-     * 打开查看窗口
-     */
+	 * 打开查看窗口
+	 */
     function openViewHandler(id) {
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
@@ -79,42 +164,18 @@
         _modal.find('.modal-title').text('查看图片');
     }
 
-    function openDeleteHandler(id) {
+    function openDetailHandler(id) {
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
             return;
         }
-        bs4pop.confirm("确定要删除吗", {title: "确认提示"}, function (sure) {
-            if (sure) {
-                $.ajax({
-                    type: "POST",
-                    dataType: "json",
-                    url: '/truck/delete.action',
-                    data: {id: rows[0].id},
-                    success: function (data) {
-                        bui.loading.hide();
-                        if (data.code != '200') {
-                            bs4pop.alert(data.message, {type: 'error'});
-                            return;
-                        }
-                        // bs4pop.alert('成功', {type: 'success '}, function () {
-                        //     window.location.reload();
-                        // });
-                        window.location.reload();
-                    },
-                    error: function () {
-                        bui.loading.hide();
-                        bs4pop.alert("车型删除失败!", {type: 'error'});
-                    }
-                });
-            }
-        });
+        window.location.href='${contextPath}/weighingBill/detail.html?id='+rows[0].id;
     }
 
     /**
-     *  保存及更新表单数据
-     */
+	 * 保存及更新表单数据
+	 */
     function saveOrUpdateHandler() {
         var form = $("#_form");
         if (form.validate().form() != true) {
@@ -124,10 +185,10 @@
         bui.loading.show('努力提交中，请稍候。。。');
         let _formData = bui.util.removeKeyStartWith(form.serializeObject(), "_");
         let _url = null;
-        //没有id就新增
+        // 没有id就新增
         if (_formData.id == null || _formData.id == "") {
             _url = "${contextPath}/booth/insert";
-        } else {//有id就修改
+        } else {// 有id就修改
             _url = "${contextPath}/booth/update.action";
         }
         $.ajax({
@@ -155,30 +216,36 @@
 
 
     /**
-     * 查询处理
-     */
+	 * 查询处理
+	 */
     function queryDataHandler() {
         _grid.bootstrapTable('refresh');
     }
 
     /**
-     * table参数组装
-     * 可修改queryParams向服务器发送其余的参数
-     * @param params
-     */
+	 * table参数组装 可修改queryParams向服务器发送其余的参数
+	 * 
+	 * @param params
+	 */
     function queryParams(params) {
         let temp = {
-            rows: params.limit,   //页面大小
-            page: ((params.offset / params.limit) + 1) || 1, //页码
+            rows: params.limit,   // 页面大小
+            page: ((params.offset / params.limit) + 1) || 1, // 页码
             sort: params.sort,
             order: params.order
         };
         return $.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
     }
 
-    /*****************************************函数区 end**************************************/
+    /**
+	 * ***************************************函数区
+	 * end*************************************
+	 */
 
-    /*****************************************自定义事件区 begin************************************/
+    /**
+	 * ***************************************自定义事件区
+	 * begin***********************************
+	 */
 
 
     function updateStatus(status, queryBtn){
@@ -212,4 +279,7 @@
             }
         })
     })
-    /*****************************************自定义事件区 end**************************************/
+    /**
+	 * ***************************************自定义事件区
+	 * end*************************************
+	 */

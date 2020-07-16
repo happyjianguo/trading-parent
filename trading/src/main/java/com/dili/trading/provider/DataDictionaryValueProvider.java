@@ -1,5 +1,16 @@
 package com.dili.trading.provider;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.alibaba.fastjson.JSONObject;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.dto.DTOUtils;
@@ -11,16 +22,6 @@ import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * <B>Description</B>
@@ -42,13 +43,13 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
     @Override
     public List<ValuePair<?>> getLookupList(Object val, Map metaMap, FieldMeta fieldMeta) {
         Object queryParams = metaMap.get(QUERY_PARAMS_KEY);
-        if (queryParams == null) {
+        if(queryParams == null) {
             return Lists.newArrayList();
         }
         List<ValuePair<?>> valuePairs = Lists.newArrayList();
         BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode(getDdCode(queryParams.toString()));
         if (output.isSuccess() && CollectionUtils.isNotEmpty(output.getData())) {
-            valuePairs = output.getData().stream().filter(Objects::nonNull).filter(f -> f.getCode().contains(val.toString()) || f.getName().contains(val.toString())).sorted(Comparator.comparing(DataDictionaryValue::getOrderNumber)).map(t -> {
+            valuePairs = output.getData().stream().filter(Objects::nonNull).sorted(Comparator.comparing(DataDictionaryValue::getOrderNumber)).map(t -> {
                 ValuePairImpl<?> vp = new ValuePairImpl<>(t.getName(), t.getCode());
                 return vp;
             }).collect(Collectors.toList());
@@ -59,7 +60,7 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
     @Override
     protected List getFkList(List<String> ddvIds, Map metaMap) {
         Object queryParams = metaMap.get(QUERY_PARAMS_KEY);
-        if (queryParams == null) {
+        if(queryParams == null) {
             return Lists.newArrayList();
         }
         BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode(getDdCode(queryParams.toString()));
@@ -85,7 +86,6 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
 
     /**
      * 获取数据字典编码
-     *
      * @return
      */
     public String getDdCode(String queryParams) {
