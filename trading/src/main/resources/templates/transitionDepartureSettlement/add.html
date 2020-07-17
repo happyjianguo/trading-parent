@@ -80,11 +80,12 @@
 <script>
     $(function () {
         $('#grossWeight').on('keyup', function (e) {
-            $('#netWeight').val(parseFloat($('#grossWeight').val()) - parseFloat($('#tareWeight').val()));
+            $('#netWeight').val(parseFloat($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseFloat($('#tareWeight').val() == null ? 0 : $('#tareWeight').val()));
             let netWeight = $('#netWeight').val();
+            let id = $('#id').val();
             $.ajax({
                 type: "POST",
-                data: {netWeight: netWeight, id},
+                data: {netWeight: netWeight, id: id},
                 dataType: "json",
                 url: "/transitionDepartureSettlement/fee.action",
                 async: true,
@@ -96,9 +97,9 @@
             });
         })
         $('#tareWeight').on('keyup', function (e) {
-            $('#netWeight').val(parseFloat($('#grossWeight').val()) - parseFloat($('#tareWeight').val()));
+            $('#netWeight').val(parseFloat($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseFloat($('#tareWeight').val() == null ? 0 : $('#tareWeight').val()));
             let netWeight = $('#netWeight').val();
-            let id = $('#id').valid();
+            let id = $('#id').val();
             $.ajax({
                 type: "POST",
                 data: {netWeight: netWeight, id: id},

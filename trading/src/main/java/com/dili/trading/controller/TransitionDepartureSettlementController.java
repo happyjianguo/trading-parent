@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 结算单接口
@@ -211,6 +212,9 @@ public class TransitionDepartureSettlementController {
     @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput getFee(BigDecimal netWeight, Long id) {
+        if (Objects.isNull(netWeight)) {
+            return BaseOutput.failure("重量不能为空");
+        }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         return transitionDepartureSettlementRpc.getFee(netWeight, userTicket.getFirmId(), userTicket.getDepartmentId(), id);
     }
