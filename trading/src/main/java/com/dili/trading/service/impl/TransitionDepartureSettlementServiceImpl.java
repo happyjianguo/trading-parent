@@ -73,8 +73,9 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         transitionDepartureSettlement.setOperatorCode(userTicket.getUserName());
         BaseOutput<TransitionDepartureSettlement> transitionDepartureSettlementBaseOutput = transitionDepartureSettlementRpc.insertTransitionDepartureSettlement(transitionDepartureSettlement);
         if (transitionDepartureSettlementBaseOutput.isSuccess()) {
-            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, transitionDepartureSettlementBaseOutput.getData().getId());
-            LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, transitionDepartureSettlementBaseOutput.getData().getCode());
+            TransitionDepartureSettlement data = transitionDepartureSettlementBaseOutput.getData();
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, data.getCode());
             LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
             LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
         }
@@ -94,8 +95,9 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         transitionDepartureSettlement.setRevocatorTime(LocalDateTime.now());
         BaseOutput<TransitionDepartureSettlement> revocator = transitionDepartureSettlementRpc.revocator(transitionDepartureSettlement);
         if (revocator.isSuccess()) {
-            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, transitionDepartureSettlement.getId());
-            LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, transitionDepartureSettlement.getCode());
+            TransitionDepartureSettlement data = revocator.getData();
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, data.getCode());
             LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
             LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
         }
@@ -106,37 +108,16 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
     @BusinessLogger(businessType = "trading_orders", content = "转离场结算单支付", operationType = "update", systemCode = "ORDERS")
     @Transactional(propagation = Propagation.REQUIRED)
     public BaseOutput pay(Long id, String password) {
-        BaseOutput<TransitionDepartureSettlement> pay = transitionDepartureSettlementRpc.pay(id, password);
-        if (!pay.isSuccess()) {
-            return pay;
-        }
-        TransitionDepartureSettlement data = pay.getData();
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        //设置进门收费相关信息，并调用新增
-        VehicleAccessDTO vehicleAccessDTO = new VehicleAccessDTO();
-        vehicleAccessDTO.setMarketId(userTicket.getFirmId());
-        vehicleAccessDTO.setPlateNumber(data.getPlate());
-        vehicleAccessDTO.setVehicleTypeId(data.getCarTypeId());
-        vehicleAccessDTO.setBarrierType(3);
-        vehicleAccessDTO.setEntryTime(new Date());
-        vehicleAccessDTO.setAmount(data.getChargeAmount());
-        vehicleAccessDTO.setPayType(3);
-        vehicleAccessDTO.setCasherId(userTicket.getId());
-        vehicleAccessDTO.setCasherName(userTicket.getRealName());
-        vehicleAccessDTO.setCasherDepartmentId(userTicket.getDepartmentId());
-        vehicleAccessDTO.setPayTime(new Date());
-        vehicleAccessDTO.setOperatorId(userTicket.getId());
-        vehicleAccessDTO.setOperatorName(userTicket.getRealName());
-        vehicleAccessDTO.setCreated(new Date());
-        BaseOutput<VehicleAccessDTO> vehicleAccessDTOBaseOutput = jmsfRpc.add(vehicleAccessDTO);
-        if (!vehicleAccessDTOBaseOutput.isSuccess()) {
-            throw new RuntimeException("进门收费单-->新增失败");
+        BaseOutput<TransitionDepartureSettlement> pay = transitionDepartureSettlementRpc.pay(id, password, userTicket.getFirmId(), userTicket.getDepartmentId(), userTicket.getUserName(), userTicket.getId(), userTicket.getRealName());
+        if (pay.isSuccess()) {
+            TransitionDepartureSettlement data = pay.getData();
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, data.getCode());
+            LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
+            LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
         }
-        LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
-        LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, data.getCode());
-        LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
-        LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
-        return BaseOutput.success();
+        return pay;
     }
 
 }

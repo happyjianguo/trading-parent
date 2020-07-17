@@ -86,7 +86,7 @@ public interface TransitionDepartureSettlementRpc {
      * @return
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/pay", method = {RequestMethod.POST})
-    BaseOutput<TransitionDepartureSettlement> pay(@RequestParam(value = "id") Long id, @RequestParam(value = "password") String password);
+    BaseOutput<TransitionDepartureSettlement> pay(@RequestParam(value = "id") Long id, @RequestParam(value = "password") String password, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId, @RequestParam(value = "operatorCode") String operatorCode, @RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "operatorName") String operatorName);
 
     /**
      * 撤销
@@ -96,7 +96,14 @@ public interface TransitionDepartureSettlementRpc {
     @RequestMapping(value = "/api/transitionDepartureSettlement/revocator", method = {RequestMethod.POST})
     BaseOutput<TransitionDepartureSettlement> revocator(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
 
-
+    /**
+     * 掉用计费规则
+     *
+     * @param netWeight
+     * @param marketId
+     * @param departmentId
+     * @return
+     */
     @RequestMapping(value = "/api/transitionDepartureSettlement/fee", method = {RequestMethod.POST})
     BaseOutput getFee(@RequestParam(value = "netWeight") BigDecimal netWeight, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId);
 }
