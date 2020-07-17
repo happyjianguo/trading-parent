@@ -1,0 +1,185 @@
+<#bs4Body>
+<div class="container-fluid">
+	<#bs4nav>
+	<form class="form" id="queryForm" role="form">
+		<div class="row">
+			<div class="form-group col">
+				<h4>基本信息</h4>
+			</div>
+		</div>
+		<div class="row  row-cols-4">
+			<div class="form-group col">
+				<label for="">过磅单号</label> <input type="text" class="form-control" readonly="readonly" value="${model.serialNo}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">结算单号</label> <input type="text" class="form-control" readonly="readonly" value="${model.statement.serialNo}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">单据状态</label> <input type="text" class="form-control" readonly="readonly" value="${model.state}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">计量单位</label> <input type="text" class="form-control" readonly="readonly" value="${model.measureType}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">卖方编号</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.sellerCode}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">卖方名称</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.sellerName}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">联系方式</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.sellerContact}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">买方编号</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.buyerCode}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">买方名称</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.buyerName}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">联系方式</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.buyerContact}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">交易类型</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.tradeType}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">商品编码</label>
+				<input type="text" class="form-control" readonly="readonly" value="${model.goodsCode}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">商品名称</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.goodsName}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">卖方编号</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.buyerCode}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">单价(元/公斤)</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.unitPrice}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">商品产地</label>
+				<input type="text" class="form-control" readonly="readonly" value="${model.goodsOriginCityId}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">车牌号</label> <input type="text" class="form-control" readonly="readonly" value="${model.plateNumber}" placeholder="">
+			</div>
+		</div>
+		<div class="row">
+			<div class="form-group col">
+				<h4>称重信息</h4>
+			</div>
+		</div>
+		<div class="row  row-cols-4">
+			<%if(model.$_measureType==@com.dili.orders.domain.MeasureType.WEIGHT.getValue()){%>
+			<div class="form-group col">
+				<label for="">净重/公斤</label> <input type="text" class="form-control" readonly="readonly" value="${model.netWeight}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">毛重/公斤</label> <input type="text" class="form-control" readonly="readonly" value="${model.roughWeight}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">过重时间</label> <input type="text" class="form-control" readonly="readonly" value="${model.createdTime}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">皮重/公斤</label> <input type="text" class="form-control" readonly="readonly" value="${model.tareWeight}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">皮重单号</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.tareBillNumber}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">估计净重/公斤</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.estimatedNetWeight}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">除杂比例</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.subtractionRate}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">除杂重量/公斤</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.subtractionWeight}" placeholder="">
+			</div>
+			<%}else{%>
+			<div class="form-group col">
+				<label for="">净重/公斤</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.netWeight}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">件数</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.unitAmount}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">件重/公斤</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model.unitWeight}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">件价</label>
+				<input type="text" class="form-control" readonly="readonly" value="${model.unitPrice}" placeholder="">
+			</div>
+			<%}%>
+		</div>
+		<div class="row">
+			<div class="form-group col">
+				<h4>结算信息</h4>
+			</div>
+		</div>
+		<div class="row  row-cols-4">
+			<%if(model.state==@com.dili.orders.domain.WeighingBillState.FROZEN.getValue()){%>
+			<div class="form-group col">
+				<label for="">冻结金额</label>
+				<input type="text" class="form-control" readonly="readonly" value="${model.statement.frozenAmount}" placeholder="">
+			</div>
+			<%}else{%>
+			<div class="form-group col">
+				<label for="">买方手续费</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model['statement.buyerPoundage']}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">买方实付</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model['statement.buyerActualAmount']}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">卖方手续费</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model['statement.sellerPoundage']}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">卖方实收</label>
+				<input type="text" class="form-control" readonly="readonly" value="${model['statement.sellerActualAmount']}" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">交易金额</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${model['statement.tradeAmount']}" placeholder="">
+			</div>
+			<%}%>
+		</div>
+		<div class="row">
+			<div class="form-group col">
+				<h4>称重信息</h4>
+			</div>
+		</div>
+		<div class="row  row-cols-4">
+		<%for(item in model.records){%>
+	        <div class="form-group col">
+				<label for="">${item.operationTypeName}人员</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${item.operatorName}" placeholder="">
+			</div>
+			 <div class="form-group col">
+				<label for="">${item.operationTypeName}时间</label> 
+				<input type="text" class="form-control" readonly="readonly" value="${item.operationTime}" placeholder="">
+			</div>
+	    <%}%>
+		</div>
+	</form>
+	</#bs4nav>
+	<hr>
+</div>
+
+</#bs4Body>
