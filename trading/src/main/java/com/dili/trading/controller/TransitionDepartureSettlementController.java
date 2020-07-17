@@ -210,8 +210,8 @@ public class TransitionDepartureSettlementController {
      */
     @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput getFee(BigDecimal netWeight) {
+    public BaseOutput getFee(BigDecimal netWeight, Long id) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        return transitionDepartureSettlementRpc.getFee(netWeight, userTicket.getFirmId(), userTicket.getDepartmentId());
+        return transitionDepartureSettlementRpc.getFee(netWeight, userTicket.getFirmId(), userTicket.getDepartmentId(), id);
     }
 }

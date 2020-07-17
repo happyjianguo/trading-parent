@@ -3,6 +3,7 @@ package com.dili.trading.rpc;
 import com.dili.orders.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
+import org.apache.juli.logging.Log;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -105,5 +106,5 @@ public interface TransitionDepartureSettlementRpc {
      * @return
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/fee", method = {RequestMethod.POST})
-    BaseOutput getFee(@RequestParam(value = "netWeight") BigDecimal netWeight, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId);
+    BaseOutput getFee(@RequestParam(value = "netWeight") BigDecimal netWeight, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId, @RequestParam(value = "id") Long id);
 }
