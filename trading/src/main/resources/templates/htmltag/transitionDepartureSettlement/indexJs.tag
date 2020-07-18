@@ -85,11 +85,11 @@
                         bui.util.debounce(diaWindow.saveOrUpdateHandler, 1000, true)()
                         return false;
                     }
-                },{
-                label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
+                }, {
+                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
 
-                }
-            }]
+                    }
+                }]
         });
 
     }
@@ -97,7 +97,7 @@
     function verificationUsernamePassword(id) {
         dia = bs4pop.dialog({
             title: '支付确认',//对话框title
-            content: '${contextPath}/transitionDepartureSettlement/verificationUsernamePassword.html?id='+id, //对话框内容，可以是 string、element，$object
+            content: '${contextPath}/transitionDepartureSettlement/verificationUsernamePassword.html?id=' + id, //对话框内容，可以是 string、element，$object
             width: '60%',//宽度
             height: '95%',//高度
             isIframe: true,//默认是页面层，非iframe
@@ -106,7 +106,7 @@
                     label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
 
                     }
-                },{
+                }, {
                     label: '保存', className: 'btn btn-primary', onClick(e, $iframe) {
                         let diaWindow = $iframe[0].contentWindow;
                         bui.util.debounce(diaWindow.pay, 1000, true)()
@@ -127,7 +127,7 @@
             bs4pop.alert('请选中一条数据');
             return false;
         }
-        if (rows[0].$_pay_status == 2) {
+        if (rows[0].$_payStatus != 2) {
             bs4pop.alert('只有已结算的单子可以撤销');
             return false;
         }
@@ -141,7 +141,7 @@
                 label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
 
                 }
-            },{
+            }, {
                 label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
                     let diaWindow = $iframe[0].contentWindow;
                     bui.util.debounce(diaWindow.revocator, 1000, true)()

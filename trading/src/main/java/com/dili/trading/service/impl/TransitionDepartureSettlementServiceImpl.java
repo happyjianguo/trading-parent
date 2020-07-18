@@ -1,15 +1,9 @@
 package com.dili.trading.service.impl;
 
-import com.dili.jmsf.microservice.sdk.dto.VehicleAccessDTO;
 import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.glossary.LoggerConstant;
-import com.dili.orders.domain.TransitionDepartureApply;
 import com.dili.orders.domain.TransitionDepartureSettlement;
-import com.dili.orders.dto.FeeDto;
-import com.dili.orders.dto.PaymentTradeCommitDto;
-import com.dili.orders.dto.PaymentTradeCommitResponseDto;
-import com.dili.orders.dto.UserAccountCardResponseDto;
 import com.dili.orders.rpc.AccountRpc;
 import com.dili.orders.rpc.JmsfRpc;
 import com.dili.orders.rpc.PayRpc;
@@ -26,10 +20,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TransitionDepartureSettlementServiceImpl implements TransitionDepartureSettlementService {
@@ -109,7 +99,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
     @Transactional(propagation = Propagation.REQUIRED)
     public BaseOutput pay(Long id, String password) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        BaseOutput<TransitionDepartureSettlement> pay = transitionDepartureSettlementRpc.pay(id, password, userTicket.getFirmId(), userTicket.getDepartmentId(), userTicket.getUserName(), userTicket.getId(), userTicket.getRealName());
+        BaseOutput<TransitionDepartureSettlement> pay = transitionDepartureSettlementRpc.pay(id, password, userTicket.getFirmId(), userTicket.getDepartmentId(), userTicket.getUserName(), userTicket.getId(), userTicket.getRealName(), userTicket.getUserName());
         if (pay.isSuccess()) {
             TransitionDepartureSettlement data = pay.getData();
             LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
