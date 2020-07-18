@@ -29,7 +29,7 @@ public class TransitionDepartureApplyServiceImpl implements TransitionDepartureA
     public BaseOutput insert(TransitionDepartureApply transitionDepartureApply) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //设置code编号
-        transitionDepartureApply.setCode(uidRpc.getCode().getData());
+        transitionDepartureApply.setCode(uidRpc.bizNumber("sg_zlc_apply").getData());
         //设置申请时间
         transitionDepartureApply.setOriginatorTime(LocalDateTime.now());
         //设置申请员工id
