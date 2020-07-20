@@ -45,4 +45,10 @@ public interface WeighingBillRpc {
 
 	@RequestMapping(value = "/api/weighingBill/detail")
 	BaseOutput<WeighingBillDetailDto> findDetailDtoById(@RequestParam Long id);
+
+	@RequestMapping(value = "/api/weighingBill/operatorInvalidate")
+	BaseOutput<Object> operatorInvalidate(@RequestParam Long id, @RequestParam Long operatorId, @RequestParam String operatorPassword);
+
+	@RequestMapping(value = "/api/weighingBill/operatorWithdraw")
+	BaseOutput<Object> operatorWithdraw(@RequestParam Long id, @RequestParam Long operatorId, @RequestParam String operatorPassword);
 }

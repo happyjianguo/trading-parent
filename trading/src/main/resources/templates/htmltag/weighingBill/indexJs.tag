@@ -60,9 +60,9 @@
     
     // 结算员名称
     var operatorNameAutoCompleteOption = {
-        serviceUrl: '/weighingBill/listOrperatorByKeyword.action',
-        paramName: 'likeName',
-        displayFieldName: 'name',
+        serviceUrl: '/weighingBill/listOperatorByKeyword.action',
+        paramName: 'keyword',
+        displayFieldName: 'realName',
         showNoSuggestionNotice: true,
         noSuggestionNotice: '操作员不存在',
         transformResult: function (result) {
@@ -127,12 +127,87 @@
     /**
 	 * 打开新增窗口
 	 */
-    function openInsertHandler() {
-        $("#_modal").modal();
-
-        $('#_modal .modal-body').load("/truck/add.html");
-        _modal.find('.modal-title').text('新增注册车辆');
-
+    function invalidate() {
+    	let rows = _grid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        if (rows[0].$_state!=1) {
+        	bs4pop.alert('该单据当前状态不能进行作废操作！');
+        	return;
+        }
+    	bs4pop.confirm(" 确定作废当前单据吗？", {title: "确认提示"}, function (sure) {
+            if (sure) {
+		        $('#_modal .modal-body').load("/weighingBill/operatorInvalidate.html?id="+rows[0].id);
+		        _modal.find('.modal-title').text('作废校验');
+            	$("#_modal").modal();
+            }
+        });
+    }
+    
+    function invalidateHandler(){
+                    $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url:'/weighingBill/operatorInvalidate.action',
+                    data: $('#validatePasswordForm').serialize(),
+                    success: function (data) {
+                        bui.loading.hide();
+                        if (data.code != '200') {
+                            bs4pop.alert(data.message, {type: 'error'});
+                            return;
+                        }
+                        window.location.reload();
+                    },
+                    error: function (data) {
+                    	console.log(data);
+                        bui.loading.hide();
+                        bs4pop.alert("请求失败!", {type: 'error'});
+                    }
+                });
+    }
+    
+     function withdraw() {
+    	let rows = _grid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        if (rows[0].$_state!=4) {
+        	bs4pop.alert('该单据当前状态不能进行撤销操作！');
+        	return;
+        }
+    	bs4pop.confirm(" 确定撤销当前单据吗？", {title: "确认提示"}, function (sure) {
+            if (sure) {
+		        $('#_modal .modal-body').load("/weighingBill/operatorWithdraw.html?id="+rows[0].id);
+		        _modal.find('.modal-title').text('作废校验');
+            	$("#_modal").modal();
+            }
+        });
+    }
+    
+    function withdrawHandler(){
+                    $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url:'/weighingBill/operatorWithdraw.action',
+                    data: $('#validatePasswordForm').serialize(),
+                    success: function (data) {
+                        bui.loading.hide();
+                        if (data.code != '200') {
+                            bs4pop.alert(data.message, {type: 'error'});
+                            return;
+                        }
+                        window.location.reload();
+                    },
+                    error: function (data) {
+                    	debugger;
+                    	console.log(data);
+                        bui.loading.hide();
+                        bs4pop.alert("请求失败!", {type: 'error'});
+                    }
+                });
     }
 
     /**

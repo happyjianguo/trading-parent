@@ -56,6 +56,8 @@ import com.dili.uap.sdk.session.SessionContext;
 public class WeighingBillController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WeighingBillController.class);
+	private static final String INVALIDATE = "invalidate";
+	private static final String WITHDRAW = "withdraw";
 	@Autowired
 	private WeighingBillRpc weighingBillRpc;
 	@Autowired
@@ -321,5 +323,33 @@ public class WeighingBillController {
 			return this.index();
 		}
 
+	}
+
+	@GetMapping("/operatorInvalidate.html")
+	public String validatePassword(Long id, ModelMap modelMap) {
+		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "invalidateHandler");
+		return "weighingBill/validatePassword";
+	}
+
+	@ResponseBody
+	@PostMapping("/operatorInvalidate.action")
+	public BaseOutput<Object> operatorInvalidate(Long id, String operatorPassword, ModelMap modelMap) {
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		BaseOutput<Object> output = this.weighingBillRpc.operatorInvalidate(id, user.getId(), operatorPassword);
+		return output;
+	}
+	
+	@GetMapping("/operatorWithdraw.html")
+	public String operatorWithdraw(Long id, ModelMap modelMap) {
+		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "withdrawHandler");
+		return "weighingBill/validatePassword";
+	}
+
+	@ResponseBody
+	@PostMapping("/operatorWithdraw.action")
+	public BaseOutput<Object> operatorWithdraw(Long id, String operatorPassword, ModelMap modelMap) {
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		BaseOutput<Object> output = this.weighingBillRpc.operatorWithdraw(id, user.getId(), operatorPassword);
+		return output;
 	}
 }
