@@ -260,6 +260,13 @@ public class WeighingBillController {
 		}
 	}
 
+	/**
+	 * 查询客户信息
+	 * 
+	 * @param name
+	 * @param keyword
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping("/listCustomerByKeyword.action")
 	public BaseOutput<?> listCustomerByKeyword(String name, String keyword) {
@@ -274,6 +281,13 @@ public class WeighingBillController {
 		return output;
 	}
 
+	/**
+	 * 查询结算员信息
+	 * 
+	 * @param name
+	 * @param keyword
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping("/listOperatorByKeyword.action")
 	public BaseOutput<?> listOperatorByKeyword(String name, String keyword) {
@@ -282,6 +296,13 @@ public class WeighingBillController {
 		return this.useRpc.listByExample(userQuery);
 	}
 
+	/**
+	 * 详情页
+	 * 
+	 * @param id
+	 * @param modelMap
+	 * @return
+	 */
 	@GetMapping("/detail.html")
 	public String detail(Long id, ModelMap modelMap) {
 		BaseOutput<WeighingBillDetailDto> output = this.weighingBillRpc.findDetailDtoById(id);
@@ -325,12 +346,27 @@ public class WeighingBillController {
 
 	}
 
+	/**
+	 * 操作员撤销验证密码页面
+	 * 
+	 * @param id
+	 * @param modelMap
+	 * @return
+	 */
 	@GetMapping("/operatorInvalidate.html")
 	public String validatePassword(Long id, ModelMap modelMap) {
 		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "invalidateHandler");
 		return "weighingBill/validatePassword";
 	}
 
+	/**
+	 * 操作员撤销
+	 * 
+	 * @param id
+	 * @param operatorPassword
+	 * @param modelMap
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("/operatorInvalidate.action")
 	public BaseOutput<Object> operatorInvalidate(Long id, String operatorPassword, ModelMap modelMap) {
@@ -338,13 +374,28 @@ public class WeighingBillController {
 		BaseOutput<Object> output = this.weighingBillRpc.operatorInvalidate(id, user.getId(), operatorPassword);
 		return output;
 	}
-	
+
+	/**
+	 * 操作员作废密码验证页面
+	 * 
+	 * @param id
+	 * @param modelMap
+	 * @return
+	 */
 	@GetMapping("/operatorWithdraw.html")
 	public String operatorWithdraw(Long id, ModelMap modelMap) {
 		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "withdrawHandler");
 		return "weighingBill/validatePassword";
 	}
 
+	/**
+	 * 操作员作废
+	 * 
+	 * @param id
+	 * @param operatorPassword
+	 * @param modelMap
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("/operatorWithdraw.action")
 	public BaseOutput<Object> operatorWithdraw(Long id, String operatorPassword, ModelMap modelMap) {
