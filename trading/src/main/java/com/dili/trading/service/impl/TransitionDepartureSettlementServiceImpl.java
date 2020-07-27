@@ -75,7 +75,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "转离场结算单撤销", operationType = "update", systemCode = "ORDERS")
     @Transactional(propagation = Propagation.REQUIRED)
-    public BaseOutput revocator(TransitionDepartureSettlement transitionDepartureSettlement) {
+    public BaseOutput revocator(TransitionDepartureSettlement transitionDepartureSettlement, String password) {
         //获取当前登录用户
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //修改结算单的支付状态
@@ -83,7 +83,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         transitionDepartureSettlement.setRevocatorId(userTicket.getId());
         transitionDepartureSettlement.setRevocatorName(userTicket.getRealName());
         transitionDepartureSettlement.setRevocatorTime(LocalDateTime.now());
-        BaseOutput<TransitionDepartureSettlement> revocator = transitionDepartureSettlementRpc.revocator(transitionDepartureSettlement);
+        BaseOutput<TransitionDepartureSettlement> revocator = transitionDepartureSettlementRpc.revocator(transitionDepartureSettlement, userTicket.getId(), password);
         if (revocator.isSuccess()) {
             TransitionDepartureSettlement data = revocator.getData();
             LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());

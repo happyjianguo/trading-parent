@@ -95,7 +95,7 @@ public interface TransitionDepartureSettlementRpc {
      * @return
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/revocator", method = {RequestMethod.POST})
-    BaseOutput<TransitionDepartureSettlement> revocator(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
+    BaseOutput<TransitionDepartureSettlement> revocator(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement, @RequestParam(value = "revocatorId") Long revocatorId, @RequestParam(value = "revocatorPassword") String revocatorPassword);
 
     /**
      * 掉用计费规则
