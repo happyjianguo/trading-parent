@@ -21,7 +21,7 @@ public interface TransitionDepartureSettlementService {
      * @param transitionDepartureSettlement
      * @return
      */
-    BaseOutput revocator(TransitionDepartureSettlement transitionDepartureSettlement);
+    BaseOutput revocator(TransitionDepartureSettlement transitionDepartureSettlement,String password);
 
     /**
      * 缴费，需要调用支付系统收钱，并且更改对应申请单的支付状态为已支付

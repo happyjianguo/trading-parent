@@ -190,7 +190,7 @@ public class TransitionDepartureSettlementController {
     @ResponseBody
     public BaseOutput revocator(Long id, String password) {
         //通过用户密码去uap验证，暂未对接
-        return transitionDepartureSettlementService.revocator(transitionDepartureSettlementRpc.getOneById(id).getData());
+        return transitionDepartureSettlementService.revocator(transitionDepartureSettlementRpc.getOneById(id).getData(),password);
     }
 
     /**
