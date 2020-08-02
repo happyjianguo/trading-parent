@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.dili.orders.constants.TradingConstans;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.BatchProviderMeta;
@@ -15,7 +16,6 @@ import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.ValuePairImpl;
 import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
-import com.dili.trading.constants.TradingConstans;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 

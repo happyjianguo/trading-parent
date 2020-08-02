@@ -1,11 +1,11 @@
 package com.dili.trading.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,24 +22,22 @@ import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
-import com.dili.orders.domain.WeighingBill;
-import com.dili.orders.domain.WeighingBillOperationRecord;
-import com.dili.orders.domain.WeighingStatement;
+import com.dili.orders.constants.TradingConstans;
+import com.dili.orders.dto.AccountPasswordValidateDto;
 import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
 import com.dili.orders.dto.WeighingBillQueryDto;
-import com.dili.orders.dto.WeighingBillUpdateDto;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.orders.rpc.CategoryRpc;
+import com.dili.orders.rpc.PayRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
-import com.dili.ss.retrofitful.annotation.GET;
-import com.dili.trading.constants.TradingConstans;
+import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
 import com.dili.trading.rpc.WeighingBillRpc;
 import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.domain.UserTicket;
@@ -70,6 +68,8 @@ public class WeighingBillController {
 	private CustomerRpc customerRpc;
 	@Autowired
 	private UserRpc useRpc;
+	@Autowired
+	private PayRpc payRpc;
 
 	/**
 	 * 列表页
@@ -82,55 +82,41 @@ public class WeighingBillController {
 	}
 
 	/**
-	 * 新增过磅单
-	 * 
-	 * @param weighingBill
-	 * @return
-	 */
-	@ResponseBody
-	@PostMapping("/add.action")
-	public BaseOutput<String> add(@RequestBody WeighingBill weighingBill) {
-		UserTicket user = SessionContext.getSessionContext().getUserTicket();
-		if (user == null) {
-			return BaseOutput.failure("用户未登录");
-		}
-		weighingBill.setCreatorId(user.getId());
-		return this.weighingBillRpc.add(weighingBill);
-	}
-
-	/**
-	 * 修改过磅单
-	 * 
-	 * @param weighingBill
-	 * @return
-	 */
-	@ResponseBody
-	@PostMapping("/update.action")
-	public BaseOutput<Object> update(@RequestBody WeighingBillUpdateDto weighingBill) {
-		UserTicket user = SessionContext.getSessionContext().getUserTicket();
-		if (user == null) {
-			return BaseOutput.failure("用户未登录");
-		}
-		weighingBill.setModifierId(user.getId());
-		return this.weighingBillRpc.update(weighingBill);
-	}
-
-	/**
 	 * 结算
 	 * 
-	 * @param serialNo
-	 * @param buyerPassword
-	 * @param sellerPassword
+	 * @param weighingBill 过磅单和卖家密码数据
 	 * @return
 	 */
 	@ResponseBody
-	@PostMapping("/settle.action")
-	public BaseOutput<Object> settle(String serialNo, String buyerPassword, String sellerPassword) {
+	@PostMapping("/saveAndSettle.action")
+	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-		return this.weighingBillRpc.settle(serialNo, buyerPassword, sellerPassword, user.getId());
+		AccountPasswordValidateDto dto = new AccountPasswordValidateDto();
+		dto.setAccountId(weighingBill.getBuyerAccount());
+		dto.setPassword(weighingBill.getBuyerPassword());
+		BaseOutput<?> output = this.payRpc.validateAccountPassword(dto);
+		if (!output.isSuccess()) {
+			return output;
+		}
+		if (StringUtils.isBlank(weighingBill.getSerialNo())) {
+			weighingBill.setCreatorId(user.getId());
+			output = this.weighingBillRpc.add(weighingBill);
+			if (!output.isSuccess()) {
+				return output;
+			}
+			output = this.weighingBillRpc.settle(output.getData().toString(), weighingBill.getBuyerPassword(), user.getId());
+		} else {
+			weighingBill.setModifierId(user.getId());
+			output = this.weighingBillRpc.update(weighingBill);
+			if (!output.isSuccess()) {
+				return output;
+			}
+			output = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId());
+		}
+		return output;
 	}
 
 	/**

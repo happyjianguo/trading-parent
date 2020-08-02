@@ -12,7 +12,6 @@ import com.dili.orders.domain.WeighingBill;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
 import com.dili.orders.dto.WeighingBillQueryDto;
-import com.dili.orders.dto.WeighingBillUpdateDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 
@@ -23,10 +22,10 @@ public interface WeighingBillRpc {
 	BaseOutput<String> add(@RequestBody WeighingBill weighingBill);
 
 	@RequestMapping(value = "/api/weighingBill/update")
-	BaseOutput<Object> update(@RequestBody WeighingBillUpdateDto weighingBill);
+	BaseOutput<Object> update(@RequestBody WeighingBill weighingBill);
 
 	@RequestMapping(value = "/api/weighingBill/settle")
-	BaseOutput<Object> settle(@RequestParam String serialNo, @RequestParam String buyerPassword, @RequestParam String sellerPassword, @RequestParam Long operatorId);
+	BaseOutput<Object> settle(@RequestParam String serialNo, @RequestParam String buyerPassword, @RequestParam Long operatorId);
 
 	@RequestMapping(value = "/api/weighingBill/withdraw")
 	BaseOutput<Object> withdraw(@RequestParam String serialNo, @RequestParam String buyerPassword, @RequestParam String sellerPassword, @RequestParam Long operatorId);
@@ -51,4 +50,5 @@ public interface WeighingBillRpc {
 
 	@RequestMapping(value = "/api/weighingBill/operatorWithdraw")
 	BaseOutput<Object> operatorWithdraw(@RequestParam Long id, @RequestParam Long operatorId, @RequestParam String operatorPassword);
+
 }
