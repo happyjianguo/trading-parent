@@ -67,15 +67,20 @@
 
     <script>
         $('#payByCard').on('click',function (e) {
+           let cardNum = callbackObj.readCardNumber();
+           if(cardNum == -1){
+               bs4pop.alert("未读取到卡号", {type: 'error'});
+               return false;
+           }
             $.ajax({
                 type: "POST",
-                data:{cardNo:"888889690048"},
+                data:{cardNo:cardNum},
                 dataType:"json",
                 url: "/transitionDepartureApply/getCustomerByCardNo.action",
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
-                        $('#customerCardNo').val('888889690048');
+                        $('#customerCardNo').val(cardNum);
                         $('#customerCode').val(res.data.code);
                         $('#customerId').val(res.data.id);
                         $('#customerName').val(res.data.name);

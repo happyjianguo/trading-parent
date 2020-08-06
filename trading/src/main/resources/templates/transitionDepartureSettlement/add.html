@@ -115,9 +115,14 @@
         })
 
         $('#payByCard').on('click', function (e) {
+            let cardNum = callbackObj.readCardNumber();
+            if(cardNum == -1){
+                bs4pop.alert("未读取到卡号", {type: 'error'});
+                return false;
+            }
             $.ajax({
                 type: "POST",
-                data: {customerCardNo: "888889690048"},
+                data: {customerCardNo: cardNum},
                 dataType: "json",
                 url: "/transitionDepartureApply/getOneByCustomerCardNo.action",
                 async: true,
@@ -126,7 +131,7 @@
                         $('#id').val(res.data.id);
                         $('#code').val(res.data.code);
                         $('#sid').val(res.data.transitionDepartureSettlement.id);
-                        $('#customerCardNo').val('888889690048');
+                        $('#customerCardNo').val(cardNum);
                         $('#customerCode').val(res.data.customerCode);
                         $('#customerId').val(res.data.customerId);
                         $('#customerName').val(res.data.customerName);
@@ -148,7 +153,7 @@
             });
             $.ajax({
                 type: "POST",
-                data: {customerCardNo: "888889690048"},
+                data: {customerCardNo: cardNum},
                 dataType: "json",
                 url: "/transitionDepartureSettlement/queryAccountBalance.action",
                 async: true,
