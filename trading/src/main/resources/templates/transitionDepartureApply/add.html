@@ -84,6 +84,9 @@
                         $('#customerCode').val(res.data.code);
                         $('#customerId').val(res.data.id);
                         $('#customerName').val(res.data.name);
+                    }else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
             });
