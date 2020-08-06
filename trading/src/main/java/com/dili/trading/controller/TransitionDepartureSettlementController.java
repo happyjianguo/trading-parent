@@ -1,6 +1,7 @@
 package com.dili.trading.controller;
 
 import com.dili.orders.domain.TransitionDepartureSettlement;
+import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.rpc.AccountRpc;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.orders.rpc.PayRpc;
@@ -62,7 +63,11 @@ public class TransitionDepartureSettlementController {
     @RequestMapping(value = "/queryAccountBalance.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput queryAccountBalance(String customerCardNo) {
-        return cardRpc.getOneAccountCard(customerCardNo);
+        BaseOutput<AccountSimpleResponseDto> oneAccountCard = cardRpc.getOneAccountCard(customerCardNo);
+        if (oneAccountCard.isSuccess()) {
+            oneAccountCard.getData().getAccountFund().setBalance(oneAccountCard.getData().getAccountFund().getBalance() / 100);
+        }
+        return oneAccountCard;
     }
 
 
@@ -190,7 +195,7 @@ public class TransitionDepartureSettlementController {
     @ResponseBody
     public BaseOutput revocator(Long id, String password) {
         //通过用户密码去uap验证，暂未对接
-        return transitionDepartureSettlementService.revocator(transitionDepartureSettlementRpc.getOneById(id).getData(),password);
+        return transitionDepartureSettlementService.revocator(transitionDepartureSettlementRpc.getOneById(id).getData(), password);
     }
 
     /**
