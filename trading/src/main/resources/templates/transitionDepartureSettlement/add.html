@@ -194,7 +194,7 @@
                 if (res.code == "200") {
                     bs4pop.alert('成功', {type: 'success'}, function () {
                         parent.dia.hide();
-                        if($('#balance').val()>=$('#chargeAmount').val()){
+                        if(parseFloat($('#balance').val())>=parseFloat($('#chargeAmount').val())){
                             parent.verificationUsernamePassword(res.data.id);
                         }else{
                             bs4pop.alert("余额不足，请充值", {type: 'error'});
