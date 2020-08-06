@@ -101,7 +101,7 @@ public class TransitionDepartureSettlementController {
      * @param modelMap
      * @return
      */
-    @RequestMapping(value = "/verificationUsernamePassword.html", method = RequestMethod.GET)
+    @RequestMapping(value = "/verificationUsernamePassword.action", method = RequestMethod.GET)
     public String verificationUsernamePassword(ModelMap modelMap, Long id) {
         BaseOutput oneById = transitionDepartureSettlementRpc.getOneById(id);
         modelMap.put("transitionDepartureSettlement", oneById.getData());
