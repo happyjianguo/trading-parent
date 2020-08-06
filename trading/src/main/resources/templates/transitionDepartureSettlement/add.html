@@ -120,18 +120,18 @@
                 bs4pop.alert("未读取到卡号", {type: 'error'});
                 return false;
             }
+            $('#customerCardNo').val(cardNum);
             $.ajax({
                 type: "POST",
                 data: {customerCardNo: cardNum},
                 dataType: "json",
                 url: "/transitionDepartureApply/getOneByCustomerCardNo.action",
-                async: false,
+                async: true,
                 success: function (res) {
                     if (res.code == "200") {
                         $('#id').val(res.data.id);
                         $('#code').val(res.data.code);
                         $('#sid').val(res.data.transitionDepartureSettlement.id);
-                        $('#customerCardNo').val(cardNum);
                         $('#customerCode').val(res.data.customerCode);
                         $('#customerId').val(res.data.customerId);
                         $('#customerName').val(res.data.customerName);
@@ -148,6 +148,9 @@
                         $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
                         $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
                         $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
+                    }else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
             });
