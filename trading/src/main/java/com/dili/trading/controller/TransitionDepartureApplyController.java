@@ -17,6 +17,7 @@ import com.dili.trading.service.TransitionDepartureApplyService;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -140,10 +141,12 @@ public class TransitionDepartureApplyController {
     @ResponseBody
     public String listByQueryParams(TransitionDepartureApply transitionDepartureApply) throws Exception {
         List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
-        String value = (String) ranges.get(0).get("value");
-        //如果value为0，则为个人
-        if (value.equals("0")) {
-            transitionDepartureApply.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
+        if (CollectionUtils.isNotEmpty(ranges)) {
+            String value = (String) ranges.get(0).get("value");
+            //如果value为0，则为个人
+            if (value.equals("0")) {
+                transitionDepartureApply.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
+            }
         }
         //数据权限，根据部门查询
 //        List<Integer> arryList = null;

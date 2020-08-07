@@ -97,7 +97,7 @@
     function verificationUsernamePassword(id) {
         dia = bs4pop.dialog({
             title: '支付确认',//对话框title
-            content: '${contextPath}/transitionDepartureSettlement/verificationUsernamePassword.html?id=' + id, //对话框内容，可以是 string、element，$object
+            content: '${contextPath}/transitionDepartureSettlement/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
             width: '60%',//宽度
             height: '95%',//高度
             isIframe: true,//默认是页面层，非iframe

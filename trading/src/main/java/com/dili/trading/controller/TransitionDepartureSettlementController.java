@@ -1,6 +1,7 @@
 package com.dili.trading.controller;
 
 import com.dili.orders.domain.TransitionDepartureSettlement;
+import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.rpc.AccountRpc;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.orders.rpc.PayRpc;
@@ -15,6 +16,7 @@ import com.dili.trading.service.TransitionDepartureSettlementService;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -62,7 +64,11 @@ public class TransitionDepartureSettlementController {
     @RequestMapping(value = "/queryAccountBalance.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput queryAccountBalance(String customerCardNo) {
-        return cardRpc.getOneAccountCard(customerCardNo);
+        BaseOutput<AccountSimpleResponseDto> oneAccountCard = cardRpc.getOneAccountCard(customerCardNo);
+        if (oneAccountCard.isSuccess()) {
+            oneAccountCard.getData().getAccountFund().setBalance(oneAccountCard.getData().getAccountFund().getBalance() / 100);
+        }
+        return oneAccountCard;
     }
 
 
@@ -95,7 +101,7 @@ public class TransitionDepartureSettlementController {
      * @param modelMap
      * @return
      */
-    @RequestMapping(value = "/verificationUsernamePassword.html", method = RequestMethod.GET)
+    @RequestMapping(value = "/verificationUsernamePassword.action", method = RequestMethod.GET)
     public String verificationUsernamePassword(ModelMap modelMap, Long id) {
         BaseOutput oneById = transitionDepartureSettlementRpc.getOneById(id);
         modelMap.put("transitionDepartureSettlement", oneById.getData());
@@ -126,10 +132,12 @@ public class TransitionDepartureSettlementController {
     @ResponseBody
     public String listPage(TransitionDepartureSettlement transitionDepartureSettlement) {
         List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
-        String value = (String) ranges.get(0).get("value");
-        //如果value为0，则为个人
-        if (value.equals("0")) {
-            transitionDepartureSettlement.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
+        if (CollectionUtils.isNotEmpty(ranges)) {
+            String value = (String) ranges.get(0).get("value");
+            //如果value为0，则为个人
+            if (value.equals("0")) {
+                transitionDepartureSettlement.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
+            }
         }
         return transitionDepartureSettlementRpc.listPage(transitionDepartureSettlement);
     }
@@ -146,12 +154,13 @@ public class TransitionDepartureSettlementController {
     public String listByQueryParams(TransitionDepartureSettlement transitionDepartureSettlement) throws Exception {
         //拿到数据权限，个人或全部
         List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
-        String value = (String) ranges.get(0).get("value");
-        //如果value为0，则为个人
-        if (value.equals("0")) {
-            transitionDepartureSettlement.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
+        if (CollectionUtils.isNotEmpty(ranges)) {
+            String value = (String) ranges.get(0).get("value");
+            //如果value为0，则为个人
+            if (value.equals("0")) {
+                transitionDepartureSettlement.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
+            }
         }
-
         PageOutput<List<TransitionDepartureSettlement>> output = transitionDepartureSettlementRpc.listByQueryParams(transitionDepartureSettlement);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(transitionDepartureSettlement, output.getData())).toString();
     }
@@ -190,7 +199,7 @@ public class TransitionDepartureSettlementController {
     @ResponseBody
     public BaseOutput revocator(Long id, String password) {
         //通过用户密码去uap验证，暂未对接
-        return transitionDepartureSettlementService.revocator(transitionDepartureSettlementRpc.getOneById(id).getData(),password);
+        return transitionDepartureSettlementService.revocator(transitionDepartureSettlementRpc.getOneById(id).getData(), password);
     }
 
     /**
