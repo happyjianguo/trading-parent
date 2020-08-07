@@ -47,7 +47,7 @@ import com.dili.uap.sdk.rpc.UserRpc;
 import com.dili.uap.sdk.session.SessionContext;
 
 /**
- * TransitionDepartureApplyController
+ * WeighingBillController
  */
 @Controller
 @RequestMapping("/weighingBill")
