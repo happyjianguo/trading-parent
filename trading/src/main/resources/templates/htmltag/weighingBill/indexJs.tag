@@ -34,6 +34,42 @@
             $('#show_customer_name').val(suggestion.name);
         }
     };
+    
+    var customerCardQueryAutoCompleteOption = {
+        serviceUrl: '/weighingBill/listCustomerByCardNo.action',
+        paramName: 'cardNo',
+        displayFieldName: 'code',
+        showNoSuggestionNotice: true,
+        minChars: 12,
+        width: 'flex',
+        noSuggestionNotice: '无此客户, 请重新输入',
+        transformResult: function (result) {
+            if(result.success){
+                let data = result.data;
+                return {
+                    suggestions: $.map(data, function (dataItem) {
+                        return $.extend(dataItem, {
+                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
+                            }
+                        );
+                    })
+                }
+            }else{
+                // bs4pop.alert(result.message, {type: 'error'});
+                return false;
+            }
+        },
+        selectFn: function (suggestion) {
+            $('#show_customer_name').val(suggestion.name);
+        }
+    };
+    
+    function swipeCard(el){
+    	let cardNo=callbackObj.readCardNumber();
+    	if (cardNo!=-1) {
+	    	$(el).prevAll()[3].value=cardNo;
+    	}
+    }
 
     function queryCustomerByCardNo(cardNo, domId) {
         $('#' + domId).val('');
