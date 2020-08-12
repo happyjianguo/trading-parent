@@ -214,7 +214,7 @@ public class TransitionDepartureApplyController {
             //设置车类型提供者
             map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
             transitionDepartureApply.setMetadata(map);
-            BaseOutput<TransitionDepartureApply> oneByCustomerID = transitionDepartureApplyRpc.getOneByCustomerCardNo(transitionDepartureApply);
+            BaseOutput<TransitionDepartureApply> oneByCustomerID = transitionDepartureApplyRpc.getOneByCustomerCardNo(transitionDepartureApply, SessionContext.getSessionContext().getUserTicket().getFirmId(), SessionContext.getSessionContext().getUserTicket().getDepartmentId());
             TransitionDepartureApply data = oneByCustomerID.getData();
             if (Objects.isNull(data)) {
                 return BaseOutput.failure("该卡号暂时未查询到已审批的申请单");
