@@ -66,7 +66,7 @@ public class TransitionDepartureSettlementController {
     public BaseOutput queryAccountBalance(String customerCardNo) {
         BaseOutput<AccountSimpleResponseDto> oneAccountCard = cardRpc.getOneAccountCard(customerCardNo);
         if (oneAccountCard.isSuccess()) {
-            oneAccountCard.getData().getAccountFund().setBalance(oneAccountCard.getData().getAccountFund().getBalance() / 100);
+            oneAccountCard.getData().getAccountFund().setBalance(oneAccountCard.getData().getAccountFund().getAvailableAmount() / 100);
         }
         return oneAccountCard;
     }
