@@ -79,7 +79,7 @@ public interface TransitionDepartureSettlementRpc {
      * @return
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/insertTransitionDepartureSettlement", method = {RequestMethod.POST})
-    BaseOutput<TransitionDepartureSettlement> insertTransitionDepartureSettlement(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
+    BaseOutput<TransitionDepartureSettlement> insertTransitionDepartureSettlement(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement,@RequestParam(value = "marketId") Long marketId);
 
     /**
      * 结算单支付

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.websocket.Session;
 import java.time.LocalDateTime;
 
 @Service
@@ -61,7 +62,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         transitionDepartureSettlement.setOperatorName(userTicket.getRealName());
         //设置操作员登录用户名
         transitionDepartureSettlement.setOperatorCode(userTicket.getUserName());
-        BaseOutput<TransitionDepartureSettlement> transitionDepartureSettlementBaseOutput = transitionDepartureSettlementRpc.insertTransitionDepartureSettlement(transitionDepartureSettlement);
+        BaseOutput<TransitionDepartureSettlement> transitionDepartureSettlementBaseOutput = transitionDepartureSettlementRpc.insertTransitionDepartureSettlement(transitionDepartureSettlement, SessionContext.getSessionContext().getUserTicket().getFirmId());
         if (transitionDepartureSettlementBaseOutput.isSuccess()) {
             TransitionDepartureSettlement data = transitionDepartureSettlementBaseOutput.getData();
             LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
