@@ -4,14 +4,11 @@ import com.dili.orders.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "order-service", contextId = "transitionDepartureApplyRpc")
+@FeignClient(name = "order-service", contextId = "transitionDepartureApplyRpc", url = "localhost:8185")
 public interface TransitionDepartureApplyRpc {
 
     /**
@@ -30,7 +27,7 @@ public interface TransitionDepartureApplyRpc {
      * @return
      */
     @RequestMapping(value = "/api/transitionDepartureApply/getOneByCustomerCardNo", method = {RequestMethod.POST})
-    BaseOutput<TransitionDepartureApply> getOneByCustomerCardNo(@RequestBody TransitionDepartureApply transitionDepartureApply);
+    BaseOutput<TransitionDepartureApply> getOneByCustomerCardNo(@RequestBody TransitionDepartureApply transitionDepartureApply, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId);
 
     /**
      * 新增TransitionDepartureApply
