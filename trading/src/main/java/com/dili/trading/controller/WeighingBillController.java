@@ -268,6 +268,31 @@ public class WeighingBillController {
 	}
 
 	/**
+	 * 查询客户信息
+	 * 
+	 * @param name
+	 * @param keyword
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/listCustomerByCardNo.action")
+	public BaseOutput<?> listCustomerByCardNo(String cardNo) {
+		BaseOutput<AccountSimpleResponseDto> cardOutput = this.cardRpc.getOneAccountCard(cardNo);
+		if (!cardOutput.isSuccess()) {
+			return cardOutput;
+		}
+		CustomerQueryInput cq = new CustomerQueryInput();
+		cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
+		BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
+		if (!firmOutput.isSuccess()) {
+			return firmOutput;
+		}
+		cq.setMarketId(firmOutput.getData().getId());
+		BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
+		return output;
+	}
+
+	/**
 	 * 查询结算员信息
 	 * 
 	 * @param name
