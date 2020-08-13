@@ -32,7 +32,7 @@
                     suggestions: $.map(data, function (dataItem) {
                         debugger
                         return $.extend(dataItem, {
-                                value: dataItem.name + '（' + dataItem.contactsPhone + '，' + dataItem.certificateNumber.substr(-4) + '，' + dataItem.certificateAddr + '）'
+                            value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
                             }
                         );
                     })
