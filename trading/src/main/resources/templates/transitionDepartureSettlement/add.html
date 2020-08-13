@@ -33,14 +33,17 @@
             <div class="form-group col">
                 <label for="">车辆类型</label>
                 <!--<input id="carTypeName" class="form-control" name="carTypeName" readonly="true" maxlength="100"-->
-                       <!--required>-->
+                <!--required>-->
                 <!--<input id="carTypeId" class="form-control" readonly="true" name="carTypeId" maxlength="100" required-->
-                       <!--hidden>-->
-                <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="carTypeId" _hiddenDomainName="carTypeId" _displayDomainId="_carTypeId" _displayDomainName="_carTypeId" _placeholder="" _provider="carTypeProvider" _validatorMethod="isSelected" _value="" _text="" _required="true"/>
+                <!--hidden>-->
+                <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="carTypeId"
+                _hiddenDomainName="carTypeId" _displayDomainId="_carTypeId" _displayDomainName="_carTypeId"
+                _placeholder="" _provider="carTypeProvider" _validatorMethod="isSelected" _value="" _text=""
+                _required="true"/>
             </div>
             <div class="form-group col">
                 <label for="">车牌号</label>
-                <input id="plate" class="form-control" name="plate" maxlength="100" required>
+                <input id="plate" class="form-control" required="true" name="plate" maxlength="100" required>
             </div>
             <div class="form-group col">
                 <label for="">交易类型</label>
@@ -54,16 +57,17 @@
             </div>
             <div class="form-group col">
                 <label for="">毛重<i class="red">*</i></label>
-                <input id="grossWeight" type="number" class="form-control" name="grossWeight" maxlength="100">
+                <input type="text" id="grossWeight" required="true" class="form-control digit" name="grossWeight"
+                       maxlength="100" range="1 100000">
             </div>
             <div class="form-group col">
                 <label for="">皮重<i class="red">*</i></label>
-                <input id="tareWeight" type="number" class="form-control" name="tareWeight" maxlength="100">
+                <input type="text" id="tareWeight" required="true" class="form-control digit" name="tareWeight"
+                       maxlength="100" range="1 100000">
             </div>
             <div class="form-group col">
                 <label for="">净重</label>
-                <input id="netWeight" type="number" class="form-control" readonly="true" name="netWeight"
-                       maxlength="100">
+                <input id="netWeight" class="form-control digit" readonly="true" name="netWeight" maxlength="100">
             </div>
             <div class="form-group col">
                 <label for="">可用余额</label>
@@ -81,7 +85,10 @@
 <script>
     $(function () {
         $('#grossWeight').on('keyup', function (e) {
-            $('#netWeight').val(parseFloat($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseFloat($('#tareWeight').val() == null ? 0 : $('#tareWeight').val()));
+            let num = parseInt($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseInt($('#tareWeight').val() == null ? 0 : $('#tareWeight').val());
+            if (!num.isNaN()) {
+                $('#netWeight').val(num);
+            }
             let netWeight = $('#netWeight').val();
             let id = $('#id').val();
             $.ajax({
@@ -98,7 +105,10 @@
             });
         })
         $('#tareWeight').on('keyup', function (e) {
-            $('#netWeight').val(parseFloat($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseFloat($('#tareWeight').val() == null ? 0 : $('#tareWeight').val()));
+            let num = parseInt($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseInt($('#tareWeight').val() == null ? 0 : $('#tareWeight').val());
+            if (!num.isNaN()) {
+                $('#netWeight').val(num);
+            }
             let netWeight = $('#netWeight').val();
             let id = $('#id').val();
             $.ajax({
@@ -117,7 +127,7 @@
 
         $('#payByCard').on('click', function (e) {
             let cardNum = callbackObj.readCardNumber();
-            if(cardNum == -1){
+            if (cardNum == -1) {
                 bs4pop.alert("未读取到卡号", {type: 'error'});
                 return false;
             }
@@ -151,7 +161,7 @@
                         $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
                         $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
                         $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
-                    }else {
+                    } else {
                         bui.loading.hide();
                         bs4pop.alert(res.result, {type: 'error'});
                     }
@@ -183,7 +193,7 @@
         if ($('#sid').val() != null && $('#sid').val() != '') {
             url = "update";
         }
-        if(!isLicenseNo($('#plate').val())){
+        if (!isLicenseNo($('#plate').val())) {
             bs4pop.alert("车牌号码不正确", {type: 'error'});
             return false;
         }
@@ -201,9 +211,9 @@
                 if (res.code == "200") {
                     bs4pop.alert('成功', {type: 'success'}, function () {
                         parent.dia.hide();
-                        if(parseFloat($('#balance').val())>=parseFloat($('#chargeAmount').val())){
+                        if (parseFloat($('#balance').val()) >= parseFloat($('#chargeAmount').val())) {
                             parent.verificationUsernamePassword(res.data.id);
-                        }else{
+                        } else {
                             bs4pop.alert("余额不足，请充值", {type: 'error'});
                         }
                     });
@@ -218,6 +228,7 @@
             }
         });
     }
+
     function isLicenseNo(str) {
         return /(^[\u4E00-\u9FA5]{1}[A-Z0-9]{6}$)|(^[A-Z]{2}[A-Z0-9]{2}[A-Z0-9\u4E00-\u9FA5]{1}[A-Z0-9]{4}$)|(^[\u4E00-\u9FA5]{1}[A-Z0-9]{5}[挂学警军港澳]{1}$)|(^[A-Z]{2}[0-9]{5}$)|(^(08|38){1}[A-Z0-9]{4}[A-Z0-9挂学警军港澳]{1}$)/.test(str);
     }
