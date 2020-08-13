@@ -165,7 +165,7 @@
                 async: false,
                 success: function (res) {
                     if (res.code == "200") {
-                        $('#balance').val(res.data.accountFund.balance/100);
+                        $('#balance').val(res.data.accountFund.balance);
                     }
                 },
             });
