@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc", url = "localhost:8185")
+@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc")
 public interface TransitionDepartureSettlementRpc {
 
 
