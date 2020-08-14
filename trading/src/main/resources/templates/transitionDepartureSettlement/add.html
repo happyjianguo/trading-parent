@@ -86,7 +86,7 @@
     $(function () {
         $('#grossWeight').on('keyup', function (e) {
             let num = parseInt($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseInt($('#tareWeight').val() == null ? 0 : $('#tareWeight').val());
-            if (!num.isNaN()) {
+            if (!isNaN(num)) {
                 $('#netWeight').val(num);
             }
             let netWeight = $('#netWeight').val();
@@ -106,7 +106,7 @@
         })
         $('#tareWeight').on('keyup', function (e) {
             let num = parseInt($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseInt($('#tareWeight').val() == null ? 0 : $('#tareWeight').val());
-            if (!num.isNaN()) {
+            if (!isNaN(num)) {
                 $('#netWeight').val(num);
             }
             let netWeight = $('#netWeight').val();
