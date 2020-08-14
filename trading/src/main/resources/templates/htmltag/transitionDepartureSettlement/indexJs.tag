@@ -13,10 +13,33 @@
             elem: this
             , trigger: 'click'
             , range: false
-            , type: 'datetime'
+            , type: 'date'
+            , min: getLastYearYestdy(new Date())
+            , max: timeStamp2String(new Date().getTime())
         });
     });
 
+    function getLastYearYestdy(date) {
+        var strYear = date.getFullYear() - 1;
+        var strDay = date.getDate();
+        var strMonth = date.getMonth() + 1;
+        if (strMonth < 10) {
+            strMonth = "0" + strMonth;
+        }
+        if (strDay < 10) {
+            strDay = "0" + strDay;
+        }
+        return strYear + "-" + strMonth + "-" + strDay;
+    }
+
+    function timeStamp2String(time) {
+        var datetime = new Date();
+        datetime.setTime(time);
+        var year = datetime.getFullYear();
+        var month = datetime.getMonth() + 1 < 10 ? "0" + (datetime.getMonth() + 1) : datetime.getMonth() + 1;
+        var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
+        return year + "-" + month + "-" + date;
+    }
 
     // 客户名称
     var customerNameAutoCompleteOption = {
