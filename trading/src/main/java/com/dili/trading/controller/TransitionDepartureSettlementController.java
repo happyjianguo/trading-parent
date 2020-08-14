@@ -25,10 +25,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 结算单接口
@@ -80,6 +78,9 @@ public class TransitionDepartureSettlementController {
      */
     @RequestMapping(value = "/list.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
+        //默认选择当天的数据，页面上也需要展示
+        modelMap.put("beginDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        modelMap.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         return "transitionDepartureSettlement/list";
     }
 

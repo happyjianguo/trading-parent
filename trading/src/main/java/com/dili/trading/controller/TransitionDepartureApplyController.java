@@ -26,10 +26,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * TransitionDepartureApplyController
@@ -60,6 +58,8 @@ public class TransitionDepartureApplyController {
      */
     @RequestMapping(value = "/list.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
+        modelMap.put("beginDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        modelMap.put("endDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         return "transitionDepartureApply/list";
     }
 

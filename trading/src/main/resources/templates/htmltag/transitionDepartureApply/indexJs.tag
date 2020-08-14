@@ -13,10 +13,33 @@
             elem: this
             , trigger: 'click'
             , range: false
-            , type: 'datetime'
+            , type: 'date'
+            , min: getLastYearYestdy(new Date())
+            , max: timeStamp2String(new Date().getTime())
         });
     });
 
+    function getLastYearYestdy(date) {
+        var strYear = date.getFullYear() - 1;
+        var strDay = date.getDate();
+        var strMonth = date.getMonth() + 1;
+        if (strMonth < 10) {
+            strMonth = "0" + strMonth;
+        }
+        if (strDay < 10) {
+            strDay = "0" + strDay;
+        }
+        return strYear + "-" + strMonth + "-" + strDay;
+    }
+
+    function timeStamp2String(time) {
+        var datetime = new Date();
+        datetime.setTime(time);
+        var year = datetime.getFullYear();
+        var month = datetime.getMonth() + 1 < 10 ? "0" + (datetime.getMonth() + 1) : datetime.getMonth() + 1;
+        var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
+        return year + "-" + month + "-" + date;
+    }
 
     // 客户名称
     var customerNameAutoCompleteOption = {
@@ -32,7 +55,7 @@
                     suggestions: $.map(data, function (dataItem) {
                         debugger
                         return $.extend(dataItem, {
-                            value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
+                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
                             }
                         );
                     })
@@ -145,19 +168,19 @@
             width: '60%',//宽度
             height: '95%',//高度
             isIframe: true,//默认是页面层，非iframe
-            btns: [ {
+            btns: [{
                 label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
                     let diaWindow = $iframe[0].contentWindow;
                     bui.util.debounce(diaWindow.updateHandler(2), 1000, true)()
                     return false;
                 }
-            },{
+            }, {
                 label: '拒绝', className: 'btn btn-primary', onClick(e, $iframe) {
                     let diaWindow = $iframe[0].contentWindow;
                     bui.util.debounce(diaWindow.updateHandler(3), 1000, true)()
                     return false;
                 }
-            },{
+            }, {
                 label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
 
                 }
