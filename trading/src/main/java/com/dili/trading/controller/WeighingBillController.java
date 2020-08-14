@@ -22,6 +22,7 @@ import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
+import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
 import com.dili.orders.dto.AccountPasswordValidateDto;
 import com.dili.orders.dto.AccountSimpleResponseDto;
@@ -39,9 +40,11 @@ import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
 import com.dili.trading.rpc.WeighingBillRpc;
+import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.domain.dto.UserQuery;
+import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import com.dili.uap.sdk.rpc.FirmRpc;
 import com.dili.uap.sdk.rpc.UserRpc;
 import com.dili.uap.sdk.session.SessionContext;
@@ -54,8 +57,6 @@ import com.dili.uap.sdk.session.SessionContext;
 public class WeighingBillController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WeighingBillController.class);
-	private static final String INVALIDATE = "invalidate";
-	private static final String WITHDRAW = "withdraw";
 	@Autowired
 	private WeighingBillRpc weighingBillRpc;
 	@Autowired
@@ -70,6 +71,8 @@ public class WeighingBillController {
 	private UserRpc useRpc;
 	@Autowired
 	private PayRpc payRpc;
+	@Autowired
+	private DataDictionaryRpc dataDictionaryRpc;
 
 	/**
 	 * 列表页
@@ -413,5 +416,23 @@ public class WeighingBillController {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		BaseOutput<Object> output = this.weighingBillRpc.operatorWithdraw(id, user.getId(), operatorPassword);
 		return output;
+	}
+
+	/**
+	 * 获取取重按钮是否可用
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/getFetchWeightSwitch.action")
+	public BaseOutput<Object> getFetchWeightSwitch() {
+		DataDictionaryValue ddValueQuery = DTOUtils.newInstance(DataDictionaryValue.class);
+		ddValueQuery.setFirmCode(OrdersConstant.SHOUGUANG_FIRM_CODE);
+		ddValueQuery.setDdCode(OrdersConstant.FETCH_WEIGHT_SWITCH_DD_CODE);
+		BaseOutput<List<DataDictionaryValue>> output = this.dataDictionaryRpc.listDataDictionaryValueWithFirm(ddValueQuery);
+		if (!output.isSuccess()) {
+			return BaseOutput.failure(output.getMessage());
+		}
+		return BaseOutput.successData(Boolean.valueOf(output.getData().get(0).getName()));
 	}
 }
