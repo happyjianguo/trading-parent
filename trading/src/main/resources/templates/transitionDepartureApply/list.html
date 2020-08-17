@@ -54,8 +54,18 @@
                 </div>
             </div>
             <div class="form-group col">
-                <label for="_approvalId" class="">审批人员</label>
+                <label for="" class="">审批人员</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="approvalId" _hiddenDomainName="approvalId" _displayDomainId="_approvalId" _displayDomainName="_approvalId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
+            </div>
+            <div class="form-group col-3">
+                <label for="" class="">卡号</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider  _hiddenDomainId="buyerCardNo" _hiddenDomainName="buyerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
+                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
+                        <i class="fa fa-refresh"></i>刷卡
+                    </button>
+                </div>
             </div>
             <div class="col align-self-center mt-3">
                 <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
@@ -143,7 +153,6 @@
 </div>
 
 </#bs4Body>
-<#btreegrid/>
 
 <script>
     function updateStatus(status, queryBtn){
