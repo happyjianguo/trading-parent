@@ -230,7 +230,7 @@ public class TransitionDepartureApplyController {
             return oneByCustomerID;
         } catch (Exception e) {
             e.printStackTrace();
-            return BaseOutput.failure("查询失败" + e.getMessage());
+            return BaseOutput.failure("查询失败");
         }
     }
 
