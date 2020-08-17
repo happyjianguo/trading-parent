@@ -27,9 +27,6 @@
         minChars: 2,
         width: 'flex',
         noSuggestionNotice: '无此客户, 请重新输入',
-        onSearchStart: function (params) {
-            debugger
-        },
         transformResult: function (result) {
             if(result.success){
                 let data = result.data;
