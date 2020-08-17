@@ -7,7 +7,7 @@
                 <div class="form-group col">
                     <label for="">卡号</label>
                     <div class="input-group">
-                        <input id="customerCardNo" readonly="true" class="form-control" name="customerCardNo"  maxlength="100">
+                        <input id="customerCardNo" required readonly="true" class="form-control" name="customerCardNo"  maxlength="100">
                         <div class="input-group-append">
                            <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;" >刷卡</a></span>
                         </div>
@@ -15,16 +15,16 @@
                 </div>
                 <div class="form-group col">
                     <label for="">客户编号</label>
-                    <input id="customerCode" readonly="true" class="form-control" name="customerCode"  maxlength="100">
-                    <input id="customerId" class="form-control" name="customerId" hidden="true" maxlength="100">
+                    <input id="customerCode" readonly="true" required class="form-control" name="customerCode"  maxlength="100">
+                    <input id="customerId" required class="form-control" name="customerId" hidden="true" maxlength="100">
                 </div>
                 <div class="form-group col">
                     <label for="">客户名称</label>
-                    <input id="customerName" readonly="true" class="form-control" name="customerName"  maxlength="100">
+                    <input id="customerName" readonly="true" required class="form-control" name="customerName"  maxlength="100">
                 </div>
                 <div class="form-group col">
                     <label for="">申请部门</label>
-                    <input id="originatorName" readonly="true" class="form-control" name="originatorName"  maxlength="100">
+                    <input id="originatorName" readonly="true" required class="form-control" name="originatorName"  maxlength="100">
                 </div>
                 <div class="form-group col">
                     <label for="">车辆类型<i class="red">*</i></label>
@@ -32,7 +32,7 @@
                 </div>
                 <div class="form-group col">
                     <label for="">车牌号<i class="red">*</i></label>
-                    <input id="plate" class="form-control" name="plate"  maxlength="100" required>
+                    <input id="plate" class="form-control" name="plate" maxlength="100" required>
                 </div>
                 <div class="form-group col">
                     <label for="">交易类型<i class="red">*</i></label>
