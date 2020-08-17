@@ -20,8 +20,8 @@
     });
 
     var customerCardQueryAutoCompleteOption = {
-        serviceUrl: '/weighingBill/listCustomerByKeyword.action',
-        paramName: 'keyword',
+        serviceUrl: '/weighingBill/listCustomerByCardNo.action',
+        paramName: 'cardNo',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
         minChars: 12,

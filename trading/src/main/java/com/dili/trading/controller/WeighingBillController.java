@@ -255,22 +255,22 @@ public class WeighingBillController {
     @ResponseBody
     @RequestMapping("/listCustomerByKeyword.action")
     public BaseOutput<?> listCustomerByKeyword(String name, String keyword) {
-//        CustomerQueryInput cq = new CustomerQueryInput();
-//        cq.setKeyword(name);
-//        BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
-//        if (!firmOutput.isSuccess()) {
-//            return firmOutput;
-//        }
-//        cq.setMarketId(firmOutput.getData().getId());
+        CustomerQueryInput cq = new CustomerQueryInput();
+        cq.setKeyword(name);
+        BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
+        if (!firmOutput.isSuccess()) {
+            return firmOutput;
+        }
+        cq.setMarketId(firmOutput.getData().getId());
         //json 修改开始
         //customer那边没有卡号的冗余，直接走卡余额查询，应该可以满足
         //通过卡号获取账户
-        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getOneAccountCard(keyword);
-        List<UserAccountCardResponseDto> userAccountCardResponseDtos = new ArrayList<>();
-        userAccountCardResponseDtos.add(oneAccountCard.getData());
-//        BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
+//        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getOneAccountCard(keyword);
+//        List<UserAccountCardResponseDto> userAccountCardResponseDtos = new ArrayList<>();
+//        userAccountCardResponseDtos.add(oneAccountCard.getData());
+        BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
         //json 修改结束
-        return BaseOutput.successData(userAccountCardResponseDtos);
+        return output;
     }
 
     /**
@@ -283,19 +283,29 @@ public class WeighingBillController {
     @ResponseBody
     @RequestMapping("/listCustomerByCardNo.action")
     public BaseOutput<?> listCustomerByCardNo(String cardNo) {
-        BaseOutput<AccountSimpleResponseDto> cardOutput = this.cardRpc.getOneAccountCard(cardNo);
-        if (!cardOutput.isSuccess()) {
-            return cardOutput;
+//        BaseOutput<AccountSimpleResponseDto> cardOutput = this.cardRpc.getOneAccountCard(cardNo);
+//        if (!cardOutput.isSuccess()) {
+//            return cardOutput;
+//        }
+//        CustomerQueryInput cq = new CustomerQueryInput();
+//        cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
+//        BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
+//        if (!firmOutput.isSuccess()) {
+//            return firmOutput;
+//        }
+//        cq.setMarketId(firmOutput.getData().getId());
+//        BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
+//        return output;
+        //json修改开始
+        BaseOutput<UserAccountCardResponseDto> oneAccountCard = this.accountRpc.getOneAccountCard(cardNo);
+        if (!oneAccountCard.isSuccess()) {
+            return oneAccountCard;
         }
-        CustomerQueryInput cq = new CustomerQueryInput();
-        cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
-        BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
-        if (!firmOutput.isSuccess()) {
-            return firmOutput;
-        }
-        cq.setMarketId(firmOutput.getData().getId());
-        BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
-        return output;
+        List<UserAccountCardResponseDto> userAccountCardResponseDtos = new ArrayList<>();
+        userAccountCardResponseDtos.add(oneAccountCard.getData());
+        return BaseOutput.successData(userAccountCardResponseDtos);
+        //json修改结束
+
     }
 
     /**
