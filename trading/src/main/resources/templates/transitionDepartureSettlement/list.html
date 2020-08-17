@@ -60,9 +60,15 @@
                 <label for="">车牌号</label>
                 <input type="text" class="form-control isNaturalNum" name="plate" placeholder="">
             </div>
-            <div class="form-group col">
+            <div class="form-group col-5">
                 <label for="" class="">卡号</label>
-                <input type="text" class="form-control isNaturalNum" name="customerCardNo" placeholder="">
+                <div class="input-group">
+                    <#bautoCompleteProvider  _displayDomainId="customerCardNo" _displayDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_customer_name" readonly/>
+                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
+                        <i class="fa fa-refresh"></i>刷卡
+                    </button>
+                </div>
             </div>
             <div class="col align-self-center mt-3">
                 <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>

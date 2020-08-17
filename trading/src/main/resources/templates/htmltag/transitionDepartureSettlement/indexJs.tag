@@ -41,6 +41,38 @@
         return year + "-" + month + "-" + date;
     }
 
+
+    var customerCardQueryAutoCompleteOption = {
+        serviceUrl: '/weighingBill/listCustomerByKeyword.action',
+        paramName: 'keyword',
+        displayFieldName: 'code',
+        showNoSuggestionNotice: true,
+        minChars: 12,
+        width: 'flex',
+        noSuggestionNotice: '无此客户, 请重新输入',
+        transformResult: function (result) {
+            if(result.success){
+                let data = result.data;
+                return {
+                    suggestions: $.map(data, function (dataItem) {
+                        return $.extend(dataItem, {
+                                value: dataItem.customerName +"|"+dataItem.cardNo
+                            }
+                        );
+                    })
+                    //888810054629
+                }
+            }else{
+                return false;
+            }
+        },
+        selectFn: function (suggestion) {
+            $('#show_customer_name').val(suggestion.customerName);
+            $('#customerCardNo').val(suggestion.cardNo);
+        }
+    };
+
+
     // 客户名称
     var customerNameAutoCompleteOption = {
         serviceUrl: '/customer/listNormal.action',

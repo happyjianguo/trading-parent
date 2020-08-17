@@ -24,7 +24,7 @@
         paramName: 'keyword',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
-        minChars: 2,
+        minChars: 12,
         width: 'flex',
         noSuggestionNotice: '无此客户, 请重新输入',
         transformResult: function (result) {
@@ -33,17 +33,19 @@
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
-                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
+                                value: dataItem.customerName +"|"+dataItem.cardNo
                             }
                         );
                     })
+                    //888810054629
                 }
             }else{
                 return false;
             }
         },
         selectFn: function (suggestion) {
-            $('#show_customer_name').val(suggestion.name);
+            $('#show_customer_name').val(suggestion.customerName);
+            $('#customerCardNo').val(suggestion.cardNo);
         }
     };
 

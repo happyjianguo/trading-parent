@@ -57,11 +57,11 @@
                 <label for="" class="">审批人员</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="approvalId" _hiddenDomainName="approvalId" _displayDomainId="_approvalId" _displayDomainName="_approvalId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
             </div>
-            <div class="form-group col-3">
+            <div class="form-group col-5">
                 <label for="" class="">卡号</label>
                 <div class="input-group">
-                    <#bautoCompleteProvider  _displayDomainId="buyerCardNo" _displayDomainName="buyerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
-                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
+                    <#bautoCompleteProvider  _displayDomainId="customerCardNo" _displayDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_customer_name" readonly/>
                     <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
                         <i class="fa fa-refresh"></i>刷卡
                     </button>
