@@ -4,7 +4,7 @@ package com.dili.trading.glossary;
  * 转离场申请单的审批状态  审批状态（1.待审核/2.通过/3.拒绝）默认为1
  */
 public enum ApplyEnum {
-    TOBEREVIEWED(1, "待审核"),
+    TOBEREVIEWED(1, "待审批"),
     ADOPT(2, "通过"),
     REFUSED(3, "拒绝");
 
