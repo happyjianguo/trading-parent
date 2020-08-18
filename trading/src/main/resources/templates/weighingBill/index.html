@@ -48,7 +48,7 @@
                 <div class="input-group">
                     <#bautoCompleteProvider _displayDomainId="buyerCardNo" _displayDomainName="buyerCardNo" _placeholder="" _optionVariable="buyerCardQueryAutoCompleteOption"/>
                     <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
-                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
+                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this,'#buyerCardNo');">
 						<i class="fa fa-refresh"></i>刷卡
 					</button>
                 </div>
@@ -58,7 +58,7 @@
                 <div class="input-group">
                     <#bautoCompleteProvider _displayDomainId="sellerCardNo" _displayDomainName="sellerCardNo" _placeholder="" _optionVariable="sellerCardQueryAutoCompleteOption"/>
                     <input type="text" class="form-control" id="show_seller_name_by_card_no" readonly/>
-                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
+                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this,'#sellerCardNo');">
 						<i class="fa fa-refresh"></i>刷卡
 					</button>
                 </div>

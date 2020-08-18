@@ -127,10 +127,11 @@
         }
     };
 
-    function swipeCard(el){
+    function swipeCard(el,val1){
     	let cardNo=callbackObj.readCardNumber();
     	if (cardNo!=-1) {
 	    	$(el).prevAll()[3].value=cardNo;
+	    	$(val1).focus();
     	}
     }
 
