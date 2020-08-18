@@ -35,7 +35,7 @@
         }
     };
     
-    var customerCardQueryAutoCompleteOption = {
+    var buyerCardQueryAutoCompleteOption = {
         serviceUrl: '/weighingBill/listCustomerByCardNo.action',
         paramName: 'cardNo',
         displayFieldName: 'code',
@@ -49,7 +49,7 @@
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
-                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
+                                value: dataItem.customerName +"|"+dataItem.cardNo
                             }
                         );
                     })
@@ -60,10 +60,40 @@
             }
         },
         selectFn: function (suggestion) {
-            $('#show_customer_name').val(suggestion.name);
+            $('#show_buyer_name_by_card_no').val(suggestion.customerName);
+            $('#buyerCardNo').val(suggestion.cardNo);
         }
     };
-    
+    var sellerCardQueryAutoCompleteOption = {
+        serviceUrl: '/weighingBill/listCustomerByCardNo.action',
+        paramName: 'cardNo',
+        displayFieldName: 'code',
+        showNoSuggestionNotice: true,
+        minChars: 12,
+        width: 'flex',
+        noSuggestionNotice: '无此客户, 请重新输入',
+        transformResult: function (result) {
+            if(result.success){
+                let data = result.data;
+                return {
+                    suggestions: $.map(data, function (dataItem) {
+                        return $.extend(dataItem, {
+                                value: dataItem.customerName +"|"+dataItem.cardNo
+                            }
+                        );
+                    })
+                }
+            }else{
+                // bs4pop.alert(result.message, {type: 'error'});
+                return false;
+            }
+        },
+        selectFn: function (suggestion) {
+            $('#show_seller_name_by_card_no').val(suggestion.customerName);
+            $('#sellerCardNo').val(suggestion.cardNo);
+        }
+    };
+
     function swipeCard(el){
     	let cardNo=callbackObj.readCardNumber();
     	if (cardNo!=-1) {

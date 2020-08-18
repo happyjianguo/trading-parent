@@ -46,7 +46,7 @@
 			<div class="form-group col-3">
                 <label for="buyerName" class="">买家卡</label>
                 <div class="input-group">
-                    <#bautoCompleteProvider _displayDomainId="buyerCardNo" _displayDomainName="buyerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <#bautoCompleteProvider _displayDomainId="buyerCardNo" _displayDomainName="buyerCardNo" _placeholder="" _optionVariable="buyerCardQueryAutoCompleteOption"/>
                     <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
                     <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
 						<i class="fa fa-refresh"></i>刷卡
@@ -56,7 +56,7 @@
             <div class="form-group col-3">
                 <label for="sellerName" class="">卖家卡</label>
                 <div class="input-group">
-                    <#bautoCompleteProvider _displayDomainId="sellerCardNo" _displayDomainName="sellerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <#bautoCompleteProvider _displayDomainId="sellerCardNo" _displayDomainName="sellerCardNo" _placeholder="" _optionVariable="sellerCardQueryAutoCompleteOption"/>
                     <input type="text" class="form-control" id="show_seller_name_by_card_no" readonly/>
                     <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
 						<i class="fa fa-refresh"></i>刷卡
