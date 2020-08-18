@@ -3,8 +3,8 @@
 <div class="container-fluid">
     <#bs4nav>
     <form class="form collapse show" id="queryForm" role="form" >
-        <div class="row  row-cols-6">
-            <div class="form-group col">
+        <div class="row  row-cols-12">
+            <div class="form-group col-3">
                 <label for="">审批状态</label>
                 <select id="approvalState" name="approvalState" class="form-control">
                     <option value="">--全部--</option>
@@ -13,7 +13,7 @@
                     <option value="3">拒绝</option>
                 </select>
             </div>
-            <div class="form-group col">
+            <div class="form-group col-3">
                 <label for="">类型</label>
                 <select id="bizType" name="bizType" class="form-control">
                     <option value="">--全部--</option>
@@ -21,21 +21,19 @@
                     <option value="2">离场</option>
                 </select>
             </div>
-            <div class="form-group col-12">
-                <label for="customerId">客户</label>
+            <div class="form-group col-6">
+                <label for="">客户</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"  _validatorMethod="isSelected" _value="" _text="" />
 
             </div>
-            <div class="form-group col">
+            <div class="form-group col-3">
                 <label for="">车牌</label>
                 <input type="text" class="form-control isNaturalNum" name="plate" placeholder="">
             </div>
-            <div class="form-group col">
-                <label for="_originatorId" class="">发起人员</label>
+            <div class="form-group col-3">
+                <label for="" class="">发起人员</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="originatorId" _hiddenDomainName="originatorId" _displayDomainId="_originatorId" _displayDomainName="_originatorId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
             </div>
-        </div>
-        <div class="row  row-cols-6">
             <div class="form-group col-auto">
                 <label for="createdStart" >发起时间</label>
                 <div class="form-inline">
@@ -53,6 +51,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row  row-cols-6">
             <div class="form-group col">
                 <label for="" class="">审批人员</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="approvalId" _hiddenDomainName="approvalId" _displayDomainId="_approvalId" _displayDomainName="_approvalId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
