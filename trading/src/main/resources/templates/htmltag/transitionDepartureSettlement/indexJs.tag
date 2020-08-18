@@ -19,6 +19,14 @@
         });
     });
 
+    function swipeCard(el){
+        let cardNo=callbackObj.readCardNumber();
+        if (cardNo!=-1) {
+            $(el).prevAll()[3].value=cardNo;
+            $('#customerCardNo').focus();
+        }
+    }
+
     function getLastYearYestdy(date) {
         var strYear = date.getFullYear() - 1;
         var strDay = date.getDate();

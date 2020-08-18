@@ -53,6 +53,7 @@
         let cardNo=callbackObj.readCardNumber();
         if (cardNo!=-1) {
             $(el).prevAll()[3].value=cardNo;
+            $('#customerCardNo').focus();
         }
     }
 
