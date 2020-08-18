@@ -1,0 +1,127 @@
+<#bs4Body>
+
+<div class="container-fluid">
+    <#bs4nav>
+    <form class="form collapse show" id="queryForm" role="form" >
+        <div class="row  row-cols-6">
+            <div class="form-group col">
+                <label for="">状态</label>
+                <select id="orderStatus" name="orderStatus" class="form-control">
+                    <option value="">--全部--</option>
+                    <option value="2">已结算</option>
+                    <option value="3">已撤销</option>
+                </select>
+            </div>
+            <div class="form-group col">
+                <label for="" class="">单据编号</label>
+                <input type="text" class="form-control isNaturalNum" name="code" placeholder="">
+            </div>
+            <div class="form-group col">
+                <label for="" class="">结算员</label>
+                <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="_operatorId" _displayDomainName="_operatorId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
+            </div>
+            <div class="form-group col-12">
+                <label for="">客户</label>
+                <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"  _validatorMethod="isSelected" _value="" _text="" />
+            </div>
+        </div>
+        <div class="row  row-cols-6">
+            <div class="form-group col-auto">
+                <label for="createdStart" >结算时间</label>
+                <div class="form-inline">
+                    <div class="input-group">
+                        <input type="text" name="operatorTimeStart" id="createdStart" class="form-control laydatetime laystart"/>
+                        <div class="input-group-append">
+                            <label for=""  class="input-group-text fa fa-calendar"></label>
+                        </div>
+                    </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                    <div class="input-group">
+                        <input type="text" name="operatorTimeEnd" id="createdEnd" class="form-control laydatetime layend" value=""/>
+                        <div class="input-group-append">
+                            <label for=""  class="input-group-text fa fa-calendar"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col">
+                <label for="">卡号</label>
+                <input type="text" class="form-control isNaturalNum" name="customerCardNo" placeholder="">
+            </div>
+            <div class="col align-self-center mt-3">
+                <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
+                <button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()"><i class="fa fa-search"></i> 查询</button>
+            </div>
+        </div>
+
+    </form>
+</#bs4nav>
+
+
+<div class="">
+    <div class="row">
+        <div class="col-12">
+            <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
+                <#resource code="comprehensiveFee_add">
+	                <button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()"><i
+	                        class="fa fa-plus"></i> 新增
+	                </button>
+                </#resource>
+                <#resource code="comprehensiveFee_update">
+	                <button type="button" class="btn btn-primary" onclick="openUpdateHandler()">
+	                    <i class="fa fa-pencil-square-o"></i> 撤销
+	                </button>
+                </#resource>
+                <#resource code="comprehensiveFee_see">
+                    <button id="btn_view" type="button" class="btn btn-primary" onclick="openViewHandler()"><i class="fa fa-eye"></i> 查看</button>
+                </#resource>
+                <#resource code="comprehensiveFee_export">
+                    <button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')"><i class="fa fa-download"></i> 导出</button>
+                </#resource>
+            </div>
+            <table id="grid" data-toggle="table" data-id-field="id" data-title="检测收费列表" data-tree-show-field="name" data-parent-id-field="parentId" data-query-params="queryParams" data-sort-name="id"
+                   data-sort-order="modified_time" data-sort-name="modified_time" data-sort-order="desc" data-pagination="true" data-page-number="1" data-page-size="10" data-side-pagination="server" data-single-select="true" data-click-to-select="true" data-ignore-click-to-select-on="ignoreExpandClick">
+                <thead>
+                <tr>
+                    <th data-radio="true"></th>
+                    <th data-field="code" data-align="center" data-sortable="true">
+                        单据编号
+                    </th>
+                    <th data-field="customerCode" data-align="center" data-sortable="true">
+                        客户编号
+                    </th>
+                    <th data-field="customerName" data-align="center" data-sortable="true">
+                        客户姓名
+                    </th>
+                    <th data-field="customerCardNo" data-align="center" data-sortable="true">
+                       卡号
+                    </th>
+                    <th data-field="inspectionNum" data-align="center" data-sortable="true">
+                        检测数量
+                    </th>
+                    <th data-field="chargeAmount" data-align="center" data-sortable="true" >
+                        收费金额
+                    </th>
+                    <th data-field="plate" data-align="center"  data-sortable="true">
+                        车牌号
+                    </th>
+                    <th data-field="orderStatus" data-provider="payStatusProvider" data-align="center" data-sortable="true">
+                        单据状态
+                    </th>
+                    <th data-field="operatorName" data-align="center" data-sortable="true">
+                        操作员
+                    </th>
+                    <th data-field="operatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true">
+                        结算时间
+                    </th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+</#bs4Body>
+<#comprehensiveFee_indexJs />

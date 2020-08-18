@@ -1,0 +1,187 @@
+<#bs4Body>
+
+<div class="container-fluid">
+        <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
+        <form id="saveForm" role="form" novalidate>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">卡号</label>
+                    <div class="input-group">
+                        <input id="customerCardNo"  class="form-control" name="customerCardNo" required="true"  maxlength="20">
+                        <div class="input-group-append">
+                           <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;" >刷卡</a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">客户名称</label>
+                    <input id="customerName" readonly="true" class="form-control" name="customerName"  maxlength="10">
+                    <input id="customerCode" hidden="true" class="form-control" name="customerCode">
+                    <input id="customerId" class="form-control" name="customerId" hidden="true">
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">可用余额</label>
+                    <input type="number" id="availableBalance" readonly="true" class="form-control"  maxlength="100">
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label tlog >商品名称</label>
+                    <select id="inspectionItem" name="inspectionItem" class="form-control"  multiple></select>
+                    <#bselect2 _id="inspectionItem" _mode="remote" _value="[2,4,8,55]" _option="" _text=""  _optionVariable="assetsNamesAutoCompleteOption" _required="true"/>
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">检测数量</label>
+                    <input type="number" id="inspectionNum"  class="form-control" name="inspectionNum"  maxlength="100">
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">缴费金额</label>
+                    <input type="number" id="chargeAmountView"  class="form-control"   maxlength="100">
+                    <input type="number" hidden="true"  id="chargeAmount"  class="form-control" name="chargeAmount"  maxlength="100">
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">车牌号</label>
+                    <input id="plate" class="form-control" name="plate"  maxlength="8">
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">备注</label>
+                    <input id="remark" class="form-control" name="remark"  maxlength="30">
+                </div>
+            </div>
+        </form>
+    </div>
+</#bs4Body>
+
+
+    <script>
+
+        // 商品
+        var assetsNamesAutoCompleteOption = {
+            width: '100%',
+            language: 'zh-CN',
+            minimumInputLength:1,
+            maximumSelectionLength: 10,
+            ajax: {
+                type:'post',
+                url: '/assets/listNormal.action',
+                    data: function (params) {
+                    return {
+                        Keyword: params.term,
+                    }
+                },
+                processResults: function (data) {
+                    if(data.length){
+                        return {
+                            results: $.map(data, function (item) {
+                                item.text =item.name ;
+                                return item;
+                            })
+                        };
+                    }
+                }
+            }
+        }
+
+        $('#payByCard').on('click',function (e) {
+            //模拟刷卡代码，测试
+            if(0==0){
+                $('#customerCardNo').val("111");
+                $('#customerCode').val("222");
+                $('#customerId').val("333");
+                $('#customerName').val("444");
+                $('#availableBalance').val("55.223");
+                return;
+            }
+           let cardNum = callbackObj.readCardNumber();
+           if(cardNum == -1){
+               bs4pop.alert("未读取到卡号", {type: 'error'});
+               return false;
+           }
+            $.ajax({
+                type: "POST",
+                data:{cardNo:cardNum},
+                dataType:"json",
+                url: "/transitionDepartureApply/getCustomerByCardNo.action",
+                async: true,
+                success: function (res) {
+                    if (res.code == "200") {
+                        $('#customerCardNo').val(cardNum);
+                        $('#customerCode').val(res.data.code);
+                        $('#customerId').val(res.data.id);
+                        $('#customerName').val(res.data.name);
+                        $.ajax({
+                            type: "POST",
+                            data: {customerCardNo: cardNum},
+                            dataType: "json",
+                            url: "/comprehensiveFee/queryAccountBalance.action",
+                            async: false,
+                            success: function (res) {
+                                if (res.code == "200") {
+                                    $('#availableBalance').val(res.data.accountFund.balance/100);
+                                }
+                            },
+                        });
+                    }else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.result, {type: 'error'});
+                    }
+                },
+            });
+        });
+
+        function saveOrUpdateHandler() {
+            // 提交保存
+            if (!$('#saveForm').validate().form()) {
+                return false;
+            }
+            if(!isLicenseNo($('#plate').val())){
+                bs4pop.alert("车牌号码不正确", {type: 'error'});
+                return false;
+            }
+            //将缴费金额转成整数存入
+            var chargeAmount=parseFloat($('#chargeAmountView').val());
+            chargeAmount=chargeAmount.toFixed(2)*100;
+            $('#chargeAmount').val(Math.round(chargeAmount));
+            bui.loading.show('努力提交中，请稍候。。。');
+            var obj=$('#saveForm')[0];
+            let _formData = new FormData($('#saveForm')[0]);
+            $.ajax({
+                type: "POST",
+                url: "/comprehensiveFee/insert.action",
+                data: _formData,
+                processData: false,
+                contentType: false,
+                async: true,
+                success: function (res) {
+                    bui.loading.hide();
+                    if (res.code == "200") {
+                        parent.dia.hide();
+                        parent.verificationUsernamePassword(res.data.id);
+                    } else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.errorData, {type: 'error'});
+                    }
+                },
+                error: function (error) {
+                    bui.loading.hide();
+                    bs4pop.alert(error.result, {type: 'error'});
+                }
+            });
+        }
+
+        function isLicenseNo(str) {
+            return /(^[\u4E00-\u9FA5]{1}[a-zA-Z0-9]{6}$)|(^[a-zA-Z]{2}[a-zA-Z0-9]{2}[a-zA-Z0-9\u4E00-\u9FA5]{1}[a-zA-Z0-9]{4}$)|(^[\u4E00-\u9FA5]{1}[a-zA-Z0-9]{5}[挂学警军港澳]{1}$)|(^[a-zA-Z]{2}[0-9]{5}$)|(^(08|38){1}[a-zA-Z0-9]{4}[a-zA-Z0-9挂学警军港澳]{1}$)/.test(str);
+        }
+    </script>
