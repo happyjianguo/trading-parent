@@ -24,7 +24,6 @@
             <div class="form-group col-6">
                 <label for="">客户</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"  _validatorMethod="isSelected" _value="" _text="" />
-
             </div>
             <div class="form-group col-3">
                 <label for="">车牌</label>
@@ -53,11 +52,11 @@
             </div>
         </div>
         <div class="row  row-cols-6">
-            <div class="form-group col">
+            <div class="form-group col-3">
                 <label for="" class="">审批人员</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="approvalId" _hiddenDomainName="approvalId" _displayDomainId="_approvalId" _displayDomainName="_approvalId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
             </div>
-            <div class="form-group col-5">
+            <div class="form-group col-6">
                 <label for="" class="">卡号</label>
                 <div class="input-group">
                     <#bautoCompleteProvider  _displayDomainId="customerCardNo" _displayDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
