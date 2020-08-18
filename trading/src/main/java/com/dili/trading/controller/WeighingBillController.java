@@ -1,5 +1,6 @@
 package com.dili.trading.controller;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import com.dili.orders.dto.*;
@@ -76,7 +77,9 @@ public class WeighingBillController {
      * @return
      */
     @GetMapping("/index.html")
-    public String index() {
+    public String index(ModelMap modelMap) {
+        modelMap.put("createdStart", LocalDate.now() + " 00:00:00");
+        modelMap.put("createdEnd", LocalDate.now() + " 23:59:59");
         return "weighingBill/index";
     }
 
@@ -335,7 +338,7 @@ public class WeighingBillController {
         BaseOutput<WeighingBillDetailDto> output = this.weighingBillRpc.findDetailDtoById(id);
         if (!output.isSuccess()) {
             LOGGER.error(output.getMessage());
-            return this.index();
+            return this.index(modelMap);
         }
 
         Map<Object, Object> metadata = new HashMap<Object, Object>();
@@ -368,7 +371,7 @@ public class WeighingBillController {
             return "weighingBill/detail";
         } catch (Exception e) {
             e.printStackTrace();
-            return this.index();
+            return this.index(modelMap);
         }
 
     }
