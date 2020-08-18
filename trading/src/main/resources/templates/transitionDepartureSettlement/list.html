@@ -3,8 +3,8 @@
 <div class="container-fluid">
     <#bs4nav>
     <form class="form collapse show" id="queryForm" role="form" >
-        <div class="row  row-cols-6">
-            <div class="form-group col">
+        <div class="row  row-cols-12">
+            <div class="form-group col-2">
                 <label for="">类型</label>
                 <select id="bizType" name="bizType" class="form-control">
                     <option value="">--全部--</option>
@@ -12,7 +12,7 @@
                     <option value="2">离场</option>
                 </select>
             </div>
-            <div class="form-group col">
+            <div class="form-group col-2">
                 <label for="">状态</label>
                 <select id="payStatus" name="payStatus" class="form-control">
                     <option value="">--全部--</option>
@@ -20,25 +20,23 @@
                     <option value="3">已撤销</option>
                 </select>
             </div>
-            <div class="form-group col">
+            <div class="form-group col-2">
                 <label for="">车型</label>
                 <select id="carTypeId" name="carTypeId" class="form-control"></select>
                 <#bcomboProvider _id="carTypeId" _provider="carTypeProvider" _queryParams='{emptyText:"-- 全部 --"}' />
             </div>
-            <div class="form-group col-12">
+            <div class="form-group col-6">
                 <label for="">客户</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"  _validatorMethod="isSelected" _value="" _text="" />
             </div>
-            <div class="form-group col">
+            <div class="form-group col-3">
                 <label for="" class="">操作员</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="originatorId" _hiddenDomainName="originatorId" _displayDomainId="_originatorId" _displayDomainName="_originatorId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
             </div>
-            <div class="form-group col">
+            <div class="form-group col-3">
                 <label for="" class="">结算单号</label>
                 <input type="text" class="form-control isNaturalNum" name="code" placeholder="">
             </div>
-        </div>
-        <div class="row  row-cols-6">
             <div class="form-group col-auto">
                 <label for="createdStart" >结算时间</label>
                 <div class="form-inline">
@@ -56,6 +54,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row  row-cols-6">
             <div class="form-group col">
                 <label for="">车牌号</label>
                 <input type="text" class="form-control isNaturalNum" name="plate" placeholder="">
