@@ -6,7 +6,7 @@
 	 **************************************************************************/
 
 
-  var customerNameQueryAutoCompleteOption = {
+  var buyerNameQueryAutoCompleteOption = {
         serviceUrl: '/weighingBill/listCustomerByKeyword.action',
         paramName: 'keyword',
         displayFieldName: 'code',
@@ -31,9 +31,42 @@
             }
         },
         selectFn: function (suggestion) {
-            $('#show_customer_name').val(suggestion.name);
+            $('#show_buyer_name').val(suggestion.name);
         }
     };
+
+  var sellerNameQueryAutoCompleteOption = {
+        serviceUrl: '/weighingBill/listCustomerByKeyword.action',
+        paramName: 'keyword',
+        displayFieldName: 'code',
+        showNoSuggestionNotice: true,
+        minChars: 2,
+        width: 'flex',
+        noSuggestionNotice: '无此客户, 请重新输入',
+        transformResult: function (result) {
+            if(result.success){
+                let data = result.data;
+                return {
+                    suggestions: $.map(data, function (dataItem) {
+                        return $.extend(dataItem, {
+                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
+                            }
+                        );
+                    })
+                }
+            }else{
+                // bs4pop.alert(result.message, {type: 'error'});
+                return false;
+            }
+        },
+        selectFn: function (suggestion) {
+            $('#show_seller_name').val(suggestion.name);
+        }
+    };
+
+
+
+
     
     var buyerCardQueryAutoCompleteOption = {
         serviceUrl: '/weighingBill/listCustomerByCardNo.action',
