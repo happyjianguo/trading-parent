@@ -48,6 +48,63 @@
         }
     };
 
+    // 结算员名称
+    var operatorNameAutoCompleteOption = {
+        serviceUrl: '/weighingBill/listOperatorByKeyword.action',
+        paramName: 'keyword',
+        displayFieldName: 'realName',
+        showNoSuggestionNotice: true,
+        noSuggestionNotice: '操作员不存在',
+        transformResult: function (result) {
+            if(result.success){
+                let data = result.data;
+                return {
+                    suggestions: $.map(data, function (dataItem) {
+                        return $.extend(dataItem, {
+                                value: dataItem.realName + '（' + dataItem.serialNumber + '）'
+                            }
+                        );
+                    })
+                }
+            }else{
+                bs4pop.alert(result.message, {type: 'error'});
+                return false;
+            }
+        },
+        selectFn: function (suggestion) {
+        }
+    };
+
+    var customerNameQueryAutoCompleteOption = {
+        serviceUrl: '/weighingBill/listCustomerByKeyword.action',
+        paramName: 'keyword',
+        displayFieldName: 'code',
+        showNoSuggestionNotice: true,
+        minChars: 2,
+        width: 'flex',
+        noSuggestionNotice: '无此客户, 请重新输入',
+        transformResult: function (result) {
+            debugger
+            if(result.success){
+                let data = result.data;
+                return {
+                    suggestions: $.map(data, function (dataItem) {
+                        return $.extend(dataItem, {
+                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
+                            }
+                        );
+                    })
+                }
+            }else{
+                // bs4pop.alert(result.message, {type: 'error'});
+                return false;
+            }
+        },
+        selectFn: function (suggestion) {
+            $('#show_customer_name').val(suggestion.name);
+        }
+    };
+
 
     /*********************变量定义区 end***************/
 
@@ -112,7 +169,7 @@
         dia = bs4pop.dialog({
             title: '支付确认',//对话框title
             content: '${contextPath}/comprehensiveFee/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
-            width: '20%',//宽度
+            width: '40%',//宽度
             height: '60%',//高度
             isIframe: true,//默认是页面层，非iframe
             btns:
@@ -182,6 +239,13 @@
             order: params.order
         };
         return $.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
+    }
+
+    /** 点击编号查看事件*/
+    function view(value, row, index) {
+        return [
+            '<a href=javascript:openViewHandler('+row.id+')>'+value+'</a>'
+        ].join("")
     }
 
     /*****************************************函数区 end**************************************/

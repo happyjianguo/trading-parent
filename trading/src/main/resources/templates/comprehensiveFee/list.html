@@ -17,10 +17,13 @@
                 <input type="text" class="form-control isNaturalNum" name="code" placeholder="">
             </div>
             <div class="form-group col">
-                <label for="" class="">结算员</label>
-                <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="_operatorId" _displayDomainName="_operatorId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
+                <label for="buyerName" class="">结算员</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="realName" _displayDomainName="realName" _placeholder="" _optionVariable="operatorNameAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_operator_name" readonly/>
+                </div>
             </div>
-            <div class="form-group col-12">
+            <div class="form-group col-3">
                 <label for="">客户</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"  _validatorMethod="isSelected" _value="" _text="" />
             </div>
@@ -43,9 +46,12 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group col">
-                <label for="">卡号</label>
-                <input type="text" class="form-control isNaturalNum" name="customerCardNo" placeholder="">
+            <div class="form-group col-3">
+                <label for="" class="">卡号</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider _hiddenDomainId="customerCardNo" _hiddenDomainName="customerCardNo" _placeholder="" _optionVariable="customerNameQueryAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
+                </div>
             </div>
             <div class="col align-self-center mt-3">
                 <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
@@ -78,12 +84,12 @@
                     <button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')"><i class="fa fa-download"></i> 导出</button>
                 </#resource>
             </div>
-            <table id="grid" data-toggle="table" data-id-field="id" data-title="检测收费列表" data-tree-show-field="name" data-parent-id-field="parentId" data-query-params="queryParams" data-sort-name="id"
-                   data-sort-order="modified_time" data-sort-name="modified_time" data-sort-order="desc" data-pagination="true" data-page-number="1" data-page-size="10" data-side-pagination="server" data-single-select="true" data-click-to-select="true" data-ignore-click-to-select-on="ignoreExpandClick">
+            <table id="grid" data-toggle="table" data-id-field="id" data-title="检测收费列表" data-tree-show-field="name" data-parent-id-field="parentId" data-query-params="queryParams"
+                   data-sort-order="desc" data-sort-name="operatorTime"  data-pagination="true" data-page-number="1" data-page-size="10" data-side-pagination="server" data-single-select="true" data-click-to-select="true" >
                 <thead>
                 <tr>
                     <th data-radio="true"></th>
-                    <th data-field="code" data-align="center" data-sortable="true">
+                    <th data-field="code" data-formatter="view" data-align="center" data-sortable="true">
                         单据编号
                     </th>
                     <th data-field="customerCode" data-align="center" data-sortable="true">

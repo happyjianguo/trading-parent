@@ -6,6 +6,7 @@ import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @FeignClient(name = "order-service", contextId = "comprehensiveFeeRpc", url = "localhost:8185")
@@ -58,5 +59,8 @@ public interface ComprehensiveFeeRpc {
     @RequestMapping(value = "/api/comprehensiveFee/pay", method = {RequestMethod.POST})
     BaseOutput<ComprehensiveFee> pay(@RequestParam(value = "id") Long id, @RequestParam(value = "password") String password, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId, @RequestParam(value = "operatorCode") String operatorCode, @RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "operatorName") String operatorName, @RequestParam(value = "operatorUserName") String operatorUserName);
 
+
+    @RequestMapping(value = "/api/comprehensiveFee/fee", method = {RequestMethod.POST})
+    BaseOutput getFee(@RequestParam(value = "marketId") Long marketId, @RequestParam(value = "customerId") Long customerId,@RequestParam(value = "type") String type);
 
 }

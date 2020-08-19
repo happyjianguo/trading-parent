@@ -1,9 +1,12 @@
 package com.dili.trading.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dili.assets.sdk.dto.CategoryDTO;
+import com.dili.assets.sdk.rpc.CategoryRpc;
 import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.rpc.CardRpc;
+import com.dili.rule.sdk.rpc.ChargeRuleRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
@@ -11,6 +14,7 @@ import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.rpc.ComprehensiveFeeRpc;
 import com.dili.trading.service.ComprehensiveFeeService;
+import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
@@ -22,11 +26,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 结算单接口
@@ -44,6 +44,11 @@ public class ComprehensiveFeeController {
     @Autowired
     private CardRpc cardRpc;
 
+    @Autowired
+    CategoryRpc categoryRpc;
+
+    @Autowired
+    private ChargeRuleRpc chargeRuleRpc;
     /**
      * 跳转到列表页面
      *
@@ -146,8 +151,7 @@ public class ComprehensiveFeeController {
     @RequestMapping(value = "/queryAccountBalance.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput queryAccountBalance(String customerCardNo) {
-        BaseOutput<AccountSimpleResponseDto> oneAccountCard = cardRpc.getOneAccountCard(customerCardNo);
-        return oneAccountCard;
+        return cardRpc.getOneAccountCard(customerCardNo);
     }
 
     /**
@@ -166,6 +170,8 @@ public class ComprehensiveFeeController {
             result.setErrorData(tips);
             return result;
         }
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        comprehensiveFee.setMarketId(userTicket.getFirmId());
         return comprehensiveFeeService.insertComprehensiveFee(comprehensiveFee);
     }
 
@@ -187,6 +193,24 @@ public class ComprehensiveFeeController {
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
         if (oneByID.isSuccess()) {
             if (Objects.nonNull(oneByID.getData())) {
+                //翻译商品id
+                if(StringUtils.isNotBlank(oneByID.getData().getInspectionItem())){
+                    List<String> ids= Arrays.asList(oneByID.getData().getInspectionItem().split(","));
+                    CategoryDTO categoryDTO = new CategoryDTO();
+
+                    categoryDTO.setIds(ids);
+                    List<CategoryDTO> list = categoryRpc.getTree(categoryDTO).getData();
+                    if(list!=null&&list.size()>0){
+                        StringBuffer name=new StringBuffer("");
+                        for (CategoryDTO cgdto:list) {
+                            name.append(",");
+                            name.append(cgdto.getName());
+                        }
+                        if(name.length()>0){
+                            oneByID.getData().setInspectionItem(name.substring(1));
+                        }
+                    }
+                }
                 modelMap.put("comprehensiveFee", ValueProviderUtils.buildDataByProvider(comprehensiveFee, Lists.newArrayList(oneByID.getData())).get(0));
                 //返回小数缴费金额
                 Double chargeAmountView=((ComprehensiveFee)oneByID.getData()).getChargeAmount().doubleValue()/100;
@@ -194,6 +218,22 @@ public class ComprehensiveFeeController {
             }
         }
         return "comprehensiveFee/view";
+    }
+
+    /**
+     * 对接计费规则
+     *
+     * @return
+     */
+    @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput getFee(Long customerId, String type) {
+        if (Objects.isNull(customerId)) {
+            return BaseOutput.failure("顾客编号不能为空");
+        }
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        BaseOutput baseOutput=comprehensiveFeeRpc.getFee(8L, customerId, type);
+        return baseOutput;
     }
 
     /**
