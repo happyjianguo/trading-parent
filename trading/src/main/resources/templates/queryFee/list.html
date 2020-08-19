@@ -1,0 +1,112 @@
+<#bs4Body>
+<div class="container-fluid">
+	<#bs4nav>
+	<form class="form" id="queryForm" role="form">
+		<input type="hidden" class="form-control" name="orderType" value="2" placeholder="">
+		<div class="row  row-cols-6">
+            <div class="form-group col-3">
+                <label for="">客户</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_customer_name" readonly/>
+                </div>
+            </div>
+			<div class="form-group col-3">
+				<label for="" class="">结算员</label>
+				<div class="input-group">
+					<#bautoCompleteProvider _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="realName" _displayDomainName="realName" _placeholder="" _optionVariable="operatorNameAutoCompleteOption"/>
+					<input type="text" class="form-control" id="show_operator_name" readonly/>
+				</div>
+			</div>
+            <div class="form-group col-3">
+                <label for="">卡号</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider _hiddenDomainId="customerCardNo" _hiddenDomainName="customerCardNo" _placeholder=""  _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_customer_card_no" readonly/>
+                </div>
+            </div>
+			<div class="form-group col-auto">
+				<label for="createdStart">结算时间</label>
+				<div class="form-inline">
+					<div class="input-group">
+						<input type="text" name="operatorTimeStart" id="createdStart" class="form-control laydatetime laystart" />
+						<div class="input-group-append">
+							<label for="createdStart" class="input-group-text fa fa-calendar"></label>
+						</div>
+					</div>
+					&nbsp;&nbsp;至&nbsp;&nbsp;
+					<div class="input-group">
+						<input type="text" name="operatorTimeEnd" id="createdEnd" class="form-control laydatetime layend" value="" />
+						<div class="input-group-append">
+							<label for="createdEnd" class="input-group-text fa fa-calendar"></label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-auto align-self-center mt-3">
+				<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm input').val('');">
+					<i class="fa fa-refresh"></i> 清空
+				</button>
+				<button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()">
+					<i class="fa fa-search"></i> 查询
+				</button>
+			</div>
+		</div>
+	</form>
+	</#bs4nav>
+	<hr>
+	<div class="row">
+		<div class="col-12">
+			<div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
+				<#resource code="comprehensiveFee_queryFee_add">
+				<button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()"><i
+						class="fa fa-plus"></i> 新增
+				</button>
+			</#resource>
+				<#resource code="truck_off">
+				<button type="button" class="btn btn-primary btn_css_disabled" id="btn_disabled" onclick="doEnableHandler(2)">
+					<i class="fa fa-stop"></i> 导出
+				</button>
+				</#resource>
+			</div>
+			<table id="grid" data-toggle="table" data-title="查询收费列表" class="table" data-toolbar="#toolbar" data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
+				data-side-pagination="server" data-method="POST" data-content-type="application/x-www-form-urlencoded" data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
+				data-unique-id="id" data-sort-name="id" data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary" data-show-refresh="true" data-show-fullscreen="true"
+				data-show-columns="true">
+				<thead>
+					<tr>
+						<th data-radio="true"></th>
+                        <th data-field="code" data-align="center" data-sortable="true">
+                            单据编号
+                        </th>
+                        <th data-field="customerCode" data-align="center" data-sortable="true">
+                            客户编号
+                        </th>
+                        <th data-field="customerName" data-align="center" data-sortable="true">
+                            客户姓名
+                        </th>
+                        <th data-field="customerCardNo" data-align="center" data-sortable="true">
+                            卡号
+                        </th>
+                        <th data-field="chargeAmount" data-align="center" data-sortable="true" >
+                            收费金额
+                        </th>
+                        <th data-field="operatorName" data-align="center" data-sortable="true">
+                            结算员
+                        </th>
+                        <th data-field="operatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true">
+                            结算时间
+                        </th>
+                        <th data-field="remark" data-align="center" data-sortable="true">
+                            备注
+                        </th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</div>
+</div>
+
+</#bs4Body>
+
+<#queryFee_indexJs />
