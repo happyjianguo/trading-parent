@@ -194,7 +194,7 @@
                 success: function (data) {
                     debugger;
                     if (data.code == '200') {
-                        $('#show_customer_name').val(data.data[0].customerName);
+                        $('#show_customer_name').val(data.data[0].name);
                     }
                 },
                 error: function () {

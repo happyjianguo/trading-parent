@@ -286,27 +286,27 @@ public class WeighingBillController {
     @ResponseBody
     @RequestMapping("/listCustomerByCardNo.action")
     public BaseOutput<?> listCustomerByCardNo(String cardNo) {
-//        BaseOutput<AccountSimpleResponseDto> cardOutput = this.cardRpc.getOneAccountCard(cardNo);
-//        if (!cardOutput.isSuccess()) {
-//            return cardOutput;
-//        }
-//        CustomerQueryInput cq = new CustomerQueryInput();
-//        cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
-//        BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
-//        if (!firmOutput.isSuccess()) {
-//            return firmOutput;
-//        }
-//        cq.setMarketId(firmOutput.getData().getId());
-//        BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
-//        return output;
-        //json修改开始
-        BaseOutput<UserAccountCardResponseDto> oneAccountCard = this.accountRpc.getOneAccountCard(cardNo);
-        if (!oneAccountCard.isSuccess()) {
-            return oneAccountCard;
+        BaseOutput<AccountSimpleResponseDto> cardOutput = this.cardRpc.getOneAccountCard(cardNo);
+        if (!cardOutput.isSuccess()) {
+            return cardOutput;
         }
-        List<UserAccountCardResponseDto> userAccountCardResponseDtos = new ArrayList<>();
-        userAccountCardResponseDtos.add(oneAccountCard.getData());
-        return BaseOutput.successData(userAccountCardResponseDtos);
+        CustomerQueryInput cq = new CustomerQueryInput();
+        cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
+        BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
+        if (!firmOutput.isSuccess()) {
+            return firmOutput;
+        }
+        cq.setMarketId(firmOutput.getData().getId());
+        BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
+        return output;
+        //json修改开始
+//        BaseOutput<UserAccountCardResponseDto> oneAccountCard = this.accountRpc.getOneAccountCard(cardNo);
+//        if (!oneAccountCard.isSuccess()) {
+//            return oneAccountCard;
+//        }
+//        List<UserAccountCardResponseDto> userAccountCardResponseDtos = new ArrayList<>();
+//        userAccountCardResponseDtos.add(oneAccountCard.getData());
+//        return BaseOutput.successData(userAccountCardResponseDtos);
         //json修改结束
 
     }
