@@ -4,40 +4,40 @@
         <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
         <form id="updateForm" role="form" novalidate>
             <div class="row row-cols-4">
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">客户编号</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.customerCode!}" disabled />
                     <input type="text" class="form-control" value="${transitionDepartureApply.id!}" name="id" hidden />
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">卡号</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.customerCardNo!}" disabled />
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">客户名称</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.customerName!}" disabled />
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">申请部门</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.originatorName!}" disabled />
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">车辆类型</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.carTypeId!}" disabled />
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">车牌号</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.plate!}" disabled />
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">交易类型</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.transTypeId!}" disabled />
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">商品名称</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.categoryId!}" disabled />
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">办理业务</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.bizType!}" disabled />
                 </div>
@@ -46,11 +46,11 @@
                     <label for="">转离场理由</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.transitionDepartureReason!}" disabled />
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">发起人</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.originatorName!}" disabled />
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">发起时间</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.originatorTime!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" disabled />
                 </div>
@@ -86,10 +86,11 @@
                 success: function (res) {
                     bui.loading.hide();
                     if (res.code == "200") {
-                        bs4pop.alert('成功', {type: 'success'}, function () {
-                            parent.dia.hide();
-                            parent.location.reload();
-                        });
+                        parent.dia.hide();
+                        parent.location.reload();
+                        // bs4pop.alert('成功', {type: 'success'}, function () {
+                        //
+                        // });
                     } else {
                         bui.loading.hide();
                         bs4pop.alert(res.result, {type: 'error'});

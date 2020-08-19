@@ -124,7 +124,7 @@
             if (!$('#saveForm').validate().form()) {
                 return false;
             }
-            bui.loading.show('努力提交中，请稍候。。。');
+            parent.bui.loading.show('努力提交中，请稍候。。。');
             let _formData = new FormData($('#saveForm')[0]);
             $.ajax({
                 type: "POST",
@@ -136,11 +136,12 @@
                 success: function (res) {
                     bui.loading.hide();
                     if (res.code == "200") {
-                        bs4pop.alert('成功', {type: 'success'}, function () {
-                            /* 应该要带条件刷新 */
-                            parent.dia.hide();
-                            parent.location.reload();
-                        });
+                        parent.dia.hide();
+                        parent.location.reload();
+                        // bs4pop.alert('成功', {type: 'success'}, function () {
+                        //     /* 应该要带条件刷新 */
+                        //
+                        // });
                     } else {
                         bui.loading.hide();
                         bs4pop.alert(res.result, {type: 'error'});
