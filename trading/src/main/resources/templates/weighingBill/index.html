@@ -46,23 +46,25 @@
 			<div class="form-group col-3">
                 <label for="buyerName" class="">买家卡</label>
                 <div class="input-group">
-                    <#bautoCompleteProvider _displayDomainId="buyerCardNo" _displayDomainName="buyerCardNo" _placeholder="" _optionVariable="buyerCardQueryAutoCompleteOption"/>
-                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
-                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this,'#buyerCardNo');">
-						<i class="fa fa-refresh"></i>刷卡
-					</button>
+                    <!--<#bautoCompleteProvider _displayDomainId="buyerCardNo" _displayDomainName="buyerCardNo" _placeholder="" _optionVariable="buyerCardQueryAutoCompleteOption"/>-->
+                    <input type="text" class="form-control" id="buyerCardNo" name="buyerCardNo"/>
+                    <input type="text" class="form-control" id="show_buyer_name_by_card_name" readonly/>
+                    <!--<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard();">-->
+						<!--<i class="fa fa-refresh"></i>刷卡-->
+					<!--</button>-->
                 </div>
             </div>
             <div class="form-group col-3">
-                <label for="sellerName" class="">卖家卡</label>
-                <div class="input-group">
-                    <#bautoCompleteProvider _displayDomainId="sellerCardNo" _displayDomainName="sellerCardNo" _placeholder="" _optionVariable="sellerCardQueryAutoCompleteOption"/>
-                    <input type="text" class="form-control" id="show_seller_name_by_card_no" readonly/>
-                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this,'#sellerCardNo');">
-						<i class="fa fa-refresh"></i>刷卡
-					</button>
-                </div>
-            </div>
+			<label for="sellerName" class="">卖家卡</label>
+			<div class="input-group">
+				<!--<#bautoCompleteProvider _displayDomainId="sellerCardNo" _displayDomainName="sellerCardNo" _placeholder="" _optionVariable="sellerCardQueryAutoCompleteOption"/>-->
+				<input type="text" class="form-control" id="sellerCardNo" name="sellerCardNo"/>
+				<input type="text" class="form-control" id="show_seller_name_by_card_name" readonly/>
+				<!--<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard();">-->
+					<!--<i class="fa fa-refresh"></i>刷卡-->
+				<!--</button>-->
+			</div>
+		</div>
 			<div class="form-group col-auto">
 				<label for="createdStart">结算时间</label>
 				<div class="form-inline">
@@ -96,12 +98,15 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-auto align-self-center mt-3">
+			<div class="col-auto align-self-center mt-5">
 				<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm input').val('');">
 					<i class="fa fa-refresh"></i> 清空
 				</button>
-				<button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()">
+				<button type="button" class="btn btn-outline-primary mr-2" onclick="queryDataHandler()">
 					<i class="fa fa-search"></i> 查询
+				</button>
+				<button type="button" class="btn btn-outline-primary" onclick="javascript:swipeCard();">
+					<i class="fa fa-refresh"></i> 刷卡
 				</button>
 			</div>
 		</div>
@@ -202,6 +207,48 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(function(){
+        $('#buyerCardNo').on('input', function (cardNo) {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: '/weighingBill/listCustomerByCardNo.action',
+                data: {cardNo: $(this).val()},
+                success: function (data) {
+                    debugger;
+                    if (data.code == '200') {
+                        $('#show_buyer_name_by_card_name').val(data.data.customerName);
+                    }
+                },
+                error: function () {
+                    bui.loading.hide();
+                    bs4pop.alert("客户获取失败!", {type: 'error'});
+                }
+            });
+        })
+        $('#sellerCardNo').on('input', function (cardNo) {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: '/weighingBill/listCustomerByCardNo.action',
+                data: {cardNo: $(this).val()},
+                success: function (data) {
+                    debugger;
+                    if (data.code == '200') {
+                        $('#show_seller_name_by_card_name').val(data.data.customerName);
+                    }
+                },
+                error: function () {
+                    bui.loading.hide();
+                    bs4pop.alert("客户获取失败!", {type: 'error'});
+                }
+            });
+        })
+    })
+</script>
+
 
 <script type="text/javascript">
 <#weighingBill_indexJs />

@@ -265,14 +265,7 @@ public class WeighingBillController {
             return firmOutput;
         }
         cq.setMarketId(firmOutput.getData().getId());
-        //json 修改开始
-        //customer那边没有卡号的冗余，直接走卡余额查询，应该可以满足
-        //通过卡号获取账户
-//        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getOneAccountCard(keyword);
-//        List<UserAccountCardResponseDto> userAccountCardResponseDtos = new ArrayList<>();
-//        userAccountCardResponseDtos.add(oneAccountCard.getData());
         BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
-        //json 修改结束
         return output;
     }
 
@@ -298,17 +291,14 @@ public class WeighingBillController {
         }
         cq.setMarketId(firmOutput.getData().getId());
         BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
-        return output;
-        //json修改开始
-//        BaseOutput<UserAccountCardResponseDto> oneAccountCard = this.accountRpc.getOneAccountCard(cardNo);
-//        if (!oneAccountCard.isSuccess()) {
-//            return oneAccountCard;
-//        }
-//        List<UserAccountCardResponseDto> userAccountCardResponseDtos = new ArrayList<>();
-//        userAccountCardResponseDtos.add(oneAccountCard.getData());
-//        return BaseOutput.successData(userAccountCardResponseDtos);
-        //json修改结束
-
+        if (!output.isSuccess()) {
+            return output;
+        }
+        //获取到客户
+        Customer customer = output.getData().get(0);
+        UserAccountCardResponseDto accountInfo = cardOutput.getData().getAccountInfo();
+        accountInfo.setCustomerName(customer.getName());
+        return BaseOutput.successData(accountInfo);
     }
 
     /**

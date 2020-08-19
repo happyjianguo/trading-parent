@@ -1,8 +1,8 @@
     /***************************************************************************
-	 * 
+	 *
 	 * @Date 2019-11-06 17:30:00
 	 * @author jiangchengyong
-	 * 
+	 *
 	 **************************************************************************/
 
 
@@ -65,7 +65,7 @@
 
 
 
-    
+
     var buyerCardQueryAutoCompleteOption = {
         serviceUrl: '/weighingBill/listCustomerByCardNo.action',
         paramName: 'cardNo',
@@ -125,12 +125,30 @@
         }
     };
 
-    function swipeCard(el,val1){
-    	let cardNo=callbackObj.readCardNumber();
-    	if (cardNo!=-1) {
-	    	$(el).prevAll()[3].value=cardNo;
-	    	$(val1).focus();
-    	}
+    function swipeCard(){
+            let cardNo=callbackObj.readCardNumber();
+            if (cardNo!=-1) {
+                $.ajax({
+                    type:'GET',
+                    url:'/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNo,
+                    dataType:'json',
+                    success:function(result) {
+                        if (result.success) {
+                            //1-买家 2-卖家
+                            if(result.data.accountType==1){
+                                $('#buyerCardNo').val(cardNo);
+                                $('#show_buyer_name_by_card_name').val(result.data.customerName);
+                            }else if(result.data.accountType==2){
+                                $('#sellerCardNo').val(cardNo);
+                                $('#show_seller_name_by_card_name').val(result.data.customerName);
+                            }
+                        }
+                    },
+                    error:function(){
+
+                    }
+                });
+            }
     }
 
     function queryCustomerByCardNo(cardNo, domId) {
@@ -154,8 +172,8 @@
             }
         });
     }
-    
-    
+
+
     // 结算员名称
     var operatorNameAutoCompleteOption = {
         serviceUrl: '/weighingBill/listOperatorByKeyword.action',
@@ -267,7 +285,7 @@
             }
         });
     }
-    
+
     function invalidateHandler(){
                     $.ajax({
                     type: "POST",
@@ -289,7 +307,7 @@
                     }
                 });
     }
-    
+
      function withdraw() {
     	let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
@@ -308,7 +326,7 @@
             }
         });
     }
-    
+
     function withdrawHandler(){
                     $.ajax({
                     type: "POST",
@@ -421,7 +439,7 @@
 
     /**
 	 * table参数组装 可修改queryParams向服务器发送其余的参数
-	 * 
+	 *
 	 * @param params
 	 */
     function queryParams(params) {
