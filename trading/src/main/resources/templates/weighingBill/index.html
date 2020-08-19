@@ -220,7 +220,8 @@
                     if (data.code == '200') {
                         $('#show_buyer_name_by_card_name').val(data.data.customerName);
                     }else{
-                        $('#show_buyer_name_by_card_name').val(data.data.customerName);
+                        $('#show_buyer_name_by_card_name').val('');
+                        // bs4pop.alert("客户获取失败!", {type: 'error'});
 					}
                 },
                 error: function () {
@@ -240,6 +241,7 @@
                         $('#show_seller_name_by_card_name').val(data.data.customerName);
                     }else{
                         $('#show_seller_name_by_card_name').val('');
+                        // bs4pop.alert("客户获取失败!", {type: 'error'});
 					}
                 },
                 error: function () {

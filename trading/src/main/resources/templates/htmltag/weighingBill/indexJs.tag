@@ -142,12 +142,19 @@
                                 $('#sellerCardNo').val(cardNo);
                                 $('#show_seller_name_by_card_name').val(result.data.customerName);
                             }
+                        }else{
+                            $('#buyerCardNo').val('');
+                            $('#show_buyer_name_by_card_name').val('');
+                            $('#sellerCardNo').val('');
+                            $('#show_seller_name_by_card_name').val('');
                         }
                     },
                     error:function(){
 
                     }
                 });
+            }else{
+                bs4pop.alert("未读取到卡号!", {type: 'error'});
             }
     }
 

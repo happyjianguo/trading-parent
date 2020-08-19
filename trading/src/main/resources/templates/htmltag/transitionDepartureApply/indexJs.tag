@@ -64,6 +64,7 @@
                         $('#show_customer_name').val(data.data[0].name);
                     }else{
                         $('#show_customer_name').val('');
+                        // bs4pop.alert("客户获取失败!", {type: 'error'});
                     }
                 },
                 error: function () {
@@ -71,6 +72,8 @@
                     bs4pop.alert("客户获取失败!", {type: 'error'});
                 }
             });
+        }else{
+            bs4pop.alert("为获取到卡号!", {type: 'error'});
         }
 
     }
