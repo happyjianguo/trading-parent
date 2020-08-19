@@ -62,6 +62,8 @@
                 success: function (data) {
                     if (data.code == '200') {
                         $('#show_customer_name').val(data.data[0].name);
+                    }else{
+                        $('#show_customer_name').val('');
                     }
                 },
                 error: function () {
