@@ -23,6 +23,23 @@
         let cardNo=callbackObj.readCardNumber();
         if (cardNo!=-1) {
             $('#show_customer_card').val(cardNo);
+            // $('#show_customer_card').val('888810054629');
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: '/weighingBill/listCustomerByCardNo.action',
+                data: {cardNo: cardNo},
+                success: function (data) {
+                    debugger;
+                    if (data.code == '200') {
+                        $('#show_customer_name').val(data.data[0].name);
+                    }
+                },
+                error: function () {
+                    bui.loading.hide();
+                    bs4pop.alert("客户获取失败!", {type: 'error'});
+                }
+            });
         }
     }
 
