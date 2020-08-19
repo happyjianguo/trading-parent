@@ -27,7 +27,7 @@
             $.ajax({
                 type: "POST",
                 dataType: "json",
-                url: '/weighingBill/listCustomerByCardNo.action',
+                url: '/customer/listCustomerByCardNo.action',
                 data: {cardNo: cardNo},
                 success: function (data) {
                     if (data.code == '200') {
