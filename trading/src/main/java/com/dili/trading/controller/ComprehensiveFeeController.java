@@ -11,6 +11,7 @@ import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.rpc.ComprehensiveFeeRpc;
 import com.dili.trading.service.ComprehensiveFeeService;
+import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
@@ -19,9 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -194,6 +193,34 @@ public class ComprehensiveFeeController {
             }
         }
         return "comprehensiveFee/view";
+    }
+
+    /**
+     * 撤销密码页面
+     *
+     * @param id
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping("/revocatorPage.html")
+    public String revocatorPage(Long id, ModelMap modelMap) {
+        modelMap.addAttribute("comprehensiveFeeId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "revocator");
+        return "comprehensiveFee/revocatorPage";
+    }
+    /**
+     * 撤销
+     *
+     * @param id
+     * @param operatorPassword
+     * @param modelMap
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/revocator.action")
+    public BaseOutput<Object> revocator(Long id, @RequestParam(value="password") String operatorPassword, ModelMap modelMap) {
+        UserTicket user = SessionContext.getSessionContext().getUserTicket();
+        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getId(), operatorPassword);
+        return output;
     }
 
     /**

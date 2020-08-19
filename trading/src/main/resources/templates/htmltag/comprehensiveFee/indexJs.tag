@@ -4,6 +4,7 @@
         //如 let itemIndex = 0;
     let _grid = $('#grid');
     let _form = $('#_form');
+    let _modal = $('#_modal');
     var dia;
 
 
@@ -129,6 +130,80 @@
                 }]
         });
 
+    }
+    function openUpdateHandler() {
+        let rows = _grid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        if (rows[0].$_orderStatus != 2) {
+            bs4pop.alert('该单据当前状态不能进行撤销操作！');
+            return;
+        }
+
+        bs4pop.confirm(" <div style='font-size: large' align='center' >确定撤销当前单据？</div>", {
+            title: "信息确认", btns: [
+                {
+                    label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
+                        $('#_modal .modal-body').load("${contextPath}/comprehensiveFee/revocatorPage.html?id=" + rows[0].id);
+                        _modal.find('.modal-title').text('作废校验');
+                        $("#_modal").modal();
+                    }
+                }, {
+                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
+
+                    }
+                }]
+        }, function (sure) {});
+    }
+    function openUpdateHandler1() {
+        let rows = _grid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return;
+        }
+        if (rows[0].$_orderStatus != 2) {
+            bs4pop.alert('该单据当前状态不能进行撤销操作！');
+            return;
+        }
+
+        bs4pop.confirm(" 确定作废当前单据吗？", {title: "确认提示"}, function (sure) {
+            if (sure) {
+                $('#_modal .modal-body').load("${contextPath}/comprehensiveFee/revocatorPage.html?id="+rows[0].id);
+                _modal.find('.modal-title').text('作废校验');
+                $("#_modal").modal();
+
+
+            }
+        });
+    }
+
+    function cancelHandler() {
+        window.location.reload();
+    }
+
+    function revocator() {
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: '/comprehensiveFee/revocator.action',
+            data: $('#UserPasswordForm').serialize(),
+            success: function (data) {
+                bui.loading.hide();
+                if (data.code != '200') {
+                    bs4pop.alert(data.message, {type: 'error'});
+                    return;
+                }
+                window.location.reload();
+            },
+            error: function (data) {
+                debugger;
+                console.log(data);
+                bui.loading.hide();
+                bs4pop.alert("请求失败!", {type: 'error'});
+            }
+        });
     }
 
     /**
