@@ -8,7 +8,7 @@
                 <a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#baseInfo" aria-expanded="true"
                    aria-controls="baseInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
             </div>
-            <div class="row row-cols-4"  id="baseInfo">
+            <div class="row row-cols-4 collapse show"   id="baseInfo">
                 <div class="form-group col-6">
                     <label for="">卡号</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.customerCardNo!}" disabled />
@@ -152,4 +152,13 @@
                 }
             });
         }
+
+        $(document).on('hide.bs.collapse', 'form .collapse', function () {
+            let id = $(this).attr('id');
+            $('[data-target="#'+ id +'"]').html('展开 <i class="fa fa-angle-double-down" aria-hidden="true"></i>');
+        });
+        $(document).on('show.bs.collapse', 'form .collapse', function () {
+            let id = $(this).attr('id');
+            $('[data-target="#'+ id +'"]').html('收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i>');
+        });
     </script>
