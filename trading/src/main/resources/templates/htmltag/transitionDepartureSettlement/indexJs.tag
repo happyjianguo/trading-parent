@@ -22,8 +22,7 @@
     function swipeCard(el){
         let cardNo=callbackObj.readCardNumber();
         if (cardNo!=-1) {
-            $(el).prevAll()[3].value=cardNo;
-            $('#customerCardNo').focus();
+            $('#show_customer_card').val(cardNo);
         }
     }
 
