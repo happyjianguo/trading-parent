@@ -11,7 +11,6 @@
         paramName: 'keyword',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
-        minChars: 2,
         width: 'flex',
         noSuggestionNotice: '无此客户, 请重新输入',
         transformResult: function (result) {
@@ -40,7 +39,6 @@
         paramName: 'keyword',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
-        minChars: 2,
         width: 'flex',
         noSuggestionNotice: '无此客户, 请重新输入',
         transformResult: function (result) {
