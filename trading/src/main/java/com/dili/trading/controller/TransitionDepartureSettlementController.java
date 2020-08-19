@@ -17,6 +17,7 @@ import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -202,6 +203,12 @@ public class TransitionDepartureSettlementController {
     @RequestMapping(value = "/pay.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput pay(Long id, String password) {
+        if (Objects.isNull(id)) {
+            return BaseOutput.failure("结算单id不能为空");
+        }
+        if (StringUtils.isBlank(password)) {
+            return BaseOutput.failure("密码不能为空");
+        }
         return transitionDepartureSettlementService.pay(id, password);
     }
 
