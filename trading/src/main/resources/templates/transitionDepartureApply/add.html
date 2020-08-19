@@ -4,7 +4,7 @@
         <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
         <form id="saveForm" role="form" novalidate>
             <div class="row row-cols-4">
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">卡号</label>
                     <div class="input-group">
                         <input id="customerCardNo" required readonly="true" class="form-control" name="customerCardNo"  maxlength="100">
@@ -13,36 +13,36 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">客户编号</label>
                     <input id="customerCode" readonly="true" required class="form-control" name="customerCode"  maxlength="100">
                     <input id="customerId" required class="form-control" name="customerId" hidden="true" maxlength="100">
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">客户名称</label>
                     <input id="customerName" readonly="true" required class="form-control" name="customerName"  maxlength="100">
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">发起</label>
                     <input id="originatorName" readonly="true" required class="form-control" name="originatorName"  maxlength="100">
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">车辆类型<i class="red">*</i></label>
                     <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="carTypeId" _hiddenDomainName="carTypeId" _displayDomainId="_carTypeId" _displayDomainName="_carTypeId" _placeholder="" _provider="carTypeProvider" _validatorMethod="isSelected" _value="" _text="" _required="true"/>
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">车牌号<i class="red">*</i></label>
                     <input id="plate" class="form-control" name="plate" type="text" maxlength="8" minlength="3" required>
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">交易类型<i class="red">*</i></label>
                     <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="transTypeId" _hiddenDomainName="transTypeId" _displayDomainId="_transTypeId" _displayDomainName="_transTypeId" _placeholder="" _provider="dataDictionaryValueProvider"  _value="" _text="" _required="true" _queryParams='{dd_code:"trade_type",required:true}'/>
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">商品名称<i class="red">*</i></label>
                     <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="categoryId" _hiddenDomainName="categoryId" _displayDomainId="_categoryId" _displayDomainName="_categoryId" _placeholder="" _provider="categoryProvider" _validatorMethod="isSelected" _value="" _text="" _required="true"/>
                 </div>
-                <div class="form-group col">
+                <div class="form-group col-6">
                     <label for="">办理业务<i class="red">*</i></label>
                     <div class="mt-2" id="stateRadioDiv">
                         <div class="custom-control custom-radio custom-control-inline">
@@ -127,11 +127,12 @@
                 success: function (res) {
                     bui.loading.hide();
                     if (res.code == "200") {
-                        bs4pop.alert('成功', {type: 'success'}, function () {
-                            /* 应该要带条件刷新 */
-                            parent.dia.hide();
-                            parent.location.reload();
-                        });
+                        parent.dia.hide();
+                        parent.location.reload();
+                        // bs4pop.alert('成功', {type: 'success'}, function () {
+                        //     /* 应该要带条件刷新 */
+                        //
+                        // });
                     } else {
                         bui.loading.hide();
                         bs4pop.alert(res.result, {type: 'error'});
