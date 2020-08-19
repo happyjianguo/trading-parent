@@ -1,0 +1,67 @@
+<#bs4Body>
+
+<div class="container-fluid">
+    <#bs4nav>
+    <form class="form" id="queryForm" role="form">
+        <input type="hidden" class="form-control" name="parentGoodsId">
+        <div class="row  row-cols-6">
+            <div class="form-group col">
+                <#bautoCompleteProvider _hiddenDomainId="goodsId" _hiddenDomainName="goodsId" _placeholder="品类名称/快捷编码"  _optionVariable="goodsIdAutoCompleteOption"/>
+            </div>
+            <div class="form-group col">
+                <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
+                <button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()"><i class="fa fa-search"></i> 查询</button>
+            </div>
+        </div>
+    </form>
+</#bs4nav>
+<div class="row">
+    <div class="col-md-2">
+        <div class="nav-tabs-custom">
+            <div class="tab-content">
+                <div id="maker" class="tab-pane active">
+                    <div class="panel panel-default">
+
+                        <div class="panel-body" style="padding: 0px 5px 5px;">
+
+                            <div class="row">
+                                <ul id="goodsTree" class="ztree"></ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-lg-10" id="tableDiv" style="display:none;">
+        <table id="grid" data-toggle="table" data-id-field="id" data-title="品类参考价设置列表" data-tree-show-field="name" data-parent-id-field="parentId" data-query-params="queryParams" data-sort-name="id"
+               data-sort-order="desc" data-pagination="false" data-page-number="1" data-page-size="10" data-side-pagination="server" data-single-select="true" data-click-to-select="true" data-ignore-click-to-select-on="ignoreExpandClick">
+            <thead>
+            <tr>
+                <th data-field="goodsName" data-align="center" data-sortable="false">
+                    品类名称
+                </th>
+                <th data-field="referenceRule" data-provider="referenceRuleProvider" data-align="center" data-sortable="false">
+                    参考价规则
+                </th>
+                <th data-align="center" >
+                    操作
+                    <!--<button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()"><i class="fa fa-search"></i> 编辑</button>-->
+                </th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+</div>
+
+</#bs4Body>
+<link rel="stylesheet" type="text/css"
+      href="${contextPath}/resources/ztree/css/zTreeStyle/zTreeStyle.css" />
+<script type="text/javascript" src="${contextPath}/resources/ztree/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="${contextPath}/resources/ztree/js/jquery.ztree.excheck.js"></script>
+<script type="text/javascript" src="${contextPath}/resources/ztree/js/jquery.ztree.exedit.js"></script>
+<#goodsReferencePriceSetting_indexJs />
