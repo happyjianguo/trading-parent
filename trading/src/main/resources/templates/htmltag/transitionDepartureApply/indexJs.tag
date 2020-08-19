@@ -60,7 +60,6 @@
                 url: '/weighingBill/listCustomerByCardNo.action',
                 data: {cardNo: cardNo},
                 success: function (data) {
-                    debugger;
                     if (data.code == '200') {
                         $('#show_customer_name').val(data.data[0].name);
                     }
