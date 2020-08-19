@@ -217,10 +217,11 @@
                 url: '/weighingBill/listCustomerByCardNo.action',
                 data: {cardNo: $(this).val()},
                 success: function (data) {
-                    debugger;
                     if (data.code == '200') {
                         $('#show_buyer_name_by_card_name').val(data.data.customerName);
-                    }
+                    }else{
+                        $('#show_buyer_name_by_card_name').val(data.data.customerName);
+					}
                 },
                 error: function () {
                     bui.loading.hide();
@@ -235,10 +236,11 @@
                 url: '/weighingBill/listCustomerByCardNo.action',
                 data: {cardNo: $(this).val()},
                 success: function (data) {
-                    debugger;
                     if (data.code == '200') {
                         $('#show_seller_name_by_card_name').val(data.data.customerName);
-                    }
+                    }else{
+                        $('#show_seller_name_by_card_name').val('');
+					}
                 },
                 error: function () {
                     bui.loading.hide();
