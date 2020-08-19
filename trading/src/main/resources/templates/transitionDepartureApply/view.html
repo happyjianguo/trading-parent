@@ -22,8 +22,8 @@
                     <input type="text" class="form-control" value="${transitionDepartureApply.customerName!}" disabled />
                 </div>
                 <div class="form-group col-6">
-                    <label for="">申请部门</label>
-                    <input type="text" class="form-control" value="${transitionDepartureApply.originatorName!}" disabled />
+                    <label for="">办理业务</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.bizType!}" disabled />
                 </div>
                 <div class="form-group col-6">
                     <label for="">车辆类型</label>
@@ -41,17 +41,18 @@
                     <label for="">商品名称</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.categoryId!}" disabled />
                 </div>
+
                 <div class="form-group col-6">
-                    <label for="">办理业务</label>
-                    <input type="text" class="form-control" value="${transitionDepartureApply.bizType!}" disabled />
-                </div>
-                <div class="form-group col-6">
-                    <label for="">发起人</label>
+                    <label for="">发起人员</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.originatorName!}" disabled />
                 </div>
                 <div class="form-group col-6">
                     <label for="">发起时间</label>
                     <input type="text" class="form-control" value="${transitionDepartureApply.originatorTime!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}" disabled />
+                </div>
+                <div class="form-group col-6">
+                    <label for="">转离场地址</label>
+                    <input type="text" class="form-control" value="${transitionDepartureApply.addr!}" disabled />
                 </div>
                 <div class="form-group col-12">
                     <label for="">转离场理由</label>
