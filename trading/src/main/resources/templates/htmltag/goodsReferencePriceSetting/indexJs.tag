@@ -56,12 +56,12 @@
             },
             data : {
                 key:{
-                    name:"goodsName"
+                    name:"name"
                 },
                 simpleData : {
                     enable : true,
-                    idKey  : "goodsId",
-                    pIdKey : "parentGoodsId"
+                    idKey  : "id",
+                    pIdKey : "parent"
                 }
             },
             callback: {
@@ -75,8 +75,8 @@
             type : 'post',
             async : false,
             success : function(data) {
-                var treeObj =  $.fn.zTree.init($("#marketTree"), setting , data);
-                treeObj.expandAll(true);
+                var treeObj =  $.fn.zTree.init($("#goodsTree"), setting , data);
+                treeObj.expandAll(false);
             }
         });
 
@@ -95,10 +95,11 @@
     /*****************************************函数区 begin************************************/
     function zTreeOnClick(event, menuTree, treeNode)
     {
-        var oid = treeNode.goodsId;
+        document.getElementById("tableDiv").style.display = "block";
+        var oid = treeNode.id;
         $("input[name='parentGoodsId']").val(oid);
         _grid.bootstrapTable('refreshOptions', {
-            url: '/goodsReferencePriceSetting/getAllGoods.action',
+            url: '/goodsReferencePriceSetting/getGoodsByParentId.action',
             columns: [
                 {
                     field: 'goodsName',

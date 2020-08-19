@@ -42,7 +42,7 @@ public class GoodsReferencePriceSettingController {
     private GoodsReferencePriceSettingService goodsReferencePriceSettingService;
 
     @Autowired
-    AssetsRpc assetsRpc;
+    private AssetsRpc assetsRpc;
 
     @Autowired
     private FirmRpc firmRpc;
@@ -69,6 +69,32 @@ public class GoodsReferencePriceSettingController {
     @RequestMapping(value = "/getAllGoods.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String getAllGoods(GoodsReferencePriceSetting goodsReferencePriceSetting) {
+        Map<Object, Object> metadata = new HashMap<Object, Object>();
+        metadata.put("referenceRule", "referenceRuleProvider");
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+        categoryDTO.setParent(goodsReferencePriceSetting.getParentGoodsId());
+
+        BaseOutput<List<CategoryDTO>> categoryDTOList = assetsRpc.list(categoryDTO);
+
+        try {
+            List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, categoryDTOList.getData());
+            return   new Gson().toJson(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return this.index();
+        }
+    }
+
+    /**
+     * 获取节点下面所有商品
+     *
+     * @param goodsReferencePriceSetting
+     * @return
+     */
+    @RequestMapping(value = "/getGoodsByParentId.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public String getGoodsByParentId(GoodsReferencePriceSetting goodsReferencePriceSetting) {
         Map<Object, Object> metadata = new HashMap<Object, Object>();
         metadata.put("referenceRule", "referenceRuleProvider");
         CategoryDTO categoryDTO = new CategoryDTO();
