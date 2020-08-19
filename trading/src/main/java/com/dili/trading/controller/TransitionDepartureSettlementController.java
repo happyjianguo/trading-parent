@@ -42,15 +42,6 @@ public class TransitionDepartureSettlementController {
     private TransitionDepartureSettlementService transitionDepartureSettlementService;
 
     @Autowired
-    private ChargeRuleRpc chargeRuleRpc;
-
-    @Autowired
-    private AccountRpc accountRpc;
-
-    @Autowired
-    private PayRpc payRpc;
-
-    @Autowired
     private CardRpc cardRpc;
 
     /**
@@ -213,6 +204,18 @@ public class TransitionDepartureSettlementController {
     public BaseOutput pay(Long id, String password) {
         return transitionDepartureSettlementService.pay(id, password);
     }
+
+    /**
+     * 获取一个TransitionDepartureSettlement单
+     *
+     * @return BaseOutput
+     */
+    @RequestMapping(value = "/getOneById.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput getOneById(Long id) {
+        return transitionDepartureSettlementRpc.getOneById(id);
+    }
+
 
     /**
      * 对接计费规则

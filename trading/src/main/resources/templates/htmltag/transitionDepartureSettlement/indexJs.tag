@@ -214,6 +214,38 @@
 
         });
     }
+    function openPrintHandler() {
+        //获取选中行的数据
+        let rows = _grid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return false;
+        }
+        if (rows[0].$_payStatus != 2) {
+            bs4pop.alert('只有已结算的单子可以补打');
+            return false;
+        }
+        //先拿到票据信息，在调用c端打印
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: '/transitionDepartureSettlement/getOneById.action',
+            data: {id: rows[0].id},
+            success: function (data) {
+                bui.loading.hide();
+                if (data.code == '200') {
+                    //调用c端打印
+                    callbackObj.printDirect(JSON.stringify(data.data),"WeighingServiceDocument");
+                }
+            },
+            error: function () {
+                bui.loading.hide();
+                bs4pop.alert("打印失败!", {type: 'error'});
+            }
+        });
+
+
+    }
 
     function openDeleteHandler(id) {
         let rows = _grid.bootstrapTable('getSelections');
