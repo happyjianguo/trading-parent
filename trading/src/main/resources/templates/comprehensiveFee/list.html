@@ -68,22 +68,30 @@
         <div class="col-12">
             <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
                 <#resource code="comprehensiveFee_add">
-	                <button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()"><i
-	                        class="fa fa-plus"></i> 新增
-	                </button>
+                    <button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()"><i
+                            class="fa fa-plus"></i> 新增
+                    </button>
                 </#resource>
                 <#resource code="comprehensiveFee_update">
-	                <button type="button" class="btn btn-primary" onclick="openUpdateHandler()">
-	                    <i class="fa fa-pencil-square-o"></i> 撤销
-	                </button>
+                    <button type="button" class="btn btn-primary" onclick="openUpdateHandler()">
+                        <i class="fa fa-pencil-square-o"></i> 撤销
+                     </button>
                 </#resource>
                 <#resource code="comprehensiveFee_see">
                     <button id="btn_view" type="button" class="btn btn-primary" onclick="openViewHandler()"><i class="fa fa-eye"></i> 查看</button>
                 </#resource>
+                <#resource code="comprehensiveFee_print">
+                    <button type="button" class="btn btn-primary" onclick="openPrintHandler()">
+                        <i class="fa fa-eye"></i> 补打
+                    </button>
+                </#resource>
                 <#resource code="comprehensiveFee_export">
                     <button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')"><i class="fa fa-download"></i> 导出</button>
-                </#resource>
+                 </#resource>
             </div>
+        </div>
+    </div>
+</div>
             <table id="grid" data-toggle="table" data-id-field="id" data-title="检测收费列表" data-tree-show-field="name" data-parent-id-field="parentId" data-query-params="queryParams"
                    data-sort-order="desc" data-sort-name="operatorTime"  data-pagination="true" data-page-number="1" data-page-size="10" data-side-pagination="server" data-single-select="true" data-click-to-select="true" >
                 <thead>
@@ -122,12 +130,24 @@
                 </tr>
                 </thead>
             </table>
+</#bs4Body>
+<div class="modal fade" id="_modal" data-backdrop="static" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!--modal-lg modal-sm(默认) 通过设置mw大小调整宽度（如mw-100） modal-dialog-centered垂直居中-->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- 标题 -->
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
         </div>
     </div>
 </div>
-
-
-</div>
-
-</#bs4Body>
 <#comprehensiveFee_indexJs />
+
+

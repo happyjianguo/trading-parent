@@ -63,4 +63,14 @@ public interface ComprehensiveFeeRpc {
     @RequestMapping(value = "/api/comprehensiveFee/fee", method = {RequestMethod.POST})
     BaseOutput getFee(@RequestParam(value = "marketId") Long marketId, @RequestParam(value = "customerId") Long customerId,@RequestParam(value = "type") String type);
 
+
+    /**
+     *
+     *
+     * @param id，operatorId，operatorPassword
+     * @return
+     */
+    @RequestMapping(value = "/api/comprehensiveFee/revocator")
+    BaseOutput<Object> revocator(@RequestParam Long id, @RequestParam Long operatorId, @RequestParam String operatorPassword);
+
 }

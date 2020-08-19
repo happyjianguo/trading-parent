@@ -23,10 +23,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.*;
+
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 
 /**
  * 结算单接口
@@ -221,6 +230,7 @@ public class ComprehensiveFeeController {
     }
 
     /**
+
      * 对接计费规则
      *
      * @return
@@ -234,6 +244,34 @@ public class ComprehensiveFeeController {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         BaseOutput baseOutput=comprehensiveFeeRpc.getFee(8L, customerId, type);
         return baseOutput;
+    }
+
+     /**
+     *撤销密码页面
+     * @param id
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping("/revocatorPage.html")
+    public String revocatorPage(Long id, ModelMap modelMap) {
+        modelMap.addAttribute("comprehensiveFeeId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "revocator");
+        return "comprehensiveFee/revocatorPage";
+    }
+    /**
+     * 撤销
+     *
+     * @param id
+     * @param operatorPassword
+     * @param modelMap
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/revocator.action")
+    public BaseOutput<Object> revocator(Long id, @RequestParam(value="password") String operatorPassword, ModelMap modelMap) {
+        UserTicket user = SessionContext.getSessionContext().getUserTicket();
+        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getId(), operatorPassword);
+        return output;
+
     }
 
     /**
