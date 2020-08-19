@@ -59,7 +59,8 @@
             <div class="form-group col-6">
                 <label for="" class="">卡号</label>
                 <div class="input-group">
-                    <#bautoCompleteProvider  _displayDomainId="customerCardNo" _displayDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <!--<#bautoCompleteProvider  _displayDomainId="customerCardNo" _displayDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>-->
+                    <input type="text" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
                     <input type="text" class="form-control" id="show_customer_name" readonly/>
                     <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
                         <i class="fa fa-refresh"></i>刷卡
@@ -184,10 +185,30 @@
             	$("#btn_enabled").addClass("btn_css_disabled");
             }
       	})
+    	$('#show_customer_card').on('input', function (cardNo) {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: '/weighingBill/listCustomerByCardNo.action',
+                data: {cardNo: $(this).val()},
+                success: function (data) {
+                    debugger;
+                    if (data.code == '200') {
+                        $('#show_customer_name').val(data.data[0].customerName);
+                    }
+                },
+                error: function () {
+                    bui.loading.hide();
+                    bs4pop.alert("客户获取失败!", {type: 'error'});
+                }
+            });
+      	})
     })
     function ignoreExpandClick(e) {
         return ['SPAN'].indexOf(e.tagName) > -1;
     }
+
+
 
 </script>
 <#transitionDepartureApply_indexJs />
