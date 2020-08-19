@@ -115,7 +115,7 @@
             //     bs4pop.alert("车牌号码不正确", {type: 'error'});
             //     return false;
             // }
-            bui.loading.show('努力提交中，请稍候。。。');
+            parent.bui.loading.show('努力提交中，请稍候。。。');
             let _formData = new FormData($('#saveForm')[0]);
             $.ajax({
                 type: "POST",
