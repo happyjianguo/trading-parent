@@ -75,7 +75,8 @@
             </div>
             <div class="form-group col-6">
                 <label for="">缴费金额</label>
-                <input id="chargeAmount" class="form-control" readonly="true" name="chargeAmount" maxlength="100">
+                <input id="chargeAmount1" class="form-control" readonly="true" maxlength="100">
+                <input id="chargeAmount" class="form-control" readonly="true" name="chargeAmount" maxlength="100" hidden>
             </div>
         </div>
     </form>
@@ -99,7 +100,8 @@
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
-                        $('#chargeAmount').val(res.data.totalFee);
+                        $('#chargeAmount1').val(res.data.totalFee);
+                        $('#chargeAmount').val(res.data.totalFee*100);
                     }
                 },
             });
@@ -119,7 +121,8 @@
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
-                        $('#chargeAmount').val(res.data.totalFee);
+                        $('#chargeAmount1').val(res.data.totalFee);
+                        $('#chargeAmount').val(res.data.totalFee*100);
                     }
                 },
             });
@@ -160,7 +163,10 @@
                         $('#grossWeight').val(res.data.transitionDepartureSettlement.grossWeight);
                         $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
                         $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
-                        $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
+                        if (!isNaN(res.data.transitionDepartureSettlement.chargeAmount)) {
+                            $('#chargeAmount1').val(res.data.transitionDepartureSettlement.chargeAmount/100);
+                            $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
+                        }
                     } else {
                         bui.loading.hide();
                         bs4pop.alert(res.result, {type: 'error'});
