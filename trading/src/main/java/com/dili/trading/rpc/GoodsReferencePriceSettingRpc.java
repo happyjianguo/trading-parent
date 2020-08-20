@@ -21,7 +21,7 @@ public interface GoodsReferencePriceSettingRpc {
      * @throws Exception
      */
     @RequestMapping(value = "/api/goodsReferencePriceSetting/getAllGoods", method = {RequestMethod.POST})
-    List<GoodsReferencePriceSetting> getAllGoods(GoodsReferencePriceSetting goodsReferencePriceSetting);
+    List<GoodsReferencePriceSetting> getAllGoods(@RequestBody GoodsReferencePriceSetting goodsReferencePriceSetting);
 
     /**
      * 根据参数查询数据
@@ -31,7 +31,7 @@ public interface GoodsReferencePriceSettingRpc {
      * @throws Exception
      */
     @RequestMapping(value = "/api/goodsReferencePriceSetting/detail")
-    BaseOutput<GoodsReferencePriceSetting> findDetailDtoById(GoodsReferencePriceSetting goodsReferencePriceSetting);
+    BaseOutput<GoodsReferencePriceSetting> findDetailDtoById(@RequestBody GoodsReferencePriceSetting goodsReferencePriceSetting);
 
     /**
      * 新增品类参考价
@@ -41,4 +41,13 @@ public interface GoodsReferencePriceSettingRpc {
      */
     @RequestMapping(value = "/api/goodsReferencePriceSetting/insert", method = {RequestMethod.POST})
     BaseOutput<GoodsReferencePriceSetting> insert(@RequestBody GoodsReferencePriceSetting goodsReferencePriceSetting);
+
+    /**
+     * 修改品类参考价
+     *
+     * @param goodsReferencePriceSetting
+     * @return BaseOutput
+     */
+    @RequestMapping(value = "/api/goodsReferencePriceSetting/update", method = {RequestMethod.POST})
+    BaseOutput<GoodsReferencePriceSetting> update(@RequestBody GoodsReferencePriceSetting goodsReferencePriceSetting);
 }

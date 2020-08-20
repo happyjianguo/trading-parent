@@ -22,7 +22,7 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
     private GoodsReferencePriceSettingRpc goodsReferencePriceSettingRpc;
 
     /**
-     * 如果数据库不存在数据，则新增，否则修改
+     * 新增
      *
      * @param goodsReferencePriceSetting
      * @return
@@ -38,6 +38,32 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
         goodsReferencePriceSetting.setCreatedTime(LocalDateTime.now());
 
         BaseOutput<GoodsReferencePriceSetting> goodsReferencePriceSettingBaseOutput = goodsReferencePriceSettingRpc.insert(goodsReferencePriceSetting);
+        if (goodsReferencePriceSettingBaseOutput.isSuccess()) {
+            GoodsReferencePriceSetting data = goodsReferencePriceSettingBaseOutput.getData();
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
+            LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
+            LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
+        }
+        return goodsReferencePriceSettingBaseOutput;
+    }
+
+    /**
+     * 修改
+     *
+     * @param goodsReferencePriceSetting
+     * @return
+     */
+    @Override
+    @BusinessLogger(businessType = "trading_orders", content = "品类参考价修改", operationType = "update", systemCode = "ORDERS")
+    @Transactional(propagation = Propagation.REQUIRED)
+    public BaseOutput<GoodsReferencePriceSetting> updateGoodsReferencePriceSetting(GoodsReferencePriceSetting goodsReferencePriceSetting) {
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        //设置修改人id
+        goodsReferencePriceSetting.setModifierId(userTicket.getId());
+        //设置数据修改时间
+        goodsReferencePriceSetting.setModifiedTime(LocalDateTime.now());
+
+        BaseOutput<GoodsReferencePriceSetting> goodsReferencePriceSettingBaseOutput = goodsReferencePriceSettingRpc.update(goodsReferencePriceSetting);
         if (goodsReferencePriceSettingBaseOutput.isSuccess()) {
             GoodsReferencePriceSetting data = goodsReferencePriceSettingBaseOutput.getData();
             LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());

@@ -10,8 +10,18 @@ import com.dili.ss.domain.BaseOutput;
 public interface GoodsReferencePriceSettingService {
 
 	/**
-	 * 新增
+	 * 新增品类参考价
+	 *
+	 * @param goodsReferencePriceSetting
+	 * @return BaseOutput<GoodsReferencePriceSetting>
 	 */
 	BaseOutput<GoodsReferencePriceSetting> insertGoodsReferencePriceSetting(GoodsReferencePriceSetting goodsReferencePriceSetting);
 
+	/**
+	 * 修改品类参考价
+	 *
+	 * @param goodsReferencePriceSetting
+	 * @return BaseOutput<GoodsReferencePriceSetting>
+	 */
+	BaseOutput<GoodsReferencePriceSetting> updateGoodsReferencePriceSetting(GoodsReferencePriceSetting goodsReferencePriceSetting);
 }

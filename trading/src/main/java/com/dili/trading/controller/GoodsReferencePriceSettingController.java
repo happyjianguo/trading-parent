@@ -157,7 +157,7 @@ public class GoodsReferencePriceSettingController {
         GoodsReferencePriceSetting goodsReferencePriceSetting = new GoodsReferencePriceSetting();
         goodsReferencePriceSetting.setGoodsId(goodsId);
         goodsReferencePriceSetting.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-        BaseOutput<GoodsReferencePriceSetting> output = this.goodsReferencePriceSettingRpc.findDetailDtoById(goodsReferencePriceSetting);
+        BaseOutput<GoodsReferencePriceSetting> output = goodsReferencePriceSettingRpc.findDetailDtoById(goodsReferencePriceSetting);
         if (!output.isSuccess()) {
             LOGGER.error(output.getMessage());
             return this.index();
@@ -185,7 +185,7 @@ public class GoodsReferencePriceSettingController {
     }
 
     /**
-     * 新增/编辑品类参考价
+     * 新增/编辑品类参考价（如果数据库不存在数据，则新增，否则修改）
      *
      * @param goodsReferencePriceSetting
      * @return BaseOutput
@@ -194,7 +194,21 @@ public class GoodsReferencePriceSettingController {
     @ResponseBody
     public BaseOutput insert(GoodsReferencePriceSetting goodsReferencePriceSetting) {
         goodsReferencePriceSetting.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-        return goodsReferencePriceSettingService.insertGoodsReferencePriceSetting(goodsReferencePriceSetting);
+        BaseOutput<GoodsReferencePriceSetting> output = goodsReferencePriceSettingRpc.findDetailDtoById(goodsReferencePriceSetting);
+        if (!output.isSuccess()) {
+            LOGGER.error(output.getMessage());
+            return output;
+        }
+
+        if(output.getData() == null){
+            return goodsReferencePriceSettingService.insertGoodsReferencePriceSetting(goodsReferencePriceSetting);
+        } else{
+            goodsReferencePriceSetting.setOid(output.getData().getOid());
+            goodsReferencePriceSetting.setVersion(output.getData().getVersion());
+            goodsReferencePriceSetting.setCreatedTime(output.getData().getCreatedTime());
+            goodsReferencePriceSetting.setCreatorId(output.getData().getCreatorId());
+            return goodsReferencePriceSettingService.updateGoodsReferencePriceSetting(goodsReferencePriceSetting);
+        }
     }
 
     /**

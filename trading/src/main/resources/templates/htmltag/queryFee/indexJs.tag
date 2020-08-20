@@ -96,7 +96,7 @@
             elem: this
             , trigger: 'click'
             , range: false
-            , type: 'date'
+            , type: 'datetime'
         });
     });
 
