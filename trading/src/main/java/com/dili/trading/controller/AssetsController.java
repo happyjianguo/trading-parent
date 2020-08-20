@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 /**
- *
  * 模糊查询商品
  * @author  Henry.Huang
  * @date 2020/08/20
