@@ -23,7 +23,7 @@
     var customerNameAutoCompleteOption = {
         serviceUrl: '/customer/listNormal.action',
         paramName: 'likeName',
-        displayFieldName: 'name',
+        displayFieldName: 'code',
         showNoSuggestionNotice: true,
         noSuggestionNotice: '不存在，请重新输入！',
         transformResult: function (result) {
@@ -43,6 +43,7 @@
             }
         },
         selectFn: function (suggestion) {
+            $('#show_customer_name').val(suggestion.name);
         }
     };
 
@@ -50,7 +51,7 @@
     var operatorNameAutoCompleteOption = {
         serviceUrl: '/weighingBill/listOperatorByKeyword.action',
         paramName: 'keyword',
-        displayFieldName: 'realName',
+        displayFieldName: 'id',
         showNoSuggestionNotice: true,
         noSuggestionNotice: '结算员不存在',
         transformResult: function (result) {
@@ -70,9 +71,7 @@
             }
         },
         selectFn: function (suggestion) {
-            $('#certificateNumber, #_certificateNumber').val(suggestion.certificateNumber);
-            $('#customerCellphone').val(suggestion.contactsPhone);
-            $('#certificateNumber, #_certificateNumber, #customerCellphone').valid();
+            $('#show_operator_name').val(suggestion.realName);
         }
     };
 
