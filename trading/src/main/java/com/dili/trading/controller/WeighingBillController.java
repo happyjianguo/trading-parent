@@ -109,14 +109,14 @@ public class WeighingBillController {
             if (!output.isSuccess()) {
                 return output;
             }
-            output = this.weighingBillRpc.settle(output.getData().toString(), weighingBill.getBuyerPassword(), user.getId());
+            output = this.weighingBillRpc.settle(output.getData().toString(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
         } else {
             weighingBill.setModifierId(user.getId());
             output = this.weighingBillRpc.update(weighingBill);
             if (!output.isSuccess()) {
                 return output;
             }
-            output = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId());
+            output = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
         }
         return output;
     }
@@ -338,13 +338,14 @@ public class WeighingBillController {
         metadata.put("tareWeight", "weightProvider");
         metadata.put("createdTime", "datetimeProvider");
         metadata.put("measureType", "measureTypeProvider");
-
+        metadata.put("state", "weighingBillStateProvider");
         metadata.put("unitPrice", "moneyProvider");
         metadata.put("statement.tradeAmount", "moneyProvider");
         metadata.put("statement.buyerPoundage", "moneyProvider");
         metadata.put("statement.buyerActualAmount", "moneyProvider");
         metadata.put("statement.sellerPoundage", "moneyProvider");
         metadata.put("statement.sellerActualAmount", "moneyProvider");
+
 
         JSONObject ddProvider = new JSONObject();
         ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
