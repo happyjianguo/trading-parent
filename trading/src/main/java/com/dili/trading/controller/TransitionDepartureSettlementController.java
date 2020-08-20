@@ -18,6 +18,7 @@ import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.map.MapperConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -167,6 +168,13 @@ public class TransitionDepartureSettlementController {
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput insert(TransitionDepartureSettlement transitionDepartureSettlement) {
+        //判断金额和净重是否都大于0
+        if (transitionDepartureSettlement.getNetWeight() < 0) {
+            return BaseOutput.failure("净重不能小于0");
+        }
+        if (transitionDepartureSettlement.getChargeAmount() < 0) {
+            return BaseOutput.failure("缴费金额不能小于0");
+        }
         return transitionDepartureSettlementService.insert(transitionDepartureSettlement);
     }
 
@@ -179,6 +187,13 @@ public class TransitionDepartureSettlementController {
     @RequestMapping(value = "/update.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput update(TransitionDepartureSettlement transitionDepartureSettlement) {
+        //判断金额和净重是否都大于0
+        if (transitionDepartureSettlement.getNetWeight() < 0) {
+            return BaseOutput.failure("净重不能小于0");
+        }
+        if (transitionDepartureSettlement.getChargeAmount() < 0) {
+            return BaseOutput.failure("缴费金额不能小于0");
+        }
         return transitionDepartureSettlementRpc.update(transitionDepartureSettlement);
     }
 
