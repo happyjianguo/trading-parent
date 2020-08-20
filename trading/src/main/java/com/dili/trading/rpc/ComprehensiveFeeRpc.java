@@ -83,11 +83,12 @@ public interface ComprehensiveFeeRpc {
     /**
      *撤销调用
      * @param id
+     * @param userName
      * @param operatorId
      * @param operatorPassword
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/revocator")
-    BaseOutput<Object> revocator(@RequestParam Long id, @RequestParam Long operatorId, @RequestParam String operatorPassword);
+    BaseOutput<Object> revocator(@RequestParam Long id,@RequestParam String userName,@RequestParam Long operatorId, @RequestParam String operatorPassword);
 
 }
