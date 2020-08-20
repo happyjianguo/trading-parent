@@ -105,7 +105,7 @@
     var customerNameAutoCompleteOption = {
         serviceUrl: '/customer/listNormal.action',
         paramName: 'likeName',
-        displayFieldName: 'name',
+        displayFieldName: 'code',
         showNoSuggestionNotice: true,
         noSuggestionNotice: '不存在，请重新输入！',
         transformResult: function (result) {
@@ -126,9 +126,7 @@
             }
         },
         selectFn: function (suggestion) {
-            $('#certificateNumber, #_certificateNumber').val(suggestion.certificateNumber);
-            $('#customerCellphone').val(suggestion.contactsPhone);
-            $('#certificateNumber, #_certificateNumber, #customerCellphone').valid();
+           $('#showCustomerName').val(suggestion.name);
         }
     };
 
