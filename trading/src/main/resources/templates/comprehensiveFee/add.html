@@ -31,7 +31,7 @@
             <div class="row row-cols-1" style="width: 500px">
                 <div class="form-group col">
                     <label tlog >商品名称</label>
-                    <select id="inspectionItem" name="inspectionItem" class="form-control"  multiple disabled></select>
+                    <select id="inspectionItem" name="inspectionItem" class="form-control" required="true"  multiple disabled></select>
                     <#bselect2 _id="inspectionItem" _mode="remote" _value="[2,4,8,55]" _option="" _text=""  _optionVariable="assetsNamesAutoCompleteOption" _required="true"/>
                 </div>
             </div>
@@ -67,6 +67,8 @@
 
     <script>
         var fee=0.00;
+        //记录是否重新刷卡
+        var reCardFlag=false;
 
         // 商品
         var assetsNamesAutoCompleteOption = {
@@ -112,10 +114,14 @@
                return false;
            }
            //再次刷卡时将检测费用和缴费金额清0
-            fee=0.00;
-            $('#inspectionNum').val('');
-            $('#chargeAmountView').val('');
-            $('#chargeAmount').val('');
+            if(reCardFlag==true){
+                $('#inspectionNum').val('');
+                $('#chargeAmountView').val('');
+                $('#chargeAmount').val('');
+                $('#inspectionItem').val(null).trigger('change');
+                fee=0.00;
+            }
+            reCardFlag=true;
             $.ajax({
                 type: "POST",
                 data:{cardNo:cardNum},

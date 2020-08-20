@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.assets.sdk.rpc.CategoryRpc;
 import com.dili.orders.domain.ComprehensiveFee;
-import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.rule.sdk.rpc.ChargeRuleRpc;
 import com.dili.ss.domain.BaseOutput;
@@ -243,7 +242,7 @@ public class ComprehensiveFeeController {
             return BaseOutput.failure("顾客编号不能为空");
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        BaseOutput baseOutput=comprehensiveFeeRpc.getFee(8L, customerId, type);
+        BaseOutput baseOutput=comprehensiveFeeRpc.getFee(userTicket.getFirmId(), customerId, type);
         return baseOutput;
     }
 
