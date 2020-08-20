@@ -222,7 +222,7 @@
             return false;
         }
         let balance = $('#balance').val();
-        if (chargeAmount > balance) {
+        if (parseFloat(chargeAmount) > parseFloat(balance)) {
             bs4pop.alert('余额不足请充值', {type: 'error'});
             return false;
         }
@@ -230,10 +230,6 @@
         if ($('#sid').val() != null && $('#sid').val() != '') {
             url = "update";
         }
-        // if (!isLicenseNo($('#plate').val())) {
-        //     bs4pop.alert("车牌号码不正确", {type: 'error'});
-        //     return false;
-        // }
         let _formData = new FormData($('#saveForm')[0]);
         bui.loading.show('努力提交中，请稍候。。。');
         $.ajax({
