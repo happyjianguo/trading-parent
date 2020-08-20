@@ -115,7 +115,7 @@
                     align: 'center',
                     formatter: function (value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs " href="#" onclick="edit(\'' + row.goodsId + '\',\'' + row.goodsName + '\',\'' + row.parentGoodsId + '\',\'' + row.referenceRule + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a href="#" onclick="edit(\'' + row.goodsId + '\',\'' + row.goodsName + '\',\'' + row.parentGoodsId + '\',\'' + row.referenceRule + '\')"><i class="fa fa-edit"></i>编辑</a> ');
                         return actions.join('');
                     }
                 }
@@ -147,7 +147,7 @@
             title: '新增价格预警',//对话框title
             content: '${contextPath}/goodsReferencePriceSetting/add.html?goodsId=' + goodsId + '&goodsName=' + goodsName + '&parentGoodsId='+ parentGoodsId +'&referenceRule=' + referenceRule, //对话框内容，可以是 string、element，$object
             width: '40%',//宽度
-            height: '75%',//高度
+            height: '85%',//高度
             isIframe: true,//默认是页面层，非iframe
             btns: [
                 {

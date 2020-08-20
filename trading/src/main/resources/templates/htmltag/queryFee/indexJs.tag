@@ -61,8 +61,8 @@
 
     // 卡号
     var customerCardQueryAutoCompleteOption = {
-        serviceUrl: '/queryFee/getCustomerInfoByCardNo.action',
-        paramName: 'customerCardNo',
+        serviceUrl: '/weighingBill/listCustomerByCardNo.action',
+        paramName: 'cardNo',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
         minChars: 12,
@@ -74,18 +74,19 @@
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
-                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
+                                value: dataItem.customerName +"|"+dataItem.cardNo
                             }
                         );
                     })
+                    //888810054629
                 }
             }else{
-                // bs4pop.alert(result.message, {type: 'error'});
                 return false;
             }
         },
         selectFn: function (suggestion) {
-            $('#show_customer_card_no').val(suggestion.name);
+            $('#show_customer_card_no').val(suggestion.customerName);
+            $('#customerCardNo').val(suggestion.cardNo);
         }
     };
 
