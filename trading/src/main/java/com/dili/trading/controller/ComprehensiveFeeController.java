@@ -38,6 +38,8 @@ import java.util.Objects;
 
 /**
  * 结算单接口
+ * @author Henry.Huang
+ * @date 2020/08/20
  */
 @Controller
 @RequestMapping("/comprehensiveFee")
@@ -83,7 +85,7 @@ public class ComprehensiveFeeController {
         if (CollectionUtils.isNotEmpty(ranges)) {
             String value = (String) ranges.get(0).get("value");
             //如果value为0，则为个人
-            if (value.equals("0")) {
+            if ("0".equals(value)) {
                 comprehensiveFee.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
             }
         }
@@ -105,7 +107,7 @@ public class ComprehensiveFeeController {
         if (CollectionUtils.isNotEmpty(ranges)) {
             String value = (String) ranges.get(0).get("value");
             //如果value为0，则为个人
-            if (value.equals("0")) {
+            if ("0".equals(value)) {
                 comprehensiveFee.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
             }
         }
@@ -288,7 +290,7 @@ public class ComprehensiveFeeController {
         //构建提供者的对应的字段，对哪个字段进行处理
         provider.put(ValueProvider.FIELD_KEY, field);
         //如果是数据字典提供者，需要传入参数，dd_code
-        if (providerName.equals("dataDictionaryValueProvider")) {
+        if ("dataDictionaryValueProvider".equals(providerName)) {
             provider.put("queryParams", "{dd_code:\"trade_type\"}");
         }
         return provider;

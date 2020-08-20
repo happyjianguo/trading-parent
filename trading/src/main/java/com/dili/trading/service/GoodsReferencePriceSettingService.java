@@ -1,6 +1,5 @@
 package com.dili.trading.service;
 
-import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.domain.GoodsReferencePriceSetting;
 import com.dili.ss.domain.BaseOutput;
 

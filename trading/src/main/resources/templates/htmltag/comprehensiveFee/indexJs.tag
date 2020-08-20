@@ -192,41 +192,11 @@
         });
 
     }
-    function openUpdateHandler1() {
-        let rows = _grid.bootstrapTable('getSelections');
-        if (null == rows || rows.length == 0) {
-            bs4pop.alert('请选中一条数据');
-            return;
-        }
-        if (rows[0].$_orderStatus != 2) {
-            bs4pop.alert('该单据当前状态不能进行撤销操作！');
-            return;
-        }
-        dia = bs4pop.dialog({
-            title: '信息确认',//对话框title
-            content: "<div style='font-size: large' align='center'>确定撤销当前单据？</div>", //对话框内容，可以是 string、element，$object
-            width: '25%',//宽度
-            height: '30%',//高度
-            isIframe: false,//默认是页面层，非iframe
-            btns: [
-            {
-                label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
-                    $('#_modal .modal-body').load("${contextPath}/comprehensiveFee/revocatorPage.html?id=" + rows[0].id);
-                    _modal.find('.modal-title').text('作废校验');
-                    $("#_modal").modal();
-                }
-            }, {
-                label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
 
-                }
-            }]
-        });
-
-    }
     /**
-     * 打开补打窗口
+     * 补打
      */
-    function openPrintHandler(id) {
+    function openPrintHandler(callbackObj) {
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
@@ -239,6 +209,9 @@
         console.info(JSON.stringify(rows[0]));
         callbackObj.printDirect(JSON.stringify(rows[0]),"CheckChargeDocument");
     }
+    /*
+    * 调用撤销功能
+    * */
     function openUpdateHandler() {
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
@@ -266,7 +239,10 @@
         }, function (sure) {});
     }
 
-
+    /*
+    *
+    * 撤销实现
+    * */
     function revocator() {
         $.ajax({
             type: "POST",
