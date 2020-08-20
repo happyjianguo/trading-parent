@@ -56,6 +56,11 @@
 
 
     <script>
+        $(function(){
+            var fixedPrice = $('#fixedPriceView').val();
+            $('#fixedPriceView').val((fixedPrice/100).toFixed(2));
+        });
+
         function changeDivDisplay(){
             var referenceRule = $("#referenceRule").val();
             if(referenceRule == '3'){

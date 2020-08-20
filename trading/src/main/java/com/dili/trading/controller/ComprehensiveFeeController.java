@@ -111,6 +111,7 @@ public class ComprehensiveFeeController {
                 comprehensiveFee.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
             }
         }
+        comprehensiveFee.setOrderType(1);
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(comprehensiveFee, output.getData())).toString();
     }
