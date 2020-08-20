@@ -33,7 +33,7 @@
     var operatorNameAutoCompleteOption = {
         serviceUrl: '/queryFee/listOperatorByKeyword.action',
         paramName: 'keyword',
-        displayFieldName: 'realName',
+        displayFieldName: 'id',
         showNoSuggestionNotice: true,
         noSuggestionNotice: '结算员不存在',
         transformResult: function (result) {
@@ -53,9 +53,7 @@
             }
         },
         selectFn: function (suggestion) {
-            $('#certificateNumber, #_certificateNumber').val(suggestion.certificateNumber);
-            $('#customerCellphone').val(suggestion.contactsPhone);
-            $('#certificateNumber, #_certificateNumber, #customerCellphone').valid();
+            $('#show_operator_name').val(suggestion.realName);
         }
     };
 
