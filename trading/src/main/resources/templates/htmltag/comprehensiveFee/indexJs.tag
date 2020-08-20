@@ -55,7 +55,7 @@
         paramName: 'keyword',
         displayFieldName: 'realName',
         showNoSuggestionNotice: true,
-        noSuggestionNotice: '操作员不存在',
+        noSuggestionNotice: '结算员不存在',
         transformResult: function (result) {
             if(result.success){
                 let data = result.data;
@@ -73,6 +73,9 @@
             }
         },
         selectFn: function (suggestion) {
+            $('#certificateNumber, #_certificateNumber').val(suggestion.certificateNumber);
+            $('#customerCellphone').val(suggestion.contactsPhone);
+            $('#certificateNumber, #_certificateNumber, #customerCellphone').valid();
         }
     };
 
