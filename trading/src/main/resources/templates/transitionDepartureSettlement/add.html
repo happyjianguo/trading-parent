@@ -221,6 +221,12 @@
             bs4pop.alert('收费金额不能小于0', {type: 'error'});
             return false;
         }
+        let balance = $('#balance').val();
+        if (chargeAmount > balance) {
+            bs4pop.alert('余额不足请充值', {type: 'error'});
+            return false;
+        }
+
         if ($('#sid').val() != null && $('#sid').val() != '') {
             url = "update";
         }
@@ -241,14 +247,7 @@
                 bui.loading.hide();
                 if (res.code == "200") {
                     parent.dia.hide();
-                    if (parseFloat($('#balance').val()) >= parseFloat($('#chargeAmount').val())) {
-                        parent.verificationUsernamePassword(res.data.id);
-                    } else {
-                        bs4pop.alert("余额不足，请充值", {type: 'error'});
-                    }
-                    // bs4pop.alert('成功', {type: 'success'}, function () {
-                    //
-                    // });
+                    parent.verificationUsernamePassword(res.data.id);
                 } else {
                     bui.loading.hide();
                     bs4pop.alert(res.result, {type: 'error'});

@@ -3,8 +3,8 @@
 <div class="container-fluid">
     <#bs4nav>
     <form class="form collapse show" id="queryForm" role="form" >
-        <div class="row  row-cols-12">
-            <div class="form-group col-3">
+        <div class="row  row-cols-5">
+            <div class="form-group col">
                 <label for="">审批状态</label>
                 <select id="approvalState" name="approvalState" class="form-control">
                     <option value="">--全部--</option>
@@ -13,7 +13,7 @@
                     <option value="3">拒绝</option>
                 </select>
             </div>
-            <div class="form-group col-3">
+            <div class="form-group col">
                 <label for="">类型</label>
                 <select id="bizType" name="bizType" class="form-control">
                     <option value="">--全部--</option>
@@ -21,15 +21,15 @@
                     <option value="2">离场</option>
                 </select>
             </div>
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="">客户</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"  _validatorMethod="isSelected" _value="" _text="" />
             </div>
-            <div class="form-group col-3">
+            <div class="form-group col">
                 <label for="">车牌</label>
                 <input type="text" class="form-control" name="plate" placeholder="">
             </div>
-            <div class="form-group col-3">
+            <div class="form-group col">
                 <label for="" class="">发起人员</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="originatorId" _hiddenDomainName="originatorId" _displayDomainId="_originatorId" _displayDomainName="_originatorId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
             </div>
@@ -51,12 +51,12 @@
                 </div>
             </div>
         </div>
-        <div class="row  row-cols-6">
-            <div class="form-group col-3">
+        <div class="row  row-cols-4">
+            <div class="form-group col">
                 <label for="" class="">审批人员</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="approvalId" _hiddenDomainName="approvalId" _displayDomainId="_approvalId" _displayDomainName="_approvalId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
             </div>
-            <div class="form-group col-6">
+            <div class="form-group col">
                 <label for="" class="">卡号</label>
                 <div class="input-group">
                     <!--<#bautoCompleteProvider  _displayDomainId="customerCardNo" _displayDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>-->

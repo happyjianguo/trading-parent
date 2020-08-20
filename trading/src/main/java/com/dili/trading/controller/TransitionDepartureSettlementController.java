@@ -11,6 +11,7 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.ss.util.MoneyUtils;
 import com.dili.trading.rpc.TransitionDepartureSettlementRpc;
 import com.dili.trading.service.TransitionDepartureSettlementService;
 import com.dili.uap.sdk.domain.UserTicket;
@@ -97,8 +98,11 @@ public class TransitionDepartureSettlementController {
      */
     @RequestMapping(value = "/verificationUsernamePassword.action", method = RequestMethod.GET)
     public String verificationUsernamePassword(ModelMap modelMap, Long id) {
-        BaseOutput oneById = transitionDepartureSettlementRpc.getOneById(id);
-        modelMap.put("transitionDepartureSettlement", oneById.getData());
+        //返回页面用map封装，因为不好分转元
+        BaseOutput<TransitionDepartureSettlement> oneById = transitionDepartureSettlementRpc.getOneById(id);
+        modelMap.put("id", oneById.getData().getId());
+        modelMap.put("chargeAmount", MoneyUtils.centToYuan(oneById.getData().getChargeAmount()));
+        modelMap.put("customerName", oneById.getData().getCustomerName());
         return "transitionDepartureSettlement/verificationUsernamePassword";
     }
 
