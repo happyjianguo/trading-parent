@@ -8,7 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-
+/**
+ *@author  Henry.Huang
+ *@date  2020/08/20
+ *
+ */
 @FeignClient(name = "order-service", contextId = "comprehensiveFeeRpc", url = "localhost:8185")
 public interface ComprehensiveFeeRpc {
 
@@ -53,21 +57,34 @@ public interface ComprehensiveFeeRpc {
 
     /**
      * 结算单支付
-     *
+     * @param id
+     * @param password
+     * @param marketId
+     * @param departmentId
+     * @param operatorCode
+     * @param operatorId
+     * @param operatorName
+     * @param operatorUserName
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/pay", method = {RequestMethod.POST})
     BaseOutput<ComprehensiveFee> pay(@RequestParam(value = "id") Long id, @RequestParam(value = "password") String password, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId, @RequestParam(value = "operatorCode") String operatorCode, @RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "operatorName") String operatorName, @RequestParam(value = "operatorUserName") String operatorUserName);
 
-
+    /**
+     * 获取费用信息
+     * @param marketId
+     * @param customerId
+     * @param type
+     * @return
+     */
     @RequestMapping(value = "/api/comprehensiveFee/fee", method = {RequestMethod.POST})
     BaseOutput getFee(@RequestParam(value = "marketId") Long marketId, @RequestParam(value = "customerId") Long customerId,@RequestParam(value = "type") String type);
 
-
     /**
-     *
-     *
-     * @param id，operatorId，operatorPassword
+     *撤销调用
+     * @param id
+     * @param operatorId
+     * @param operatorPassword
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/revocator")

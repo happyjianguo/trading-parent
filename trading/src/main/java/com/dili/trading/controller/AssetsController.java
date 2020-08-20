@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 /**
+ *
  * 模糊查询商品
+ * @author  Henry.Huang
+ * @date 2020/08/20
  */
 @RequestMapping("/assets")
 @Controller
@@ -29,11 +32,11 @@ public class AssetsController {
      */
     @RequestMapping(value = "/listNormal.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public List<CategoryDTO> listNormal(String Keyword) {
+    public List<CategoryDTO> listNormal(String keyword) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setMarketId(userTicket.getFirmId());
-        categoryDTO.setKeyword(Keyword);
+        categoryDTO.setKeyword(keyword);
         List<CategoryDTO> list = assetsRpc.list(categoryDTO).getData();
         return list;
     }
