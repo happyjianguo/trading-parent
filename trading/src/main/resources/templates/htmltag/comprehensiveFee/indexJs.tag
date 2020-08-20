@@ -76,33 +76,34 @@
         }
     };
 
-    var customerNameQueryAutoCompleteOption = {
-        serviceUrl: '/weighingBill/listCustomerByKeyword.action',
-        paramName: 'keyword',
+    // 卡号
+    var customerCardQueryAutoCompleteOption = {
+        serviceUrl: '/weighingBill/listCustomerByCardNo.action',
+        paramName: 'cardNo',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
-        minChars: 2,
+        minChars: 12,
         width: 'flex',
         noSuggestionNotice: '无此客户, 请重新输入',
         transformResult: function (result) {
-            debugger
             if(result.success){
                 let data = result.data;
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
-                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
+                                value: dataItem.customerName +"|"+dataItem.cardNo
                             }
                         );
                     })
+                    //888810054629
                 }
             }else{
-                // bs4pop.alert(result.message, {type: 'error'});
                 return false;
             }
         },
         selectFn: function (suggestion) {
-            $('#show_customer_name').val(suggestion.name);
+            $('#show_customer_card_no').val(suggestion.customerName);
+            $('#customerCardNo').val(suggestion.cardNo);
         }
     };
 
