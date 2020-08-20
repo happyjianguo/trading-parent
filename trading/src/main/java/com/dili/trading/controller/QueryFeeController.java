@@ -117,7 +117,7 @@ public class QueryFeeController {
     }
 
     /**
-     * 检测收费单新增页面
+     * 检查询收费单新增页面
      *
      * @param modelMap
      * @return
@@ -128,7 +128,7 @@ public class QueryFeeController {
     }
 
     /**
-     * 跳转到检测收费输入密码页面
+     * 跳转到查询收费输入密码页面
      *
      * @param modelMap
      * @return
@@ -143,7 +143,7 @@ public class QueryFeeController {
     }
 
     /**
-     * 检测收费缴费
+     * 查询收费缴费
      *
      * @return BaseOutput
      */
@@ -182,6 +182,9 @@ public class QueryFeeController {
             result.setErrorData(tips);
             return result;
         }
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        comprehensiveFee.setMarketId(userTicket.getFirmId());
+        comprehensiveFee.setOrderType(2);
         return comprehensiveFeeService.insertComprehensiveFee(comprehensiveFee);
     }
 

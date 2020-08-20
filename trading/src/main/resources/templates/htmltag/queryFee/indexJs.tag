@@ -138,7 +138,10 @@
             btns: [
                 {
                     label: '下一步', className: 'btn btn-primary', onClick(e, $iframe) {
-                       verificationUsernamePassword();
+                        let diaWindow = $iframe[0].contentWindow;
+                        bui.util.debounce(diaWindow.saveOrUpdateHandler, 1000, true)()
+                        return false;
+                       //verificationUsernamePassword();
                     }
                 }, {
                     label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
@@ -149,10 +152,10 @@
 
     }
 
-    function verificationUsernamePassword() {
+    function verificationUsernamePassword(id) {
         dia = bs4pop.dialog({
             title: '支付确认',//对话框title
-            content: '${contextPath}/queryFee/verificationUsernamePassword.action', //对话框内容，可以是 string、element，$object
+            content: '${contextPath}/queryFee/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
             width: '40%',//宽度
             height: '95%',//高度
             isIframe: true,//默认是页面层，非iframe
