@@ -33,7 +33,8 @@
                             <#bcomboProvider _id="referenceRule" _provider="referenceRuleProvider" _queryParams='{}'/>
                         </div>
                         <div  class="td operator" id="priceValueDiv" Style="display: none;border: 1px solid black;">
-                            <input type="text" name="fixedPrice" class="form-control" value="${model.fixedPrice}" placeholder="">
+                            <input type="number" id="fixedPriceView"  class="form-control" value="${model.fixedPrice}"  maxlength="100">
+                            <input type="number" hidden="true"  id="fixedPrice"  class="form-control" name="fixedPrice"  maxlength="100">
                         </div>
                     </li>
                 </ul>
@@ -72,6 +73,10 @@
             if (!$('#saveForm').validate().form()) {
                 return false;
             }
+            //将固定金额转成整数存入
+            var fixedPrice=parseFloat($('#fixedPriceView').val());
+            fixedPrice=fixedPrice.toFixed(2)*100;
+            $('#fixedPrice').val(Math.round(fixedPrice));
             bui.loading.show('努力提交中，请稍候。。。');
             var obj=$('#saveForm')[0];
             let _formData = new FormData($('#saveForm')[0]);
