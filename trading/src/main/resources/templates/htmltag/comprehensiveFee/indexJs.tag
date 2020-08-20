@@ -228,6 +228,10 @@
             bs4pop.alert('请选中一条数据');
             return;
         }
+        if (rows[0].$_orderStatus != 2) {
+            bs4pop.alert('该单据当前状态不能进行补打操作！');
+            return;
+        }
         console.info(JSON.stringify(rows[0]));
         callbackObj.printDirect(JSON.stringify(rows[0]),"CheckChargeDocument");
     }
@@ -258,10 +262,6 @@
         }, function (sure) {});
     }
 
-
-    function cancelHandler() {
-        window.location.reload();
-    }
 
     function revocator() {
         $.ajax({
