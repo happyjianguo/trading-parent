@@ -181,6 +181,7 @@ public class ComprehensiveFeeController {
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         comprehensiveFee.setMarketId(userTicket.getFirmId());
+        comprehensiveFee.setOrderType(1);
         return comprehensiveFeeService.insertComprehensiveFee(comprehensiveFee);
     }
 

@@ -48,20 +48,12 @@
 
     <script>
         $('#payByCard').on('click',function (e) {
-            //模拟刷卡代码，测试
-            if(0==0){
-                $('#customerCardNo').val("111");
-                $('#customerCode').val("222");
-                $('#customerId').val("333");
-                $('#customerName').val("444");
-                $('#availableBalance').val("55.223");
-                return;
+            let cardNum='888800031912';
+            //let cardNum = callbackObj.readCardNumber();
+            if(cardNum == -1){
+                bs4pop.alert("未读取到卡号", {type: 'error'});
+                return false;
             }
-           let cardNum = callbackObj.readCardNumber();
-           if(cardNum == -1){
-               bs4pop.alert("未读取到卡号", {type: 'error'});
-               return false;
-           }
             $.ajax({
                 type: "POST",
                 data:{cardNo:cardNum},
@@ -74,6 +66,20 @@
                         $('#customerCode').val(res.data.code);
                         $('#customerId').val(res.data.id);
                         $('#customerName').val(res.data.name);
+
+                        //查询客户余额
+                        $.ajax({
+                            type: "POST",
+                            data: {customerCardNo: cardNum},
+                            dataType: "json",
+                            url: "/queryFee/queryAccountBalance.action",
+                            async: false,
+                            success: function (res) {
+                                if (res.code == "200") {
+                                    $('#availableBalance').val((res.data.accountFund.balance/100).toFixed(2));
+                                }
+                            }
+                        });
                     }else {
                         bui.loading.hide();
                         bs4pop.alert(res.result, {type: 'error'});
@@ -110,6 +116,7 @@
         }
 
         function saveOrUpdateHandler() {
+            debugger
             // 提交保存
             if (!$('#saveForm').validate().form()) {
                 return false;
@@ -131,14 +138,16 @@
                 success: function (res) {
                     bui.loading.hide();
                     if (res.code == "200") {
-                        bs4pop.alert('成功', {type: 'success'}, function () {
-                            /* 应该要带条件刷新 */
+                        parent.dia.hide();
+                        parent.verificationUsernamePassword(res.data.id);
+                        /*bs4pop.alert('成功', {type: 'success'}, function () {
+                            /!* 应该要带条件刷新 *!/
                             parent.dia.hide();
                             parent.location.reload();
-                        });
+                        });*/
                     } else {
                         bui.loading.hide();
-                        bs4pop.alert(res.errorData, {type: 'error'});
+                        bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
                 error: function (error) {
