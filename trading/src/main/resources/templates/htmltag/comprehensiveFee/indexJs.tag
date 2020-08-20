@@ -225,7 +225,7 @@
                 {
                     label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
                         $('#_modal .modal-body').load("${contextPath}/comprehensiveFee/revocatorPage.html?id=" + rows[0].id);
-                        _modal.find('.modal-title').text('作废校验');
+                        _modal.find('.modal-title').text('撤销校验');
                         $("#_modal").modal();
                     }
                 }, {
@@ -250,6 +250,9 @@
                 bui.loading.hide();
                 if (data.code != '200') {
                     bs4pop.alert(data.message, {type: 'error'});
+                    return;
+                } else{
+                    bs4pop.alert("退款成功","",function (){window.location.reload();});
                     return;
                 }
                 window.location.reload();
