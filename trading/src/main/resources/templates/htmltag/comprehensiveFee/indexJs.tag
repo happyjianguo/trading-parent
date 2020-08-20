@@ -25,6 +25,7 @@
         paramName: 'likeName',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
+        width: 'flex',
         noSuggestionNotice: '不存在，请重新输入！',
         transformResult: function (result) {
             if (result.success) {
@@ -53,6 +54,7 @@
         paramName: 'keyword',
         displayFieldName: 'id',
         showNoSuggestionNotice: true,
+        width: 'flex',
         noSuggestionNotice: '结算员不存在',
         transformResult: function (result) {
             if(result.success){
@@ -175,14 +177,13 @@
             isIframe: true,//默认是页面层，非iframe
             btns:
                 [{
-                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
-
-                    }
-                }, {
                     label: '付款', className: 'btn btn-primary', onClick(e, $iframe) {
                         let diaWindow = $iframe[0].contentWindow;
                         bui.util.debounce(diaWindow.pay, 1000, true)()
                         return false;
+                    }
+                }, {
+                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
                     }
                 }]
         });
