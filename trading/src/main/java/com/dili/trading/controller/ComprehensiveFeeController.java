@@ -264,15 +264,16 @@ public class ComprehensiveFeeController {
      * 撤销
      *
      * @param id
+     * @param userName
      * @param operatorPassword
      * @param modelMap
      * @return
      */
     @ResponseBody
     @PostMapping("/revocator.action")
-    public BaseOutput<Object> revocator(Long id, @RequestParam(value="password") String operatorPassword, ModelMap modelMap) {
+    public BaseOutput<Object> revocator(Long id,@RequestParam(value = "userName")String userName,@RequestParam(value="password") String operatorPassword, ModelMap modelMap) {
         UserTicket user = SessionContext.getSessionContext().getUserTicket();
-        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getId(), operatorPassword);
+        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getUserName(),user.getId(), operatorPassword);
         return output;
 
     }
