@@ -108,8 +108,8 @@
         });
 
         $('#payByCard').on('click',function (e) {
-            let cardNum='888800031912';
-           //let cardNum = callbackObj.readCardNumber();
+            //let cardNum='888800031912';
+           let cardNum = callbackObj.readCardNumber();
            if(cardNum == -1){
                bs4pop.alert("未读取到卡号", {type: 'error'});
                return false;
