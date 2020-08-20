@@ -273,7 +273,7 @@ public class ComprehensiveFeeController {
     @PostMapping("/revocator.action")
     public BaseOutput<Object> revocator(Long id,@RequestParam(value = "userName")String userName,@RequestParam(value="password") String operatorPassword, ModelMap modelMap) {
         UserTicket user = SessionContext.getSessionContext().getUserTicket();
-        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getUserName(),user.getId(), operatorPassword);
+        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getRealName(),user.getId(), operatorPassword);
         return output;
 
     }
