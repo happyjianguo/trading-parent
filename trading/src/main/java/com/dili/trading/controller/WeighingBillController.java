@@ -339,6 +339,7 @@ public class WeighingBillController {
         metadata.put("createdTime", "datetimeProvider");
         metadata.put("measureType", "measureTypeProvider");
         metadata.put("state", "weighingBillStateProvider");
+
         metadata.put("unitPrice", "moneyProvider");
         metadata.put("statement.tradeAmount", "moneyProvider");
         metadata.put("statement.buyerPoundage", "moneyProvider");
