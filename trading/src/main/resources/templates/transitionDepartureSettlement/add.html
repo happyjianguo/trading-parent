@@ -12,18 +12,21 @@
                     <span class="input-group-text card-bt text-primary" id="payByCard"><a
                             href="javascript:;">刷卡</a></span>
                     <input id="id" readonly="true" required class="form-control" name="applyId" maxlength="100" hidden>
-                    <input id="code" readonly="true" required class="form-control" name="applyCode" maxlength="100" hidden>
+                    <input id="code" readonly="true" required class="form-control" name="applyCode" maxlength="100"
+                           hidden>
                     <input id="sid" readonly="true" required class="form-control" name="id" maxlength="100" hidden>
                 </div>
             </div>
             <div class="form-group col-6">
                 <label for="">客户编号</label>
-                <input id="customerCode" required readonly="true" class="form-control" name="customerCode" maxlength="100">
+                <input id="customerCode" required readonly="true" class="form-control" name="customerCode"
+                       maxlength="100">
                 <input id="customerId" required class="form-control" name="customerId" hidden="true" maxlength="100">
             </div>
             <div class="form-group col-6">
                 <label for="">客户名称</label>
-                <input id="customerName" required readonly="true" class="form-control" name="customerName" maxlength="100">
+                <input id="customerName" required readonly="true" class="form-control" name="customerName"
+                       maxlength="100">
             </div>
             <div class="form-group col-6">
                 <label for="">办理业务</label>
@@ -47,17 +50,20 @@
             </div>
             <div class="form-group col-6">
                 <label for="">交易类型</label>
-                <input id="transTypeId" class="form-control" required readonly="true" name="transTypeId" hidden maxlength="100">
+                <input id="transTypeId" class="form-control" required readonly="true" name="transTypeId" hidden
+                       maxlength="100">
                 <input id="transTypeName" class="form-control" required readonly="true" maxlength="100">
             </div>
             <div class="form-group col-6">
                 <label for="">商品名称</label>
-                <input id="categoryName" class="form-control" required readonly="true" name="categoryName" maxlength="100">
-                <input id="categoryId" class="form-control" required readonly="true" name="categoryId" maxlength="100" hidden>
+                <input id="categoryName" class="form-control" required readonly="true" name="categoryName"
+                       maxlength="100">
+                <input id="categoryId" class="form-control" required readonly="true" name="categoryId" maxlength="100"
+                       hidden>
             </div>
             <div class="form-group col-6">
                 <label for="">毛重/公斤<i class="red">*</i></label>
-                <input type="text" id="grossWeight"  required="true" class="form-control digit" name="grossWeight"
+                <input type="text" id="grossWeight" required="true" class="form-control digit" name="grossWeight"
                        maxlength="100" range="1 100000">
             </div>
             <div class="form-group col-6">
@@ -76,7 +82,8 @@
             <div class="form-group col-6">
                 <label for="">缴费金额</label>
                 <input id="chargeAmount1" class="form-control" readonly="true" maxlength="100">
-                <input id="chargeAmount" class="form-control" readonly="true" name="chargeAmount" maxlength="100" hidden>
+                <input id="chargeAmount" class="form-control" readonly="true" name="chargeAmount" maxlength="100"
+                       hidden>
             </div>
         </div>
     </form>
@@ -88,6 +95,10 @@
         $('#grossWeight').on('keyup', function (e) {
             let num = parseInt($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseInt($('#tareWeight').val() == null ? 0 : $('#tareWeight').val());
             if (!isNaN(num)) {
+                //如果净重小于零，则不行
+                if (num < 0) {
+                    bui.loading.show('净重必须大于0');
+                }
                 $('#netWeight').val(num);
             }
             let netWeight = $('#netWeight').val();
@@ -101,7 +112,7 @@
                 success: function (res) {
                     if (res.code == "200") {
                         $('#chargeAmount1').val(res.data.totalFee);
-                        $('#chargeAmount').val(res.data.totalFee*100);
+                        $('#chargeAmount').val(res.data.totalFee * 100);
                     }
                 },
             });
@@ -109,6 +120,10 @@
         $('#tareWeight').on('keyup', function (e) {
             let num = parseInt($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseInt($('#tareWeight').val() == null ? 0 : $('#tareWeight').val());
             if (!isNaN(num)) {
+                //如果净重小于零，则不行
+                if (num < 0) {
+                    bs4pop.alert('净重不能小于0', {type: 'error'});
+                }
                 $('#netWeight').val(num);
             }
             let netWeight = $('#netWeight').val();
@@ -122,7 +137,7 @@
                 success: function (res) {
                     if (res.code == "200") {
                         $('#chargeAmount1').val(res.data.totalFee);
-                        $('#chargeAmount').val(res.data.totalFee*100);
+                        $('#chargeAmount').val(res.data.totalFee * 100);
                     }
                 },
             });
@@ -131,7 +146,7 @@
         $('#payByCard').on('click', function (e) {
             let cardNum = callbackObj.readCardNumber();
             if (cardNum == -1) {
-                bs4pop.alert("未读取到卡号", {type: 'error'});
+                bs4pop.alert('净重不能小于0', {type: 'error'});
                 return false;
             }
             $('#customerCardNo').val(cardNum);
@@ -164,7 +179,7 @@
                         $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
                         $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
                         if (!isNaN(res.data.transitionDepartureSettlement.chargeAmount)) {
-                            $('#chargeAmount1').val(res.data.transitionDepartureSettlement.chargeAmount/100);
+                            $('#chargeAmount1').val(res.data.transitionDepartureSettlement.chargeAmount / 100);
                             $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
                         }
                     } else {
@@ -194,6 +209,16 @@
         let url = 'insert';
         // 提交保存
         if (!$('#saveForm').validate().form()) {
+            return false;
+        }
+        let netWeight = $('#netWeight').val();
+        let chargeAmount = $('#chargeAmount').val();
+        if (netWeight < 0) {
+            bs4pop.alert('净重不能小于0', {type: 'error'});
+            return false;
+        }
+        if (chargeAmount < 0) {
+            bs4pop.alert('收费金额不能小于0', {type: 'error'});
             return false;
         }
         if ($('#sid').val() != null && $('#sid').val() != '') {
