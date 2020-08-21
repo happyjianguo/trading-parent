@@ -121,20 +121,9 @@
         size = size > 10 ? size : 10;
         _grid.bootstrapTable('refreshOptions', {
             url: '/comprehensiveFee/listByQueryParams.action',
-            onLoadSuccess: toFixChargeAmount,
             pageSize: parseInt(size)
         });
     });
-
-    /*执行前改变数据*/
-    function toFixChargeAmount(data) {
-        var rows=data.rows;
-        for(var i=0;i<rows.length;i++){
-            var chargeAmount=rows[i].chargeAmount;
-            rows[i].chargeAmount=(chargeAmount/100).toFixed(2);
-        }
-        _grid.bootstrapTable('load',data);
-    }
 
     /******************************驱动执行区 end****************************/
 

@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 /**
+ * 检测收费RPC
+ *
  *@author  Henry.Huang
  *@date  2020/08/20
  *
  */
-@FeignClient(name = "order-service", contextId = "comprehensiveFeeRpc", url = "localhost:8185")
+@FeignClient(name = "order-service", contextId = "comprehensiveFeeRpc",url="localhost:8185")
 public interface ComprehensiveFeeRpc {
 
 
@@ -56,19 +58,17 @@ public interface ComprehensiveFeeRpc {
     BaseOutput<ComprehensiveFee> getOneById(@PathVariable(value = "id") Long id);
 
     /**
-     * 结算单支付
+     * 检测收费单支付
      * @param id
      * @param password
      * @param marketId
-     * @param departmentId
-     * @param operatorCode
      * @param operatorId
      * @param operatorName
      * @param operatorUserName
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/pay", method = {RequestMethod.POST})
-    BaseOutput<ComprehensiveFee> pay(@RequestParam(value = "id") Long id, @RequestParam(value = "password") String password, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId, @RequestParam(value = "operatorCode") String operatorCode, @RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "operatorName") String operatorName, @RequestParam(value = "operatorUserName") String operatorUserName);
+    BaseOutput<ComprehensiveFee> pay(@RequestParam(value = "id") Long id, @RequestParam(value = "password") String password, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "operatorName") String operatorName, @RequestParam(value = "operatorUserName") String operatorUserName);
 
     /**
      * 获取费用信息

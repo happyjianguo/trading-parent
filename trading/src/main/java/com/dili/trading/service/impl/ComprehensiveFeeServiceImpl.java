@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 /**
+ * 检测收费服务实现类
+ *
  *@author  Henry.Huang
  *@date  2020/08/20
  *
@@ -27,12 +29,6 @@ public class ComprehensiveFeeServiceImpl implements ComprehensiveFeeService {
     @Autowired
     private ComprehensiveFeeRpc comprehensiveFeeRpc;
 
-    /**
-     * 根据申请单信息，新增一条结算单信息
-     *
-     * @param comprehensiveFee
-     * @return
-     */
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "检测收费新增", operationType = "add", systemCode = "ORDERS")
     @Transactional(propagation = Propagation.REQUIRED)
@@ -65,15 +61,13 @@ public class ComprehensiveFeeServiceImpl implements ComprehensiveFeeService {
         return comprehensiveFeeBaseOutput;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "检测收费结算单支付", operationType = "update", systemCode = "ORDERS")
     @Transactional(propagation = Propagation.REQUIRED)
     public BaseOutput pay(Long id, String password) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        BaseOutput<ComprehensiveFee> pay = comprehensiveFeeRpc.pay(id, password, userTicket.getFirmId(), userTicket.getDepartmentId(), userTicket.getUserName(), userTicket.getId(), userTicket.getRealName(), userTicket.getUserName());
+        BaseOutput<ComprehensiveFee> pay = comprehensiveFeeRpc.pay(id, password, userTicket.getFirmId(), userTicket.getId(), userTicket.getRealName(), userTicket.getUserName());
         if (pay.isSuccess()) {
             ComprehensiveFee data = pay.getData();
             LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
