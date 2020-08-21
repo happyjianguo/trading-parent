@@ -40,7 +40,7 @@ public class CarTypeProvider extends BatchDisplayTextProviderSupport {
         if (Objects.nonNull(obj)) {
             carTypeForJmsfDTO.setKeyword(obj.toString());
         }
-        carTypeForJmsfDTO.setBusinessCode("jmsf");
+        carTypeForJmsfDTO.setBusinessCode("kcjm");
         carTypeForJmsfDTO.setMarketId(userTicket.getFirmId());
         List<CarTypeForBusinessDTO> list = assetsRpc.listCarType(carTypeForJmsfDTO).getData();
         List<ValuePair<?>> resultList = list.stream().map(f -> {
