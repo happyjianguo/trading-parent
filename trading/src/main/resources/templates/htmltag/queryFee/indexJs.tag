@@ -117,7 +117,7 @@
         size = size > 10 ? size : 10;
         _grid.bootstrapTable('refreshOptions', {
             url: '/queryFee/listByQueryParams.action',
-            onLoadSuccess: toFixChargeAmount,
+            //onLoadSuccess: toFixChargeAmount,
             pageSize: parseInt(size)
         });
     });
