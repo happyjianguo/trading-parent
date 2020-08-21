@@ -5,7 +5,6 @@ import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.assets.sdk.rpc.CategoryRpc;
 import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.rpc.CardRpc;
-import com.dili.rule.sdk.rpc.ChargeRuleRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
@@ -33,8 +32,8 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Description:
  * 检测收费controller
+ *
  * @author Henry.Huang
  * @date   2020-08-18
  */
@@ -53,9 +52,6 @@ public class ComprehensiveFeeController {
 
     @Autowired
     CategoryRpc categoryRpc;
-
-    @Autowired
-    private ChargeRuleRpc chargeRuleRpc;
 
     /**
      * 跳转到列表页面
@@ -249,6 +245,7 @@ public class ComprehensiveFeeController {
         BaseOutput baseOutput=comprehensiveFeeRpc.getFee(userTicket.getFirmId(), customerId, type);
         return baseOutput;
     }
+
     /**
      * 撤销密码页面
      *

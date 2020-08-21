@@ -4,13 +4,16 @@ import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.ss.domain.BaseOutput;
 
 /**
- * 由MyBatis Generator工具自动生成 This file was generated on 2020-06-19 14:20:28.
+ * 检测收费服务
+ *
  * @author  Henry.Huang
+ * @date  2020/08/20
  */
 public interface ComprehensiveFeeService {
 
 	/**
-	 * 新增
+	 * 根据申请单信息，新增一条检测收费单信息
+	 *
 	 * @param comprehensiveFee
 	 * @return
 	 */
