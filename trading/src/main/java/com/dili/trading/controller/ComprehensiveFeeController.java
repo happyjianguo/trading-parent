@@ -22,23 +22,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.*;
-
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * 结算单接口
+ * Description:
+ * 检测收费controller
  * @author Henry.Huang
- * @date 2020/08/20
+ * @date   2020-08-18
  */
 @Controller
 @RequestMapping("/comprehensiveFee")
@@ -58,6 +56,7 @@ public class ComprehensiveFeeController {
 
     @Autowired
     private ChargeRuleRpc chargeRuleRpc;
+
     /**
      * 跳转到列表页面
      *
@@ -68,8 +67,6 @@ public class ComprehensiveFeeController {
     public String index(ModelMap modelMap) {
         return "comprehensiveFee/list";
     }
-
-
 
     /**
      * 分页查询
@@ -94,7 +91,7 @@ public class ComprehensiveFeeController {
     /**
      * 根据参数查询数据
      *
-     * @param comprehensiveFee
+     * @param  comprehensiveFee
      * @return
      * @throws Exception
      */
@@ -129,7 +126,8 @@ public class ComprehensiveFeeController {
     /**
      * 跳转到检测收费输入密码页面
      *
-     * @param modelMap
+     * @param  modelMap
+     * @param  id
      * @return
      */
     @RequestMapping(value = "/verificationUsernamePassword.action", method = RequestMethod.GET)
@@ -144,6 +142,8 @@ public class ComprehensiveFeeController {
     /**
      * 检测收费缴费
      *
+     * @param  id
+     * @param  password
      * @return BaseOutput
      */
     @RequestMapping(value = "/pay.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -189,6 +189,7 @@ public class ComprehensiveFeeController {
     /**
      * 跳到查看页面
      *
+     * @param modelMap
      * @param comprehensiveFee
      * @return
      */
@@ -232,9 +233,10 @@ public class ComprehensiveFeeController {
     }
 
     /**
-
      * 对接计费规则
      *
+     * @param  customerId
+     * @param  type
      * @return
      */
     @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -247,9 +249,9 @@ public class ComprehensiveFeeController {
         BaseOutput baseOutput=comprehensiveFeeRpc.getFee(userTicket.getFirmId(), customerId, type);
         return baseOutput;
     }
-
-     /**
-     *撤销密码页面
+    /**
+     * 撤销密码页面
+     *
      * @param id
      * @param modelMap
      * @return
@@ -259,6 +261,7 @@ public class ComprehensiveFeeController {
         modelMap.addAttribute("comprehensiveFeeId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "revocator");
         return "comprehensiveFee/revocatorPage";
     }
+
     /**
      * 撤销
      *
@@ -299,6 +302,7 @@ public class ComprehensiveFeeController {
 
     /**
      * 校验comprehensiveFee
+     *
      * @param comprehensiveFee
      * @return
      */

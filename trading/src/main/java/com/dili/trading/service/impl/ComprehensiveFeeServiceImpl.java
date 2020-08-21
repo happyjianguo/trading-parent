@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
  *@date  2020/08/20
  *
  */
-
 @Service
 public class ComprehensiveFeeServiceImpl implements ComprehensiveFeeService {
 
@@ -66,6 +65,9 @@ public class ComprehensiveFeeServiceImpl implements ComprehensiveFeeService {
         return comprehensiveFeeBaseOutput;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "检测收费结算单支付", operationType = "update", systemCode = "ORDERS")
     @Transactional(propagation = Propagation.REQUIRED)
