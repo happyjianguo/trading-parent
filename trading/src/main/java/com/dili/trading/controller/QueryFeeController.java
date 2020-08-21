@@ -37,7 +37,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 结算单接口
+ * Description: 查询收费功能Controller类
+ *
+ * @date:    2020/8/21
+ * @author:   Seabert.Zhan
  */
 @Controller
 @RequestMapping("/queryFee")

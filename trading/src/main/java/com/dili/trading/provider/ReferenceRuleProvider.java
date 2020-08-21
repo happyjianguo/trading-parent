@@ -13,10 +13,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 品类参考价设置 参考价规则(1.规则1 2.规则2 3.规则3 4.无)默认为1
- * @author Seabert.Zhan
+ * Description: 品类参考价设置ReferenceRuleProvider
+ * 参考价规则(1.规则1 2.规则2 3.规则3 4.无)默认为1
+ *
+ * @date:    2020/8/21
+ * @author:   Seabert.Zhan
  */
-
 @Component
 @Scope("prototype")
 public class ReferenceRuleProvider implements ValueProvider {

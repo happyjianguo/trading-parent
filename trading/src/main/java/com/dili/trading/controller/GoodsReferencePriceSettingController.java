@@ -26,8 +26,10 @@ import com.google.gson.Gson;
 import java.util.*;
 
 /**
- * 品类参考价接口
- * @author Seabert.Zhan
+ * Description: 查询收费功能Controller类
+ *
+ * @date:    2020/8/21
+ * @author:   Seabert.Zhan
  */
 @Controller
 @RequestMapping("/goodsReferencePriceSetting")
