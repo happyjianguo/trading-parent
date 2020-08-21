@@ -156,19 +156,19 @@
         dia = bs4pop.dialog({
             title: '转离场结算单',//对话框title
             content: '${contextPath}/transitionDepartureSettlement/add.html', //对话框内容，可以是 string、element，$object
-            width: '60%',//宽度
-            height: '95%',//高度
+            width: '900px',//宽度
+            height: '500px',//高度
             isIframe: true,//默认是页面层，非iframe
             btns: [
-                {
+                 {
+                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
+
+                    }
+                },{
                     label: '保存', className: 'btn btn-primary', onClick(e, $iframe) {
                         let diaWindow = $iframe[0].contentWindow;
                         bui.util.debounce(diaWindow.saveOrUpdateHandler, 1000, true)()
                         return false;
-                    }
-                }, {
-                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
-
                     }
                 }]
         });
@@ -179,19 +179,19 @@
         dia = bs4pop.dialog({
             title: '支付确认',//对话框title
             content: '${contextPath}/transitionDepartureSettlement/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
-            width: '60%',//宽度
-            height: '65%',//高度
+            width: '400px',//宽度
+            height: '400px',//高度
             isIframe: true,//默认是页面层，非iframe
             btns:
                 [{
-                        label: '确定（O）', className: 'btn btn-primary', onClick(e, $iframe) {
-                            let diaWindow = $iframe[0].contentWindow;
-                            bui.util.debounce(diaWindow.pay, 1000, true)()
-                            return false;
-                        }
-                    },{
                     label: '取消（E）', className: 'btn btn-secondary', onClick(e, $iframe) {
 
+                    }
+                },{
+                    label: '确定（O）', className: 'btn btn-primary', onClick(e, $iframe) {
+                        let diaWindow = $iframe[0].contentWindow;
+                        bui.util.debounce(diaWindow.pay, 1000, true)()
+                        return false;
                     }
                 }]
         });
@@ -215,8 +215,8 @@
         dia = bs4pop.dialog({
             title: '撤销校验',//对话框title
             content: '${contextPath}/transitionDepartureSettlement/revocatorPage.html?id=' + rows[0].id,
-            width: '60%',//宽度
-            height: '65%',//高度
+            width: '400px',//宽度
+            height: '400px',//高度
             isIframe: true,//默认是页面层，非iframe
             btns: [{
                 label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
