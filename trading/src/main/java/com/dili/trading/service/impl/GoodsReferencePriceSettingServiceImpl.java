@@ -15,6 +15,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
+/**
+ * Description: 品类参考价接口实现GoodsReferencePriceSettingServiceImpl
+ *
+ * @date:    2020/8/21
+ * @author:   Seabert.Zhan
+ */
 @Service
 public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePriceSettingService {
 
