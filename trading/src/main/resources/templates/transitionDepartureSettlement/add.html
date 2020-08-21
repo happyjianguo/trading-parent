@@ -223,7 +223,8 @@
             return false;
         }
         let balance = $('#balance').val();
-        if (parseFloat(chargeAmount) > parseFloat(balance)) {
+        let chargeAmount1=$('#chargeAmount1').val();
+        if (parseFloat(chargeAmount1) > parseFloat(balance)) {
             bs4pop.alert('余额不足请充值', {type: 'error'});
             return false;
         }
