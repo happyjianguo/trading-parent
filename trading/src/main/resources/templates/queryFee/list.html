@@ -69,33 +69,33 @@
 			</div>
 			<table id="grid" data-toggle="table" data-title="查询收费列表" class="table" data-toolbar="#toolbar" data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
 				data-side-pagination="server" data-method="POST" data-content-type="application/x-www-form-urlencoded" data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
-				data-unique-id="id" data-sort-name="operatorTime" data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary" data-show-refresh="true" data-show-fullscreen="true"
+				data-unique-id="id" data-sort-name="operator_time" data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary" data-show-refresh="true" data-show-fullscreen="true"
 				data-show-columns="true">
 				<thead>
 					<tr>
 						<th data-radio="true"></th>
-                        <th data-field="code" data-align="center" data-sortable="true">
+                        <th data-field="code" data-align="center" data-sortable="true" data-sort-name="code">
                             单据编号
                         </th>
-                        <th data-field="customerCode" data-align="center" data-sortable="true">
+                        <th data-field="customerCode" data-align="center" data-sortable="true" data-sort-name="customer_code">
                             客户编号
                         </th>
-                        <th data-field="customerName" data-align="center" data-sortable="true">
+                        <th data-field="customerName" data-align="center" data-sortable="true" data-sort-name="customer_name">
                             客户姓名
                         </th>
-                        <th data-field="customerCardNo" data-align="center" data-sortable="true">
+                        <th data-field="customerCardNo" data-align="center" data-sortable="true" data-sort-name="customer_card_no">
                             卡号
                         </th>
-                        <th data-field="chargeAmount" data-align="center" data-sortable="true" data-provider="moneyProvider">
+                        <th data-field="chargeAmount" data-align="center" data-sortable="true" data-provider="moneyProvider" data-sort-name="charge_amount">
                             收费金额
                         </th>
-                        <th data-field="operatorName" data-align="center" data-sortable="true">
+                        <th data-field="operatorName" data-align="center" data-sortable="true" data-sort-name="operator_name">
                             结算员
                         </th>
-                        <th data-field="operatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true">
+                        <th data-field="operatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true" data-sort-name="operator_time">
                             结算时间
                         </th>
-                        <th data-field="remark" data-align="center" data-sortable="true">
+                        <th data-field="remark" data-align="center" data-sortable="true" data-sort-name="remark">
                             备注
                         </th>
 					</tr>
