@@ -97,7 +97,7 @@
             if (!isNaN(num)) {
                 //如果净重小于零，则不行
                 if (num < 0) {
-                    bui.loading.show('净重必须大于0');
+                    bs4pop.alert('净重不能小于0', {type: 'error'});
                 }
                 $('#netWeight').val(num);
             }
