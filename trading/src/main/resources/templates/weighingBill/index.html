@@ -142,12 +142,10 @@
 				</button>
 				</#resource>
 				<#resource code="truck_off">
-				<button type="button" class="btn btn-primary btn_css_disabled" id="btn_disabled" onclick="doEnableHandler(2)">
-					<i class="fa fa-stop"></i> 导出
-				</button>
+					<button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')"><i class="fa fa-download"></i> 导出</button>
 				</#resource>
 			</div>
-			<table id="grid" data-toggle="table" data-title="注册车辆列表" class="table" data-toolbar="#toolbar" data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
+			<table id="grid" data-toggle="table" data-title="交易过磅列表" class="table" data-toolbar="#toolbar" data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
 				data-side-pagination="server" data-method="POST" data-content-type="application/x-www-form-urlencoded" data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
 				data-unique-id="id" data-sort-name="id" data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary" data-show-refresh="true" data-show-fullscreen="true"
 				data-show-columns="true">
