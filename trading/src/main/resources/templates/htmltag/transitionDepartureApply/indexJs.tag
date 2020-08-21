@@ -225,7 +225,11 @@
             width: '60%',//宽度
             height: '95%',//高度
             isIframe: true,//默认是页面层，非iframe
-            btns: [{
+            btns: [ {
+                label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
+
+                }
+            },{
                 label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
                     let diaWindow = $iframe[0].contentWindow;
                     bui.util.debounce(diaWindow.updateHandler(2), 1000, true)()
@@ -237,11 +241,7 @@
                     bui.util.debounce(diaWindow.updateHandler(3), 1000, true)()
                     return false;
                 }
-            }, {
-                label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
-
-                }
-            },]
+            }]
 
         });
     }

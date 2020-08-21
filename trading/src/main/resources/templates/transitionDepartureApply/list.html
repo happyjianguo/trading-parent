@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <#bs4nav>
     <form class="form collapse show" id="queryForm" role="form" >
-        <div class="row  row-cols-5">
+        <div class="row  row-cols-6">
             <div class="form-group col">
                 <label for="">审批状态</label>
                 <select id="approvalState" name="approvalState" class="form-control">
@@ -21,16 +21,13 @@
                     <option value="2">离场</option>
                 </select>
             </div>
-            <div class="form-group col-3">
-                <label for="" class="">客户</label>
-                <div class="input-group">
-                    <#bautoCompleteProvider _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="code" _displayDomainName="code" _placeholder=""  _optionVariable="customerNameAutoCompleteOption" />
-                    <input type="text" class="form-control" id="showCustomerName" readonly/>
-                </div>
-            </div>
             <div class="form-group col">
                 <label for="">车牌</label>
                 <input type="text" class="form-control" name="plate" placeholder="">
+            </div>
+            <div class="form-group col">
+                <label for="" class="">审批人员</label>
+                <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="approvalId" _hiddenDomainName="approvalId" _displayDomainId="_approvalId" _displayDomainName="_approvalId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
             </div>
             <div class="form-group col">
                 <label for="" class="">发起人员</label>
@@ -53,13 +50,14 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row  row-cols-4">
-            <div class="form-group col">
-                <label for="" class="">审批人员</label>
-                <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="approvalId" _hiddenDomainName="approvalId" _displayDomainId="_approvalId" _displayDomainName="_approvalId" _placeholder="" _provider="userProvider" _validatorMethod="isSelected" _value="" _text="" />
+            <div class="form-group col-auto">
+                <label for="" class="">客户</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="code" _displayDomainName="code" _placeholder=""  _optionVariable="customerNameAutoCompleteOption" />
+                    <input type="text" class="form-control" id="showCustomerName" readonly/>
+                </div>
             </div>
-            <div class="form-group col">
+            <div class="form-group col-auto">
                 <label for="" class="">卡号</label>
                 <div class="input-group">
                     <!--<#bautoCompleteProvider  _displayDomainId="customerCardNo" _displayDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>-->
@@ -78,9 +76,8 @@
 
     </form>
 </#bs4nav>
+<hr>
 
-
-<div class="">
     <div class="row">
         <div class="col-12">
             <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
@@ -149,7 +146,6 @@
                 </thead>
             </table>
         </div>
-    </div>
 </div>
 
 
