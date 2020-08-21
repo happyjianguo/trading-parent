@@ -46,6 +46,8 @@ public class ComprehensiveFeeServiceImpl implements ComprehensiveFeeService {
         comprehensiveFee.setCreatorId(userTicket.getId());
         //设置数据创建时间
         comprehensiveFee.setCreatedTime(LocalDateTime.now());
+        //设置检测收费单归属部门
+        comprehensiveFee.setDepartmentId(userTicket.getDepartmentId());
         //将车牌号的小写变为大写
         if (StringUtils.isNotBlank(comprehensiveFee.getPlate())) {
             comprehensiveFee.setPlate(comprehensiveFee.getPlate().toUpperCase());
