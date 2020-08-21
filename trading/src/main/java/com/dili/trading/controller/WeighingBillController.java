@@ -3,6 +3,7 @@ package com.dili.trading.controller;
 import java.time.LocalDate;
 import java.util.*;
 
+import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.dto.*;
 import com.dili.orders.rpc.AccountRpc;
 import org.apache.commons.lang3.StringUtils;
@@ -272,8 +273,8 @@ public class WeighingBillController {
     /**
      * 查询客户信息
      *
-     * @param name
-     * @param keyword
+     * @param
+     * @param
      * @return
      */
     @ResponseBody
@@ -330,7 +331,6 @@ public class WeighingBillController {
             LOGGER.error(output.getMessage());
             return this.index(modelMap);
         }
-
         Map<Object, Object> metadata = new HashMap<Object, Object>();
         metadata.put("netWeight", "weightProvider");
         metadata.put("unitWeight", "weightProvider");
@@ -352,7 +352,10 @@ public class WeighingBillController {
         ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
         ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
         metadata.put("tradeType", ddProvider);
-
+        //未结算的，不展示结算信息
+        if (Objects.equals(output.getData().getState(), 1)) {
+            output.getData().setStatement(new WeighingStatement());
+        }
         try {
             List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData()));
             metadata = new HashMap<Object, Object>();
