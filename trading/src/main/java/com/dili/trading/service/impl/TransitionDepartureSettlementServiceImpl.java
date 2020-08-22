@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.websocket.Session;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 public class TransitionDepartureSettlementServiceImpl implements TransitionDepartureSettlementService {
@@ -100,6 +101,9 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
     @Transactional(propagation = Propagation.REQUIRED)
     public BaseOutput pay(Long id, String password) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        if (Objects.isNull(userTicket.getDepartmentId())) {
+            return BaseOutput.failure("该操作员没有部门");
+        }
         BaseOutput<TransitionDepartureSettlement> pay = transitionDepartureSettlementRpc.pay(id, password, userTicket.getFirmId(), userTicket.getDepartmentId(), userTicket.getUserName(), userTicket.getId(), userTicket.getRealName(), userTicket.getUserName());
         if (pay.isSuccess()) {
             TransitionDepartureSettlement data = pay.getData();
