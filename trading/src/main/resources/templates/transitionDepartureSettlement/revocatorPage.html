@@ -50,12 +50,12 @@
                     // });
                 } else {
                     bui.loading.hide();
-                    bs4pop.alert(res.result, {type: 'error'});
+                    bs4pop.alert(res.result, {width:'350px',type: 'error'});
                 }
             },
             error: function (error) {
                 bui.loading.hide();
-                bs4pop.alert(error.result, {type: 'error'});
+                bs4pop.alert(error.result, {width:'350px',type: 'error'});
             }
         });
     }
