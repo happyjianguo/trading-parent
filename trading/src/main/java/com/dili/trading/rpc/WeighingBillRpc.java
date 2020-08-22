@@ -16,7 +16,7 @@ import com.dili.orders.dto.WeighingBillUpdateDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 
-@FeignClient(name = "order-service", contextId = "weighingBill")
+@FeignClient(name = "order-service", contextId = "weighingBill", url = "localhost:8185")
 public interface WeighingBillRpc {
 
     @RequestMapping(value = "/api/weighingBill/insert")

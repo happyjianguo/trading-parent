@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc")
+@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc", url = "localhost:8185")
 public interface TransitionDepartureSettlementRpc {
 
 
@@ -63,7 +63,7 @@ public interface TransitionDepartureSettlementRpc {
 
 
     /**
-     * 定时任务，每天凌晨12点更新当天为结算的单子，支付状态更改为已关闭状态
+     * 根据结算单id获取结算单信息
      *
      * @param id
      * @return
@@ -79,7 +79,7 @@ public interface TransitionDepartureSettlementRpc {
      * @return
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/insertTransitionDepartureSettlement", method = {RequestMethod.POST})
-    BaseOutput<TransitionDepartureSettlement> insertTransitionDepartureSettlement(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement,@RequestParam(value = "marketId") Long marketId);
+    BaseOutput<TransitionDepartureSettlement> insertTransitionDepartureSettlement(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement, @RequestParam(value = "marketId") Long marketId);
 
     /**
      * 结算单支付
