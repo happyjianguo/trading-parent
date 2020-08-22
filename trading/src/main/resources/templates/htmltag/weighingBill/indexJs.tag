@@ -317,7 +317,7 @@
     	bs4pop.confirm(" 确定作废当前单据吗？", {title: "确认提示"}, function (sure) {
             if (sure) {
 		        $('#_modal .modal-body').load("/weighingBill/operatorInvalidate.html?id="+rows[0].id);
-		        _modal.find('.modal-title').text('作废校验');
+		        _modal.find('.modal-title').text('信息确认');
             	$("#_modal").modal();
             }
         });
@@ -358,7 +358,7 @@
     	bs4pop.confirm(" 确定撤销当前单据吗？", {title: "确认提示"}, function (sure) {
             if (sure) {
 		        $('#_modal .modal-body').load("/weighingBill/operatorWithdraw.html?id="+rows[0].id);
-		        _modal.find('.modal-title').text('作废校验');
+		        _modal.find('.modal-title').text('信息确认');
             	$("#_modal").modal();
             }
         });
