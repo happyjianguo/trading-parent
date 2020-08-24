@@ -109,8 +109,17 @@ public class GoodsReferencePriceSettingController {
         BaseOutput<List<CategoryDTO>> categoryDTOList = assetsRpc.list(categoryDTO);
         goodsReferencePriceSetting.setGoodsName(null);
         goodsReferencePriceSetting.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+        //获取节点子节点的数据（goods_reference_price_setting）
         List<GoodsReferencePriceSetting> goodsReferencePriceSettings =  goodsReferencePriceSettingRpc.getAllGoods(goodsReferencePriceSetting);
         try {
+            ////获取节点本身的数据（goods_reference_price_setting）
+            goodsReferencePriceSetting.setGoodsId(goodsReferencePriceSetting.getParentGoodsId());
+            goodsReferencePriceSetting.setParentGoodsId(null);
+            BaseOutput<GoodsReferencePriceSetting> output = goodsReferencePriceSettingRpc.findDetailDtoById(goodsReferencePriceSetting);
+            if (!output.isSuccess()) {
+                LOGGER.error(output.getMessage());
+                return this.index();
+            }
             //组装数据
             List<CategoryDTO> categoryList = new ArrayList<CategoryDTO>();
             CategoryDTO categoryOneSelf = categoryDTOOneSelf.getData();
@@ -122,6 +131,14 @@ public class GoodsReferencePriceSettingController {
                 }
             } else{
                 throw new Exception("未获取到当前节点的商品数据");
+            }
+
+            GoodsReferencePriceSetting tempGoods = output.getData();
+            if(tempGoods != null) {
+                if(goodsReferencePriceSettings == null){
+                    goodsReferencePriceSettings = new  ArrayList<GoodsReferencePriceSetting>();
+                }
+                goodsReferencePriceSettings.add(tempGoods);
             }
             List<GoodsReferencePriceSetting> finalSettings = new ArrayList<GoodsReferencePriceSetting>();
             if(categoryList != null) {
