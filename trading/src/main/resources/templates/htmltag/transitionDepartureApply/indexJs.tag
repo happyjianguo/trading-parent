@@ -334,6 +334,9 @@
      * 查询处理
      */
     function queryDataHandler() {
+        // if (!$('#queryForm').validate().form()) {
+        //     return false;
+        // }
         _grid.bootstrapTable('refresh');
     }
 
