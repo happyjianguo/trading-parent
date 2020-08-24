@@ -1,33 +1,4 @@
 <script>
-    // 根据快捷吗查询商品
-    var goodsIdAutoCompleteOption = {
-        serviceUrl: '/goodsReferencePriceSetting/getGoodsByKeyword.action',
-        paramName: 'keyword',
-        displayFieldName: 'code',
-        showNoSuggestionNotice: true,
-        minChars: 2,
-        width: 'flex',
-        noSuggestionNotice: '无此商品, 请重新输入',
-        transformResult: function (result) {
-            if(result.success){
-                let data = result.data;
-                return {
-                    /*suggestions: $.map(data, function (dataItem) {
-                        return $.extend(dataItem, {
-                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
-                            }
-                        );
-                    })*/
-                }
-            }else{
-                // bs4pop.alert(result.message, {type: 'error'});
-                return false;
-            }
-        },
-        selectFn: function (suggestion) {
-        }
-    };
-
     /*********************变量定义区 begin*************/
         //行索引计数器
         //如 let itemIndex = 0;
@@ -98,6 +69,9 @@
         document.getElementById("tableDiv").style.display = "block";
         var oid = treeNode.id;
         $("input[name='parentGoodsId']").val(oid);
+        $(window).resize(function () {
+            _grid.bootstrapTable('resetView')
+        });
         _grid.bootstrapTable('refreshOptions', {
             url: '/goodsReferencePriceSetting/getGoodsByParentId.action',
             columns: [
@@ -181,9 +155,36 @@
     }
 
     /**
-     * 查询处理
+     * 查询处理(根据快捷吗查询商品)
      */
     function queryDataHandler() {
+        document.getElementById("tableDiv").style.display = "block";
+        $(window).resize(function () {
+            _grid.bootstrapTable('resetView')
+        });
+        _grid.bootstrapTable('refreshOptions', {
+            url: '/goodsReferencePriceSetting/getGoodsByKeyword.action',
+            columns: [
+                {
+                    field: 'goodsName',
+                    title: '品类名称 ',
+                    align: 'center'
+                },   {
+                    field: 'referenceRule',
+                    title: '参考价规则',
+                    align: 'center'
+                },{
+                    field: 'oid',
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a href="#" onclick="edit(\'' + row.goodsId + '\',\'' + row.goodsName + '\',\'' + row.parentGoodsId + '\',\'' + row.referenceRule + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        return actions.join('');
+                    }
+                }
+            ],
+        });
         _grid.bootstrapTable('refresh');
     }
     /*****************************************函数区 end**************************************/

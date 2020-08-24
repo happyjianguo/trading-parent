@@ -6,7 +6,8 @@
         <input type="hidden" class="form-control" name="parentGoodsId">
         <div class="row  row-cols-6">
             <div class="form-group col">
-                <#bautoCompleteProvider _hiddenDomainId="goodsId" _hiddenDomainName="goodsId" _placeholder="品类名称/快捷编码"  _optionVariable="goodsIdAutoCompleteOption"/>
+                <input type="text" class="form-control isNaturalNum" name="goodsName" placeholder="品类名称/快捷编码">
+                <!--<#bautoCompleteProvider _hiddenDomainId="goodsId" _hiddenDomainName="goodsId" _placeholder="品类名称/快捷编码"  _optionVariable="goodsIdAutoCompleteOption"/>-->
             </div>
             <div class="form-group col">
                 <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
