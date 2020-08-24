@@ -42,6 +42,10 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
         goodsReferencePriceSetting.setCreatorId(userTicket.getId());
         //设置数据创建时间
         goodsReferencePriceSetting.setCreatedTime(LocalDateTime.now());
+        //设置修改人id
+        goodsReferencePriceSetting.setModifierId(userTicket.getId());
+        //设置数据修改时间
+        goodsReferencePriceSetting.setModifiedTime(LocalDateTime.now());
 
         BaseOutput<GoodsReferencePriceSetting> goodsReferencePriceSettingBaseOutput = goodsReferencePriceSettingRpc.insert(goodsReferencePriceSetting);
         if (goodsReferencePriceSettingBaseOutput.isSuccess()) {
