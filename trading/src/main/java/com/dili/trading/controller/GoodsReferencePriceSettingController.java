@@ -107,6 +107,7 @@ public class GoodsReferencePriceSettingController {
         BaseOutput<CategoryDTO> categoryDTOOneSelf = assetsRpc.get(goodsReferencePriceSetting.getParentGoodsId());
         //获取节点下面子节点的数据
         BaseOutput<List<CategoryDTO>> categoryDTOList = assetsRpc.list(categoryDTO);
+        goodsReferencePriceSetting.setGoodsName(null);
         goodsReferencePriceSetting.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         List<GoodsReferencePriceSetting> goodsReferencePriceSettings =  goodsReferencePriceSettingRpc.getAllGoods(goodsReferencePriceSetting);
         try {
