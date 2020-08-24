@@ -47,7 +47,7 @@
                 </div>
                 <div class="form-group col">
                     <label for="">交易类型<i class="red">*</i></label>
-                    <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="transTypeId" _hiddenDomainName="transTypeId" _displayDomainId="_transTypeId" _displayDomainName="_transTypeId" _placeholder="" _provider="dataDictionaryValueProvider"  _value="" _text="" _required="true" _queryParams='{dd_code:"trade_type",required:true}'/>
+                    <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="transTypeId" _hiddenDomainName="transTypeId" _displayDomainId="_transTypeId" _displayDomainName="_transTypeId" _placeholder="" _provider="dataDictionaryValueProvider"   _validatorMethod="isSelected"  _value="" _text="" _required="true" _queryParams='{dd_code:"trade_type",required:true}'/>
                 </div>
                 <div class="form-group col">
                     <label for="">商品名称<i class="red">*</i></label>
@@ -120,6 +120,18 @@
             }
             // if(!isLicenseNo($('#plate').val())){
             //     bs4pop.alert("车牌号码不正确", {type: 'error'});
+            //     return false;
+            // }
+            // if($('#carTypeId').val()==null){
+            //     bs4pop.alert('请输入正确的车辆类型', {type: 'error'});
+            //     return false;
+            // }
+            // if($('#transTypeId').val()==null){
+            //     bs4pop.alert('请输入正确的交易类型', {type: 'error'});
+            //     return false;
+            // }
+            // if($('#categoryId').val()==null){
+            //     bs4pop.alert('请输入正确的商品名称', {type: 'error'});
             //     return false;
             // }
             parent.bui.loading.show('努力提交中，请稍候。。。');
