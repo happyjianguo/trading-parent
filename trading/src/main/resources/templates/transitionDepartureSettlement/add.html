@@ -147,7 +147,7 @@
         $('#payByCard').on('click', function (e) {
             let cardNum = callbackObj.readCardNumber();
             if (cardNum == -1) {
-                bs4pop.alert('净重不能小于0', {type: 'error'});
+                bs4pop.alert('未读取到卡号', {type: 'error'});
                 return false;
             }
             $('#customerCardNo').val(cardNum);
