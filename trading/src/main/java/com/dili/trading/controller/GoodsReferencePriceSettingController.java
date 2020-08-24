@@ -218,7 +218,7 @@ public class GoodsReferencePriceSettingController {
         if(output.getData() == null){
             return goodsReferencePriceSettingService.insertGoodsReferencePriceSetting(goodsReferencePriceSetting);
         } else{
-            goodsReferencePriceSetting.setOid(output.getData().getOid());
+            goodsReferencePriceSetting.setId(output.getData().getId());
             goodsReferencePriceSetting.setVersion(output.getData().getVersion());
             goodsReferencePriceSetting.setCreatedTime(output.getData().getCreatedTime());
             goodsReferencePriceSetting.setCreatorId(output.getData().getCreatorId());
