@@ -17,7 +17,7 @@
         <form id="saveForm" role="form" novalidate>
             <input type="hidden" class="form-control" name="goodsId" value="${model.goodsId}" placeholder="">
             <input type="hidden" class="form-control" name="parentGoodsId" value="${model.parentGoodsId}" placeholder="">
-            <input type="hidden" class="form-control" name="referenceRule" value="${model.referenceRule}" placeholder="">
+            <input type="hidden" class="form-control" name="referenceRuleView" value="${model.referenceRule}" placeholder="">
             <div   id= "menu ">
                 <ul>
                     <li>
@@ -57,14 +57,12 @@
 
 
     <script>
-        if(document.readyState=="complete"){
-            openTheIndexPage();
-        }
         $(function(){
+            debugger
             var fixedPrice = $('#fixedPriceView').val();
             $('#fixedPriceView').val((fixedPrice/100).toFixed(2));
 
-            var referenceRule = $("input[name='referenceRule']").val();
+            var referenceRule = $("input[name='referenceRuleView']").val();
             if(referenceRule == "undefined" || referenceRule == "" || referenceRule == "规则1")
             {
                 referenceRule = 1;
@@ -107,6 +105,7 @@
         }
 
         function saveOrUpdateHandler() {
+            debugger
             // 提交保存
             if (!$('#saveForm').validate().form()) {
                 return false;
