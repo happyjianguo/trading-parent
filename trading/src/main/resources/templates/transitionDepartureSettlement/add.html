@@ -116,6 +116,10 @@
                         $('#chargeAmount').val(res.data.totalFee * 100);
                     }
                 },
+                error: function () {
+                    bui.loading.hide();
+                    bs4pop.alert("计费规则获取失败!", {type: 'error'});
+                }
             });
         })
         $('#tareWeight').on('keyup', function (e) {
@@ -141,6 +145,10 @@
                         $('#chargeAmount').val(res.data.totalFee * 100);
                     }
                 },
+                error: function () {
+                    bui.loading.hide();
+                    bs4pop.alert("计费规则获取失败!", {type: 'error'});
+                }
             });
         })
 
@@ -188,6 +196,10 @@
                         bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
+                error: function () {
+                    bui.loading.hide();
+                    bs4pop.alert("根据卡号获取申请单信息失败!", {type: 'error'});
+                }
             });
             $.ajax({
                 type: "POST",
@@ -198,8 +210,15 @@
                 success: function (res) {
                     if (res.code == "200") {
                         $('#balance').val(res.data);
+                    }else{
+                        bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
+                error: function () {
+                    bui.loading.hide();
+                    bs4pop.alert("余额获取失败!", {type: 'error'});
+                }
+
             });
         });
 
