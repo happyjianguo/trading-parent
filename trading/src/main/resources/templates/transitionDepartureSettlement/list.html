@@ -23,7 +23,7 @@
             <div class="form-group col">
                 <label for="">车型</label>
                 <select id="carTypeId" name="carTypeId" class="form-control"></select>
-                <#bcomboProvider _id="carTypeId" _provider="carTypeProvider" _queryParams='{emptyText:"-- 全部 --"}' />
+                <#bcomboProvider _id="carTypeId" _provider="carTypeProvider" _validatorMethod="isSelected" _queryParams='{emptyText:"-- 全部 --"}' />
             </div>
             <div class="form-group col">
                 <label for="" class="">操作员</label>
@@ -57,7 +57,7 @@
             <div class="form-group col-auto">
                 <label for="" class="">客户</label>
                 <div class="input-group">
-                    <#bautoCompleteProvider _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="code1" _displayDomainName="code1" _placeholder=""  _optionVariable="customerNameAutoCompleteOption" />
+                    <#bautoCompleteProvider _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="code1" _displayDomainName="code1" _placeholder=""  _validatorMethod="isSelected" _optionVariable="customerNameAutoCompleteOption" />
                     <input type="text" class="form-control" id="showCustomerName" readonly/>
                 </div>
             </div>
