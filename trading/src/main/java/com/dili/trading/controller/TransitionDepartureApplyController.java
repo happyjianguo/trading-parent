@@ -281,9 +281,9 @@ public class TransitionDepartureApplyController {
             return BaseOutput.failure("卡号不能为空");
         }
         //根据卡号id拿到对应的账号信息
-        CardQueryDto dto=new CardQueryDto();
-        dto.setCardNo(cardNo);
-        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getSingle(dto);
+        CardQueryDto cardQueryDto = new CardQueryDto();
+        cardQueryDto.setCardNo(cardNo);
+        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getSingle(cardQueryDto);
         //判断请求是否成功
         if (oneAccountCard.isSuccess()) {
             //判断账户是否为空

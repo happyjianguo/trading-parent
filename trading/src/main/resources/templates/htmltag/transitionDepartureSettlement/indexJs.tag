@@ -34,7 +34,7 @@
                         $('#show_customer_name').val(data.data[0].name);
                     }else{
                         $('#show_customer_name').val('');
-                        // bs4pop.alert("客户获取失败!", {type: 'error'});
+                        bs4pop.alert(data.result, {type: 'error'});
                     }
                 },
                 error: function () {

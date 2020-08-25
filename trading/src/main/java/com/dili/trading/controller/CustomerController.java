@@ -29,72 +29,73 @@ import java.util.List;
 @Controller
 public class CustomerController {
 
-	@Autowired
-	private CustomerRpc customerRpc;
+    @Autowired
+    private CustomerRpc customerRpc;
 
-	@Autowired
-	private AccountRpc accountRpc;
 
-	@Autowired
-	private FirmRpc firmRpc;
+    @Autowired
+    private AccountRpc accountRpc;
 
-	@Autowired
-	private CardRpc cardRpc;
+    @Autowired
+    private FirmRpc firmRpc;
 
-	/**
-	 * 客户查询
-	 *
-	 * @return
-	 */
-	@RequestMapping(value = "/listNormal.action", method = { RequestMethod.GET, RequestMethod.POST })
-	@ResponseBody
-	public BaseOutput listNormal(String likeName) {
-		CustomerQueryInput customerQueryInput = new CustomerQueryInput();
-		customerQueryInput.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-		customerQueryInput.setKeyword(likeName);
-		return customerRpc.list(customerQueryInput);
-	}
+    @Autowired
+    private CardRpc cardRpc;
 
-	/**
-	 * 根据卡号查询客户信息
-	 *
-	 * @param
-	 * @return
-	 */
-	@RequestMapping(value = "/listAccount.action", method = { RequestMethod.GET, RequestMethod.POST })
-	@ResponseBody
-	public BaseOutput listAccount(String cardNo) {
-		CardQueryDto dto = new CardQueryDto();
-		dto.setCardNo(cardNo);
-		BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getSingle(dto);
-		if (!oneAccountCard.isSuccess()) {
-			return oneAccountCard;
-		}
-		return customerRpc.get(oneAccountCard.getData().getCustomerId(), oneAccountCard.getData().getFirmId());
-	}
+    /**
+     * 客户查询
+     *
+     * @return
+     */
+    @RequestMapping(value = "/listNormal.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput listNormal(String likeName) {
+        CustomerQueryInput customerQueryInput = new CustomerQueryInput();
+        customerQueryInput.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+        customerQueryInput.setKeyword(likeName);
+        return customerRpc.list(customerQueryInput);
+    }
 
-	/**
-	 * 根据卡号获取客户
-	 *
-	 * @param cardNo
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping("/listCustomerByCardNo.action")
-	public BaseOutput<?> listCustomerByCardNo(String cardNo) {
-		BaseOutput<AccountSimpleResponseDto> cardOutput = this.cardRpc.getOneAccountCard(cardNo);
-		if (!cardOutput.isSuccess()) {
-			return cardOutput;
-		}
-		CustomerQueryInput cq = new CustomerQueryInput();
-		cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
-		BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
-		if (!firmOutput.isSuccess()) {
-			return firmOutput;
-		}
-		cq.setMarketId(firmOutput.getData().getId());
-		BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
-		return output;
-	}
+    /**
+     * 根据卡号查询客户信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/listAccount.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput listAccount(String cardNo) {
+        CardQueryDto cardQueryDto = new CardQueryDto();
+        cardQueryDto.setCardNo(cardNo);
+        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getSingle(cardQueryDto);
+        if (!oneAccountCard.isSuccess()) {
+            return oneAccountCard;
+        }
+        return customerRpc.get(oneAccountCard.getData().getCustomerId(), oneAccountCard.getData().getFirmId());
+    }
+
+    /**
+     * 根据卡号获取客户
+     *
+     * @param cardNo
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/listCustomerByCardNo.action")
+    public BaseOutput<?> listCustomerByCardNo(String cardNo) {
+        BaseOutput<AccountSimpleResponseDto> cardOutput = this.cardRpc.getOneAccountCard(cardNo);
+        if (!cardOutput.isSuccess()) {
+            return cardOutput;
+        }
+        CustomerQueryInput cq = new CustomerQueryInput();
+        cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
+        BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
+        if (!firmOutput.isSuccess()) {
+            return firmOutput;
+        }
+        cq.setMarketId(firmOutput.getData().getId());
+        BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
+        return output;
+    }
 
 }
