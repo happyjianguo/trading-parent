@@ -113,7 +113,7 @@
                 success: function (res) {
                     if (res.code == "200") {
                         $('#chargeAmount1').val(res.data.totalFee);
-                        $('#chargeAmount').val(res.data.totalFee * 100);
+                        $('#chargeAmount').val(parseInt(res.data.totalFee * 100));
                     }
                 },
                 error: function () {
@@ -142,7 +142,7 @@
                 success: function (res) {
                     if (res.code == "200") {
                         $('#chargeAmount1').val(res.data.totalFee);
-                        $('#chargeAmount').val(res.data.totalFee * 100);
+                        $('#chargeAmount').val(parseInt(res.data.totalFee * 100));
                     }
                 },
                 error: function () {

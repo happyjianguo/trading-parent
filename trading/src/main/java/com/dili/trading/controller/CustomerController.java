@@ -5,6 +5,7 @@ import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.TradingConstans;
 import com.dili.orders.dto.AccountSimpleResponseDto;
+import com.dili.orders.dto.CardQueryDto;
 import com.dili.orders.dto.UserAccountCardResponseDto;
 import com.dili.orders.rpc.AccountRpc;
 import com.dili.orders.rpc.CardRpc;
@@ -64,7 +65,9 @@ public class CustomerController {
     @RequestMapping(value = "/listAccount.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput listAccount(String cardNo) {
-        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getOneAccountCard(cardNo);
+        CardQueryDto cardQueryDto = new CardQueryDto();
+        cardQueryDto.setCardNo(cardNo);
+        BaseOutput<UserAccountCardResponseDto> oneAccountCard = accountRpc.getSingle(cardQueryDto);
         if (!oneAccountCard.isSuccess()) {
             return oneAccountCard;
         }
