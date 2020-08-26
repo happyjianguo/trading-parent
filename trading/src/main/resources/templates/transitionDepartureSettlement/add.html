@@ -164,7 +164,7 @@
                 data: {customerCardNo: cardNum},
                 dataType: "json",
                 url: "/transitionDepartureApply/getOneByCustomerCardNo.action",
-                async: true,
+                async: false,
                 success: function (res) {
                     if (res.code == "200") {
                         $('#id').val(res.data.id);
