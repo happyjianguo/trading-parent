@@ -64,17 +64,18 @@
             </div>
             <div class="form-group col">
                 <label for="">毛重/公斤<i class="red">*</i></label>
-                <input type="text" id="grossWeight"  required="true" class="form-control isNaturalNum" name="grossWeight"
+                <input type="text" id="grossWeight" required="true" class="form-control isNaturalNum" name="grossWeight"
                        maxlength="100" range="1 100000">
             </div>
             <div class="form-group col">
                 <label for="">皮重/公斤<i class="red">*</i></label>
-                <input type="text" id="tareWeight"  required="true" class="form-control isNaturalNum" name="tareWeight"
+                <input type="text" id="tareWeight" required="true" class="form-control isNaturalNum" name="tareWeight"
                        maxlength="100" range="1 100000">
             </div>
             <div class="form-group col">
                 <label for="">净重/公斤</label>
-                <input id="netWeight"  class="form-control isNaturalNum"  readonly="true" name="netWeight" maxlength="100" required>
+                <input id="netWeight" class="form-control isNaturalNum" readonly="true" name="netWeight" maxlength="100"
+                       required>
             </div>
             <div class="form-group col">
                 <label for="">可用余额</label>
@@ -104,9 +105,10 @@
             }
             let netWeight = $('#netWeight').val();
             let id = $('#id').val();
+            let carTypeId = $('#carTypeId').val();
             $.ajax({
                 type: "POST",
-                data: {netWeight: netWeight, id: id},
+                data: {netWeight: netWeight, id: id, carTypeId: carTypeId},
                 dataType: "json",
                 url: "/transitionDepartureSettlement/fee.action",
                 async: true,
@@ -133,9 +135,10 @@
             }
             let netWeight = $('#netWeight').val();
             let id = $('#id').val();
+            let carTypeId = $('#carTypeId').val();
             $.ajax({
                 type: "POST",
-                data: {netWeight: netWeight, id: id},
+                data: {netWeight: netWeight, id: id, carTypeId: carTypeId},
                 dataType: "json",
                 url: "/transitionDepartureSettlement/fee.action",
                 async: true,
@@ -210,7 +213,7 @@
                 success: function (res) {
                     if (res.code == "200") {
                         $('#balance').val(res.data);
-                    }else{
+                    } else {
                         bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
@@ -242,7 +245,7 @@
             return false;
         }
         let balance = $('#balance').val();
-        let chargeAmount1=$('#chargeAmount1').val();
+        let chargeAmount1 = $('#chargeAmount1').val();
         if (parseFloat(chargeAmount1) > parseFloat(balance)) {
             bs4pop.alert('余额不足请充值', {type: 'error'});
             return false;
