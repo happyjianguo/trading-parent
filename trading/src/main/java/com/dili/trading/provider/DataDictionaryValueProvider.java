@@ -43,11 +43,16 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
     @Override
     public List<ValuePair<?>> getLookupList(Object val, Map metaMap, FieldMeta fieldMeta) {
         Object queryParams = metaMap.get(QUERY_PARAMS_KEY);
-        if(queryParams == null) {
+        if (queryParams == null) {
             return Lists.newArrayList();
         }
+        DataDictionaryValue dataDictionaryValue = DTOUtils.newInstance(DataDictionaryValue.class);
+        dataDictionaryValue.setDdCode(getDdCode(queryParams.toString()));
+        if (Objects.nonNull(val)) {
+            dataDictionaryValue.setCode(val.toString());
+        }
         List<ValuePair<?>> valuePairs = Lists.newArrayList();
-        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode(getDdCode(queryParams.toString()));
+        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValue(dataDictionaryValue);
         if (output.isSuccess() && CollectionUtils.isNotEmpty(output.getData())) {
             valuePairs = output.getData().stream().filter(Objects::nonNull).sorted(Comparator.comparing(DataDictionaryValue::getOrderNumber)).map(t -> {
                 ValuePairImpl<?> vp = new ValuePairImpl<>(t.getName(), t.getCode());
@@ -60,7 +65,7 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
     @Override
     protected List getFkList(List<String> ddvIds, Map metaMap) {
         Object queryParams = metaMap.get(QUERY_PARAMS_KEY);
-        if(queryParams == null) {
+        if (queryParams == null) {
             return Lists.newArrayList();
         }
         BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode(getDdCode(queryParams.toString()));
@@ -86,6 +91,7 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
 
     /**
      * 获取数据字典编码
+     *
      * @return
      */
     public String getDdCode(String queryParams) {
