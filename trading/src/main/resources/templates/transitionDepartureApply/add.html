@@ -91,7 +91,7 @@
 <script>
     $('#payByCard').on('click', function (e) {
         let cardNum = callbackObj.readCardNumber();
-        if (cardNum == -1) {
+        if (cardNum == -1 || cardNum == "") {
             bs4pop.alert("未读取到卡号", {type: 'error'});
             return false;
         }

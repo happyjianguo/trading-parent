@@ -142,6 +142,8 @@ public class TransitionDepartureApplyController {
     @ResponseBody
     public String listByQueryParams(TransitionDepartureApply transitionDepartureApply) throws Exception {
         List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
+        //根据市场id查询
+        transitionDepartureApply.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         if (CollectionUtils.isNotEmpty(ranges)) {
             String value = (String) ranges.get(0).get("value");
             //如果value为0，则为个人
@@ -172,6 +174,8 @@ public class TransitionDepartureApplyController {
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput insert(TransitionDepartureApply transitionDepartureApply) {
+        //新增的时候设置市场id
+        transitionDepartureApply.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         return transitionDepartureApplyService.insert(transitionDepartureApply);
     }
 

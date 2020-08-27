@@ -2,11 +2,7 @@ package com.dili.trading.controller;
 
 import com.dili.orders.domain.TransitionDepartureSettlement;
 import com.dili.orders.dto.AccountSimpleResponseDto;
-import com.dili.orders.rpc.AccountRpc;
 import com.dili.orders.rpc.CardRpc;
-import com.dili.orders.rpc.PayRpc;
-import com.dili.rule.sdk.domain.input.QueryFeeInput;
-import com.dili.rule.sdk.rpc.ChargeRuleRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
@@ -19,7 +15,6 @@ import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.MapperConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -29,7 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 结算单接口
@@ -152,6 +150,7 @@ public class TransitionDepartureSettlementController {
     public String listByQueryParams(TransitionDepartureSettlement transitionDepartureSettlement) throws Exception {
         //拿到数据权限，个人或全部
         List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
+        transitionDepartureSettlement.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         if (CollectionUtils.isNotEmpty(ranges)) {
             String value = (String) ranges.get(0).get("value");
             //如果value为0，则为个人
@@ -179,6 +178,8 @@ public class TransitionDepartureSettlementController {
         if (transitionDepartureSettlement.getChargeAmount() < 0) {
             return BaseOutput.failure("缴费金额不能小于0");
         }
+        //新增的时候设置市场id
+        transitionDepartureSettlement.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         return transitionDepartureSettlementService.insert(transitionDepartureSettlement);
     }
 
@@ -198,7 +199,7 @@ public class TransitionDepartureSettlementController {
         if (transitionDepartureSettlement.getChargeAmount() < 0) {
             return BaseOutput.failure("缴费金额不能小于0");
         }
-        return transitionDepartureSettlementRpc.update(transitionDepartureSettlement);
+        return transitionDepartureSettlementRpc.update(transitionDepartureSettlement, SessionContext.getSessionContext().getUserTicket().getFirmId());
     }
 
 
@@ -250,11 +251,11 @@ public class TransitionDepartureSettlementController {
      */
     @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput getFee(BigDecimal netWeight, Long id) {
+    public BaseOutput getFee(BigDecimal netWeight, Long id, Long carTypeId) {
         if (Objects.isNull(netWeight)) {
             return BaseOutput.failure("重量不能为空");
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        return transitionDepartureSettlementRpc.getFee(netWeight, userTicket.getFirmId(), userTicket.getDepartmentId(), id);
+        return transitionDepartureSettlementRpc.getFee(netWeight, userTicket.getFirmId(), userTicket.getDepartmentId(), id, carTypeId);
     }
 }

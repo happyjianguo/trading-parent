@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +34,9 @@ public class CategoryProvider extends BatchDisplayTextProviderSupport {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setMarketId(userTicket.getFirmId());
-        categoryDTO.setKeyword(obj.toString());
+        if (Objects.nonNull(obj)) {
+            categoryDTO.setKeyword(obj.toString());
+        }
         List<CategoryDTO> list = assetsRpc.list(categoryDTO).getData();
         List<ValuePair<?>> resultList = list.stream().map(f -> {
             return (ValuePair<?>) new ValuePairImpl(f.getName(), f.getId());

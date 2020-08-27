@@ -49,7 +49,7 @@ public interface TransitionDepartureSettlementRpc {
      * @return BaseOutput
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/update", method = {RequestMethod.POST})
-    BaseOutput update(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement);
+    BaseOutput update(@RequestBody TransitionDepartureSettlement transitionDepartureSettlement, @RequestParam(value = "marketId") Long marketId);
 
 
     /**
@@ -106,5 +106,5 @@ public interface TransitionDepartureSettlementRpc {
      * @return
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/fee", method = {RequestMethod.POST})
-    BaseOutput getFee(@RequestParam(value = "netWeight") BigDecimal netWeight, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId, @RequestParam(value = "id") Long id);
+    BaseOutput getFee(@RequestParam(value = "netWeight") BigDecimal netWeight, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId, @RequestParam(value = "id") Long id, @RequestParam(value = "carTypeId") Long carTypeId);
 }

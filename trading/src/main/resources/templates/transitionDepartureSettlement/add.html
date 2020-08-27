@@ -64,17 +64,18 @@
             </div>
             <div class="form-group col">
                 <label for="">毛重/公斤<i class="red">*</i></label>
-                <input type="text" id="grossWeight"  required="true" class="form-control isNaturalNum" name="grossWeight"
+                <input type="text" id="grossWeight" required="true" class="form-control isNaturalNum" name="grossWeight"
                        maxlength="100" range="1 100000">
             </div>
             <div class="form-group col">
                 <label for="">皮重/公斤<i class="red">*</i></label>
-                <input type="text" id="tareWeight"  required="true" class="form-control isNaturalNum" name="tareWeight"
+                <input type="text" id="tareWeight" required="true" class="form-control isNaturalNum" name="tareWeight"
                        maxlength="100" range="1 100000">
             </div>
             <div class="form-group col">
                 <label for="">净重/公斤</label>
-                <input id="netWeight"  class="form-control isNaturalNum"  readonly="true" name="netWeight" maxlength="100" required>
+                <input id="netWeight" class="form-control isNaturalNum" readonly="true" name="netWeight" maxlength="100"
+                       required>
             </div>
             <div class="form-group col">
                 <label for="">可用余额</label>
@@ -97,16 +98,17 @@
             let num = parseInt($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseInt($('#tareWeight').val() == null ? 0 : $('#tareWeight').val());
             if (!isNaN(num)) {
                 //如果净重小于零，则不行
-                if (num < 0) {
+                if (parseInt(num) < 0) {
                     bs4pop.alert('净重不能小于0', {type: 'error'});
                 }
                 $('#netWeight').val(num);
             }
             let netWeight = $('#netWeight').val();
             let id = $('#id').val();
+            let carTypeId = $('#carTypeId').val();
             $.ajax({
                 type: "POST",
-                data: {netWeight: netWeight, id: id},
+                data: {netWeight: netWeight, id: id, carTypeId: carTypeId},
                 dataType: "json",
                 url: "/transitionDepartureSettlement/fee.action",
                 async: true,
@@ -126,16 +128,17 @@
             let num = parseInt($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseInt($('#tareWeight').val() == null ? 0 : $('#tareWeight').val());
             if (!isNaN(num)) {
                 //如果净重小于零，则不行
-                if (num < 0) {
+                if (parseInt(num) < 0) {
                     bs4pop.alert('净重不能小于0', {type: 'error'});
                 }
                 $('#netWeight').val(num);
             }
             let netWeight = $('#netWeight').val();
             let id = $('#id').val();
+            let carTypeId = $('#carTypeId').val();
             $.ajax({
                 type: "POST",
-                data: {netWeight: netWeight, id: id},
+                data: {netWeight: netWeight, id: id, carTypeId: carTypeId},
                 dataType: "json",
                 url: "/transitionDepartureSettlement/fee.action",
                 async: true,
@@ -151,56 +154,14 @@
                 }
             });
         })
-
         $('#payByCard').on('click', function (e) {
+            let flag = false;
             let cardNum = callbackObj.readCardNumber();
-            if (cardNum == -1) {
+            if (cardNum == -1 || cardNum == "") {
                 bs4pop.alert('未读取到卡号', {type: 'error'});
                 return false;
             }
             $('#customerCardNo').val(cardNum);
-            $.ajax({
-                type: "POST",
-                data: {customerCardNo: cardNum},
-                dataType: "json",
-                url: "/transitionDepartureApply/getOneByCustomerCardNo.action",
-                async: true,
-                success: function (res) {
-                    if (res.code == "200") {
-                        $('#id').val(res.data.id);
-                        $('#code').val(res.data.code);
-                        $('#sid').val(res.data.transitionDepartureSettlement.id);
-                        $('#customerCode').val(res.data.customerCode);
-                        $('#customerId').val(res.data.customerId);
-                        $('#customerName').val(res.data.customerName);
-                        $('#bizType').val(res.data.bizType);
-                        $('#bizTypeId').val(res.data.$_bizType);
-
-                        $('#carTypeId').val(res.data.$_carTypeId);
-                        $('#_carTypeId').val(res.data.carTypeId);
-
-                        $('#plate').val(res.data.plate);
-                        $('#transTypeId').val(res.data.$_transTypeId);
-                        $('#transTypeName').val(res.data.transTypeId);
-                        $('#categoryName').val(res.data.categoryId);
-                        $('#categoryId').val(res.data.$_categoryId);
-                        $('#grossWeight').val(res.data.transitionDepartureSettlement.grossWeight);
-                        $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
-                        $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
-                        if (!isNaN(res.data.transitionDepartureSettlement.chargeAmount)) {
-                            $('#chargeAmount1').val(res.data.transitionDepartureSettlement.chargeAmount / 100);
-                            $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
-                        }
-                    } else {
-                        bui.loading.hide();
-                        bs4pop.alert(res.result, {type: 'error'});
-                    }
-                },
-                error: function () {
-                    bui.loading.hide();
-                    bs4pop.alert("根据卡号获取申请单信息失败!", {type: 'error'});
-                }
-            });
             $.ajax({
                 type: "POST",
                 data: {customerCardNo: cardNum},
@@ -210,7 +171,8 @@
                 success: function (res) {
                     if (res.code == "200") {
                         $('#balance').val(res.data);
-                    }else{
+                        flag = true;
+                    } else {
                         bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
@@ -220,6 +182,52 @@
                 }
 
             });
+
+            if (flag) {
+                $.ajax({
+                    type: "POST",
+                    data: {customerCardNo: cardNum},
+                    dataType: "json",
+                    url: "/transitionDepartureApply/getOneByCustomerCardNo.action",
+                    async: false,
+                    success: function (res) {
+                        if (res.code == "200") {
+                            flag = true;
+                            $('#id').val(res.data.id);
+                            $('#code').val(res.data.code);
+                            $('#sid').val(res.data.transitionDepartureSettlement.id);
+                            $('#customerCode').val(res.data.customerCode);
+                            $('#customerId').val(res.data.customerId);
+                            $('#customerName').val(res.data.customerName);
+                            $('#bizType').val(res.data.bizType);
+                            $('#bizTypeId').val(res.data.$_bizType);
+
+                            $('#carTypeId').val(res.data.$_carTypeId);
+                            $('#_carTypeId').val(res.data.carTypeId);
+
+                            $('#plate').val(res.data.plate);
+                            $('#transTypeId').val(res.data.$_transTypeId);
+                            $('#transTypeName').val(res.data.transTypeId);
+                            $('#categoryName').val(res.data.categoryId);
+                            $('#categoryId').val(res.data.$_categoryId);
+                            $('#grossWeight').val(res.data.transitionDepartureSettlement.grossWeight);
+                            $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
+                            $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
+                            if (!isNaN(res.data.transitionDepartureSettlement.chargeAmount)) {
+                                $('#chargeAmount1').val(res.data.transitionDepartureSettlement.chargeAmount / 100);
+                                $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
+                            }
+                        } else {
+                            bui.loading.hide();
+                            bs4pop.alert(res.result, {type: 'error'});
+                        }
+                    },
+                    error: function () {
+                        bui.loading.hide();
+                        bs4pop.alert("根据卡号获取申请单信息失败!", {type: 'error'});
+                    }
+                });
+            }
         });
 
 
@@ -231,7 +239,7 @@
         if (!$('#saveForm').validate().form()) {
             return false;
         }
-        let netWeight = $('#netWeight').val();
+        let netWeight = parseInt($('#netWeight').val());
         let chargeAmount = $('#chargeAmount').val();
         if (netWeight < 0) {
             bs4pop.alert('净重不能小于0', {type: 'error'});
@@ -242,7 +250,7 @@
             return false;
         }
         let balance = $('#balance').val();
-        let chargeAmount1=$('#chargeAmount1').val();
+        let chargeAmount1 = $('#chargeAmount1').val();
         if (parseFloat(chargeAmount1) > parseFloat(balance)) {
             bs4pop.alert('余额不足请充值', {type: 'error'});
             return false;
