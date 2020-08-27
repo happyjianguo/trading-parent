@@ -98,7 +98,7 @@
             let num = parseInt($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseInt($('#tareWeight').val() == null ? 0 : $('#tareWeight').val());
             if (!isNaN(num)) {
                 //如果净重小于零，则不行
-                if (num < 0) {
+                if (parseInt(num) < 0) {
                     bs4pop.alert('净重不能小于0', {type: 'error'});
                 }
                 $('#netWeight').val(num);
@@ -128,7 +128,7 @@
             let num = parseInt($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseInt($('#tareWeight').val() == null ? 0 : $('#tareWeight').val());
             if (!isNaN(num)) {
                 //如果净重小于零，则不行
-                if (num < 0) {
+                if (parseInt(num) < 0) {
                     bs4pop.alert('净重不能小于0', {type: 'error'});
                 }
                 $('#netWeight').val(num);
@@ -234,7 +234,7 @@
         if (!$('#saveForm').validate().form()) {
             return false;
         }
-        let netWeight = $('#netWeight').val();
+        let netWeight = parseInt($('#netWeight').val());
         let chargeAmount = $('#chargeAmount').val();
         if (netWeight < 0) {
             bs4pop.alert('净重不能小于0', {type: 'error'});
