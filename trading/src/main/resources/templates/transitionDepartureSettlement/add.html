@@ -154,7 +154,7 @@
                 }
             });
         })
-
+        let flag = false;
         $('#payByCard').on('click', function (e) {
             let cardNum = callbackObj.readCardNumber();
             if (cardNum == -1 || cardNum == "") {
@@ -170,6 +170,7 @@
                 async: false,
                 success: function (res) {
                     if (res.code == "200") {
+                        flag = true;
                         $('#id').val(res.data.id);
                         $('#code').val(res.data.code);
                         $('#sid').val(res.data.transitionDepartureSettlement.id);
@@ -204,25 +205,27 @@
                     bs4pop.alert("根据卡号获取申请单信息失败!", {type: 'error'});
                 }
             });
-            $.ajax({
-                type: "POST",
-                data: {customerCardNo: cardNum},
-                dataType: "json",
-                url: "/transitionDepartureSettlement/queryAccountBalance.action",
-                async: false,
-                success: function (res) {
-                    if (res.code == "200") {
-                        $('#balance').val(res.data);
-                    } else {
-                        bs4pop.alert(res.result, {type: 'error'});
+            if (flag) {
+                $.ajax({
+                    type: "POST",
+                    data: {customerCardNo: cardNum},
+                    dataType: "json",
+                    url: "/transitionDepartureSettlement/queryAccountBalance.action",
+                    async: false,
+                    success: function (res) {
+                        if (res.code == "200") {
+                            $('#balance').val(res.data);
+                        } else {
+                            bs4pop.alert(res.result, {type: 'error'});
+                        }
+                    },
+                    error: function () {
+                        bui.loading.hide();
+                        bs4pop.alert("余额获取失败!", {type: 'error'});
                     }
-                },
-                error: function () {
-                    bui.loading.hide();
-                    bs4pop.alert("余额获取失败!", {type: 'error'});
-                }
 
-            });
+                });
+            }
         });
 
 
