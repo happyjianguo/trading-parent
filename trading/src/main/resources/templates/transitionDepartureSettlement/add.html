@@ -154,8 +154,8 @@
                 }
             });
         })
-        let flag = false;
         $('#payByCard').on('click', function (e) {
+            let flag = false;
             let cardNum = callbackObj.readCardNumber();
             if (cardNum == -1 || cardNum == "") {
                 bs4pop.alert('未读取到卡号', {type: 'error'});
@@ -166,64 +166,66 @@
                 type: "POST",
                 data: {customerCardNo: cardNum},
                 dataType: "json",
-                url: "/transitionDepartureApply/getOneByCustomerCardNo.action",
+                url: "/transitionDepartureSettlement/queryAccountBalance.action",
                 async: false,
                 success: function (res) {
                     if (res.code == "200") {
+                        $('#balance').val(res.data);
                         flag = true;
-                        $('#id').val(res.data.id);
-                        $('#code').val(res.data.code);
-                        $('#sid').val(res.data.transitionDepartureSettlement.id);
-                        $('#customerCode').val(res.data.customerCode);
-                        $('#customerId').val(res.data.customerId);
-                        $('#customerName').val(res.data.customerName);
-                        $('#bizType').val(res.data.bizType);
-                        $('#bizTypeId').val(res.data.$_bizType);
-
-                        $('#carTypeId').val(res.data.$_carTypeId);
-                        $('#_carTypeId').val(res.data.carTypeId);
-
-                        $('#plate').val(res.data.plate);
-                        $('#transTypeId').val(res.data.$_transTypeId);
-                        $('#transTypeName').val(res.data.transTypeId);
-                        $('#categoryName').val(res.data.categoryId);
-                        $('#categoryId').val(res.data.$_categoryId);
-                        $('#grossWeight').val(res.data.transitionDepartureSettlement.grossWeight);
-                        $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
-                        $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
-                        if (!isNaN(res.data.transitionDepartureSettlement.chargeAmount)) {
-                            $('#chargeAmount1').val(res.data.transitionDepartureSettlement.chargeAmount / 100);
-                            $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
-                        }
                     } else {
-                        bui.loading.hide();
                         bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
                 error: function () {
                     bui.loading.hide();
-                    bs4pop.alert("根据卡号获取申请单信息失败!", {type: 'error'});
+                    bs4pop.alert("余额获取失败!", {type: 'error'});
                 }
+
             });
+
             if (flag) {
                 $.ajax({
                     type: "POST",
                     data: {customerCardNo: cardNum},
                     dataType: "json",
-                    url: "/transitionDepartureSettlement/queryAccountBalance.action",
+                    url: "/transitionDepartureApply/getOneByCustomerCardNo.action",
                     async: false,
                     success: function (res) {
                         if (res.code == "200") {
-                            $('#balance').val(res.data);
+                            flag = true;
+                            $('#id').val(res.data.id);
+                            $('#code').val(res.data.code);
+                            $('#sid').val(res.data.transitionDepartureSettlement.id);
+                            $('#customerCode').val(res.data.customerCode);
+                            $('#customerId').val(res.data.customerId);
+                            $('#customerName').val(res.data.customerName);
+                            $('#bizType').val(res.data.bizType);
+                            $('#bizTypeId').val(res.data.$_bizType);
+
+                            $('#carTypeId').val(res.data.$_carTypeId);
+                            $('#_carTypeId').val(res.data.carTypeId);
+
+                            $('#plate').val(res.data.plate);
+                            $('#transTypeId').val(res.data.$_transTypeId);
+                            $('#transTypeName').val(res.data.transTypeId);
+                            $('#categoryName').val(res.data.categoryId);
+                            $('#categoryId').val(res.data.$_categoryId);
+                            $('#grossWeight').val(res.data.transitionDepartureSettlement.grossWeight);
+                            $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
+                            $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
+                            if (!isNaN(res.data.transitionDepartureSettlement.chargeAmount)) {
+                                $('#chargeAmount1').val(res.data.transitionDepartureSettlement.chargeAmount / 100);
+                                $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
+                            }
                         } else {
+                            bui.loading.hide();
                             bs4pop.alert(res.result, {type: 'error'});
                         }
                     },
                     error: function () {
                         bui.loading.hide();
-                        bs4pop.alert("余额获取失败!", {type: 'error'});
+                        bs4pop.alert("根据卡号获取申请单信息失败!", {type: 'error'});
                     }
-
                 });
             }
         });
