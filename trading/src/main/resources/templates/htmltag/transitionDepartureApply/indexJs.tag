@@ -14,7 +14,7 @@
             , trigger: 'click'
             , range: false
             , type: 'date'
-            , min: getLastYearYestdy(new Date())
+            // , min: getLastYearYestdy(new Date())
             , max: timeStamp2String(new Date().getTime())
         });
     });
