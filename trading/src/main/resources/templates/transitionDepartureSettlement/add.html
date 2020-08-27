@@ -116,6 +116,9 @@
                     if (res.code == "200") {
                         $('#chargeAmount1').val(res.data.totalFee);
                         $('#chargeAmount').val(parseInt(res.data.totalFee * 100));
+                    } else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
                 error: function () {
@@ -146,6 +149,9 @@
                     if (res.code == "200") {
                         $('#chargeAmount1').val(res.data.totalFee);
                         $('#chargeAmount').val(parseInt(res.data.totalFee * 100));
+                    } else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
                 error: function () {
