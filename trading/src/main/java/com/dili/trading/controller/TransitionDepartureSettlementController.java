@@ -150,6 +150,7 @@ public class TransitionDepartureSettlementController {
     public String listByQueryParams(TransitionDepartureSettlement transitionDepartureSettlement) throws Exception {
         //拿到数据权限，个人或全部
         List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
+        transitionDepartureSettlement.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         if (CollectionUtils.isNotEmpty(ranges)) {
             String value = (String) ranges.get(0).get("value");
             //如果value为0，则为个人
@@ -177,6 +178,8 @@ public class TransitionDepartureSettlementController {
         if (transitionDepartureSettlement.getChargeAmount() < 0) {
             return BaseOutput.failure("缴费金额不能小于0");
         }
+        //新增的时候设置市场id
+        transitionDepartureSettlement.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         return transitionDepartureSettlementService.insert(transitionDepartureSettlement);
     }
 
