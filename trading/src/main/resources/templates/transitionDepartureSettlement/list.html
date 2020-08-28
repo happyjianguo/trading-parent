@@ -54,22 +54,24 @@
                 <label for="">车牌号</label>
                 <input type="text" class="form-control" name="plate" placeholder="">
             </div>
-            <div class="form-group col-auto">
+            <div class="form-group col-auto" style="width: 350px">
                 <label for="" class="">客户</label>
                 <div class="input-group">
                     <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="code1" _displayDomainName="code1" _placeholder=""  _optionVariable="customerNameAutoCompleteOption" />
                     <input type="text" class="form-control" id="showCustomerName" readonly/>
                 </div>
             </div>
-            <div class="form-group col-auto">
+            <div class="form-group col-auto" style="width: 350px">
                 <label for="" class="">卡号</label>
-                <div class="input-group">
-                    <!--<#bautoCompleteProvider  _displayDomainId="customerCardNo" _displayDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>-->
-                    <input type="text" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
-                    <input type="text" class="form-control" id="show_customer_name" readonly/>
-                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
-                        <i class="fa fa-refresh"></i>刷卡
-                    </button>
+                <div class="form-inline">
+                    <div class="input-group">
+                        <!--<#bautoCompleteProvider  _displayDomainId="customerCardNo" _displayDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>-->
+                        <input type="text" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
+                        <input type="text" class="form-control" id="show_customer_name" readonly/>
+                        <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
+                            <i class="fa fa-refresh"></i>刷卡
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="col align-self-center mt-3">
@@ -216,7 +218,6 @@
                 url: '/customer/listCustomerByCardNo.action',
                 data: {cardNo: $(this).val()},
                 success: function (data) {
-                    debugger;
                     if (data.code == '200') {
                         $('#show_customer_name').val(data.data[0].name);
                     }else{

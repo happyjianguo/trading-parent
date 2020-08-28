@@ -106,6 +106,7 @@
         serviceUrl: '/customer/listNormal.action',
         paramName: 'likeName',
         displayFieldName: 'code',
+        width: '320px',
         showNoSuggestionNotice: true,
         noSuggestionNotice: '不存在，请重新输入！',
         transformResult: function (result) {

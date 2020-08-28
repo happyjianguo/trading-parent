@@ -106,6 +106,7 @@
         paramName: 'likeName',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
+        width: '320px',
         noSuggestionNotice: '不存在，请重新输入！',
         transformResult: function (result) {
             if (result.success) {
