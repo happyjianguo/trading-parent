@@ -60,4 +60,22 @@ public interface TransitionDepartureApplyRpc {
      */
     @RequestMapping(value = "/api/transitionDepartureApply/listByQueryParams", method = {RequestMethod.POST})
     PageOutput<List<TransitionDepartureApply>> listByQueryParams(@RequestBody TransitionDepartureApply transitionDepartureApply);
+
+    /**
+     * 根据客户卡号查询到当天的所有的已审核的单子
+     *
+     * @param transitionDepartureApply
+     * @return
+     */
+    @RequestMapping(value = "/listByCustomerCardNo.action", method = {RequestMethod.POST})
+    BaseOutput<?> listByCustomerCardNo(@RequestBody TransitionDepartureApply transitionDepartureApply);
+
+    /**
+     * 根据id查询申请单和结算单信息
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/api/transitionDepartureApply/getApplyAndSettleById/{id}", method = {RequestMethod.GET, RequestMethod.POST})
+    BaseOutput<TransitionDepartureApply> getApplyAndSettleById(@PathVariable(value = "id") Long id);
 }
