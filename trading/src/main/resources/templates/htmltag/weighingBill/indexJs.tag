@@ -11,7 +11,7 @@
         paramName: 'keyword',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
-        width: 'flex',
+        width: '320px',
         noSuggestionNotice: '无此客户, 请重新输入',
         transformResult: function (result) {
             if(result.success){
@@ -69,7 +69,7 @@
         paramName: 'keyword',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
-        width: 'flex',
+        width: '320px',
         noSuggestionNotice: '无此客户, 请重新输入',
         transformResult: function (result) {
             if(result.success){
@@ -102,7 +102,7 @@
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
         minChars: 12,
-        width: 'flex',
+        width: '320px',
         noSuggestionNotice: '无此客户, 请重新输入',
         transformResult: function (result) {
             if(result.success){
@@ -131,7 +131,7 @@
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
         minChars: 12,
-        width: 'flex',
+        width: '320px',
         noSuggestionNotice: '无此客户, 请重新输入',
         transformResult: function (result) {
             if(result.success){

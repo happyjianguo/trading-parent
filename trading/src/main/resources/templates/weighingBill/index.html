@@ -16,15 +16,15 @@
 			<div class="form-group col">
 				<label for="">商品名称</label> <input type="text" class="form-control" name="goodsSplitStr" placeholder="">
 			</div>
-			<div class="form-group col-3">
+			<div class="form-group col-auto" style="width: 350px">
                 <label for="buyerName" class="">买家</label>
                 <div class="input-group">
                     <#bautoCompleteProvider _hiddenDomainId="buyerId" _hiddenDomainName="buyerId" _displayDomainId="buyerCode" _displayDomainName="buyerCode" _placeholder="" _optionVariable="buyerNameQueryAutoCompleteOption"/>
                     <input type="text" class="form-control" id="show_buyer_name" readonly/>
                 </div>
             </div>
-            <div class="form-group col-3">
-                <label for="sellerName" class="">卖家</label>
+			<div class="form-group col-auto" style="width: 350px">
+				<label for="sellerName" class="">卖家</label>
                 <div class="input-group">
                     <#bautoCompleteProvider _hiddenDomainId="sellerId" _hiddenDomainName="sellerId" _displayDomainId="sellerCode" _displayDomainName="sellerCode" _placeholder="" _optionVariable="sellerNameQueryAutoCompleteOption"/>
                     <input type="text" class="form-control" id="show_seller_name" readonly/>
@@ -43,7 +43,7 @@
                     <!--<input type="text" class="form-control" id="show_operator_name" readonly/>-->
                 </div>
             </div>
-			<div class="form-group col-3">
+			<div class="form-group col-auto" style="width: 350px">
                 <label for="buyerName" class="">买家卡</label>
                 <div class="input-group">
                     <!--<#bautoCompleteProvider _displayDomainId="buyerCardNo" _displayDomainName="buyerCardNo" _placeholder="" _optionVariable="buyerCardQueryAutoCompleteOption"/>-->
@@ -54,17 +54,31 @@
 					<!--</button>-->
                 </div>
             </div>
-            <div class="form-group col-3">
-			<label for="sellerName" class="">卖家卡</label>
-			<div class="input-group">
-				<!--<#bautoCompleteProvider _displayDomainId="sellerCardNo" _displayDomainName="sellerCardNo" _placeholder="" _optionVariable="sellerCardQueryAutoCompleteOption"/>-->
-				<input type="text" class="form-control" id="sellerCardNo" name="sellerCardNo"/>
-				<input type="text" class="form-control" id="show_seller_name_by_card_name" readonly/>
-				<!--<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard();">-->
-					<!--<i class="fa fa-refresh"></i>刷卡-->
-				<!--</button>-->
+			<div class="form-group col-auto" style="width: 350px">
+				<label for="sellerName" class="">卖家卡</label>
+				<div class="input-group">
+					<!--<#bautoCompleteProvider _displayDomainId="sellerCardNo" _displayDomainName="sellerCardNo" _placeholder="" _optionVariable="sellerCardQueryAutoCompleteOption"/>-->
+					<input type="text" class="form-control" id="sellerCardNo" name="sellerCardNo"/>
+					<input type="text" class="form-control" id="show_seller_name_by_card_name" readonly/>
+					<!--<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard();">-->
+						<!--<i class="fa fa-refresh"></i>刷卡-->
+					<!--</button>-->
+				</div>
 			</div>
-		</div>
+			<div class="form-group col">
+				<label for="">车牌号</label> <input type="text" class="form-control" name="plateNumber" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="unitPriceStart">单价</label>
+				<div class="form-inline">
+					<div class="input-group">
+						<input type="text" name="unitPriceStart" id="unitPriceStart" class="form-control isNaturalNum laystart" />
+						&nbsp;&nbsp;至&nbsp;&nbsp;
+						<input type="text" name="unitPriceEnd" id="unitPriceEnd" class="form-control isNaturalNum layend" value="" />
+					</div>
+
+				</div>
+			</div>
 			<div class="form-group col-auto">
 				<label for="createdStart">结算时间</label>
 				<div class="form-inline">
@@ -83,21 +97,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="form-group col">
-				<label for="">车牌号</label> <input type="text" class="form-control" name="plateNumber" placeholder="">
-			</div>
-			<div class="form-group col-auto">
-				<label for="unitPriceStart">单价</label>
-				<div class="form-inline">
-					<div class="input-group">
-						<input type="text" name="unitPriceStart" id="unitPriceStart" class="form-control isNaturalNum laystart" />
-					</div>
-					&nbsp;&nbsp;至&nbsp;&nbsp;
-					<div class="input-group">
-						<input type="text" name="unitPriceEnd" id="unitPriceEnd" class="form-control isNaturalNum layend" value="" />
-					</div>
-				</div>
-			</div>
+
+
 			<div class="col-auto align-self-center mt-3">
 				<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm input').val('');">
 					<i class="fa fa-refresh"></i> 清空
