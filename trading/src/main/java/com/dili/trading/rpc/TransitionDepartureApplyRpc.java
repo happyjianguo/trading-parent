@@ -67,7 +67,7 @@ public interface TransitionDepartureApplyRpc {
      * @param transitionDepartureApply
      * @return
      */
-    @RequestMapping(value = "/listByCustomerCardNo.action", method = {RequestMethod.POST})
+    @RequestMapping(value = "/api/transitionDepartureApply/listByCustomerCardNo", method = {RequestMethod.POST})
     BaseOutput<?> listByCustomerCardNo(@RequestBody TransitionDepartureApply transitionDepartureApply);
 
     /**
