@@ -248,7 +248,7 @@
     function serachSec(value) {
         let targetId = $('#id');
         targetId.empty();
-        let datas = ["<option value=''>" + '-- 全部 --' + "</option>"];
+        let datas = ["<option value=''>" + '-- 请选择 --' + "</option>"];
         $.ajax({
             type: "POST",
             url: "/transitionDepartureApply/listByCustomerCardNo.action",
