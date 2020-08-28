@@ -100,32 +100,34 @@
                 //如果净重小于零，则不行
                 if (parseInt(num) < 0) {
                     bs4pop.alert('净重不能小于0', {type: 'error'});
+                    $('#netWeight').val(num);
+                    return false;
                 }
                 $('#netWeight').val(num);
-            }
-            let netWeight = $('#netWeight').val();
-            let id = $('#id').val();
-            let carTypeId = $('#carTypeId').val();
-            $.ajax({
-                type: "POST",
-                data: {netWeight: netWeight, id: id, carTypeId: carTypeId},
-                dataType: "json",
-                url: "/transitionDepartureSettlement/fee.action",
-                async: true,
-                success: function (res) {
-                    if (res.code == "200") {
-                        $('#chargeAmount1').val(res.data.totalFee);
-                        $('#chargeAmount').val(parseInt(res.data.totalFee * 100));
-                    } else {
+                let id = $('#id').val();
+                let carTypeId = $('#carTypeId').val();
+                $.ajax({
+                    type: "POST",
+                    data: {netWeight: num, id: id, carTypeId: carTypeId},
+                    dataType: "json",
+                    url: "/transitionDepartureSettlement/fee.action",
+                    async: true,
+                    success: function (res) {
+                        if (res.code == "200") {
+                            $('#chargeAmount1').val(res.data.totalFee);
+                            $('#chargeAmount').val(parseInt(res.data.totalFee * 100));
+                        } else {
+                            bui.loading.hide();
+                            bs4pop.alert(res.result, {type: 'error'});
+                        }
+                    },
+                    error: function () {
                         bui.loading.hide();
-                        bs4pop.alert(res.result, {type: 'error'});
+                        bs4pop.alert("计费规则获取失败!", {type: 'error'});
                     }
-                },
-                error: function () {
-                    bui.loading.hide();
-                    bs4pop.alert("计费规则获取失败!", {type: 'error'});
-                }
-            });
+                });
+            }
+
         })
         $('#tareWeight').on('keyup', function (e) {
             let num = parseInt($('#grossWeight').val() == null ? 0 : $('#grossWeight').val()) - parseInt($('#tareWeight').val() == null ? 0 : $('#tareWeight').val());
@@ -133,32 +135,33 @@
                 //如果净重小于零，则不行
                 if (parseInt(num) < 0) {
                     bs4pop.alert('净重不能小于0', {type: 'error'});
+                    $('#netWeight').val(num);
+                    return false;
                 }
                 $('#netWeight').val(num);
-            }
-            let netWeight = $('#netWeight').val();
-            let id = $('#id').val();
-            let carTypeId = $('#carTypeId').val();
-            $.ajax({
-                type: "POST",
-                data: {netWeight: netWeight, id: id, carTypeId: carTypeId},
-                dataType: "json",
-                url: "/transitionDepartureSettlement/fee.action",
-                async: true,
-                success: function (res) {
-                    if (res.code == "200") {
-                        $('#chargeAmount1').val(res.data.totalFee);
-                        $('#chargeAmount').val(parseInt(res.data.totalFee * 100));
-                    } else {
+                let id = $('#id').val();
+                let carTypeId = $('#carTypeId').val();
+                $.ajax({
+                    type: "POST",
+                    data: {netWeight: num, id: id, carTypeId: carTypeId},
+                    dataType: "json",
+                    url: "/transitionDepartureSettlement/fee.action",
+                    async: true,
+                    success: function (res) {
+                        if (res.code == "200") {
+                            $('#chargeAmount1').val(res.data.totalFee);
+                            $('#chargeAmount').val(parseInt(res.data.totalFee * 100));
+                        } else {
+                            bui.loading.hide();
+                            bs4pop.alert(res.result, {type: 'error'});
+                        }
+                    },
+                    error: function () {
                         bui.loading.hide();
-                        bs4pop.alert(res.result, {type: 'error'});
+                        bs4pop.alert("计费规则获取失败!", {type: 'error'});
                     }
-                },
-                error: function () {
-                    bui.loading.hide();
-                    bs4pop.alert("计费规则获取失败!", {type: 'error'});
-                }
-            });
+                });
+            }
         })
         $('#payByCard').on('click', function (e) {
             let flag = false;
