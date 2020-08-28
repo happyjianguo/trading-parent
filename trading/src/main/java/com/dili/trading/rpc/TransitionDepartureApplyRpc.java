@@ -73,9 +73,9 @@ public interface TransitionDepartureApplyRpc {
     /**
      * 根据id查询申请单和结算单信息
      *
-     * @param id
+     * @param
      * @return
      */
-    @RequestMapping(value = "/api/transitionDepartureApply/getApplyAndSettleById/{id}", method = {RequestMethod.POST})
-    BaseOutput<TransitionDepartureApply> getApplyAndSettleById(@PathVariable(value = "id") Long id);
+    @RequestMapping(value = "/api/transitionDepartureApply/getApplyAndSettleById", method = {RequestMethod.POST})
+    BaseOutput<TransitionDepartureApply> getApplyAndSettleById(@RequestBody TransitionDepartureApply transitionDepartureApply);
 }
