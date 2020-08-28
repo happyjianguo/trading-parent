@@ -342,4 +342,37 @@ public class TransitionDepartureApplyController {
         return provider;
     }
 
+    /**
+     * 根据客户卡号获取申请单集合
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping("/listByCustomerCardNo.action")
+    @ResponseBody
+    public BaseOutput listByCustomerCardNo(String customerCardNo) {
+        if (StringUtils.isBlank(customerCardNo)) {
+            return BaseOutput.failure("客户卡号不能为空");
+        }
+        TransitionDepartureApply transitionDepartureApply = new TransitionDepartureApply();
+        transitionDepartureApply.setCustomerCardNo(customerCardNo);
+        transitionDepartureApply.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+        return transitionDepartureApplyRpc.listByCustomerCardNo(transitionDepartureApply);
+    }
+
+    /**
+     * 根据申请单信息获取申请单和结算单信息
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping("/applyAndSettleById.action")
+    @ResponseBody
+    public BaseOutput applyAndSettleById(Long id) {
+        if (Objects.isNull(id)) {
+            return BaseOutput.failure("申请单id不能为空");
+        }
+        return transitionDepartureApplyRpc.getApplyAndSettleById(id);
+    }
+
 }
