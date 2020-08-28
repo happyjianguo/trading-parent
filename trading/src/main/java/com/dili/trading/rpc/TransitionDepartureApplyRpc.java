@@ -77,5 +77,5 @@ public interface TransitionDepartureApplyRpc {
      * @return
      */
     @RequestMapping(value = "/api/transitionDepartureApply/getApplyAndSettleById", method = {RequestMethod.POST})
-    BaseOutput<TransitionDepartureApply> getApplyAndSettleById(@RequestBody TransitionDepartureApply transitionDepartureApply);
+    BaseOutput<TransitionDepartureApply> getApplyAndSettleById(@RequestBody TransitionDepartureApply transitionDepartureApply, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId);
 }

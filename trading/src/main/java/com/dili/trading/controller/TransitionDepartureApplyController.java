@@ -386,7 +386,7 @@ public class TransitionDepartureApplyController {
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
         transitionDepartureApply.setMetadata(map);
-        BaseOutput<TransitionDepartureApply> applyAndSettleById = transitionDepartureApplyRpc.getApplyAndSettleById(transitionDepartureApply);
+        BaseOutput<TransitionDepartureApply> applyAndSettleById = transitionDepartureApplyRpc.getApplyAndSettleById(transitionDepartureApply, SessionContext.getSessionContext().getUserTicket().getFirmId(), SessionContext.getSessionContext().getUserTicket().getDepartmentId());
         if (applyAndSettleById.isSuccess()) {
             if (Objects.nonNull(applyAndSettleById.getData())) {
                 if (Objects.isNull(applyAndSettleById.getData().getTransitionDepartureSettlement())) {
