@@ -372,7 +372,35 @@ public class TransitionDepartureApplyController {
         if (Objects.isNull(id)) {
             return BaseOutput.failure("申请单id不能为空");
         }
-        return transitionDepartureApplyRpc.getApplyAndSettleById(id);
+        TransitionDepartureApply transitionDepartureApply = new TransitionDepartureApply();
+        transitionDepartureApply.setId(id);
+        Map<Object, Object> map = new HashMap<>();
+        //设置审批状态提供者
+        map.put("approvalState", getProvider("applyProvider", "approvalState"));
+        //设置业务类型提供者
+        map.put("bizType", getProvider("bizTypeProvider", "bizType"));
+        //设置商品提供者
+        map.put("categoryId", getProvider("categoryProvider", "categoryId"));
+        //设置交易类型提供者
+        map.put("transTypeId", getProvider("dataDictionaryValueProvider", "transTypeId"));
+        //设置车类型提供者
+        map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
+        transitionDepartureApply.setMetadata(map);
+        BaseOutput<TransitionDepartureApply> applyAndSettleById = transitionDepartureApplyRpc.getApplyAndSettleById(transitionDepartureApply);
+        if (applyAndSettleById.isSuccess()) {
+            if (Objects.nonNull(applyAndSettleById.getData())) {
+                if (Objects.isNull(applyAndSettleById.getData().getTransitionDepartureSettlement())) {
+                    applyAndSettleById.getData().setTransitionDepartureSettlement(new TransitionDepartureSettlement());
+                }
+                try {
+                    return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Lists.newArrayList(applyAndSettleById.getData())).get(0));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return BaseOutput.failure("转换失败");
+                }
+            }
+        }
+        return applyAndSettleById;
     }
 
 }

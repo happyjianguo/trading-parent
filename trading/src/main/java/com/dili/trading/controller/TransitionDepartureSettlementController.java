@@ -24,10 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 结算单接口
@@ -56,7 +53,12 @@ public class TransitionDepartureSettlementController {
     public BaseOutput queryAccountBalance(String customerCardNo) {
         BaseOutput<AccountSimpleResponseDto> oneAccountCard = cardRpc.getOneAccountCard(customerCardNo);
         if (oneAccountCard.isSuccess()) {
-            return BaseOutput.successData(oneAccountCard.getData().getAccountFund().getAvailableAmount().doubleValue() / 100);
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("balance", oneAccountCard.getData().getAccountFund().getAvailableAmount().doubleValue() / 100);
+            map.put("customerCode", oneAccountCard.getData().getAccountInfo().getCustomerCode());
+            map.put("customerId", oneAccountCard.getData().getAccountInfo().getCustomerId());
+            map.put("customerName", oneAccountCard.getData().getAccountInfo().getCustomerName());
+            return BaseOutput.successData(map);
         }
         return oneAccountCard;
     }
