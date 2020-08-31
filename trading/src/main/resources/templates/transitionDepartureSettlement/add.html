@@ -13,7 +13,7 @@
                             href="javascript:;">刷卡</a></span>
                     <!--<input id="id" readonly="true" required class="form-control" name="applyId" maxlength="100" hidden>-->
                     <input id="code" readonly="true" required class="form-control" name="applyCode" maxlength="100"
-                    hidden>
+                           hidden>
                     <input id="sid" readonly="true" required class="form-control" name="id" maxlength="100" hidden>
                     <input id="customerCode" required readonly="true" class="form-control" name="customerCode"
                            hidden="true"
@@ -37,7 +37,8 @@
             <div class="form-group col">
                 <label for="">办理业务</label>
                 <input id="bizType" readonly="true" required class="form-control" maxlength="100">
-                <input id="bizTypeId" readonly="true" name="bizType" required class="form-control" maxlength="100" hidden="true">
+                <input id="bizTypeId" readonly="true" name="bizType" required class="form-control" maxlength="100"
+                       hidden="true">
             </div>
             <div class="form-group col">
                 <label for="">车辆类型</label>
@@ -56,8 +57,9 @@
             </div>
             <div class="form-group col">
                 <label for="">交易类型</label>
-                <input id="transTypeId" class="form-control" required readonly name="transTypeId" hidden maxlength="100">
-                <input id="transTypeName"  class="form-control" required readonly maxlength="100">
+                <input id="transTypeId" class="form-control" required readonly name="transTypeId" hidden
+                       maxlength="100">
+                <input id="transTypeName" class="form-control" required readonly maxlength="100">
             </div>
             <div class="form-group col">
                 <label for="">商品名称</label>
@@ -99,6 +101,28 @@
 <script>
     $(function () {
         $('#id').on("change", function (e) {
+            if ($(this).val() == undefined || $(this).val() == null||$(this).val() == '') {
+                bs4pop.alert("提示请选择申请单号", {type: 'error'});
+                $('#code').val('');
+                $('#sid').val('');
+                $('#bizType').val('');
+                $('#bizTypeId').val('');
+                $('#carTypeId').val('');
+                $('#_carTypeId').val('');
+                $('#plate').val('');
+                $('#transTypeId').val('');
+                $('#transTypeName').val('');
+                $('#categoryName').val('');
+                $('#categoryId').val('');
+                $('#grossWeight').val('');
+                $('#tareWeight').val('');
+                $('#netWeight').val('');
+                if (!isNaN('')) {
+                    $('#chargeAmount1').val('');
+                    $('#chargeAmount').val('');
+                }
+                return false;
+            }
             $.ajax({
                 type: "POST",
                 data: {id: $(this).val()},
@@ -279,7 +303,7 @@
         let targetId = $('#id');
         targetId.empty();
         let datas = ["<option value=''>" + '-- 请选择 --' + "</option>"];
-        let num=0;
+        let num = 0;
         let applyId;
         $.ajax({
             type: "POST",
@@ -291,7 +315,7 @@
                 if (res.code == "200") {
                     $.each(res.data, function (i, item) {
                         num++;
-                        applyId=item.id;
+                        applyId = item.id;
                         datas.push('<option value="' + item.id + '">' + item.code + '</option>');
                     });
                 } else {
@@ -303,7 +327,7 @@
             }
         });
         targetId.html(datas.join(''));
-        if(num==1){
+        if (num == 1) {
             $("#id option:nth-child(2)").prop("selected", 'selected');
             $.ajax({
                 type: "POST",
