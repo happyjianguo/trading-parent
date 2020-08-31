@@ -22,32 +22,34 @@
         });
     });
 
-    function swipeCard(el){
-        let cardNo=callbackObj.readCardNumber();
-        if (cardNo!=-1) {
-            $('#show_customer_card').val(cardNo);
-            // $('#show_customer_card').val('888810054629');
-            $.ajax({
-                type: "POST",
-                dataType: "json",
-                url: '/customer/listCustomerByCardNo.action',
-                data: {cardNo: cardNo},
-                success: function (data) {
-                    if (data.code == '200') {
-                        $('#show_customer_name').val(data.data[0].name);
-                    }else{
-                        $('#show_customer_name').val('');
-                        bs4pop.alert(data.result, {type: 'error'});
-                    }
-                },
-                error: function () {
-                    bui.loading.hide();
-                    bs4pop.alert("客户获取失败!", {type: 'error'});
-                }
-            });
-        }else{
-            bs4pop.alert("未读取到卡号!", {type: 'error'});
+    function swipeCard(el) {
+        let cardNo;
+        let json = JSON.parse(callbackObj.readCardNumber());
+        if (json.code == 0) {
+            cardNo = json.data;
+        } else {
+            bs4pop.alert(json.message, {type: "error"});
+            return false;
         }
+        $('#show_customer_card').val(cardNo);
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: '/customer/listCustomerByCardNo.action',
+            data: {cardNo: cardNo},
+            success: function (data) {
+                if (data.code == '200') {
+                    $('#show_customer_name').val(data.data[0].name);
+                } else {
+                    $('#show_customer_name').val('');
+                    bs4pop.alert(data.result, {type: 'error'});
+                }
+            },
+            error: function () {
+                bui.loading.hide();
+                bs4pop.alert("客户获取失败!", {type: 'error'});
+            }
+        });
     }
 
     function getLastYearYestdy(date) {
@@ -82,18 +84,18 @@
         width: 'flex',
         noSuggestionNotice: '无此客户, 请重新输入',
         transformResult: function (result) {
-            if(result.success){
+            if (result.success) {
                 let data = result.data;
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
-                                value: dataItem.customerName +"|"+dataItem.cardNo
+                                value: dataItem.customerName + "|" + dataItem.cardNo
                             }
                         );
                     })
                     //888810054629
                 }
-            }else{
+            } else {
                 return false;
             }
         },
@@ -119,7 +121,7 @@
                     suggestions: $.map(data, function (dataItem) {
                         debugger
                         return $.extend(dataItem, {
-                            value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
+                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
                             }
                         );
                     })
@@ -130,7 +132,7 @@
             }
         },
         selectFn: function (suggestion) {
-           $('#showCustomerName').val(suggestion.name);
+            $('#showCustomerName').val(suggestion.name);
         }
     };
 
@@ -164,11 +166,11 @@
             height: '500px',//高度
             isIframe: true,//默认是页面层，非iframe
             btns: [
-                 {
+                {
                     label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
 
                     }
-                },{
+                }, {
                     label: '保存', className: 'btn btn-primary', onClick(e, $iframe) {
                         let diaWindow = $iframe[0].contentWindow;
                         bui.util.debounce(diaWindow.saveOrUpdateHandler, 1000, true)()
@@ -191,7 +193,7 @@
                     label: '取消（E）', className: 'btn btn-secondary', onClick(e, $iframe) {
 
                     }
-                },{
+                }, {
                     label: '确定（O）', className: 'btn btn-primary', onClick(e, $iframe) {
                         let diaWindow = $iframe[0].contentWindow;
                         bui.util.debounce(diaWindow.pay, 1000, true)()
@@ -236,6 +238,7 @@
 
         });
     }
+
     function openPrintHandler() {
         //获取选中行的数据
         let rows = _grid.bootstrapTable('getSelections');
@@ -257,7 +260,7 @@
                 bui.loading.hide();
                 if (data.code == '200') {
                     //调用c端打印
-                    callbackObj.printDirect(JSON.stringify(data.data),"WeighingServiceDocument");
+                    callbackObj.printDirect(JSON.stringify(data.data), "WeighingServiceDocument");
                 }
             },
             error: function () {
