@@ -231,9 +231,9 @@ public class WeighingBillController {
 		metadata.put("statement.buyerActualAmount", "moneyProvider");
 		metadata.put("statement.sellerPoundage", "moneyProvider");
 		metadata.put("statement.sellerActualAmount", "moneyProvider");
+		metadata.put("statement.state", "weighingStatementStateProvider");
 
 		metadata.put("operationRecord.operationTime", "datetimeProvider");
-		metadata.put("state", "weighingBillStateProvider");
 
 		JSONObject ddProvider = new JSONObject();
 		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
