@@ -8,14 +8,17 @@
 
 
     //时间范围
-    lay('.laydatetime').each(function () {
+    lay('.sendtime').each(function () {
         laydate.render({
             elem: this
             , trigger: 'click'
             , range: false
             , type: 'date'
             // , min: getLastYearYestdy(new Date())
-            , max: timeStamp2String(new Date().getTime())
+            , max: timeStamp2String(new Date().getTime()),
+            done: function (value, date) {
+                isStartEndDatetime(this.elem, value);
+            }
         });
     });
 
