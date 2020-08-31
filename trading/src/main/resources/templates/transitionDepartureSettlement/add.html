@@ -215,6 +215,28 @@
                 bs4pop.alert('未读取到卡号', {type: 'error'});
                 return false;
             }
+            $('#code').val('');
+            $('#sid').val('');
+
+            $('#bizType').val('');
+            $('#bizTypeId').val('');
+
+            $('#carTypeId').val('');
+            $('#_carTypeId').val('');
+
+            $('#plate').val('');
+            $('#transTypeId').val('');
+            $('#transTypeName').val('');
+            $('#categoryName').val('');
+            $('#categoryId').val('');
+            $('#grossWeight').val('');
+            $('#tareWeight').val('');
+            $('#netWeight').val('');
+            if (!isNaN('')) {
+                $('#chargeAmount1').val('');
+                $('#chargeAmount').val('');
+            }
+
             $('#customerCardNo').val(cardNum);
             $.ajax({
                 type: "POST",
