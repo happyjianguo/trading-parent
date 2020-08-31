@@ -271,6 +271,7 @@
         targetId.empty();
         let datas = ["<option value=''>" + '-- 请选择 --' + "</option>"];
         let num=0;
+        let applyId;
         $.ajax({
             type: "POST",
             url: "/transitionDepartureApply/listByCustomerCardNo.action",
@@ -281,6 +282,7 @@
                 if (res.code == "200") {
                     $.each(res.data, function (i, item) {
                         num++;
+                        applyId=item.id;
                         datas.push('<option value="' + item.id + '">' + item.code + '</option>');
                     });
                 } else {
@@ -293,10 +295,10 @@
         });
         targetId.html(datas.join(''));
         if(num==1){
-            $("#id option:first").prop("selected", 'selected');
+            $("#id option:nth-child(2)").prop("selected", 'selected');
             $.ajax({
                 type: "POST",
-                data: {id: $(this).val()},
+                data: {id: applyId},
                 dataType: "json",
                 url: "/transitionDepartureApply/applyAndSettleById.action",
                 async: true,
