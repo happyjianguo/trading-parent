@@ -90,11 +90,16 @@
 
 <script>
     $('#payByCard').on('click', function (e) {
-        let cardNum = callbackObj.readCardNumber();
-        if (cardNum == -1 || cardNum == "") {
-            bs4pop.alert("未读取到卡号", {type: 'error'});
+
+        let cardNum;
+        let json = JSON.parse(callbackObj.readCardNumber());
+        if (json.code == 0) {
+            cardNum = json.data;
+        } else {
+            bs4pop.alert(json.message, {type: "error"});
             return false;
         }
+
         $.ajax({
             type: "POST",
             data: {cardNo: cardNum},

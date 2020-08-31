@@ -210,11 +210,20 @@
         })
         $('#payByCard').on('click', function (e) {
             let flag = false;
-            let cardNum = callbackObj.readCardNumber();
-            if (cardNum == -1 || cardNum == "") {
-                bs4pop.alert('未读取到卡号', {type: 'error'});
+            // let cardNum = callbackObj.readCardNumber();
+            // if (cardNum == -1 || cardNum == "") {
+            //     bs4pop.alert('未读取到卡号', {type: 'error'});
+            //     return false;
+            // }
+            let cardNum;
+            let json = JSON.parse(callbackObj.readCardNumber());
+            if (json.code == 0) {
+                cardNum = json.data;
+            } else {
+                bs4pop.alert(json.message, {type: "error"});
                 return false;
             }
+
             $('#code').val('');
             $('#sid').val('');
 
