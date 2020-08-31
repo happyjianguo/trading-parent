@@ -164,6 +164,7 @@
             width: '60%',//宽度
             height: '95%',//高度
             isIframe: true,//默认是页面层，非iframe
+            backdrop: 'static',
             btns: [{
                 label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
 
@@ -199,8 +200,8 @@
             title: '申请单详情',
             content: '/transitionDepartureApply/getOneByID.action?id=' + id,
             isIframe: true,
-            closeBtn: true,
             backdrop: 'static',
+            closeBtn: true,
             width: '60%',
             height: '95%',
             btns: [{
@@ -231,6 +232,7 @@
             width: '60%',//宽度
             height: '95%',//高度
             isIframe: true,//默认是页面层，非iframe
+            backdrop: 'static',
             btns: [{
                 label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
 
