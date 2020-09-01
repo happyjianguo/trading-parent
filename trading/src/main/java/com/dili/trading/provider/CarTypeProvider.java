@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.dili.orders.dto.MyBusinessType;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -40,7 +41,8 @@ public class CarTypeProvider extends BatchDisplayTextProviderSupport {
         if (Objects.nonNull(obj)) {
             carTypeForJmsfDTO.setKeyword(obj.toString());
         }
-        carTypeForJmsfDTO.setBusinessCode("kcjm");
+//        carTypeForJmsfDTO.setBusinessCode("kcjm");
+        carTypeForJmsfDTO.setBusinessCode(MyBusinessType.KCJM.getCode());
         carTypeForJmsfDTO.setMarketId(userTicket.getFirmId());
         List<CarTypeForBusinessDTO> list = assetsRpc.listCarType(carTypeForJmsfDTO).getData();
         List<ValuePair<?>> resultList = list.stream().map(f -> {
