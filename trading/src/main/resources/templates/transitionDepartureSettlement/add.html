@@ -102,7 +102,7 @@
     $(function () {
         $('#id').on("change", function (e) {
             if ($(this).val() == undefined || $(this).val() == null || $(this).val() == '') {
-                bs4pop.alert("提示请选择申请单号", {type: 'error'});
+                bs4pop.alert("请选择申请单号", {type: 'error'});
                 $('#code').val('');
                 $('#sid').val('');
                 $('#bizType').val('');
