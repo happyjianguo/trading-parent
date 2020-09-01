@@ -26,6 +26,11 @@ public class BpmcUtil {
 	@Autowired
 	private RoleRpc roleRpc;
 
+	/**
+	 * 设置流程属性
+	 * 
+	 * @param dtos
+	 */
 	public void fitLoggedUserIsCanHandledProcess(List<? extends ProcessHandleInfoDto> dtos) {
 		// 根据流程实例批量查询任务
 		Set<String> processInstanceIds = new HashSet<>();

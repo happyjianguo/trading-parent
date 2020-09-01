@@ -92,9 +92,20 @@ public class PriceApproveRecordController {
 		}
 	}
 
+	/**
+	 * 审批试图
+	 * 
+	 * @param businessKey 业务id
+	 * @param taskId      任务id
+	 * @param isNeedClaim 是否需要签收
+	 * @param modal       是否窗口
+	 * @param modelMap
+	 * @return
+	 * @throws Exception
+	 */
 	@GetMapping("/approve.html")
-	public String approveView(@RequestParam Long businessKey, @RequestParam String taskId, @RequestParam(defaultValue = "false") Boolean isNeedClaim, @RequestParam(defaultValue = "false") Boolean modal,
-			ModelMap modelMap) throws Exception {
+	public String approveView(@RequestParam Long businessKey, @RequestParam String taskId, @RequestParam(defaultValue = "false") Boolean isNeedClaim,
+			@RequestParam(defaultValue = "false") Boolean modal, ModelMap modelMap) throws Exception {
 		BaseOutput<PriceApproveRecord> output = this.priceApproveRpc.getById(businessKey);
 		if (!output.isSuccess()) {
 			LOGGER.error(output.getMessage());
