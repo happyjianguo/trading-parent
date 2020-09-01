@@ -21,15 +21,12 @@ public class TransitionDepartureApplyServiceImpl implements TransitionDepartureA
     @Autowired
     private TransitionDepartureApplyRpc transitionDepartureApplyRpc;
 
-    @Autowired
-    private UidRpc uidRpc;
-
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "新增转离场申请单", operationType = "add", systemCode = "ORDERS")
     public BaseOutput insert(TransitionDepartureApply transitionDepartureApply) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //设置code编号
-        transitionDepartureApply.setCode(uidRpc.bizNumber("sg_zlc_apply").getData());
+//        transitionDepartureApply.setCode(uidRpc.bizNumber("sg_zlc_apply").getData());
         //设置申请时间
         transitionDepartureApply.setOriginatorTime(LocalDateTime.now());
         //设置申请员工id
