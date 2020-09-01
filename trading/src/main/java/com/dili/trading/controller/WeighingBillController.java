@@ -338,6 +338,7 @@ public class WeighingBillController {
 		metadata.put("unitWeight", "weightProvider");
 		metadata.put("roughWeight", "weightProvider");
 		metadata.put("tareWeight", "weightProvider");
+		metadata.put("estimatedNetWeight", "weightProvider");
 		metadata.put("createdTime", "datetimeProvider");
 		metadata.put("measureType", "measureTypeProvider");
 		metadata.put("state", "weighingBillStateProvider");

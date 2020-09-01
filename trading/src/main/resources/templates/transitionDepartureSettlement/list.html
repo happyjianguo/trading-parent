@@ -37,15 +37,15 @@
                 <label for="createdStart" >结算时间</label>
                 <div class="form-inline">
                     <div class="input-group">
-                        <input type="text" name="beginTime" value="${beginDate!}" id="createdStart" class="form-control laydatetime laystart"/>
+                        <input type="text" name="beginTime" value="${beginDate!}" id="createdStart" class="form-control settletime laystart"/>
                         <div class="input-group-append">
-                            <label for=""  class="input-group-text fa fa-calendar"></label>
+                            <label for="createdStart"  class="input-group-text fa fa-calendar"></label>
                         </div>
                     </div>&nbsp;&nbsp;至&nbsp;&nbsp;
                     <div class="input-group">
-                        <input type="text" name="endTime" id="createdEnd" class="form-control laydatetime layend" value="${endDate!}"/>
+                        <input type="text" name="endTime" id="createdEnd" class="form-control settletime layend" value="${endDate!}"/>
                         <div class="input-group-append">
-                            <label for=""  class="input-group-text fa fa-calendar"></label>
+                            <label for="createdEnd"  class="input-group-text fa fa-calendar"></label>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                         <input type="text" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
                         <input type="text" class="form-control" id="show_customer_name" readonly/>
                         <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
-                            <i class="fa fa-refresh"></i>刷卡
+                            刷卡
                         </button>
                     </div>
                 </div>

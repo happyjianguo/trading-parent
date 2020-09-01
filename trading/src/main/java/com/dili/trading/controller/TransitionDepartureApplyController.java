@@ -372,6 +372,9 @@ public class TransitionDepartureApplyController {
         if (Objects.isNull(id)) {
             return BaseOutput.failure("申请单id不能为空");
         }
+        if (Objects.isNull(SessionContext.getSessionContext().getUserTicket().getDepartmentId())) {
+            return BaseOutput.failure("部门不能为空");
+        }
         TransitionDepartureApply transitionDepartureApply = new TransitionDepartureApply();
         transitionDepartureApply.setId(id);
         Map<Object, Object> map = new HashMap<>();

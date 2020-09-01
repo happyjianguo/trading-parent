@@ -10,10 +10,10 @@
                     <input id="customerCardNo" required readonly="true" class="form-control" name="customerCardNo"
                            maxlength="100">
                     <span class="input-group-text card-bt text-primary" id="payByCard"><a
-                            href="javascript:;">刷卡</a></span>
+                            href="javascript:;" style=" text-decoration: none;">刷卡</a></span>
                     <!--<input id="id" readonly="true" required class="form-control" name="applyId" maxlength="100" hidden>-->
                     <input id="code" readonly="true" required class="form-control" name="applyCode" maxlength="100"
-                    hidden>
+                           hidden>
                     <input id="sid" readonly="true" required class="form-control" name="id" maxlength="100" hidden>
                     <input id="customerCode" required readonly="true" class="form-control" name="customerCode"
                            hidden="true"
@@ -37,7 +37,8 @@
             <div class="form-group col">
                 <label for="">办理业务</label>
                 <input id="bizType" readonly="true" required class="form-control" maxlength="100">
-                <input id="bizTypeId" readonly="true" name="bizType" required class="form-control" maxlength="100" hidden="true">
+                <input id="bizTypeId" readonly="true" name="bizType" required class="form-control" maxlength="100"
+                       hidden="true">
             </div>
             <div class="form-group col">
                 <label for="">车辆类型</label>
@@ -56,8 +57,9 @@
             </div>
             <div class="form-group col">
                 <label for="">交易类型</label>
-                <input id="transTypeId" class="form-control" required readonly name="transTypeId" hidden maxlength="100">
-                <input id="transTypeName"  class="form-control" required readonly maxlength="100">
+                <input id="transTypeId" class="form-control" required readonly name="transTypeId" hidden
+                       maxlength="100">
+                <input id="transTypeName" class="form-control" required readonly maxlength="100">
             </div>
             <div class="form-group col">
                 <label for="">商品名称</label>
@@ -99,6 +101,26 @@
 <script>
     $(function () {
         $('#id').on("change", function (e) {
+            if ($(this).val() == undefined || $(this).val() == null || $(this).val() == '') {
+                bs4pop.alert("请选择申请单号", {type: 'error'});
+                $('#code').val('');
+                $('#sid').val('');
+                $('#bizType').val('');
+                $('#bizTypeId').val('');
+                $('#carTypeId').val('');
+                $('#_carTypeId').val('');
+                $('#plate').val('');
+                $('#transTypeId').val('');
+                $('#transTypeName').val('');
+                $('#categoryName').val('');
+                $('#categoryId').val('');
+                $('#grossWeight').val('');
+                $('#tareWeight').val('');
+                $('#netWeight').val('');
+                $('#chargeAmount1').val('');
+                $('#chargeAmount').val('');
+                return false;
+            }
             $.ajax({
                 type: "POST",
                 data: {id: $(this).val()},
@@ -210,11 +232,40 @@
         })
         $('#payByCard').on('click', function (e) {
             let flag = false;
-            let cardNum = callbackObj.readCardNumber();
-            if (cardNum == -1 || cardNum == "") {
-                bs4pop.alert('未读取到卡号', {type: 'error'});
+            // let cardNum = callbackObj.readCardNumber();
+            // if (cardNum == -1 || cardNum == "") {
+            //     bs4pop.alert('未读取到卡号', {type: 'error'});
+            //     return false;
+            // }
+            let cardNum;
+            let json = JSON.parse(callbackObj.readCardNumber());
+            if (json.code == 0) {
+                cardNum = json.data;
+            } else {
+                bs4pop.alert(json.message, {type: "error"});
                 return false;
             }
+
+            $('#code').val('');
+            $('#sid').val('');
+
+            $('#bizType').val('');
+            $('#bizTypeId').val('');
+
+            $('#carTypeId').val('');
+            $('#_carTypeId').val('');
+
+            $('#plate').val('');
+            $('#transTypeId').val('');
+            $('#transTypeName').val('');
+            $('#categoryName').val('');
+            $('#categoryId').val('');
+            $('#grossWeight').val('');
+            $('#tareWeight').val('');
+            $('#netWeight').val('');
+            $('#chargeAmount1').val('');
+            $('#chargeAmount').val('');
+
             $('#customerCardNo').val(cardNum);
             $.ajax({
                 type: "POST",
@@ -248,6 +299,8 @@
         let targetId = $('#id');
         targetId.empty();
         let datas = ["<option value=''>" + '-- 请选择 --' + "</option>"];
+        let num = 0;
+        let applyId;
         $.ajax({
             type: "POST",
             url: "/transitionDepartureApply/listByCustomerCardNo.action",
@@ -257,6 +310,8 @@
                 bui.loading.hide();
                 if (res.code == "200") {
                     $.each(res.data, function (i, item) {
+                        num++;
+                        applyId = item.id;
                         datas.push('<option value="' + item.id + '">' + item.code + '</option>');
                     });
                 } else {
@@ -268,6 +323,48 @@
             }
         });
         targetId.html(datas.join(''));
+        if (num == 1) {
+            $("#id option:nth-child(2)").prop("selected", 'selected');
+            $.ajax({
+                type: "POST",
+                data: {id: applyId},
+                dataType: "json",
+                url: "/transitionDepartureApply/applyAndSettleById.action",
+                async: true,
+                success: function (res) {
+                    if (res.code == "200") {
+                        $('#code').val(res.data.code);
+                        $('#sid').val(res.data.transitionDepartureSettlement.id);
+
+                        $('#bizType').val(res.data.bizType);
+                        $('#bizTypeId').val(res.data.$_bizType);
+
+                        $('#carTypeId').val(res.data.$_carTypeId);
+                        $('#_carTypeId').val(res.data.carTypeId);
+
+                        $('#plate').val(res.data.plate);
+                        $('#transTypeId').val(res.data.$_transTypeId);
+                        $('#transTypeName').val(res.data.transTypeId);
+                        $('#categoryName').val(res.data.categoryId);
+                        $('#categoryId').val(res.data.$_categoryId);
+                        $('#grossWeight').val(res.data.transitionDepartureSettlement.grossWeight);
+                        $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
+                        $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
+                        if (!isNaN(res.data.transitionDepartureSettlement.chargeAmount)) {
+                            $('#chargeAmount1').val(res.data.transitionDepartureSettlement.chargeAmount / 100);
+                            $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
+                        }
+                    } else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.result, {type: 'error'});
+                    }
+                },
+                error: function () {
+                    bui.loading.hide();
+                    bs4pop.alert("根据卡号获取申请单信息失败!", {type: 'error'});
+                }
+            });
+        }
     };
 
     function saveOrUpdateHandler() {
@@ -322,7 +419,4 @@
         });
     }
 
-    // function isLicenseNo(str) {
-    //     return /(^[\u4E00-\u9FA5]{1}[A-Z0-9]{6}$)|(^[A-Z]{2}[A-Z0-9]{2}[A-Z0-9\u4E00-\u9FA5]{1}[A-Z0-9]{4}$)|(^[\u4E00-\u9FA5]{1}[A-Z0-9]{5}[挂学警军港澳]{1}$)|(^[A-Z]{2}[0-9]{5}$)|(^(08|38){1}[A-Z0-9]{4}[A-Z0-9挂学警军港澳]{1}$)/.test(str);
-    // }
 </script>
