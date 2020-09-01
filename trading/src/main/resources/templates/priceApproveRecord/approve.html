@@ -1,0 +1,148 @@
+<#bs4Body>
+
+<div class="container-fluid">
+	<form id="saveForm" role="form" novalidate>
+		<input type="hidden" name="id" value="${model.id!}"> <input type="hidden" name="taskId" value="${taskId!}"> <input type="hidden" name="isNeedClaim" value="${isNeedClaim!}">
+		<div class="row row-cols-2">
+			<div class="form-group col">
+				<label for="">卖方名称</label>
+				<div class="input-group">
+					<input id="sellerName" required readonly="true" class="form-control" name="sellerName" value="${model.sellerName!}" maxlength="100">
+				</div>
+			</div>
+			<div class="form-group col">
+				<label for="">买方名称</label> <input id="buyerName" readonly="true" required class="form-control" name="buyerName" value="${model.buyerName!}" maxlength="100">
+			</div>
+			<div class="form-group col">
+				<label for="">卖方卡号</label> <input id="sellerCardNo" readonly="true" required class="form-control" name="sellerCardNo" value="${model.sellerCardNo!}" maxlength="100">
+			</div>
+			<div class="form-group col">
+				<label for="">买方卡号</label> <input id="buyerCardNo" readonly="true" required class="form-control" name="buyerCardNo" value="${model.buyerCardNo!}" maxlength="100">
+			</div>
+			<div class="form-group col">
+				<label for="">交易类型</label> <input id="tradeType" readonly="true" required class="form-control" name="tradeType" value="${model.tradeType!}" maxlength="100">
+			</div>
+			<div class="form-group col">
+				<label for="">商品品类</label> <input id="goodsName" readonly="true" required class="form-control" name="goodsName" value="${model.goodsName!}" maxlength="100">
+			</div>
+			<div class="form-group col">
+				<label for="">商品单价</label> <input id="unitPrice" readonly="true" required class="form-control" name="unitPrice" value="${model.unitPrice!}" maxlength="100">
+			</div>
+			<div class="form-group col">
+				<label for="">参考最低价</label> <input id="referencePrice" readonly="true" required class="form-control" name="referencePrice" value="${model.referencePrice!}" maxlength="100">
+			</div>
+			<div class="form-group col">
+				<label for="">交易量/公斤</label> <input id="tradeWeight" readonly="true" required class="form-control" name="tradeWeight" value="${model.tradeWeight!}" maxlength="100">
+			</div>
+
+		</div>
+		<div class="row row-cols-1">
+			<div class="form-group col">
+				<label for="">审核说明</label>
+				<div class="input-group">
+					<textarea class="form-control" rows="3" cols="" name="notes" maxlength="30">${model.notes!}</textarea>
+				</div>
+			</div>
+
+		</div>
+		<%if(model.state==@com.dili.orders.domain.PriceState.APPROVING.getValue()&&!modal){%>
+		<div class="col-auto align-self-center mt-3">
+			<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:approveAcceptHandler();">
+				<i class="fa fa-refresh"></i> 通过
+			</button>
+			<button type="button" class="btn btn-outline-primary mr-2" onclick="approveRejectHandler()">
+				<i class="fa fa-search"></i> 拒绝
+			</button>
+		</div>
+		<%}%>
+	</form>
+</div>
+</#bs4Body>
+
+
+<script>
+	function approveAcceptHandler() {
+		debugger;
+		// 提交保存
+		if (!$('#saveForm').validate().form()) {
+			return false;
+		}
+		<%if(modal){%>
+		parent.bui.loading.show('努力提交中，请稍候。。。');
+		<%}else{%>
+		bui.loading.show('努力提交中，请稍候。。。');
+		<%}%>
+		let _formData = new FormData($('#saveForm')[0]);
+		$.ajax({
+			type : "POST",
+			url : "/priceApproveRecord/approveAccept.action",
+			data : _formData,
+			processData : false,
+			contentType : false,
+			async : true,
+			success : function(res) {
+				<%if(modal){%>
+				parent.bui.loading.hide();
+				<%}else{%>
+				bui.loading.hide();
+				<%}%>
+				if (res.code == "200") {
+					<%if(modal){%>
+					parent.dia.hide();
+					parent.location.reload();
+					<%}else{%>
+					window.location.reload;
+					<%}%>
+				} else {
+					bui.loading.hide();
+					bs4pop.alert(res.result, {
+						type : 'error'
+					});
+				}
+			},
+			error : function(error) {
+				<%if(modal){%>
+				parent.bui.loading.hide();
+				<%}%>				
+				bs4pop.alert(error.result, {
+					type : 'error'
+				});
+			}
+		});
+	}
+
+	function approveRejectHandler() {
+		// 提交保存
+		if (!$('#saveForm').validate().form()) {
+			return false;
+		}
+		parent.bui.loading.show('努力提交中，请稍候。。。');
+		let _formData = new FormData($('#saveForm')[0]);
+		$.ajax({
+			type : "POST",
+			url : "/priceApproveRecord/approveReject.action",
+			data : _formData,
+			processData : false,
+			contentType : false,
+			async : true,
+			success : function(res) {
+				parent.bui.loading.hide();
+				if (res.code == "200") {
+					parent.dia.hide();
+					parent.location.reload();
+				} else {
+					bui.loading.hide();
+					bs4pop.alert(res.result, {
+						type : 'error'
+					});
+				}
+			},
+			error : function(error) {
+				parent.bui.loading.hide();
+				bs4pop.alert(error.result, {
+					type : 'error'
+				});
+			}
+		});
+	}
+</script>
