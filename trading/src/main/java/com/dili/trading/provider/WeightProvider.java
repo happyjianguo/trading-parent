@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -20,16 +21,16 @@ import com.dili.ss.metadata.ValueProvider;
 @Scope("prototype")
 public class WeightProvider implements ValueProvider {
 
-	@Override
-	public List<ValuePair<?>> getLookupList(Object o, Map map, FieldMeta fieldMeta) {
-		return null;
-	}
+    @Override
+    public List<ValuePair<?>> getLookupList(Object o, Map map, FieldMeta fieldMeta) {
+        return null;
+    }
 
-	@Override
-	public String getDisplayText(Object object, Map map, FieldMeta fieldMeta) {
-		if (null == object) {
-			return null;
-		}
-		return new BigDecimal(object.toString()).divide(new BigDecimal(100).setScale(2)).setScale(2, RoundingMode.HALF_UP).toString();
-	}
+    @Override
+    public String getDisplayText(Object object, Map map, FieldMeta fieldMeta) {
+        if (null == object || Objects.equals(0, object)) {
+            return null;
+        }
+        return new BigDecimal(object.toString()).divide(new BigDecimal(100).setScale(2)).setScale(2, RoundingMode.HALF_UP).toString();
+    }
 }
