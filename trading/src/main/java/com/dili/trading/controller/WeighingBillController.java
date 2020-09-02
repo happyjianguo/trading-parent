@@ -169,9 +169,13 @@ public class WeighingBillController {
     @ResponseBody
     @PostMapping("/listByExample.action")
     public BaseOutput<Object> listByExample(@RequestBody WeighingBillQueryDto dto) {
-        //判断，如果是已结算的话，需要加入参数，操作员
+        //判断，如果是已结算的话，需要加入参数，操作员，如果是查询的结算的，只会有一个状态
         if (Objects.equals(dto.getStatementStates().size(), 1)) {
             dto.setOperatorId(SessionContext.getSessionContext().getUserTicket().getId());
+        }
+        //需要加入市场
+        if (Objects.isNull(dto.getMarketId())) {
+            dto.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         }
         return this.weighingBillRpc.listByExample(dto);
     }
@@ -221,6 +225,10 @@ public class WeighingBillController {
     @ResponseBody
     @PostMapping("/listPage.action")
     public String listPage(WeighingBillQueryDto query) {
+        //如果市场id为空，则加入
+        if (Objects.isNull(query.getMarketId())) {
+            query.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+        }
         PageOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listPage(query);
 
         Map<Object, Object> metadata = new HashMap<Object, Object>();
