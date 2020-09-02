@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import com.dili.orders.domain.WeighingStatement;
+import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.*;
 import com.dili.orders.rpc.AccountRpc;
 import org.apache.commons.lang3.StringUtils;
@@ -229,13 +230,17 @@ public class WeighingBillController {
         if (Objects.isNull(query.getMarketId())) {
             query.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         }
+        //判断是否选择了操作员，如果选择了操作员，那就增加状态为已结算
+        if (Objects.nonNull(query.getOperatorId())) {
+            query.setStatementStates(Arrays.asList(WeighingStatementState.PAID.getValue()));
+        }
         PageOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listPage(query);
 
         Map<Object, Object> metadata = new HashMap<Object, Object>();
         metadata.put("roughWeight", "weightProvider");
+        metadata.put("tareWeight", "weightProvider");
         metadata.put("netWeight", "weightProvider");
         metadata.put("unitWeight", "weightProvider");
-        metadata.put("roughWeight", "weightProvider");
 
         metadata.put("unitPrice", "moneyProvider");
         metadata.put("statement.tradeAmount", "moneyProvider");
