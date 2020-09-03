@@ -1,0 +1,214 @@
+<#bs4Body>
+
+<div class="container-fluid">
+        <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
+        <form id="saveForm" role="form" novalidate>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">卡号</label>
+                    <div class="input-group">
+                        <input id="customerCardNo" readonly="true"  class="form-control" name="customerCardNo" required="true"  maxlength="20">
+                        <div class="input-group-append">
+                           <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;" >刷卡</a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">客户名称</label>
+                    <input id="customerName" readonly="true" class="form-control" name="customerName"  maxlength="10">
+                    <input id="customerCode" hidden="true" class="form-control" name="customerCode">
+                    <input id="customerId" class="form-control" name="customerId" hidden="true">
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">可用余额</label>
+                    <input type="number" id="availableBalance" readonly="true" class="form-control"  maxlength="100">
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label tlog >商品名称</label>
+                    <select id="inspectionItem" name="inspectionItem" class="form-control" required="true"  multiple disabled></select>
+                    <#bselect2 _id="inspectionItem" _mode="remote" _value="[2,4,8,55]" _option="" _text=""  _optionVariable="assetsNamesAutoCompleteOption" _required="true"/>
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">检测数量</label>
+                    <input type="number" id="inspectionNum" readonly="true" class="form-control" name="inspectionNum"  maxlength="100">
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">缴费金额</label>
+                    <input type="number" id="chargeAmountView" readonly="true"  class="form-control"   maxlength="100">
+                    <input type="number" hidden="true"  id="chargeAmount"  class="form-control" name="chargeAmount"  maxlength="100">
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">车牌号</label>
+                    <input id="plate" class="form-control" name="plate"  maxlength="8">
+                </div>
+            </div>
+            <div class="row row-cols-1" style="width: 500px">
+                <div class="form-group col">
+                    <label for="">备注</label>
+                    <input id="remark" class="form-control" name="remark"  maxlength="30">
+                </div>
+            </div>
+        </form>
+    </div>
+</#bs4Body>
+
+
+    <script>
+        var fee=0.00;
+        //记录是否重新刷卡
+        var reCardFlag=false;
+
+        // 商品
+        var assetsNamesAutoCompleteOption = {
+            width: '100%',
+            language: 'zh-CN',
+            minimumInputLength:1,
+            maximumSelectionLength: 10,
+            allowClear : true,
+            placeholder: '',
+            ajax: {
+                type:'post',
+                url: '/assets/listNormal.action',
+                    data: function (params) {
+                    return {
+                        keyword: params.term,
+                    }
+                },
+                processResults: function (data) {
+                    if(data.length){
+                        return {
+                            results: $.map(data, function (item) {
+                                item.text =item.name ;
+                                return item;
+                            })
+                        };
+                    }
+                }
+            }
+        }
+
+        $('#inspectionItem').on('change',function (data) {
+            var items=$('#inspectionItem').val();
+            var chargeAmount=fee*(items.length);
+            $('#inspectionNum').val(items.length);
+            $('#chargeAmountView').val(chargeAmount.toFixed(2));
+            $('#chargeAmount').val(chargeAmount*100);
+        });
+
+        $('#payByCard').on('click',function (e) {
+            //let cardNum='888800031912';
+           let cardNum = callbackObj.readCardNumber();
+           if(cardNum == -1){
+               bs4pop.alert("未读取到卡号", {type: 'error'});
+               return false;
+           }
+           //再次刷卡时将检测费用和缴费金额清0
+            if(reCardFlag==true){
+                $('#inspectionNum').val('');
+                $('#chargeAmountView').val('');
+                $('#chargeAmount').val('');
+                $('#inspectionItem').val(null).trigger('change');
+                fee=0.00;
+            }
+            reCardFlag=true;
+            $.ajax({
+                type: "POST",
+                data:{cardNo:cardNum},
+                dataType:"json",
+                url: "/transitionDepartureApply/getCustomerByCardNo.action",
+                async: true,
+                success: function (res) {
+                    if (res.code == "200") {
+                        //刷卡成功后才可以输入商品
+                        $('#inspectionItem').attr('disabled',false);
+                        //赋值
+                        $('#customerCardNo').val(cardNum);
+                        $('#customerCode').val(res.data.code);
+                        $('#customerId').val(res.data.id);
+                        $('#customerName').val(res.data.name);
+                        //查询客户余额
+                        $.ajax({
+                            type: "POST",
+                            data: {customerCardNo: cardNum},
+                            dataType: "json",
+                            url: "/comprehensiveFee/queryAccountBalance.action",
+                            async: false,
+                            success: function (res) {
+                                if (res.code == "200") {
+                                    $('#availableBalance').val((res.data.accountFund.balance/100).toFixed(2));
+                                }
+                            }
+                        });
+                        //查询计费规则
+                        $.ajax({
+                            type: "POST",
+                            data: {customerId: res.data.id, type: res.data.customerMarket.type},
+                            dataType: "json",
+                            url: "/comprehensiveFee/fee.action",
+                            async: false,
+                            success: function (res) {
+                                if (res.code == "200") {
+                                    if(res.data!=null&&res.data.length>0){
+                                        for(var i=0;i<res.data.length;i++){
+                                            fee+=res.data[i].totalFee;
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.result, {type: 'error'});
+                    }
+                }
+            });
+        });
+
+        function saveOrUpdateHandler() {
+            // 提交保存
+            if (!$('#saveForm').validate().form()) {
+                return false;
+            }
+            //将缴费金额转成整数存入
+            var chargeAmount=parseFloat($('#chargeAmountView').val());
+            chargeAmount=chargeAmount.toFixed(2)*100;
+            $('#chargeAmount').val(Math.round(chargeAmount));
+            bui.loading.show('努力提交中，请稍候。。。');
+            var obj=$('#saveForm')[0];
+            let _formData = new FormData($('#saveForm')[0]);
+            $.ajax({
+                type: "POST",
+                url: "/comprehensiveFee/insert.action",
+                data: _formData,
+                processData: false,
+                contentType: false,
+                async: true,
+                success: function (res) {
+                    bui.loading.hide();
+                    if (res.code == "200") {
+                        parent.dia.hide();
+                        parent.verificationUsernamePassword(res.data.id);
+                    } else {
+                        bui.loading.hide();
+                        bs4pop.alert(res.errorData, {type: 'error'});
+                    }
+                },
+                error: function (error) {
+                    bui.loading.hide();
+                    bs4pop.alert(error.result, {type: 'error'});
+                }
+            });
+        }
+    </script>

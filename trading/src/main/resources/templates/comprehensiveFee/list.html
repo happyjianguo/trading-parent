@@ -1,0 +1,158 @@
+<#bs4Body>
+
+<div class="container-fluid">
+    <#bs4nav>
+    <form class="form collapse show" id="queryForm" role="form" >
+        <div class="row  row-cols-6">
+            <div class="form-group col">
+                <label for="">单据状态</label>
+                <select id="orderStatus" name="orderStatus" class="form-control">
+                    <option value="">--全部--</option>
+                    <option value="2">已结算</option>
+                    <option value="3">已撤销</option>
+                </select>
+            </div>
+            <div class="form-group col-3">
+                <label for="" class="">结算员</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="realName" _displayDomainName="realName" _placeholder="" _optionVariable="operatorNameAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_operator_name" readonly/>
+                </div>
+            </div>
+            <div class="form-group col-3">
+                <label for="">客户</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_customer_name" readonly/>
+                </div>
+            </div>
+        </div>
+        <div class="row  row-cols-6">
+            <div class="form-group col-auto">
+                <label for="createdStart" >结算时间</label>
+                <div class="form-inline">
+                    <div class="input-group">
+                        <input type="text" name="operatorTimeStart" id="createdStart" class="form-control laydatetime laystart"/>
+                        <div class="input-group-append">
+                            <label for=""  class="input-group-text fa fa-calendar"></label>
+                        </div>
+                    </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                    <div class="input-group">
+                        <input type="text" name="operatorTimeEnd" id="createdEnd" class="form-control laydatetime layend" value=""/>
+                        <div class="input-group-append">
+                            <label for=""  class="input-group-text fa fa-calendar"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col">
+                <label for="" class="">单据编号</label>
+                <input type="text" class="form-control isNaturalNum" name="code" placeholder="">
+            </div>
+            <div class="form-group col-3">
+                <label for="" class="">卡号</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider _hiddenDomainId="customerCardNo" _hiddenDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
+                </div>
+            </div>
+            <div class="col align-self-center mt-3">
+                <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm input,select').val('');"><i class="fa fa-refresh"></i> 清空</button>
+                <button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()"><i class="fa fa-search"></i> 查询</button>
+            </div>
+        </div>
+
+    </form>
+</#bs4nav>
+
+
+<div class="">
+    <div class="row">
+        <div class="col-12">
+            <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
+                <#resource code="comprehensiveFee_add">
+                    <button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()"><i
+                            class="fa fa-plus"></i> 新增
+                    </button>
+                </#resource>
+                <#resource code="comprehensiveFee_update">
+                    <button type="button" class="btn btn-primary" onclick="openUpdateHandler()">
+                        <i class="fa fa-pencil-square-o"></i> 撤销
+                     </button>
+                </#resource>
+                <#resource code="comprehensiveFee_see">
+                    <button id="btn_view" type="button" class="btn btn-primary" onclick="openViewHandler()"><i class="fa fa-eye"></i> 查看</button>
+                </#resource>
+                <#resource code="comprehensiveFee_print">
+                    <button type="button" class="btn btn-primary" onclick="openPrintHandler()">
+                        <i class="fa fa-eye"></i> 补打
+                    </button>
+                </#resource>
+                <#resource code="comprehensiveFee_export">
+                    <button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')"><i class="fa fa-download"></i> 导出</button>
+                 </#resource>
+            </div>
+        </div>
+    </div>
+</div>
+            <table id="grid" data-toggle="table" data-title="检查收费列表" class="table" data-toolbar="#toolbar" data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
+                   data-side-pagination="server" data-method="POST" data-content-type="application/x-www-form-urlencoded" data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
+                   data-unique-id="id" data-sort-name="operator_time" data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary" data-show-refresh="true" data-show-fullscreen="true"
+                   data-show-columns="true" >
+                <thead>
+                <tr>
+                    <th data-radio="true"></th>
+                    <th data-field="code" data-formatter="view" data-align="center" data-sortable="true" data-sort-name="code">
+                        单据编号
+                    </th>
+                    <th data-field="customerCode" data-align="center" data-sortable="true" data-sort-name="customer_code">
+                        客户编号
+                    </th>
+                    <th data-field="customerName" data-align="center" data-sortable="true" data-sort-name="customer_name">
+                        客户姓名
+                    </th>
+                    <th data-field="customerCardNo" data-align="center" data-sortable="true" data-sort-name="customer_card_no">
+                       卡号
+                    </th>
+                    <th data-field="inspectionNum" data-align="center" data-sortable="true" data-sort-name="inspection_num">
+                        检测数量
+                    </th>
+                    <th data-field="chargeAmount" data-align="center" data-sortable="true" data-provider="moneyProvider" data-sort-name="charge_amount">
+                        收费金额
+                    </th>
+                    <th data-field="plate" data-align="center"  data-sortable="true" data-sort-name="plate">
+                        车牌号
+                    </th>
+                    <th data-field="orderStatus" data-provider="payStatusProvider" data-align="center" data-sortable="true" data-sort-name="order_status">
+                        单据状态
+                    </th>
+                    <th data-field="operatorName" data-align="center" data-sortable="true" data-sort-name="operator_name">
+                        结算员
+                    </th>
+                    <th data-field="operatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true" data-sort-name="operator_time">
+                        结算时间
+                    </th>
+                </tr>
+                </thead>
+            </table>
+</#bs4Body>
+<div class="modal fade" id="_modal" data-backdrop="static" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!--modal-lg modal-sm(默认) 通过设置mw大小调整宽度（如mw-100） modal-dialog-centered垂直居中-->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- 标题 -->
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<#comprehensiveFee_indexJs />
+
+
