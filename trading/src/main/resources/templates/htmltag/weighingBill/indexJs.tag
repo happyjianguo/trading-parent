@@ -322,7 +322,9 @@
             }
         });
     }
-
+    function cancelHandler(){
+        window.location.reload();
+    }
     function invalidateHandler(){
                     $.ajax({
                     type: "POST",
