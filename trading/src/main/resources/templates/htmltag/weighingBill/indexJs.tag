@@ -346,12 +346,13 @@
     }
 
      function withdraw() {
+        debugger;
     	let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
             return;
         }
-        if (rows[0].$_state!=2) {
+        if (rows[0].state!=4) {
         	bs4pop.alert('该单据当前状态不能进行撤销操作！');
         	return;
         }
