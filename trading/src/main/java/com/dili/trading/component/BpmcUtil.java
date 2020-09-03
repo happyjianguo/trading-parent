@@ -18,6 +18,9 @@ import com.dili.uap.sdk.domain.dto.RoleUserDto;
 import com.dili.uap.sdk.rpc.RoleRpc;
 import com.dili.uap.sdk.session.SessionContext;
 
+/**
+ * 流程引擎工具类
+ */
 @Component
 public class BpmcUtil {
 

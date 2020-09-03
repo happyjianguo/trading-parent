@@ -117,17 +117,17 @@
 	<div class="row">
 		<div class="col-12">
 			<div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
-				<#resource code="truck_add">
+				<#resource code="weighingBillInvalidate">
 				<button id="btn_add" type="button" class="btn btn-primary" onclick="invalidate()">
 					<i class="fa fa-plus"></i> 作废
 				</button>
 				</#resource>
-				<#resource code="truck_edit">
+				<#resource code="weighingBillWithdraw">
 				<button type="button" class="btn btn-primary" onclick="withdraw()">
 					<i class="fa fa-pencil-square-o"></i> 撤销
 				</button>
 				</#resource>
-				<#resource code="truck_del">
+				<#resource code="weighingBillDetail">
 				<button type="button" class="btn btn-primary" onclick="openDetailHandler()">
 					<i class="fa fa-trash-o"></i> 查看
 				</button>
@@ -195,8 +195,8 @@
 <div class="modal fade" id="_modal" data-backdrop="static" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalLabel" aria-hidden="true">
     <!--modal-lg modal-sm(默认) 通过设置mw大小调整宽度（如mw-100） modal-dialog-centered垂直居中-->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="width:80%;">
             <div class="modal-header">
                 <!-- 标题 -->
                 <h5 class="modal-title" id="exampleModalLabel"></h5>
