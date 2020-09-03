@@ -109,6 +109,8 @@ public class WeighingBillController {
         }
         if (StringUtils.isBlank(weighingBill.getSerialNo())) {
             weighingBill.setCreatorId(user.getId());
+            //设置市场id
+            weighingBill.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
             output = this.weighingBillRpc.add(weighingBill);
             if (!output.isSuccess()) {
                 return output;
