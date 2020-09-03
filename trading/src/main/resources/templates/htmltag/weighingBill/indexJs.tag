@@ -310,7 +310,8 @@
             bs4pop.alert('请选中一条数据');
             return;
         }
-        if (rows[0].$_state!=1) {
+        debugger;
+        if (rows[0].state!=1&&rows[0].state!=2) {
         	bs4pop.alert('该单据当前状态不能进行作废操作！');
         	return;
         }
@@ -351,7 +352,7 @@
             bs4pop.alert('请选中一条数据');
             return;
         }
-        if (rows[0].$_state!=4) {
+        if (rows[0].state!=4) {
         	bs4pop.alert('该单据当前状态不能进行撤销操作！');
         	return;
         }
