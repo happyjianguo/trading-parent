@@ -48,7 +48,7 @@
 
     <script>
         $('#payByCard').on('click',function (e) {
-            //let cardNum='888800031912';
+            //let cardNum='888810045303';
             let cardNum = callbackObj.readCardNumber();
             if(cardNum == -1){
                 bs4pop.alert("未读取到卡号", {type: 'error'});
@@ -58,14 +58,14 @@
                 type: "POST",
                 data:{cardNo:cardNum},
                 dataType:"json",
-                url: "/transitionDepartureApply/getCustomerByCardNo.action",
+                url: "/weighingBill/listCustomerByCardNo.action",
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
                         $('#customerCardNo').val(cardNum);
                         $('#customerCode').val(res.data.code);
                         $('#customerId').val(res.data.id);
-                        $('#customerName').val(res.data.name);
+                        $('#customerName').val(res.data.customerName);
 
                         //查询客户余额
                         $.ajax({
