@@ -27,7 +27,7 @@ import com.google.gson.Gson;
 import java.util.*;
 
 /**
- * Description: 查询收费功能Controller类
+ * Description: 品类参考价功能Controller类
  *
  * @date:    2020/8/21
  * @author:   Seabert.Zhan
