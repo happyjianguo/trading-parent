@@ -15,7 +15,7 @@ import java.util.List;
  *@date  2020/08/20
  *
  */
-@FeignClient(name = "order-service", contextId = "comprehensiveFeeRpc",url="localhost:8185")
+@FeignClient(name = "order-service", contextId = "comprehensiveFeeRpc",url="${orderService.url:}")
 public interface ComprehensiveFeeRpc {
 
 

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
-@FeignClient(name = "order-service", contextId = "goodsReferencePriceSettingRpc", url = "localhost:8185")
+@FeignClient(name = "order-service", contextId = "goodsReferencePriceSettingRpc", url = "${orderService.url:}")
 public interface GoodsReferencePriceSettingRpc {
     /**
      * 根据参数查询数据
