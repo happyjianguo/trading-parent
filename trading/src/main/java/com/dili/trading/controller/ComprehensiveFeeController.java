@@ -173,7 +173,7 @@ public class ComprehensiveFeeController {
         if(StringUtils.isNotBlank(tips)){
             BaseOutput<ComprehensiveFee> result=new BaseOutput<ComprehensiveFee>();
             result.setCode("500");
-            result.setErrorData(tips);
+            result.setResult(tips);
             return result;
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
