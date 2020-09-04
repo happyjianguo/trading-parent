@@ -166,18 +166,6 @@
             height: '500px',//高度
             isIframe: true,//默认是页面层，非iframe
             backdrop: 'static',
-            btns: [
-                {
-                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
-
-                    }
-                }, {
-                    label: '保存', className: 'btn btn-primary', onClick(e, $iframe) {
-                        let diaWindow = $iframe[0].contentWindow;
-                        bui.util.debounce(diaWindow.saveOrUpdateHandler, 1000, true)()
-                        return false;
-                    }
-                }]
         });
 
     }
@@ -189,19 +177,7 @@
             width: '400px',//宽度
             height: '400px',//高度
             isIframe: true,//默认是页面层，非iframe
-            backdrop: 'static',
-            btns:
-                [{
-                    label: '取消（E）', className: 'btn btn-secondary', onClick(e, $iframe) {
-
-                    }
-                }, {
-                    label: '确定（O）', className: 'btn btn-primary', onClick(e, $iframe) {
-                        let diaWindow = $iframe[0].contentWindow;
-                        bui.util.debounce(diaWindow.pay, 1000, true)()
-                        return false;
-                    }
-                }]
+            backdrop: 'static'
         });
 
     }
