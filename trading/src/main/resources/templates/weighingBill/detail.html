@@ -136,7 +136,7 @@
 			</div>
 			<%}%>
 		</div>
-		<%if(model.state==@com.dili.orders.domain.WeighingBillState.NO_SETTLEMENT.getValue()){%>
+		<%if(model.statement.state==@com.dili.orders.domain.WeighingStatementState.PAID.getValue()){%>
 		<div class="row">
 			<div class="form-group col">
 				<h4>结算信息</h4>

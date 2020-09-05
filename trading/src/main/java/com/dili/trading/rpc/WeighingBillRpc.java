@@ -36,8 +36,8 @@ public interface WeighingBillRpc {
 	BaseOutput<Object> invalidate(@RequestParam(value = "serialNo") String serialNo, @RequestParam(value = "buyerPassword") String buyerPassword,
 			@RequestParam(value = "sellerPassword") String sellerPassword, @RequestParam(value = "operatorId") Long operatorId);
 
-	@RequestMapping(value = "/api/weighingBill/close")
-	BaseOutput<Object> close(@RequestParam(value = "serialNo") String serialNo);
+	@RequestMapping(value = "/api/weighingBill/autoClose")
+	BaseOutput<Object> autoClose();
 
 	@RequestMapping(value = "/api/weighingBill/listByExample", method = RequestMethod.POST)
 	BaseOutput<Object> listByExample(@RequestBody WeighingBillQueryDto queryDto);
