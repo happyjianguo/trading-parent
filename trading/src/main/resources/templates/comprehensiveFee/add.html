@@ -108,6 +108,8 @@
         });
 
         $('#payByCard').on('click',function (e) {
+
+            //let cardNum='888800039006';
             let cardNum;
             let json = JSON.parse(callbackObj.readCardNumber());
             if (json.code == 0) {
@@ -147,24 +149,24 @@
                             dataType: "json",
                             url: "/comprehensiveFee/queryAccountBalance.action",
                             async: false,
-                            success: function (res) {
-                                if (res.code == "200") {
-                                    $('#availableBalance').val((res.data.accountFund.balance/100).toFixed(2));
+                            success: function (resulst) {
+                                if (resulst.code == "200") {
+                                    $('#availableBalance').val((resulst.data.accountFund.balance/100).toFixed(2));
                                 }
                             }
                         });
                         //查询计费规则
                         $.ajax({
                             type: "POST",
-                            data: {customerId: res.data.id, type: res.data.customerMarket.type},
+                            data: {customerId: res.data[0].id, type: res.data[0].customerMarket.type},
                             dataType: "json",
                             url: "/comprehensiveFee/fee.action",
                             async: false,
-                            success: function (res) {
-                                if (res.code == "200") {
-                                    if(res.data!=null&&res.data.length>0){
-                                        for(var i=0;i<res.data.length;i++){
-                                            fee+=res.data[i].totalFee;
+                            success: function (resulst) {
+                                if (resulst.code == "200") {
+                                    if(resulst.data!=null&&resulst.data.length>0){
+                                        for(var i=0;i<resulst.data.length;i++){
+                                            fee+=resulst.data[i].totalFee;
                                         }
                                     }
                                 }
