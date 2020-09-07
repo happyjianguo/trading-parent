@@ -1,10 +1,16 @@
     /***************************************************************************
-	 *
+	 * 
 	 * @Date 2019-11-06 17:30:00
 	 * @author jiangchengyong
-	 *
+	 * 
 	 **************************************************************************/
 
+
+function doPrintHandler(){
+	$.post('/weighingBill/list.action',queryParams(),function(res){
+		callbackObj.printDirect(res.data,'');
+	});
+}
 
   var buyerNameQueryAutoCompleteOption = {
         serviceUrl: '/weighingBill/listCustomerByKeyword.action',
@@ -36,13 +42,13 @@
 
 
     function openPrintHandler() {
-    //获取选中行的数据
+    // 获取选中行的数据
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
             return false;
         }
-        //先拿到票据信息，在调用c端打印
+        // 先拿到票据信息，在调用c端打印
         $.ajax({
             type: "POST",
             dataType: "json",
@@ -51,7 +57,7 @@
             success: function (data) {
                 bui.loading.hide();
                 if (data.code == '200') {
-                //调用c端打印
+                // 调用c端打印
                 callbackObj.printDirect(JSON.stringify(data.data),"WeighingServiceDocument");
                 }
             },
@@ -164,7 +170,7 @@
                     dataType:'json',
                     success:function(result) {
                         if (result.success) {
-                            //1-买家 2-卖家
+                            // 1-买家 2-卖家
                             if(result.data.accountType==1){
                                 $('#buyerCardNo').val(cardNo);
                                 $('#show_buyer_name_by_card_name').val(result.data.customerName);
@@ -310,7 +316,6 @@
             bs4pop.alert('请选中一条数据');
             return;
         }
-        debugger;
         if (rows[0].state!=1&&rows[0].state!=2) {
         	bs4pop.alert('该单据当前状态不能进行作废操作！');
         	return;
@@ -349,7 +354,6 @@
     }
 
      function withdraw() {
-        debugger;
     	let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
@@ -427,11 +431,12 @@
             return;
         }
         dia = bs4pop.dialog({
-            title: '过磅单详情',//对话框title
-            content: '${contextPath}/weighingBill/detail.html?id='+rows[0].id, //对话框内容，可以是 string、element，$object
-            width: '80%',//宽度
-            height: '95%',//高度
-            isIframe: true,//默认是页面层，非iframe
+            title: '过磅单详情',// 对话框title
+            content: '${contextPath}/weighingBill/detail.html?id='+rows[0].id, // 对话框内容，可以是
+																				// string、element，$object
+            width: '80%',// 宽度
+            height: '95%',// 高度
+            isIframe: true,// 默认是页面层，非iframe
             backdrop: 'static',
             btns: [{
                 label: '关闭', className: 'btn btn-secondary', onClick(e, $iframe) {
@@ -492,7 +497,7 @@
 
     /**
 	 * table参数组装 可修改queryParams向服务器发送其余的参数
-	 *
+	 * 
 	 * @param params
 	 */
     function queryParams(params) {
