@@ -24,7 +24,7 @@ public interface ReferencePriceRpc {
      * @return
      */
     @RequestMapping(value = "/api/refrencePrice/getReferencePriceByGoodsId", method = {RequestMethod.POST})
-    BaseOutput<Object> getReferencePriceByGoodsId(Long goodsId,Long marketId);
+    BaseOutput<Object> getReferencePriceByGoodsId(@RequestParam(value = "goodsId") Long goodsId,@RequestParam(value = "marketId") Long marketId);
 
 
 }

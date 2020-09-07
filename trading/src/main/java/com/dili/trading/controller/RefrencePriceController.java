@@ -29,7 +29,7 @@ public class RefrencePriceController {
      */
     @RequestMapping(value = "/getReferencePriceByGoodsId.action", method = {RequestMethod.POST})
     @ResponseBody
-    public BaseOutput getReferencePriceByGoodsId(Long goodsId,Long marketId) {
+    public BaseOutput<Object> getReferencePriceByGoodsId(Long goodsId,Long marketId) {
         return referencePriceRpc.getReferencePriceByGoodsId(goodsId,marketId);
     }
 
