@@ -48,24 +48,27 @@
 
     <script>
         $('#payByCard').on('click',function (e) {
-            //let cardNum='888810045303';
-            let cardNum = callbackObj.readCardNumber();
-            if(cardNum == -1){
-                bs4pop.alert("未读取到卡号", {type: 'error'});
+            //let cardNum='888800039006';
+            let cardNum;
+            let json = JSON.parse(callbackObj.readCardNumber());
+            if (json.code == 0) {
+                cardNum = json.data;
+            } else {
+                bs4pop.alert(json.message, {type: "error"});
                 return false;
             }
             $.ajax({
                 type: "POST",
                 data:{cardNo:cardNum},
                 dataType:"json",
-                url: "/weighingBill/listCustomerByCardNo.action",
+                url: "/customer/listCustomerByCardNo.action",
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
                         $('#customerCardNo').val(cardNum);
-                        $('#customerCode').val(res.data.customerCode);
-                        $('#customerId').val(res.data.customerId);
-                        $('#customerName').val(res.data.customerName);
+                        $('#customerCode').val(res.data[0].code);
+                        $('#customerId').val(res.data[0].id);
+                        $('#customerName').val(res.data[0].name);
 
                         //查询客户余额
                         $.ajax({

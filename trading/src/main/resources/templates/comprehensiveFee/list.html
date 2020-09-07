@@ -52,7 +52,9 @@
             <div class="form-group col-3">
                 <label for="" class="">卡号</label>
                 <div class="input-group">
-                    <#bautoCompleteProvider _hiddenDomainId="customerCardNo" _hiddenDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <!--<#bautoCompleteProvider _hiddenDomainId="customerCardNo" _hiddenDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>-->
+                    <input type="text" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
                     <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
                 </div>
             </div>
@@ -153,6 +155,31 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(function(){
+        $('#show_customer_card').on('input', function (cardNo) {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: '/customer/listCustomerByCardNo.action',
+                data: {cardNo: $(this).val()},
+                success: function (data) {
+                    if (data.code == '200') {
+                        $('#show_buyer_name_by_card_no').val(data.data[0].name);
+                    }else{
+                        $('#show_buyer_name_by_card_no').val('');
+                        // bs4pop.alert("客户获取失败!", {type: 'error'});
+                    }
+                },
+                error: function () {
+                    bui.loading.hide();
+                    bs4pop.alert("客户获取失败!", {type: 'error'});
+                }
+            });
+        })
+    })
+</script>
 <#comprehensiveFee_indexJs />
 
 
