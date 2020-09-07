@@ -105,7 +105,13 @@
         }
 
         function saveOrUpdateHandler() {
-            debugger
+            //固定金额校验
+            var num = $('#fixedPriceView').val();
+            var exp = /^\d{1,4}(\.\d{1,2})?$/;
+            if(!exp.test(num)){
+                bs4pop.alert("固定价格必须是0.01-9999.99之间的数字且最多两位小数", {type: 'error'});
+                return;
+            }
             // 提交保存
             if (!$('#saveForm').validate().form()) {
                 return false;
