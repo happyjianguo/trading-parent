@@ -108,7 +108,7 @@
             //固定金额校验
             var num = $('#fixedPriceView').val();
             var exp = /^\d{1,4}(\.\d{1,2})?$/;
-            if(!exp.test(num)){
+            if(!exp.test(num) || num == 0){
                 bs4pop.alert("固定价格必须是0.01-9999.99之间的数字且最多两位小数", {type: 'error'});
                 return;
             }
