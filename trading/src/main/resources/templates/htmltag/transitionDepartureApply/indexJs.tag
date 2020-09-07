@@ -70,6 +70,7 @@
             success: function (data) {
                 if (data.code == '200') {
                     $('#show_customer_name').val(data.data[0].name);
+                    $('#accountId').val(data.data[0].id);
                 } else {
                     $('#show_customer_name').val('');
                     bs4pop.alert(data.result, {type: 'error'});
