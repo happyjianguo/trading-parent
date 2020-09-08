@@ -194,6 +194,7 @@
             bs4pop.alert('该单据当前状态不能进行补打操作！');
             return;
         }
+        //查询comprehensiveFee单信息
         $.ajax({
             type: "POST",
             dataType: "json",
