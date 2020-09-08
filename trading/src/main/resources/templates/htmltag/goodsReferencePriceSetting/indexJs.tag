@@ -120,7 +120,7 @@
         dia = bs4pop.dialog({
             title: '新增价格预警',//对话框title
             content: '${contextPath}/goodsReferencePriceSetting/add.html?goodsId=' + goodsId + '&goodsName=' + goodsName + '&parentGoodsId='+ parentGoodsId +'&referenceRule=' + referenceRule, //对话框内容，可以是 string、element，$object
-            width: '40%',//宽度
+            width: '60%',//宽度
             height: '85%',//高度
             isIframe: true,//默认是页面层，非iframe
             btns: [
