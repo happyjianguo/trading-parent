@@ -182,7 +182,7 @@
     /**
      * 补打
      */
-    function openPrintHandler(callbackObj) {
+    function openPrintHandler() {
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
@@ -192,7 +192,7 @@
             bs4pop.alert('该单据当前状态不能进行补打操作！');
             return;
         }
-        console.info(JSON.stringify(rows[0]));
+
         callbackObj.printDirect(JSON.stringify(rows[0]),"CheckChargeDocument");
     }
     /*
