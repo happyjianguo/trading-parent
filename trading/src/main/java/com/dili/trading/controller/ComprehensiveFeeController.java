@@ -279,12 +279,12 @@ public class ComprehensiveFeeController {
     /**
      * 获取一个comprehensiveFee单
      *
-     *
+     * @param comprehensiveFee
      * @return BaseOutput
      */
     @RequestMapping(value = "/printOneById.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput printOneById(ModelMap modelMap, ComprehensiveFee comprehensiveFee) throws Exception {
+    public BaseOutput printOneById( ComprehensiveFee comprehensiveFee) throws Exception {
         Map<Object, Object> map = new HashMap<>();
         //设置单据状态提供者
         map.put("orderStatus", getProvider("payStatusProvider", "orderStatus"));
