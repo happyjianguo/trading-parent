@@ -197,8 +197,7 @@ public class GoodsReferencePriceSettingController {
         Map<Object, Object> metadata = new HashMap<Object, Object>();
         metadata.put("referenceRule", "referenceRuleProvider");
         try {
-            if(output.getData() == null)
-            {
+            if(output.getData() == null){
                 goodsReferencePriceSetting = new GoodsReferencePriceSetting();
                 goodsReferencePriceSetting.setGoodsId(goodsId);
                 goodsReferencePriceSetting.setGoodsName(goodsName);

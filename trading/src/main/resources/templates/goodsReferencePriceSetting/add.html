@@ -17,7 +17,7 @@
         <form id="saveForm" role="form" novalidate>
             <input type="hidden" class="form-control" name="goodsId" value="${model.goodsId}" placeholder="">
             <input type="hidden" class="form-control" name="parentGoodsId" value="${model.parentGoodsId}" placeholder="">
-            <input type="hidden" class="form-control" name="referenceRuleView" value="${model.referenceRule}" placeholder="">
+            <input type="hidden" class="form-control" name="referenceRuleView" value="${model.$_referenceRule}" placeholder="">
             <div   id= "menu ">
                 <ul>
                     <li>
@@ -31,7 +31,7 @@
                         </div>
                         <div class="td operator" style="border: 1px solid black;">
                             <select id="referenceRule" onchange="changeDivDisplay();" name="referenceRule" class="form-control"></select>
-                            <#bcomboProvider _id="referenceRule" _provider="referenceRuleProvider" _queryParams='{}'/>
+                            <#bcomboProvider _id="referenceRule" _provider="referenceRuleProvider" _queryParams='{}' _value="${model.$_referenceRule}"/>
                         </div>
                         <div  class="td operator" id="priceValueDiv" Style="display: none;border: 1px solid black;">
                             <input type="number" id="fixedPriceView"  class="form-control" value="${model.fixedPrice}"  maxlength="100">
@@ -58,29 +58,12 @@
 
     <script>
         $(function(){
-            debugger
             var fixedPrice = $('#fixedPriceView').val();
             $('#fixedPriceView').val((fixedPrice/100).toFixed(2));
 
             var referenceRule = $("input[name='referenceRuleView']").val();
-            if(referenceRule == "undefined" || referenceRule == "" || referenceRule == "规则1")
-            {
-                referenceRule = 1;
-            }
-            else if(referenceRule == "规则2")
-            {
-                referenceRule = 2;
-            }
-            else if(referenceRule == "规则3")
-            {
-                referenceRule = 3;
-            }
-            else if(referenceRule == "无")
-            {
-                referenceRule = 4;
-            }
-
-            setTimeout( function(){
+            changeDivDisplay(referenceRule);
+            /*setTimeout( function(){
                 var numbers = $("#referenceRule").find("option"); //获取select下拉框的所有值
                 for (var j = 1; j < numbers.length; j++) {
                     if ($(numbers[j]).val() == referenceRule) {
@@ -89,11 +72,13 @@
                 }
 
                 changeDivDisplay();
-            }, 600 );
+            }, 600 );*/
         });
 
-        function changeDivDisplay(){
-            var referenceRule = $("#referenceRule").val();
+        function changeDivDisplay(referenceRule){
+            if(referenceRule == null){
+                referenceRule = $("#referenceRule").val();
+            }
             if(referenceRule == '3'){
                 document.getElementById("priceTitleDiv").style.display = "block";
                 document.getElementById("priceValueDiv").style.display = "block";
@@ -106,9 +91,10 @@
 
         function saveOrUpdateHandler() {
             //固定金额校验
+            var referenceRule = $("#referenceRule").val();
             var num = $('#fixedPriceView').val();
             var exp = /^\d{1,4}(\.\d{1,2})?$/;
-            if(!exp.test(num) || num == 0){
+            if(referenceRule == '3' && (!exp.test(num) || num == 0)){
                 bs4pop.alert("固定价格必须是0.01-9999.99之间的数字且最多两位小数", {type: 'error'});
                 return;
             }
@@ -117,9 +103,14 @@
                 return false;
             }
             //将固定金额转成整数存入
-            var fixedPrice=parseFloat($('#fixedPriceView').val());
-            fixedPrice=fixedPrice.toFixed(2)*100;
-            $('#fixedPrice').val(Math.round(fixedPrice));
+            if(referenceRule == '3'){
+                var fixedPrice=parseFloat($('#fixedPriceView').val());
+                fixedPrice=fixedPrice.toFixed(2)*100;
+                $('#fixedPrice').val(Math.round(fixedPrice));
+            } else{
+                $('#fixedPrice').val(null);
+            }
+
             bui.loading.show('努力提交中，请稍候。。。');
             var obj=$('#saveForm')[0];
             let _formData = new FormData($('#saveForm')[0]);
