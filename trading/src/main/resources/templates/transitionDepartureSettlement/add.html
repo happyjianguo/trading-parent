@@ -1,6 +1,5 @@
 <#bs4Body>
-<!-- 快捷键资源快速引入标签 -->
-<#bhotkey/>
+
 <div class="container-fluid pb-5">
     <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
     <form id="saveForm" role="form" novalidate class="pb-5">
@@ -43,7 +42,7 @@
             <div class="form-group col">
                 <label for="">车辆类型</label>
                 <select id="carTypeId" name="carTypeId" class="form-control" required focus-shift></select>
-                <#bselect2 _id="carTypeId" _mode="remote"   _provider="carTypeProvider"/>
+                <#bselect2 _id="carTypeId" _mode="remote"  _provider="carTypeProvider"/>
             </div>
             <div class="form-group col">
                 <label for="">车牌号</label>
@@ -90,8 +89,8 @@
         </div>
         <div class="modal-footer-wrap">
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.dia.hide()" data-hotkey="{key: 'Ctrl+E'}">取消（E）</button>
-                <button type="button" class="btn btn-primary px-5" onclick="bui.util.debounce(saveOrUpdateHandler,1000,true)()" id="formSubmit" data-hotkey="{key: 'Ctrl+S'}">确定（S）</button>
+                <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.dia.hide()" data-hotkey="{key: 'Ctrl+E'}">取消</button>
+                <button type="button" class="btn btn-primary px-5" onclick="bui.util.debounce(saveOrUpdateHandler,1000,true)()" id="formSubmit" data-hotkey="{key: 'Ctrl+S'}">确定</button>
             </div>
         </div>
     </form>
@@ -100,8 +99,6 @@
 
 <script>
     $(function () {
-        //快捷键启动
-            hotkey.start();
 
         $('#id').on("change", function (e) {
             if ($(this).val() == undefined || $(this).val() == null || $(this).val() == '') {
@@ -138,8 +135,8 @@
                         $('#bizType').val(res.data.bizType);
                         $('#bizTypeId').val(res.data.$_bizType);
 
-                        $('#carTypeId').val(res.data.$_carTypeId);
-                        $('#_carTypeId').val(res.data.carTypeId);
+                        var carTypeIdOption = new Option(res.data.carTypeId, res.data.$_carTypeId, true, true);
+                        $('#carTypeId').append(carTypeIdOption).trigger('change');
 
                         $('#plate').val(res.data.plate);
                         $('#transTypeId').val(res.data.$_transTypeId);
@@ -342,8 +339,8 @@
                         $('#bizType').val(res.data.bizType);
                         $('#bizTypeId').val(res.data.$_bizType);
 
-                        $('#carTypeId').val(res.data.$_carTypeId);
-                        $('#_carTypeId').val(res.data.carTypeId);
+                        var carTypeIdOption = new Option(res.data.carTypeId, res.data.$_carTypeId, true, true);
+                        $('#carTypeId').append(carTypeIdOption).trigger('change');
 
                         $('#plate').val(res.data.plate);
                         $('#transTypeId').val(res.data.$_transTypeId);
