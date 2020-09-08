@@ -143,6 +143,7 @@
             content: '${contextPath}/queryFee/add.html', //对话框内容，可以是 string、element，$object
             width: '60%',//宽度
             height: '95%',//高度
+            backdrop: 'static',
             isIframe: true,//默认是页面层，非iframe
             btns: [
                 {
@@ -167,6 +168,7 @@
             content: '${contextPath}/queryFee/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
             width: '60%',//宽度
             height: '60%',//高度
+            backdrop: 'static',
             isIframe: true,//默认是页面层，非iframe
             btns:
                 [{
