@@ -135,8 +135,9 @@
         dia = bs4pop.dialog({
             title: '检测收费单',//对话框title
             content: '${contextPath}/comprehensiveFee/add.html', //对话框内容，可以是 string、element，$object
-            width: '40%',//宽度
+            width: '60%',//宽度
             height: '95%',//高度
+            backdrop: 'static',
             isIframe: true,//默认是页面层，非iframe
             btns: [
                 {
@@ -163,6 +164,7 @@
             content: '${contextPath}/comprehensiveFee/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
             width: '60%',//宽度
             height: '60%',//高度
+            backdrop: 'static',
             isIframe: true,//默认是页面层，非iframe
             btns:
                 [{
@@ -182,7 +184,7 @@
     /**
      * 补打
      */
-    function openPrintHandler(callbackObj) {
+    function openPrintHandler() {
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
@@ -192,8 +194,7 @@
             bs4pop.alert('该单据当前状态不能进行补打操作！');
             return;
         }
-        console.info(JSON.stringify(rows[0]));
-        callbackObj.printDirect(JSON.stringify(rows[0]),"CheckChargeDocument");
+        callbackObj.printDirect(JSON.stringify(rows[0]),"CheckRechargeDocument");
     }
     /*
     * 调用撤销功能
