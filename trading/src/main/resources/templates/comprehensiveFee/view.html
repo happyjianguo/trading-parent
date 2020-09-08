@@ -56,7 +56,7 @@
             <div class="row row-cols-1">
                 <div class="form-group col">
                     <label for="">检测商品</label>
-                    <input type="text" id="inspectionItem" name="inspectionItem" class="form-control" value="${comprehensiveFee.inspectionItem!}" data-provider="categoryProvider" data-sort-name="category_id"  disabled>
+                    <textarea id="inspectionItem" name="inspectionItem" class="form-control"  disabled>${comprehensiveFee.inspectionItem!}</textarea>
                 </div>
             </div>
             <div class="row row-cols-1">
@@ -65,7 +65,7 @@
                     <input type="text" class="form-control" value="${comprehensiveFee.remark!}" disabled>
                 </div>
             </div>
-            <div class="row row-cols-4">
+            <div class="row row-cols-2">
                 <div class="form-group col">
                     <label for="">结算员</label>
                     <input type="text" class="form-control" value="${comprehensiveFee.operatorName!}"  disabled>
@@ -74,6 +74,8 @@
                     <label for="">结算时间</label>
                     <input type="text" class="form-control" value="${comprehensiveFee.operatorTime!,localDateTimeFormat='yyyy-MM-dd HH:mm:ss'}"  disabled>
                 </div>
+            </div>
+            <div class="row row-cols-2">
                 <div class="form-group col">
                     <label for="">撤销员</label>
                     <input type="text" class="form-control" value="${comprehensiveFee.revocatorName!}"  disabled>
