@@ -194,8 +194,7 @@
             bs4pop.alert('该单据当前状态不能进行补打操作！');
             return;
         }
-
-        callbackObj.printDirect(JSON.stringify(rows[0]),"CheckChargeDocument");
+        callbackObj.printDirect(JSON.stringify(rows[0]),"CheckRechargeDocument");
     }
     /*
     * 调用撤销功能
