@@ -1,24 +1,16 @@
 package com.dili.trading.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import com.dili.customer.sdk.domain.Customer;
-import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
-import com.dili.orders.constants.TradingConstans;
 import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
-import com.dili.ss.dto.DTOUtils;
-import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.rpc.ComprehensiveFeeRpc;
 import com.dili.trading.service.ComprehensiveFeeService;
-import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.domain.UserTicket;
-import com.dili.uap.sdk.domain.dto.UserQuery;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.rpc.FirmRpc;
 import com.dili.uap.sdk.rpc.UserRpc;
@@ -141,8 +133,8 @@ public class QueryFeeController {
     public String verificationUsernamePassword(ModelMap modelMap, Long id) {
         BaseOutput oneById = comprehensiveFeeRpc.getOneById(id);
         modelMap.put("comprehensiveFee", oneById.getData());
-        Double chargeAmountView=((ComprehensiveFee)oneById.getData()).getChargeAmount().doubleValue()/100;
-        modelMap.put("chargeAmountView", String.format("%.2f",chargeAmountView));
+        Double chargeAmountView = ((ComprehensiveFee)oneById.getData()).getChargeAmount().doubleValue()/100;
+        modelMap.put("chargeAmountView", String.format("%.2f", chargeAmountView));
         return "queryFee/verificationUsernamePassword";
     }
 
@@ -179,9 +171,9 @@ public class QueryFeeController {
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput insert(ComprehensiveFee comprehensiveFee) {
-        String tips=checkUpDate(comprehensiveFee);
+        String tips = checkUpDate(comprehensiveFee);
         if(StringUtils.isNotBlank(tips)){
-            BaseOutput<ComprehensiveFee> result=new BaseOutput<ComprehensiveFee>();
+            BaseOutput<ComprehensiveFee> result = new BaseOutput<ComprehensiveFee>();
             result.setCode("500");
             result.setResult(tips);
             return result;
@@ -198,15 +190,15 @@ public class QueryFeeController {
      * @return
      */
     public String  checkUpDate(ComprehensiveFee comprehensiveFee){
-        StringBuffer tips =new StringBuffer();
-        if (StringUtils.isBlank(comprehensiveFee.getCustomerCardNo())){
+        StringBuffer tips = new StringBuffer();
+        if (StringUtils.isBlank(comprehensiveFee.getCustomerCardNo())) {
             tips.append(",卡号不能为空");
-        }else{
-            if (comprehensiveFee.getCustomerId()==null){
+        } else {
+            if (comprehensiveFee.getCustomerId() == null) {
                 tips.append(",客户不存在或者卡号出错请联系管理员");
             }
         }
-        if (tips.length()!=0){
+        if (tips.length() != 0) {
             tips.append("!");
             return tips.substring(1);
         }
