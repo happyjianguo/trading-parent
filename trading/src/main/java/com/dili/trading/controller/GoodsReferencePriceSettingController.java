@@ -82,7 +82,7 @@ public class GoodsReferencePriceSettingController {
 
         try {
             List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, categoryDTOList.getData());
-            return   new Gson().toJson(list);
+            return new Gson().toJson(list);
         } catch (Exception e) {
             e.printStackTrace();
             return this.index();
@@ -123,38 +123,38 @@ public class GoodsReferencePriceSettingController {
             //组装数据
             List<CategoryDTO> categoryList = new ArrayList<CategoryDTO>();
             CategoryDTO categoryOneSelf = categoryDTOOneSelf.getData();
-            if(categoryOneSelf != null) {
+            if (categoryOneSelf != null) {
                 categoryList.add(categoryOneSelf);
                 List<CategoryDTO> categoryListTemp = categoryDTOList.getData();
-                if(categoryListTemp != null){
+                if (categoryListTemp != null) {
                     categoryList.addAll(categoryListTemp);
                 }
-            } else{
+            } else {
                 throw new Exception("未获取到当前节点的商品数据");
             }
 
             GoodsReferencePriceSetting tempGoods = output.getData();
-            if(tempGoods != null) {
-                if(goodsReferencePriceSettings == null){
+            if (tempGoods != null) {
+                if (goodsReferencePriceSettings == null) {
                     goodsReferencePriceSettings = new  ArrayList<GoodsReferencePriceSetting>();
                 }
                 goodsReferencePriceSettings.add(tempGoods);
             }
             List<GoodsReferencePriceSetting> finalSettings = new ArrayList<GoodsReferencePriceSetting>();
-            if(categoryList != null) {
-                if(goodsReferencePriceSettings != null){
+            if (categoryList != null) {
+                if (goodsReferencePriceSettings != null) {
                     for(CategoryDTO category : categoryList){
                         boolean flag = false;
                         for(GoodsReferencePriceSetting goodsSetting : goodsReferencePriceSettings)
                         {
-                            if(category.getId().equals(goodsSetting.getGoodsId())){
+                            if (category.getId().equals(goodsSetting.getGoodsId())) {
                                 finalSettings.add(goodsSetting);
                                 flag = true;
                                 break;
                             }
                         }
 
-                        if(!flag){
+                        if (!flag) {
                             GoodsReferencePriceSetting tempSetting = new GoodsReferencePriceSetting();
                             tempSetting.setGoodsId(category.getId());
                             tempSetting.setGoodsName(category.getName());
@@ -167,7 +167,7 @@ public class GoodsReferencePriceSettingController {
             }
 
             List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, finalSettings);
-            return   new Gson().toJson(list);
+            return new Gson().toJson(list);
         } catch (Exception e) {
             e.printStackTrace();
             return this.index();
@@ -197,7 +197,7 @@ public class GoodsReferencePriceSettingController {
         Map<Object, Object> metadata = new HashMap<Object, Object>();
         metadata.put("referenceRule", "referenceRuleProvider");
         try {
-            if(output.getData() == null){
+            if (output.getData() == null) {
                 goodsReferencePriceSetting = new GoodsReferencePriceSetting();
                 goodsReferencePriceSetting.setGoodsId(goodsId);
                 goodsReferencePriceSetting.setGoodsName(goodsName);
@@ -231,9 +231,9 @@ public class GoodsReferencePriceSettingController {
             return output;
         }
 
-        if(output.getData() == null){
+        if (output.getData() == null) {
             return goodsReferencePriceSettingService.insertGoodsReferencePriceSetting(goodsReferencePriceSetting);
-        } else{
+        } else {
             goodsReferencePriceSetting.setId(output.getData().getId());
             goodsReferencePriceSetting.setVersion(output.getData().getVersion());
             goodsReferencePriceSetting.setCreatedTime(output.getData().getCreatedTime());
@@ -270,23 +270,23 @@ public class GoodsReferencePriceSettingController {
             List<CategoryDTO> categoryList = categoryDTOList.getData();
             goodsReferencePriceSetting = new GoodsReferencePriceSetting();
             goodsReferencePriceSetting.setMarketId(output.getData().getId());
-            List<GoodsReferencePriceSetting> goodsReferencePriceSettings =  goodsReferencePriceSettingRpc.getAllGoods(goodsReferencePriceSetting);
+            List<GoodsReferencePriceSetting> goodsReferencePriceSettings = goodsReferencePriceSettingRpc.getAllGoods(goodsReferencePriceSetting);
 
             List<GoodsReferencePriceSetting> finalSettings = new ArrayList<GoodsReferencePriceSetting>();
-            if(categoryList != null) {
-                if(goodsReferencePriceSettings != null){
+            if (categoryList != null) {
+                if (goodsReferencePriceSettings != null) {
                     for(CategoryDTO category : categoryList){
                         boolean flag = false;
                         for(GoodsReferencePriceSetting goodsSetting : goodsReferencePriceSettings)
                         {
-                            if(category.getId().equals(goodsSetting.getGoodsId())){
+                            if (category.getId().equals(goodsSetting.getGoodsId())) {
                                 finalSettings.add(goodsSetting);
                                 flag = true;
                                 break;
                             }
                         }
 
-                        if(!flag){
+                        if (!flag) {
                             GoodsReferencePriceSetting tempSetting = new GoodsReferencePriceSetting();
                             tempSetting.setGoodsId(category.getId());
                             tempSetting.setGoodsName(category.getName());
@@ -299,7 +299,7 @@ public class GoodsReferencePriceSettingController {
             }
 
             List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, finalSettings);
-            return   new Gson().toJson(list);
+            return new Gson().toJson(list);
         } catch (Exception e) {
             e.printStackTrace();
             return this.index();

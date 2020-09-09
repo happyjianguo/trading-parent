@@ -1,7 +1,7 @@
 <script>
     // 客户名称
     var customerNameAutoCompleteOption = {
-        serviceUrl: '/queryFee/listCustomerByKeyword.action',
+        serviceUrl: '/weighingBill/listCustomerByKeyword.action',
         paramName: 'keyword',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
@@ -31,7 +31,7 @@
 
     // 结算员名称
     var operatorNameAutoCompleteOption = {
-        serviceUrl: '/queryFee/listOperatorByKeyword.action',
+        serviceUrl: '/weighingBill/listOperatorByKeyword.action',
         paramName: 'keyword',
         displayFieldName: 'realName',
         showNoSuggestionNotice: true,

@@ -23,7 +23,6 @@ import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.rpc.FirmRpc;
 import com.dili.uap.sdk.rpc.UserRpc;
 import com.dili.uap.sdk.session.SessionContext;
-import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +31,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Description: 查询收费功能Controller类
@@ -196,32 +193,12 @@ public class QueryFeeController {
     }
 
     /**
-     * 获取provider 的JSONObject 对象
-     *
-     * @param providerName
-     * @param field
-     * @return
-     */
-    private JSONObject getProvider(String providerName, String field) {
-        JSONObject provider = new JSONObject();
-        //构建提供者名称
-        provider.put("provider", providerName);
-        //构建提供者的对应的字段，对哪个字段进行处理
-        provider.put(ValueProvider.FIELD_KEY, field);
-        //如果是数据字典提供者，需要传入参数，dd_code
-        if (providerName.equals("dataDictionaryValueProvider")) {
-            provider.put("queryParams", "{dd_code:\"trade_type\"}");
-        }
-        return provider;
-    }
-
-    /**
      * 校验comprehensiveFee
      * @param comprehensiveFee
      * @return
      */
     public String  checkUpDate(ComprehensiveFee comprehensiveFee){
-        StringBuffer tips=new StringBuffer();
+        StringBuffer tips =new StringBuffer();
         if (StringUtils.isBlank(comprehensiveFee.getCustomerCardNo())){
             tips.append(",卡号不能为空");
         }else{
@@ -234,54 +211,5 @@ public class QueryFeeController {
             return tips.substring(1);
         }
         return  "";
-    }
-
-    /**
-     * 查询客户信息
-     *
-     * @param name
-     * @param keyword
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("/listCustomerByKeyword.action")
-    public BaseOutput<?> listCustomerByKeyword(String name, String keyword) {
-        CustomerQueryInput cq = new CustomerQueryInput();
-        cq.setKeyword(name);
-        BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
-        if (!firmOutput.isSuccess()) {
-            return firmOutput;
-        }
-        cq.setMarketId(firmOutput.getData().getId());
-        BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
-        return output;
-    }
-
-    /**
-     * 查询结算员信息
-     *
-     * @param name
-     * @param keyword
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("/listOperatorByKeyword.action")
-    public BaseOutput<?> listOperatorByKeyword(String name, String keyword) {
-        UserQuery userQuery = DTOUtils.newInstance(UserQuery.class);
-        userQuery.setKeyword(keyword);
-        return this.useRpc.listByExample(userQuery);
-    }
-
-    /**
-     * 根据卡号查询客户信息
-     *
-     * @param cardNo 卡号
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/getCustomerInfoByCardNo.action")
-    public BaseOutput<AccountSimpleResponseDto> getCustomerInfoByCardNo(String cardNo) {
-        BaseOutput<AccountSimpleResponseDto> output = this.cardRpc.getOneAccountCard(cardNo);
-        return output;
     }
 }
