@@ -8,7 +8,7 @@
 
 function doPrintHandler(){
 	$.post('/weighingBill/list.action',queryParams(),function(res){
-		callbackObj.printDirect(res.data,'');
+		callbackObj.printDirect(res.data,'SettlementDocument');
 	});
 }
 
@@ -48,12 +48,20 @@ function doPrintHandler(){
             bs4pop.alert('请选中一条数据');
             return false;
         }
+        var url='';
+        if (rows[0].statement.$_state==4) {
+        	url='/weighingBill/getWeighingBillPrintData.action'
+        }else if (rows[0].statement.$_state==2) {
+        	url='/weighingBill/getWeighingStatementPrintData.action'
+        }else{
+        	bs4pop.alert("当前单据状态不能补打单据!", {type: 'error'});
+        }
         // 先拿到票据信息，在调用c端打印
         $.ajax({
             type: "POST",
             dataType: "json",
-            url: '/transitionDepartureSettlement/getOneById.action',
-            data: {id: '77'},
+            url: url,
+            data: {serialNo: rows[0].statement.serialNo},
             success: function (data) {
                 bui.loading.hide();
                 if (data.code == '200') {

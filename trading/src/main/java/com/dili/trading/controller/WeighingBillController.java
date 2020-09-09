@@ -1,12 +1,13 @@
 package com.dili.trading.controller;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-import com.dili.orders.domain.WeighingStatement;
-import com.dili.orders.domain.WeighingStatementState;
-import com.dili.orders.dto.*;
-import com.dili.orders.rpc.AccountRpc;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.customer.sdk.domain.Customer;
@@ -28,6 +28,16 @@ import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
+import com.dili.orders.domain.WeighingStatement;
+import com.dili.orders.domain.WeighingStatementState;
+import com.dili.orders.dto.AccountPasswordValidateDto;
+import com.dili.orders.dto.AccountSimpleResponseDto;
+import com.dili.orders.dto.UserAccountCardResponseDto;
+import com.dili.orders.dto.WeighingBillDetailDto;
+import com.dili.orders.dto.WeighingBillListPageDto;
+import com.dili.orders.dto.WeighingBillPrintDto;
+import com.dili.orders.dto.WeighingBillQueryDto;
+import com.dili.orders.dto.WeighingStatementPrintDto;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.orders.rpc.CategoryRpc;
 import com.dili.orders.rpc.PayRpc;
@@ -35,6 +45,8 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.dto.DTOUtils;
+import com.dili.ss.idempotent.annotation.Idempotent;
+import com.dili.ss.idempotent.annotation.Token;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
@@ -72,8 +84,6 @@ public class WeighingBillController {
 	private PayRpc payRpc;
 	@Autowired
 	private DataDictionaryRpc dataDictionaryRpc;
-	@Autowired
-	private AccountRpc accountRpc;
 
 	/**
 	 * 列表页
@@ -93,6 +103,7 @@ public class WeighingBillController {
 	 * @param weighingBill 过磅单和卖家密码数据
 	 * @return
 	 */
+	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/saveAndSettle.action")
 	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) {
@@ -135,6 +146,7 @@ public class WeighingBillController {
 	 * @param sellerPassword
 	 * @return
 	 */
+	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/withdraw.action")
 	public BaseOutput<Object> withdraw(String serialNo, String buyerPassword, String sellerPassword) {
@@ -153,6 +165,7 @@ public class WeighingBillController {
 	 * @param sellerPassword
 	 * @return
 	 */
+	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/invalidate.action")
 	public BaseOutput<Object> invalidate(String serialNo, String buyerPassword, String sellerPassword) {
@@ -463,6 +476,7 @@ public class WeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
+	@Token(url = "/weighingBill/operatorInvalidate.action")
 	@GetMapping("/operatorInvalidate.html")
 	public String validatePassword(Long id, ModelMap modelMap) {
 		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "invalidateHandler");
@@ -477,6 +491,7 @@ public class WeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
+	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/operatorInvalidate.action")
 	public BaseOutput<Object> operatorInvalidate(Long id, String operatorPassword, ModelMap modelMap) {
@@ -492,6 +507,7 @@ public class WeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
+	@Token(url = "/weighingBill/operatorWithdraw.action")
 	@GetMapping("/operatorWithdraw.html")
 	public String operatorWithdraw(Long id, ModelMap modelMap) {
 		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "withdrawHandler");
@@ -506,6 +522,7 @@ public class WeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
+	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/operatorWithdraw.action")
 	public BaseOutput<Object> operatorWithdraw(Long id, String operatorPassword, ModelMap modelMap) {
@@ -540,8 +557,13 @@ public class WeighingBillController {
 	 */
 	@ResponseBody
 	@RequestMapping("/getWeighingBillPrintData.action")
-	public BaseOutput<Object> getWeighingBillPrintData(@RequestParam String serialNo) {
-		return this.weighingBillRpc.getWeighingBillPrintData(serialNo);
+	public BaseOutput<WeighingBillPrintDto> getWeighingBillPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) {
+		BaseOutput<WeighingBillPrintDto> output = this.weighingBillRpc.getWeighingBillPrintData(serialNo);
+		if (!output.isSuccess()) {
+			return output;
+		}
+		output.getData().setReprint(reprint);
+		return output;
 	}
 
 	/**
@@ -552,7 +574,12 @@ public class WeighingBillController {
 	 */
 	@ResponseBody
 	@RequestMapping("/getWeighingStatementPrintData.action")
-	public BaseOutput<Object> getWeighingStatementPrintData(@RequestParam String serialNo) {
-		return this.weighingBillRpc.getWeighingStatementPrintData(serialNo);
+	public BaseOutput<WeighingStatementPrintDto> getWeighingStatementPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) {
+		BaseOutput<WeighingStatementPrintDto> output = this.weighingBillRpc.getWeighingStatementPrintData(serialNo);
+		if (!output.isSuccess()) {
+			return output;
+		}
+		output.getData().setReprint(reprint);
+		return output;
 	}
 }

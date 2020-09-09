@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.dili.orders.domain.WeighingBill;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
+import com.dili.orders.dto.WeighingBillPrintDto;
 import com.dili.orders.dto.WeighingBillQueryDto;
+import com.dili.orders.dto.WeighingStatementPrintDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 
@@ -55,8 +57,8 @@ public interface WeighingBillRpc {
 	BaseOutput<Object> operatorWithdraw(@RequestParam(value = "id") Long id, @RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "operatorPassword") String operatorPassword);
 
 	@RequestMapping(value = "/api/weighingBill/getWeighingBillPrintData")
-	BaseOutput<Object> getWeighingBillPrintData(@RequestParam(value = "serialNo") String serialNo);
+	BaseOutput<WeighingBillPrintDto> getWeighingBillPrintData(@RequestParam(value = "serialNo") String serialNo);
 
 	@RequestMapping(value = "/api/weighingBill/getWeighingStatementPrintData")
-	BaseOutput<Object> getWeighingStatementPrintData(@RequestParam(value = "serialNo") String serialNo);
+	BaseOutput<WeighingStatementPrintDto> getWeighingStatementPrintData(@RequestParam(value = "serialNo") String serialNo);
 }
