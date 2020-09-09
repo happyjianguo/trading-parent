@@ -24,6 +24,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.time.LocalDate;
 import java.util.*;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
@@ -61,6 +63,8 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/list.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
+        modelMap.put("operatorTimeStart", LocalDate.now() + " 00:00:00");
+        modelMap.put("operatorTimeEnd", LocalDate.now() + " 23:59:59");
         return "comprehensiveFee/list";
     }
 

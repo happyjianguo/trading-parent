@@ -31,6 +31,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,8 @@ public class QueryFeeController {
      */
     @RequestMapping(value = "/list.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
+        modelMap.put("operatorTimeStart", LocalDate.now() + " 00:00:00");
+        modelMap.put("operatorTimeEnd", LocalDate.now() + " 23:59:59");
         return "queryFee/list";
     }
 
