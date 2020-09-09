@@ -43,7 +43,7 @@
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
                                 //value: dataItem.realName + '（' + dataItem.serialNumber + '）'
-                                value: dataItem.serialNumber + '|' + dataItem.realName
+                                value: dataItem.userName + '|' + dataItem.realName
                             }
                         );
                     })
