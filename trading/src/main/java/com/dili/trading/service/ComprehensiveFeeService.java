@@ -21,8 +21,8 @@ public interface ComprehensiveFeeService {
 
 	/**
 	 * 缴费，需要调用支付系统收钱，并且更改对应申请单的支付状态为已支付
-	 * @param id
-	 * @param password
+	 * @param id 检查收费单据ID
+	 * @param password 支付密码
 	 * @return
 	 */
 	BaseOutput pay(Long id, String password);

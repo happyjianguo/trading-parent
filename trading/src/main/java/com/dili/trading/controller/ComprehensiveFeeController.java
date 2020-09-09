@@ -71,7 +71,7 @@ public class ComprehensiveFeeController {
     /**
      * 分页查询
      *
-     * @param comprehensiveFee
+     * @param comprehensiveFee 参数obj
      * @return
      */
     @RequestMapping(value = "/listPage.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -91,7 +91,7 @@ public class ComprehensiveFeeController {
     /**
      * 根据参数查询数据
      *
-     * @param  comprehensiveFee
+     * @param  comprehensiveFee 参数obj
      * @return
      * @throws Exception
      */
@@ -127,7 +127,7 @@ public class ComprehensiveFeeController {
      * 跳转到检测收费输入密码页面
      *
      * @param  modelMap
-     * @param  id
+     * @param  id 检查收费单据ID
      * @return
      */
     @RequestMapping(value = "/verificationUsernamePassword.action", method = RequestMethod.GET)
@@ -142,8 +142,8 @@ public class ComprehensiveFeeController {
     /**
      * 检测收费缴费
      *
-     * @param  id
-     * @param  password
+     * @param  id 检查收费单据ID
+     * @param  password 密码
      * @return BaseOutput
      */
     @RequestMapping(value = "/pay.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -155,7 +155,7 @@ public class ComprehensiveFeeController {
     /**
      * 根据卡号获取账户余额
      *
-     * @param customerCardNo
+     * @param customerCardNo 客户卡号
      * @return
      */
     @RequestMapping(value = "/queryAccountBalance.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -167,7 +167,7 @@ public class ComprehensiveFeeController {
     /**
      * 新增comprehensiveFee
      *
-     * @param comprehensiveFee
+     * @param comprehensiveFee 参数OBJ
      * @return BaseOutput
      */
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -190,7 +190,7 @@ public class ComprehensiveFeeController {
      * 跳到查看页面
      *
      * @param modelMap
-     * @param comprehensiveFee
+     * @param comprehensiveFee 参数Obj
      * @return
      */
     @RequestMapping(value = "/view.html", method = {RequestMethod.GET, RequestMethod.POST})
@@ -235,8 +235,8 @@ public class ComprehensiveFeeController {
     /**
      * 对接计费规则
      *
-     * @param  customerId
-     * @param  type
+     * @param  customerId 客户ID
+     * @param  type 客户类型
      * @return
      */
     @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -253,7 +253,7 @@ public class ComprehensiveFeeController {
     /**
      * 撤销密码页面
      *
-     * @param id
+     * @param id 检查收费单据ID
      * @param modelMap
      * @return
      */
@@ -266,9 +266,9 @@ public class ComprehensiveFeeController {
     /**
      * 撤销
      *
-     * @param id
-     * @param userName
-     * @param operatorPassword
+     * @param id 检查收费ID
+     * @param userName 用户名称
+     * @param operatorPassword 操作人密码
      * @param modelMap
      * @return
      */
@@ -283,7 +283,7 @@ public class ComprehensiveFeeController {
     /**
      * 获取一个comprehensiveFee单
      *
-     * @param comprehensiveFee
+     * @param comprehensiveFee 参数Obj
      * @return BaseOutput
      */
     @RequestMapping(value = "/printOneById.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -342,7 +342,7 @@ public class ComprehensiveFeeController {
     /**
      * 校验comprehensiveFee
      *
-     * @param comprehensiveFee
+     * @param comprehensiveFee 参数Obj
      * @return
      */
     public String  checkUpDate(ComprehensiveFee comprehensiveFee){

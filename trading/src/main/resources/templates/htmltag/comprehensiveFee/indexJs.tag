@@ -1,7 +1,7 @@
 <script>
     /*********************变量定义区 begin*************/
-        //行索引计数器
-        //如 let itemIndex = 0;
+    //行索引计数器
+    // 如 let itemIndex = 0;
     let _grid = $('#grid');
     let _form = $('#_form');
     let _modal = $('#_modal');
