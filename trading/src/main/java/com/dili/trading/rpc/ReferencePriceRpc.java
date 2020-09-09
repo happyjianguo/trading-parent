@@ -21,10 +21,11 @@ public interface ReferencePriceRpc {
      * 获取参考价
      * @param goodsId
      * @param marketId
+     * @param tradeType
      * @return
      */
     @RequestMapping(value = "/api/refrencePrice/getReferencePriceByGoodsId", method = {RequestMethod.POST})
-    BaseOutput<Object> getReferencePriceByGoodsId(@RequestParam(value = "goodsId") Long goodsId,@RequestParam(value = "marketId") Long marketId);
+    BaseOutput<Object> getReferencePriceByGoodsId(@RequestParam(value = "goodsId") Long goodsId, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "tradeType") String tradeType);
 
 
 }
