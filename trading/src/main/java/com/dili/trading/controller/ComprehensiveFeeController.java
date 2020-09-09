@@ -276,6 +276,44 @@ public class ComprehensiveFeeController {
         return output;
 
     }
+    /**
+     * 获取一个comprehensiveFee单
+     *
+     * @param comprehensiveFee
+     * @return BaseOutput
+     */
+    @RequestMapping(value = "/printOneById.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput printOneById( ComprehensiveFee comprehensiveFee) throws Exception {
+        Map<Object, Object> map = new HashMap<>();
+        //设置单据状态提供者
+        map.put("orderStatus", getProvider("payStatusProvider", "orderStatus"));
+        comprehensiveFee.setMetadata(map);
+        BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
+        if (oneByID.isSuccess()) {
+            if (Objects.nonNull(oneByID.getData())) {
+                //翻译商品id
+                if (StringUtils.isNotBlank(oneByID.getData().getInspectionItem())) {
+                    List<String> ids = Arrays.asList(oneByID.getData().getInspectionItem().split(","));
+                    CategoryDTO categoryDTO = new CategoryDTO();
+
+                    categoryDTO.setIds(ids);
+                    List<CategoryDTO> list = categoryRpc.getTree(categoryDTO).getData();
+                    if (list != null && list.size() > 0) {
+                        StringBuffer name = new StringBuffer("");
+                        for (CategoryDTO cgdto : list) {
+                            name.append(",");
+                            name.append(cgdto.getName());
+                        }
+                        if (name.length() > 0) {
+                            oneByID.getData().setInspectionItem(name.substring(1));
+                        }
+                    }
+                }
+            }
+        }
+        return oneByID;
+    }
 
     /**
      * 获取provider 的JSONObject 对象

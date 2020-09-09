@@ -194,8 +194,46 @@
             bs4pop.alert('该单据当前状态不能进行补打操作！');
             return;
         }
-        callbackObj.printDirect(JSON.stringify(rows[0]),"CheckRechargeDocument");
+        //查询comprehensiveFee单信息
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: '/comprehensiveFee/printOneById.action',
+            data: {id: rows[0].id},
+            success: function (data) {
+                bui.loading.hide();
+                if (data.code == '200') {
+                    let comprehensiveFee= data.data;
+                    //查询余额
+                    $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        url: '/comprehensiveFee/queryAccountBalance.action',
+                        data: {customerCardNo: rows[0].customerCardNo},
+                        success: function (res) {
+                            bui.loading.hide();
+                            if (res.code == '200') {
+                                //调用c端打印
+                                comprehensiveFee.balance = res.data.accountFund.balance;
+                                callbackObj.printDirect(JSON.stringify(comprehensiveFee), "CheckRechargeDocument");
+                            }
+                        },
+                        error: function () {
+                            bui.loading.hide();
+                            bs4pop.alert("打印失败!", {type: 'error'});
+                        }
+                    });
+
+                }
+            },
+            error: function () {
+                bui.loading.hide();
+                bs4pop.alert("打印失败!", {type: 'error'});
+            }
+        });
+
     }
+
     /*
     * 调用撤销功能
     * */
