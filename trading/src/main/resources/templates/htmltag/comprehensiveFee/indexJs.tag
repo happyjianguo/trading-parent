@@ -1,7 +1,7 @@
 <script>
     /*********************变量定义区 begin*************/
-        //行索引计数器
-        //如 let itemIndex = 0;
+    //行索引计数器
+    // 如 let itemIndex = 0;
     let _grid = $('#grid');
     let _form = $('#_form');
     let _modal = $('#_modal');
@@ -52,9 +52,9 @@
     var operatorNameAutoCompleteOption = {
         serviceUrl: '/weighingBill/listOperatorByKeyword.action',
         paramName: 'keyword',
-        displayFieldName: 'id',
+        displayFieldName: 'realName',
         showNoSuggestionNotice: true,
-        width: 'flex',
+        //width: 'flex',
         noSuggestionNotice: '结算员不存在',
         transformResult: function (result) {
             if(result.success){
@@ -62,7 +62,8 @@
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
-                                value: dataItem.realName + '（' + dataItem.serialNumber + '）'
+                                //value: dataItem.realName + '（' + dataItem.serialNumber + '）'
+                                value: dataItem.userName + '|' + dataItem.realName
                             }
                         );
                     })
@@ -73,7 +74,7 @@
             }
         },
         selectFn: function (suggestion) {
-            $('#show_operator_name').val(suggestion.realName);
+            /*$('#show_operator_name').val(suggestion.realName);*/
         }
     };
 

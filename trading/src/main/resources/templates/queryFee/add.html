@@ -3,6 +3,7 @@
 <div class="container-fluid">
         <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
         <form id="saveForm" role="form" novalidate>
+            <input type="text" hidden="true"  id="customerType"  class="form-control" name="customerType"  maxlength="100">
             <div class="row row-cols-1">
                 <div class="form-group col">
                     <label for="">卡号</label>
@@ -47,6 +48,9 @@
 
 
     <script>
+        /**
+         * 点击刷卡获取客户信息
+         */
         $('#payByCard').on('click',function (e) {
             //let cardNum='888800039006';
             let cardNum;
@@ -65,6 +69,7 @@
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
+                        $('#customerType').val(res.data[0].customerMarket.type);
                         $('#customerCardNo').val(cardNum);
                         $('#customerCode').val(res.data[0].code);
                         $('#customerId').val(res.data[0].id);
@@ -91,31 +96,9 @@
             });
         });
 
-        var customerNamesAutoCompleteOption = {
-            width: '100%',
-            language: 'zh-CN',
-            maximumSelectionLength: 10,
-            ajax: {
-                type:'post',
-                url: '/api/customCategory/getTree',
-                data: function (params) {
-                    return {
-                        Keyword: params.term,
-                    }
-                },
-                processResults: function (data) {
-                    if(data.length){
-                        return {
-                            results: $.map(data, function (item) {
-                                item.text = item.id + ' | ' + item.name ;
-                                return item;
-                            })
-                        };
-                    }
-                }
-            }
-        }
-
+        /**
+         * 保存数据信息
+         */
         function saveOrUpdateHandler() {
             //固定金额校验
             var num = $('#chargeAmountView').val();

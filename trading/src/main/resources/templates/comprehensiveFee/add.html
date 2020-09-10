@@ -3,6 +3,7 @@
 <div class="container-fluid">
         <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
         <form id="saveForm" role="form" novalidate>
+            <input type="text" hidden="true"  id="customerType"  class="form-control" name="customerType"  maxlength="100">
             <div class="row row-cols-1">
                 <div class="form-group col">
                     <label for="">卡号</label>
@@ -99,6 +100,7 @@
             }
         }
 
+        //商品选择监听事件
         $('#inspectionItem').on('change',function (data) {
             var items=$('#inspectionItem').val();
             var chargeAmount=fee*(items.length);
@@ -107,6 +109,7 @@
             $('#chargeAmount').val(chargeAmount*100);
         });
 
+        //刷卡监听
         $('#payByCard').on('click',function (e) {
 
             //let cardNum='888800039006';
@@ -138,6 +141,7 @@
                         //刷卡成功后才可以输入商品
                         $('#inspectionItem').attr('disabled',false);
                         //赋值
+                        $('#customerType').val(res.data[0].customerMarket.type);
                         $('#customerCardNo').val(cardNum);
                         $('#customerCode').val(res.data[0].code);
                         $('#customerId').val(res.data[0].id);
@@ -180,6 +184,9 @@
             });
         });
 
+        /**
+         * 保存事件
+         * */
         function saveOrUpdateHandler() {
             // 提交保存
             if (!$('#saveForm').validate().form()) {

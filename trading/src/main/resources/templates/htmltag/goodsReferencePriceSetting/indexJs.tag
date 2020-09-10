@@ -1,7 +1,7 @@
 <script>
     /*********************变量定义区 begin*************/
-        //行索引计数器
-        //如 let itemIndex = 0;
+    //行索引计数器
+    //如 let itemIndex = 0;
     let _grid = $('#grid');
     let _form = $('#_form');
     var dia;
@@ -9,8 +9,10 @@
 
 
     /******************************驱动执行区 begin***************************/
+    /**
+     * 页面初始化加载树形结构数据
+     */
     $(function(){
-
         var requestUrl = "${ctxPath}/goodsReferencePriceSetting/getAllGoods.action";
 
         var setting  = {
@@ -64,6 +66,9 @@
     /******************************驱动执行区 end****************************/
 
     /*****************************************函数区 begin************************************/
+    /**
+     * 点击树形节点加载右侧列表数据
+     */
     function zTreeOnClick(event, menuTree, treeNode)
     {
         document.getElementById("tableDiv").style.display = "block";
