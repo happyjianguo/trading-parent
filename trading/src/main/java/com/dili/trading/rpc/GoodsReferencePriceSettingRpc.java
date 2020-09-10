@@ -11,6 +11,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
+/**
+ * Description: 品类参考价RPC
+ *
+ * @date:    2020/8/21
+ * @author:   Seabert.Zhan
+ */
 @FeignClient(name = "order-service", contextId = "goodsReferencePriceSettingRpc", url = "${orderService.url:}")
 public interface GoodsReferencePriceSettingRpc {
     /**
