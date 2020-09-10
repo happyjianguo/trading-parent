@@ -126,11 +126,6 @@
 			<artifactId>logger-sdk</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		<!-- gson工具类 -->
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-		</dependency>
 		<!-- spring boot 基类 -->
 		<dependency>
 			<groupId>com.dili</groupId>
