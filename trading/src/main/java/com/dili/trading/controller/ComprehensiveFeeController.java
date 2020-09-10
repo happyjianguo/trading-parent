@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.assets.sdk.rpc.CategoryRpc;
 import com.dili.orders.domain.ComprehensiveFee;
+import com.dili.orders.domain.ComprehensiveFeeType;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
@@ -107,7 +108,7 @@ public class ComprehensiveFeeController {
                 comprehensiveFee.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
             }
         }
-        comprehensiveFee.setOrderType(1);
+        comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(comprehensiveFee, output.getData())).toString();
     }
@@ -182,7 +183,7 @@ public class ComprehensiveFeeController {
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         comprehensiveFee.setMarketId(userTicket.getFirmId());
-        comprehensiveFee.setOrderType(1);
+        comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
         return comprehensiveFeeService.insertComprehensiveFee(comprehensiveFee);
     }
 
