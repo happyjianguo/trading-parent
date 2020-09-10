@@ -92,4 +92,10 @@ public interface ComprehensiveFeeRpc {
     @RequestMapping(value = "/api/comprehensiveFee/revocator")
     BaseOutput<Object> revocator(@RequestParam Long id,@RequestParam String userName,@RequestParam Long operatorId, @RequestParam String operatorPassword, @RequestParam String operatorName);
 
+    /**
+     * 获取费用信息
+     * @return
+     */
+    @RequestMapping(value = "/api/comprehensiveFee/scheduleUpdate", method = {RequestMethod.POST})
+    BaseOutput scheduleUpdate();
 }
