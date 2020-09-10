@@ -84,7 +84,7 @@ public class GoodsReferencePriceSettingController {
             List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, categoryDTOList.getData());
             return new Gson().toJson(list);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return this.index();
         }
     }
@@ -169,7 +169,7 @@ public class GoodsReferencePriceSettingController {
             List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, finalSettings);
             return new Gson().toJson(list);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return this.index();
         }
     }
@@ -210,7 +210,7 @@ public class GoodsReferencePriceSettingController {
             modelMap.addAttribute("model", list.get(0));
             return "goodsReferencePriceSetting/add";
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return this.index();
         }
     }
@@ -301,7 +301,7 @@ public class GoodsReferencePriceSettingController {
             List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, finalSettings);
             return new Gson().toJson(list);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return this.index();
         }
     }
