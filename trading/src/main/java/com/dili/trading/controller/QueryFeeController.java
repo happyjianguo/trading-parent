@@ -176,7 +176,7 @@ public class QueryFeeController {
         if(StringUtils.isNotBlank(tips)){
             BaseOutput<ComprehensiveFee> result = new BaseOutput<ComprehensiveFee>();
             result.setCode("500");
-            result.setResult(tips);
+            result.setMessage(tips);
             return result;
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
