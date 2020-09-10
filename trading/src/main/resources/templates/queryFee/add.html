@@ -48,6 +48,9 @@
 
 
     <script>
+        /**
+         * 点击刷卡获取客户信息
+         */
         $('#payByCard').on('click',function (e) {
             //let cardNum='888800039006';
             let cardNum;
@@ -93,31 +96,9 @@
             });
         });
 
-        var customerNamesAutoCompleteOption = {
-            width: '100%',
-            language: 'zh-CN',
-            maximumSelectionLength: 10,
-            ajax: {
-                type:'post',
-                url: '/api/customCategory/getTree',
-                data: function (params) {
-                    return {
-                        Keyword: params.term,
-                    }
-                },
-                processResults: function (data) {
-                    if(data.length){
-                        return {
-                            results: $.map(data, function (item) {
-                                item.text = item.id + ' | ' + item.name ;
-                                return item;
-                            })
-                        };
-                    }
-                }
-            }
-        }
-
+        /**
+         * 保存数据信息
+         */
         function saveOrUpdateHandler() {
             //固定金额校验
             var num = $('#chargeAmountView').val();
