@@ -2,6 +2,7 @@ package com.dili.trading.controller;
 
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.domain.ComprehensiveFee;
+import com.dili.orders.domain.ComprehensiveFeeType;
 import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.ss.domain.BaseOutput;
@@ -107,7 +108,7 @@ public class QueryFeeController {
                 comprehensiveFee.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
             }
         }
-        comprehensiveFee.setOrderType(2);
+        comprehensiveFee.setOrderType(ComprehensiveFeeType.QUERY_CHARGE.getValue());
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(comprehensiveFee, output.getData())).toString();
     }
@@ -180,7 +181,7 @@ public class QueryFeeController {
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         comprehensiveFee.setMarketId(userTicket.getFirmId());
-        comprehensiveFee.setOrderType(2);
+        comprehensiveFee.setOrderType(ComprehensiveFeeType.QUERY_CHARGE.getValue());
         return comprehensiveFeeService.insertComprehensiveFee(comprehensiveFee);
     }
 

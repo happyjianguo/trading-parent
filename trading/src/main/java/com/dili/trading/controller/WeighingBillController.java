@@ -238,7 +238,7 @@ public class WeighingBillController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping("/autoClose.action")
+	@RequestMapping("/autoClose.api")
 	public BaseOutput<Object> autoClose() {
 		return this.weighingBillRpc.autoClose();
 	}

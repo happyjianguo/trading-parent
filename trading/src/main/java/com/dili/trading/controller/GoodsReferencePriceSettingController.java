@@ -1,5 +1,6 @@
 package com.dili.trading.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.assets.sdk.rpc.AssetsRpc;
 import com.dili.orders.constants.TradingConstans;
@@ -21,8 +22,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.gson.Gson;
 
 import java.util.*;
 
@@ -82,7 +81,7 @@ public class GoodsReferencePriceSettingController {
 
         try {
             List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, categoryDTOList.getData());
-            return new Gson().toJson(list);
+            return JSON.toJSON(list).toString();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return this.index();
@@ -167,7 +166,7 @@ public class GoodsReferencePriceSettingController {
             }
 
             List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, finalSettings);
-            return new Gson().toJson(list);
+            return JSON.toJSON(list).toString();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return this.index();
@@ -299,7 +298,7 @@ public class GoodsReferencePriceSettingController {
             }
 
             List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, finalSettings);
-            return new Gson().toJson(list);
+            return JSON.toJSON(list).toString();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return this.index();
