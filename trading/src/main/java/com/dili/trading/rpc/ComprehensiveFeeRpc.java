@@ -13,9 +13,9 @@ import java.util.List;
  *
  *@author  Henry.Huang
  *@date  2020/08/20
- *
+ *url="${orderService.url:}"
  */
-@FeignClient(name = "order-service", contextId = "comprehensiveFeeRpc",url="${orderService.url:}")
+@FeignClient(name = "order-service", contextId = "comprehensiveFeeRpc",url="localhost:8185")
 public interface ComprehensiveFeeRpc {
 
 
@@ -86,9 +86,10 @@ public interface ComprehensiveFeeRpc {
      * @param userName
      * @param operatorId
      * @param operatorPassword
+     * @param operatorName
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/revocator")
-    BaseOutput<Object> revocator(@RequestParam Long id,@RequestParam String userName,@RequestParam Long operatorId, @RequestParam String operatorPassword);
+    BaseOutput<Object> revocator(@RequestParam Long id,@RequestParam String userName,@RequestParam Long operatorId, @RequestParam String operatorPassword, @RequestParam String operatorName);
 
 }
