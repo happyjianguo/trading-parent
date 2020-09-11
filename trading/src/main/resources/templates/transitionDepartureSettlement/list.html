@@ -5,7 +5,7 @@
     <form class="form collapse show" id="queryForm" role="form" >
         <div class="row  row-cols-6">
             <div class="form-group col">
-                <label for="">类型</label>
+                <label for="">业务类型</label>
                 <select id="bizType" name="bizType" class="form-control">
                     <option value="">--全部--</option>
                     <option value="1">转场</option>
@@ -19,6 +19,11 @@
                     <option value="2">已结算</option>
                     <option value="3">已撤销</option>
                 </select>
+            </div>
+            <div class="form-group col">
+                <label for="">交易类型</label>
+                <select id="transTypeId" name="transTypeId" class="form-control"></select>
+                <#bselect2 _id="transTypeId" _mode="remote"  _provider="tradeTypeProvider"/>
             </div>
             <div class="form-group col">
                 <label for="">车型</label>
@@ -125,7 +130,7 @@
                     <th data-field="customerCardNo" data-align="center" data-sortable="true">
                        卡号
                     </th>
-                    <th data-field="transTypeId" data-align="center" data-provider="dataDictionaryValueProvider"  data-query-params='{dd_code:"trade_type"}' data-sortable="true">
+                    <th data-field="transTypeId" data-align="center" data-provider="tradeTypeProvider"  data-sortable="true">
                         交易类型
                     </th>
                     <th data-field="categoryId" data-align="center" data-provider="categoryProvider"  data-sortable="true" data-sort-name="category_id">

@@ -14,7 +14,12 @@
                 </select>
             </div>
             <div class="form-group col">
-                <label for="">类型</label>
+                <label for="">交易类型</label>
+                <select id="transTypeId" name="transTypeId" class="form-control"></select>
+                <#bselect2 _id="transTypeId" _mode="remote"  _provider="tradeTypeProvider"/>
+            </div>
+            <div class="form-group col">
+                <label for="">业务类型</label>
                 <select id="bizType" name="bizType" class="form-control">
                     <option value="">--全部--</option>
                     <option value="1">转场</option>
@@ -116,7 +121,7 @@
                     <th data-field="customerCardNo" data-align="center" data-sortable="true">
                        卡号
                     </th>
-                    <th data-field="transTypeId" data-align="center" data-provider="dataDictionaryValueProvider"  data-sortable="true" data-sort-name="trans_type_id" data-query-params='{dd_code:"trade_type"}'>
+                    <th data-field="transTypeId" data-align="center" data-provider="tradeTypeProvider"  data-sortable="true" data-sort-name="trans_type_id">
                         交易类型
                     </th>
                     <th data-field="categoryId" data-align="center" data-provider="categoryProvider"  data-sortable="true" data-sort-name="category_id">
@@ -129,7 +134,7 @@
                         车牌号
                     </th>
                     <th data-field="bizType" data-align="center" data-provider="bizTypeProvider" data-sortable="true" data-sort-name="biz_type">
-                        类型
+                        业务类型
                     </th>
                     <th data-field="approvalState" data-align="center" data-provider="applyProvider" data-sortable="true" data-sort-name="approval_state">
                         审批状态

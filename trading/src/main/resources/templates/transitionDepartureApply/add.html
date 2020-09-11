@@ -55,7 +55,7 @@
             <div class="form-group col">
                 <label for="">交易类型<i class="red">*</i></label>
                 <select id="transTypeId" name="transTypeId" class="form-control" required focus-shift></select>
-                <#bselect2 _id="transTypeId" _mode="remote"  _provider="dataDictionaryValueProvider"  _queryParams='{dd_code:"trade_type",required:true}'/>
+                <#bselect2 _id="transTypeId" _mode="remote"  _provider="tradeTypeProvider"/>
             </div>
             <div class="form-group col">
                 <label for="">商品名称<i class="red">*</i></label>

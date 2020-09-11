@@ -46,7 +46,7 @@ public class TradeTypeProvider extends BatchDisplayTextProviderSupport {
     protected BatchProviderMeta getBatchProviderMeta(Map metaMap) {
         BatchProviderMeta batchProviderMeta = DTOUtils.newInstance(BatchProviderMeta.class);
         // 设置主DTO和关联DTO需要转义的字段名
-        batchProviderMeta.setEscapeFiled("tradeType");
+        batchProviderMeta.setEscapeFiled("name");
         // 忽略大小写关联
         batchProviderMeta.setIgnoreCaseToRef(true);
         // 关联(数据库)表的主键的字段名，默认取id
