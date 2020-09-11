@@ -19,6 +19,8 @@ import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -33,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.*;
 
 /**
  * 检测收费controller
@@ -55,6 +58,9 @@ public class ComprehensiveFeeController {
 
     @Autowired
     CategoryRpc categoryRpc;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComprehensiveFeeController.class);
+
 
     /**
      * 跳转到列表页面
@@ -238,6 +244,26 @@ public class ComprehensiveFeeController {
     }
 
     /**
+     * 综合收费将前一天未结算单据关闭定时任务执行接口
+     *
+     * @return
+     */
+    @RequestMapping(value = "/scheduleUpdate.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput scheduleUpdate() {
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 3, 120L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1));
+        // 任务1
+        pool.execute(() -> {
+            try {
+                comprehensiveFeeRpc.scheduleUpdate();
+            } catch (Exception e) {
+                LOGGER.error("综合收费将前一天未结算单据关闭定时任务:" + e.getMessage());
+            }
+        });
+        return BaseOutput.success("综合收费将前一天未结算单据关闭定时任务执行成功");
+    }
+
+    /**
      * 撤销密码页面
      *
      * @param id 检查收费单据ID
@@ -268,6 +294,7 @@ public class ComprehensiveFeeController {
         return output;
 
     }
+
     /**
      * 获取一个comprehensiveFee单
      *
