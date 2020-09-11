@@ -206,24 +206,10 @@ public class ComprehensiveFeeController {
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
         if (oneByID.isSuccess()) {
             if (Objects.nonNull(oneByID.getData())) {
-                //翻译商品id
-                if(StringUtils.isNotBlank(oneByID.getData().getInspectionItem())){
-                    List<String> ids= Arrays.asList(oneByID.getData().getInspectionItem().split(","));
-                    CategoryDTO categoryDTO = new CategoryDTO();
+                //根据商品ID获取商品名称
+                String inspectionItem = oneByID.getData().getInspectionItem();
+                oneByID.getData().setInspectionItem(getItemNameByItemId(inspectionItem));
 
-                    categoryDTO.setIds(ids);
-                    List<CategoryDTO> list = categoryRpc.getTree(categoryDTO).getData();
-                    if(list!=null&&list.size()>0){
-                        StringBuffer name=new StringBuffer("");
-                        for (CategoryDTO cgdto:list) {
-                            name.append(",");
-                            name.append(cgdto.getName());
-                        }
-                        if(name.length()>0){
-                            oneByID.getData().setInspectionItem(name.substring(1));
-                        }
-                    }
-                }
                 modelMap.put("comprehensiveFee", ValueProviderUtils.buildDataByProvider(comprehensiveFee, Lists.newArrayList(oneByID.getData())).get(0));
                 //返回小数缴费金额
                 Double chargeAmountView=((ComprehensiveFee)oneByID.getData()).getChargeAmount().doubleValue()/100;
@@ -298,24 +284,9 @@ public class ComprehensiveFeeController {
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
         if (oneByID.isSuccess()) {
             if (Objects.nonNull(oneByID.getData())) {
-                //翻译商品id
-                if (StringUtils.isNotBlank(oneByID.getData().getInspectionItem())) {
-                    List<String> ids = Arrays.asList(oneByID.getData().getInspectionItem().split(","));
-                    CategoryDTO categoryDTO = new CategoryDTO();
-
-                    categoryDTO.setIds(ids);
-                    List<CategoryDTO> list = categoryRpc.getTree(categoryDTO).getData();
-                    if (list != null && list.size() > 0) {
-                        StringBuffer name = new StringBuffer("");
-                        for (CategoryDTO cgdto : list) {
-                            name.append(",");
-                            name.append(cgdto.getName());
-                        }
-                        if (name.length() > 0) {
-                            oneByID.getData().setInspectionItem(name.substring(1));
-                        }
-                    }
-                }
+                //根据商品ID获取商品名称
+                String inspectionItem = oneByID.getData().getInspectionItem();
+                oneByID.getData().setInspectionItem(getItemNameByItemId(inspectionItem));
             }
         }
         return oneByID;
@@ -363,4 +334,31 @@ public class ComprehensiveFeeController {
         return  "";
     }
 
+    /**
+     * 根据商品ID获取商品名称
+     * @param inspectionItem
+     * @return
+     */
+    public String getItemNameByItemId(String inspectionItem) {
+        String returnName = "";
+        if (StringUtils.isNotBlank(inspectionItem)) {
+            List<String> ids = Arrays.asList(inspectionItem.split(","));
+            CategoryDTO categoryDTO = new CategoryDTO();
+
+            categoryDTO.setIds(ids);
+            List<CategoryDTO> list = categoryRpc.getTree(categoryDTO).getData();
+            if (list != null && list.size() > 0) {
+                StringBuffer name=new StringBuffer("");
+                for (CategoryDTO cgdto : list) {
+                    name.append(",");
+                    name.append(cgdto.getName());
+                }
+
+                if (name.length() > 0) {
+                    returnName = name.substring(1);
+                }
+            }
+        }
+        return returnName;
+    }
 }
