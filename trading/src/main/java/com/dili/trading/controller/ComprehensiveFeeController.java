@@ -85,7 +85,7 @@ public class ComprehensiveFeeController {
     @RequestMapping(value = "/listPage.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String listPage(ComprehensiveFee comprehensiveFee) {
-        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
+        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DEPARTMENT.getCode());
         if (CollectionUtils.isNotEmpty(ranges)) {
             String value = (String) ranges.get(0).get("value");
             //如果value为0，则为个人
@@ -106,15 +106,16 @@ public class ComprehensiveFeeController {
     @RequestMapping(value = "/listByQueryParams.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String listByQueryParams(ComprehensiveFee comprehensiveFee) throws Exception {
-        //拿到数据权限，个人或全部
-        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
-        if (CollectionUtils.isNotEmpty(ranges)) {
-            String value = (String) ranges.get(0).get("value");
-            //如果value为0，则为个人
-            if ("0".equals(value)) {
-                comprehensiveFee.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
-            }
+        //拿到部门数据权限
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DEPARTMENT.getCode());
+        if (CollectionUtils.isEmpty(ranges)) {
+            return new EasyuiPageOutput(0, new ArrayList<>(0)).toString();
         }
+        List<Long> projectIds = new ArrayList<>();
+        ranges.forEach(m -> projectIds.add(Long.valueOf(m.get("value").toString())));
+        comprehensiveFee.setDepartments(projectIds);
+        comprehensiveFee.setMarketId(userTicket.getFirmId());
         comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(comprehensiveFee, output.getData())).toString();
