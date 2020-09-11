@@ -25,12 +25,13 @@ public class RefrencePriceController {
      * 获取参考价
      * @param goodsId
      * @param marketId
+     * @param tradeType
      * @return
      */
     @RequestMapping(value = "/getReferencePriceByGoodsId.action", method = {RequestMethod.POST})
     @ResponseBody
-    public BaseOutput<Object> getReferencePriceByGoodsId(Long goodsId,Long marketId) {
-        return referencePriceRpc.getReferencePriceByGoodsId(goodsId,marketId);
+    public BaseOutput<Object> getReferencePriceByGoodsId(Long goodsId, Long marketId, String tradeType) {
+        return referencePriceRpc.getReferencePriceByGoodsId(goodsId, marketId, tradeType);
     }
 
 

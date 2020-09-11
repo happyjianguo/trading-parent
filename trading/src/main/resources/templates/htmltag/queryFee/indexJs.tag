@@ -1,7 +1,7 @@
 <script>
-    // 客户名称
+    // 客户名称(客户编号/客户名称/联系方式，联想查询)
     var customerNameAutoCompleteOption = {
-        serviceUrl: '/queryFee/listCustomerByKeyword.action',
+        serviceUrl: '/weighingBill/listCustomerByKeyword.action',
         paramName: 'keyword',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
@@ -29,11 +29,11 @@
         }
     };
 
-    // 结算员名称
+    // 结算员名称(用户工号（用户名），及姓名查询)
     var operatorNameAutoCompleteOption = {
-        serviceUrl: '/queryFee/listOperatorByKeyword.action',
+        serviceUrl: '/weighingBill/listOperatorByKeyword.action',
         paramName: 'keyword',
-        displayFieldName: 'id',
+        displayFieldName: 'realName',
         showNoSuggestionNotice: true,
         noSuggestionNotice: '结算员不存在',
         transformResult: function (result) {
@@ -42,7 +42,8 @@
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
-                                value: dataItem.realName + '（' + dataItem.serialNumber + '）'
+                                //value: dataItem.realName + '（' + dataItem.serialNumber + '）'
+                                value: dataItem.userName + '|' + dataItem.realName
                             }
                         );
                     })
@@ -53,11 +54,11 @@
             }
         },
         selectFn: function (suggestion) {
-            $('#show_operator_name').val(suggestion.realName);
+            /*$('#show_operator_name').val(suggestion.realName);*/
         }
     };
 
-    // 卡号
+    // 卡号(12位卡号后，精确匹配)
     var customerCardQueryAutoCompleteOption = {
         serviceUrl: '/weighingBill/listCustomerByCardNo.action',
         paramName: 'cardNo',
@@ -109,6 +110,9 @@
 
 
     /******************************驱动执行区 begin***************************/
+    /**
+     * 页面初始化加载
+     */
     $(function () {
         $(window).resize(function () {
             _grid.bootstrapTable('resetView')
@@ -162,6 +166,9 @@
 
     }
 
+    /**
+     * 打开确认支付页面
+     */
     function verificationUsernamePassword(id) {
         dia = bs4pop.dialog({
             title: '支付确认',//对话框title

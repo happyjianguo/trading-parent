@@ -2,7 +2,9 @@
 
 <div class="container-fluid">
 	<form id="saveForm" role="form" novalidate>
-		<input type="hidden" name="id" value="${model.id!}"> <input type="hidden" name="taskId" value="${taskId!}"> <input type="hidden" name="isNeedClaim" value="${isNeedClaim!}">
+		<input type="hidden" name="id" value="${model.id!}"> 
+		<input type="hidden" name="taskId" value="${taskId!}"> 
+		<input type="hidden" name="isNeedClaim" value="${isNeedClaim!}">
 		<div class="row row-cols-2">
 			<div class="form-group col">
 				<label for="">卖方名称</label>
@@ -62,7 +64,6 @@
 
 <script>
 	function approveAcceptHandler() {
-		debugger;
 		// 提交保存
 		if (!$('#saveForm').validate().form()) {
 			return false;

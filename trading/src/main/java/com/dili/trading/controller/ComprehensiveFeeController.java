@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.assets.sdk.rpc.CategoryRpc;
 import com.dili.orders.domain.ComprehensiveFee;
+import com.dili.orders.domain.ComprehensiveFeeType;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
@@ -24,6 +25,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.time.LocalDate;
 import java.util.*;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
@@ -61,13 +64,15 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/list.html", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
+        modelMap.put("operatorTimeStart", LocalDate.now() + " 00:00:00");
+        modelMap.put("operatorTimeEnd", LocalDate.now() + " 23:59:59");
         return "comprehensiveFee/list";
     }
 
     /**
      * 分页查询
      *
-     * @param comprehensiveFee
+     * @param comprehensiveFee 参数obj
      * @return
      */
     @RequestMapping(value = "/listPage.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -87,7 +92,7 @@ public class ComprehensiveFeeController {
     /**
      * 根据参数查询数据
      *
-     * @param  comprehensiveFee
+     * @param  comprehensiveFee 参数obj
      * @return
      * @throws Exception
      */
@@ -103,7 +108,7 @@ public class ComprehensiveFeeController {
                 comprehensiveFee.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
             }
         }
-        comprehensiveFee.setOrderType(1);
+        comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(comprehensiveFee, output.getData())).toString();
     }
@@ -123,7 +128,7 @@ public class ComprehensiveFeeController {
      * 跳转到检测收费输入密码页面
      *
      * @param  modelMap
-     * @param  id
+     * @param  id 检查收费单据ID
      * @return
      */
     @RequestMapping(value = "/verificationUsernamePassword.action", method = RequestMethod.GET)
@@ -138,8 +143,8 @@ public class ComprehensiveFeeController {
     /**
      * 检测收费缴费
      *
-     * @param  id
-     * @param  password
+     * @param  id 检查收费单据ID
+     * @param  password 密码
      * @return BaseOutput
      */
     @RequestMapping(value = "/pay.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -151,7 +156,7 @@ public class ComprehensiveFeeController {
     /**
      * 根据卡号获取账户余额
      *
-     * @param customerCardNo
+     * @param customerCardNo 客户卡号
      * @return
      */
     @RequestMapping(value = "/queryAccountBalance.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -163,7 +168,7 @@ public class ComprehensiveFeeController {
     /**
      * 新增comprehensiveFee
      *
-     * @param comprehensiveFee
+     * @param comprehensiveFee 参数OBJ
      * @return BaseOutput
      */
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -178,7 +183,7 @@ public class ComprehensiveFeeController {
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         comprehensiveFee.setMarketId(userTicket.getFirmId());
-        comprehensiveFee.setOrderType(1);
+        comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
         return comprehensiveFeeService.insertComprehensiveFee(comprehensiveFee);
     }
 
@@ -186,7 +191,7 @@ public class ComprehensiveFeeController {
      * 跳到查看页面
      *
      * @param modelMap
-     * @param comprehensiveFee
+     * @param comprehensiveFee 参数Obj
      * @return
      */
     @RequestMapping(value = "/view.html", method = {RequestMethod.GET, RequestMethod.POST})
@@ -231,8 +236,8 @@ public class ComprehensiveFeeController {
     /**
      * 对接计费规则
      *
-     * @param  customerId
-     * @param  type
+     * @param  customerId 客户ID
+     * @param  type 客户类型
      * @return
      */
     @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
@@ -249,7 +254,7 @@ public class ComprehensiveFeeController {
     /**
      * 撤销密码页面
      *
-     * @param id
+     * @param id 检查收费单据ID
      * @param modelMap
      * @return
      */
@@ -262,19 +267,58 @@ public class ComprehensiveFeeController {
     /**
      * 撤销
      *
-     * @param id
-     * @param userName
-     * @param operatorPassword
+     * @param id                 检查收费ID
+     * @param userName           用户真实名字
+     * @param operatorPassword   操作人密码
      * @param modelMap
+     * @param operatorName       操作员登录名
      * @return
      */
     @ResponseBody
     @PostMapping("/revocator.action")
-    public BaseOutput<Object> revocator(Long id,@RequestParam(value = "userName")String userName,@RequestParam(value="password") String operatorPassword, ModelMap modelMap) {
+    public BaseOutput<Object> revocator(Long id,@RequestParam(value = "userName")String userName,@RequestParam(value="password") String operatorPassword, ModelMap modelMap, String operatorName) {
         UserTicket user = SessionContext.getSessionContext().getUserTicket();
-        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getRealName(),user.getId(), operatorPassword);
+        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getRealName(),user.getId(), operatorPassword, user.getUserName());
         return output;
 
+    }
+    /**
+     * 获取一个comprehensiveFee单
+     *
+     * @param comprehensiveFee 参数Obj
+     * @return BaseOutput
+     */
+    @RequestMapping(value = "/printOneById.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput printOneById( ComprehensiveFee comprehensiveFee) throws Exception {
+        Map<Object, Object> map = new HashMap<>();
+        //设置单据状态提供者
+        map.put("orderStatus", getProvider("payStatusProvider", "orderStatus"));
+        comprehensiveFee.setMetadata(map);
+        BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
+        if (oneByID.isSuccess()) {
+            if (Objects.nonNull(oneByID.getData())) {
+                //翻译商品id
+                if (StringUtils.isNotBlank(oneByID.getData().getInspectionItem())) {
+                    List<String> ids = Arrays.asList(oneByID.getData().getInspectionItem().split(","));
+                    CategoryDTO categoryDTO = new CategoryDTO();
+
+                    categoryDTO.setIds(ids);
+                    List<CategoryDTO> list = categoryRpc.getTree(categoryDTO).getData();
+                    if (list != null && list.size() > 0) {
+                        StringBuffer name = new StringBuffer("");
+                        for (CategoryDTO cgdto : list) {
+                            name.append(",");
+                            name.append(cgdto.getName());
+                        }
+                        if (name.length() > 0) {
+                            oneByID.getData().setInspectionItem(name.substring(1));
+                        }
+                    }
+                }
+            }
+        }
+        return oneByID;
     }
 
     /**
@@ -300,7 +344,7 @@ public class ComprehensiveFeeController {
     /**
      * 校验comprehensiveFee
      *
-     * @param comprehensiveFee
+     * @param comprehensiveFee 参数Obj
      * @return
      */
     public String  checkUpDate(ComprehensiveFee comprehensiveFee){
