@@ -170,11 +170,18 @@ function doPrintHandler(){
     };
 
     function swipeCard(){
-            let cardNo=callbackObj.readCardNumber();
+ 		let cardNum;
+        let json = JSON.parse(callbackObj.readCardNumber());
+         if (json.code == 0) {
+            cardNum = json.data;
+        } else {
+            bs4pop.alert(json.message, {type: "error"});
+            return false;
+        }
             if (cardNo!=-1) {
                 $.ajax({
                     type:'GET',
-                    url:'/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNo,
+                    url:'${contextPath!}/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
                     dataType:'json',
                     success:function(result) {
                         if (result.success) {
