@@ -208,6 +208,7 @@ public class ComprehensiveFeeController {
         Map<Object, Object> map = new HashMap<>();
         //设置单据状态提供者
         map.put("orderStatus", getProvider("payStatusProvider", "orderStatus"));
+        map.put("chargeAmount", getProvider("moneyProvider", "chargeAmount"));
         comprehensiveFee.setMetadata(map);
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
         if (oneByID.isSuccess()) {
@@ -215,11 +216,7 @@ public class ComprehensiveFeeController {
                 //根据商品ID获取商品名称
                 String inspectionItem = oneByID.getData().getInspectionItem();
                 oneByID.getData().setInspectionItem(getItemNameByItemId(inspectionItem));
-
                 modelMap.put("comprehensiveFee", ValueProviderUtils.buildDataByProvider(comprehensiveFee, Lists.newArrayList(oneByID.getData())).get(0));
-                //返回小数缴费金额
-                Double chargeAmountView=((ComprehensiveFee)oneByID.getData()).getChargeAmount().doubleValue()/100;
-                modelMap.put("chargeAmountView", String.format("%.2f",chargeAmountView));
             }
         }
         return "comprehensiveFee/view";
