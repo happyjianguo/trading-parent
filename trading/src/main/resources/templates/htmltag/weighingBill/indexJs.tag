@@ -245,7 +245,7 @@ function doPrintHandler(){
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
-                                value: dataItem.serialNumber + '|' + dataItem.realName
+                                value: dataItem.userName + '|' + dataItem.realName
                             }
                         );
                     })

@@ -43,7 +43,6 @@
 				<div class="input-group">
 					<#bautoCompleteProvider _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="realName" _displayDomainName="realName" _placeholder=""
 						_optionVariable="operatorNameAutoCompleteOption" />
-					<!--<input type="text" class="form-control" id="show_operator_name" readonly/>-->
 				</div>
 			</div>
 			<div class="form-group col-auto" style="width: 350px">
@@ -174,7 +173,7 @@
 						<th data-field="tradeType" data-align="center" data-sortable="true" data-provider="tradeTypeProvider">交易类型</th>
 						<th data-field="plateNumber" data-align="center" data-sortable="true">车牌号</th>
 						<th data-field="statement.state" data-align="center" data-sortable="true" data-provider="weighingStatementStateProvider">单据状态</th>
-						<th data-field="operationRecord.operatorId" data-align="center" data-sortable="true">结算员工号</th>
+						<th data-field="operationRecord.operatorUserName" data-align="center" data-sortable="true" data-provider="userNameProvider">结算员工号</th>
 						<th data-field="operationRecord.operatorName" data-align="center" data-sortable="true">结算员名称</th>
 						<th data-field="operationRecord.operationTime" data-align="center" data-sortable="true" data-provider="datetimeProvider">结算时间</th>
 					</tr>

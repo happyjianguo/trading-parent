@@ -28,6 +28,7 @@ import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
+import com.dili.orders.domain.MeasureType;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.AccountPasswordValidateDto;
@@ -261,6 +262,11 @@ public class WeighingBillController {
 			query.setStatementStates(Arrays.asList(WeighingStatementState.PAID.getValue()));
 		}
 		PageOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listPage(query);
+		output.getData().forEach(wb -> {
+			if (wb.getMeasureType().equals(MeasureType.WEIGHT.getValue())) {
+				wb.setUnitPrice(wb.getUnitPrice() * 2);
+			}
+		});
 
 		Map<Object, Object> metadata = new HashMap<Object, Object>();
 		metadata.put("roughWeight", "weightProvider");
