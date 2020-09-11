@@ -43,7 +43,7 @@ public class UserProvider extends BatchDisplayTextProviderSupport {
         userQuery.setKeyword(obj.toString());
         List<User> list = userRpc.listByExample(userQuery).getData();
         List<ValuePair<?>> resultList = list.stream().map(f -> {
-            return (ValuePair<?>) new ValuePairImpl(f.getRealName(), f.getId());
+            return (ValuePair<?>) new ValuePairImpl(f.getUserName()+"|"+f.getRealName(), f.getId());
         }).collect(Collectors.toList());
         return resultList;
     }
