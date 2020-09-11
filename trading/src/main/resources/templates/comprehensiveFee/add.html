@@ -213,12 +213,12 @@
                         parent.verificationUsernamePassword(res.data.id);
                     } else {
                         bui.loading.hide();
-                        bs4pop.alert(res.errorData, {type: 'error'});
+                        bs4pop.alert(res.message, {type: 'error'});
                     }
                 },
                 error: function (error) {
                     bui.loading.hide();
-                    bs4pop.alert(error.result, {type: 'error'});
+                    bs4pop.alert(error.message, {type: 'error'});
                 }
             });
         }

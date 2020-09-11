@@ -180,11 +180,11 @@ public class ComprehensiveFeeController {
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public BaseOutput insert(ComprehensiveFee comprehensiveFee) {
-        String tips=checkUpDate(comprehensiveFee);
+        String tips = checkUpDate(comprehensiveFee);
         if(StringUtils.isNotBlank(tips)){
-            BaseOutput<ComprehensiveFee> result=new BaseOutput<ComprehensiveFee>();
+            BaseOutput<ComprehensiveFee> result = new BaseOutput<ComprehensiveFee>();
             result.setCode("500");
-            result.setResult(tips);
+            result.setMessage(tips);
             return result;
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
@@ -236,7 +236,7 @@ public class ComprehensiveFeeController {
             return BaseOutput.failure("顾客编号不能为空");
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        BaseOutput baseOutput=comprehensiveFeeRpc.getFee(userTicket.getFirmId(), customerId, type);
+        BaseOutput baseOutput = comprehensiveFeeRpc.getFee(userTicket.getFirmId(), customerId, type);
         return baseOutput;
     }
 
@@ -343,15 +343,15 @@ public class ComprehensiveFeeController {
      * @return
      */
     public String  checkUpDate(ComprehensiveFee comprehensiveFee){
-        StringBuffer tips=new StringBuffer();
+        StringBuffer tips = new StringBuffer();
         if (StringUtils.isBlank(comprehensiveFee.getCustomerCardNo())){
             tips.append(",卡号不能为空");
         }else{
-            if (comprehensiveFee.getCustomerId()==null){
+            if (comprehensiveFee.getCustomerId() == null){
                 tips.append(",客户不存在或者卡号出错请联系管理员");
             }
         }
-        if (tips.length()!=0){
+        if (tips.length() != 0){
             tips.append("!");
             return tips.substring(1);
         }
