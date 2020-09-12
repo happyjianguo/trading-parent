@@ -34,7 +34,7 @@ public class GenericGlobalExceptionResolver {
      */
     @ExceptionHandler({Exception.class})
     @ResponseBody
-    public BaseOutput timeOut(SocketTimeoutException e) {
+    public BaseOutput timeOut(Exception e) {
         LOGGER.error(e.getMessage(), e);
         return BaseOutput.failure("服务异常，请联系管理员");
     }
