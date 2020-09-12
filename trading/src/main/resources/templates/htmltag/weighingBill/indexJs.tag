@@ -402,7 +402,6 @@ function doPrintHandler(){
                         window.location.reload();
                     },
                     error: function (data) {
-                    	debugger;
                     	console.log(data);
                         bui.loading.hide();
                         bs4pop.alert("请求失败!", {type: 'error'});
