@@ -11,6 +11,7 @@ import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.ss.util.MoneyUtils;
 import com.dili.trading.rpc.ComprehensiveFeeRpc;
 import com.dili.trading.service.ComprehensiveFeeService;
 import com.dili.uap.sdk.domain.UserTicket;
@@ -19,6 +20,8 @@ import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -33,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.*;
 
 /**
  * 检测收费controller
@@ -56,6 +60,9 @@ public class ComprehensiveFeeController {
     @Autowired
     CategoryRpc categoryRpc;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComprehensiveFeeController.class);
+
+
     /**
      * 跳转到列表页面
      *
@@ -78,7 +85,7 @@ public class ComprehensiveFeeController {
     @RequestMapping(value = "/listPage.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String listPage(ComprehensiveFee comprehensiveFee) {
-        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
+        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DEPARTMENT.getCode());
         if (CollectionUtils.isNotEmpty(ranges)) {
             String value = (String) ranges.get(0).get("value");
             //如果value为0，则为个人
@@ -99,15 +106,9 @@ public class ComprehensiveFeeController {
     @RequestMapping(value = "/listByQueryParams.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String listByQueryParams(ComprehensiveFee comprehensiveFee) throws Exception {
-        //拿到数据权限，个人或全部
-        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
-        if (CollectionUtils.isNotEmpty(ranges)) {
-            String value = (String) ranges.get(0).get("value");
-            //如果value为0，则为个人
-            if ("0".equals(value)) {
-                comprehensiveFee.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
-            }
-        }
+        //拿到部门数据权限
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        comprehensiveFee.setMarketId(userTicket.getFirmId());
         comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(comprehensiveFee, output.getData())).toString();
@@ -133,10 +134,9 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/verificationUsernamePassword.action", method = RequestMethod.GET)
     public String verificationUsernamePassword(ModelMap modelMap, Long id) {
-        BaseOutput oneById = comprehensiveFeeRpc.getOneById(id);
+        BaseOutput<ComprehensiveFee> oneById = comprehensiveFeeRpc.getOneById(id);
         modelMap.put("comprehensiveFee", oneById.getData());
-        Double chargeAmountView=((ComprehensiveFee)oneById.getData()).getChargeAmount().doubleValue()/100;
-        modelMap.put("chargeAmountView", String.format("%.2f",chargeAmountView));
+        modelMap.put("chargeAmountView", MoneyUtils.centToYuan(oneById.getData().getChargeAmount()));
         return "comprehensiveFee/verificationUsernamePassword";
     }
 
@@ -149,7 +149,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/pay.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput pay(Long id, String password) {
+    public BaseOutput pay(Long id, String password) throws Exception{
         return comprehensiveFeeService.pay(id, password);
     }
 
@@ -173,12 +173,12 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput insert(ComprehensiveFee comprehensiveFee) {
-        String tips=checkUpDate(comprehensiveFee);
+    public BaseOutput insert(ComprehensiveFee comprehensiveFee) throws Exception{
+        String tips = checkUpDate(comprehensiveFee);
         if(StringUtils.isNotBlank(tips)){
-            BaseOutput<ComprehensiveFee> result=new BaseOutput<ComprehensiveFee>();
+            BaseOutput<ComprehensiveFee> result = new BaseOutput<ComprehensiveFee>();
             result.setCode("500");
-            result.setResult(tips);
+            result.setMessage(tips);
             return result;
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
@@ -202,32 +202,15 @@ public class ComprehensiveFeeController {
         Map<Object, Object> map = new HashMap<>();
         //设置单据状态提供者
         map.put("orderStatus", getProvider("payStatusProvider", "orderStatus"));
+        map.put("chargeAmount", getProvider("moneyProvider", "chargeAmount"));
         comprehensiveFee.setMetadata(map);
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
         if (oneByID.isSuccess()) {
             if (Objects.nonNull(oneByID.getData())) {
-                //翻译商品id
-                if(StringUtils.isNotBlank(oneByID.getData().getInspectionItem())){
-                    List<String> ids= Arrays.asList(oneByID.getData().getInspectionItem().split(","));
-                    CategoryDTO categoryDTO = new CategoryDTO();
-
-                    categoryDTO.setIds(ids);
-                    List<CategoryDTO> list = categoryRpc.getTree(categoryDTO).getData();
-                    if(list!=null&&list.size()>0){
-                        StringBuffer name=new StringBuffer("");
-                        for (CategoryDTO cgdto:list) {
-                            name.append(",");
-                            name.append(cgdto.getName());
-                        }
-                        if(name.length()>0){
-                            oneByID.getData().setInspectionItem(name.substring(1));
-                        }
-                    }
-                }
+                //根据商品ID获取商品名称
+                String inspectionItem = oneByID.getData().getInspectionItem();
+                oneByID.getData().setInspectionItem(getItemNameByItemId(inspectionItem));
                 modelMap.put("comprehensiveFee", ValueProviderUtils.buildDataByProvider(comprehensiveFee, Lists.newArrayList(oneByID.getData())).get(0));
-                //返回小数缴费金额
-                Double chargeAmountView=((ComprehensiveFee)oneByID.getData()).getChargeAmount().doubleValue()/100;
-                modelMap.put("chargeAmountView", String.format("%.2f",chargeAmountView));
             }
         }
         return "comprehensiveFee/view";
@@ -247,8 +230,28 @@ public class ComprehensiveFeeController {
             return BaseOutput.failure("顾客编号不能为空");
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        BaseOutput baseOutput=comprehensiveFeeRpc.getFee(userTicket.getFirmId(), customerId, type);
+        BaseOutput baseOutput = comprehensiveFeeRpc.getFee(userTicket.getFirmId(), customerId, type);
         return baseOutput;
+    }
+
+    /**
+     * 综合收费将前一天未结算单据关闭定时任务执行接口
+     *
+     * @return
+     */
+    @RequestMapping(value = "/scheduleUpdate.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput scheduleUpdate() {
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 3, 120L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1));
+        // 任务1
+        pool.execute(() -> {
+            try {
+                comprehensiveFeeRpc.scheduleUpdate();
+            } catch (Exception e) {
+                LOGGER.error("综合收费将前一天未结算单据关闭定时任务:" + e.getMessage());
+            }
+        });
+        return BaseOutput.success("综合收费将前一天未结算单据关闭定时任务执行成功");
     }
 
     /**
@@ -276,12 +279,16 @@ public class ComprehensiveFeeController {
      */
     @ResponseBody
     @PostMapping("/revocator.action")
-    public BaseOutput<Object> revocator(Long id,@RequestParam(value = "userName")String userName,@RequestParam(value="password") String operatorPassword, ModelMap modelMap, String operatorName) {
+    public BaseOutput<Object> revocator(Long id,@RequestParam(value = "userName")String userName,@RequestParam(value="password") String operatorPassword, ModelMap modelMap, String operatorName) throws Exception{
         UserTicket user = SessionContext.getSessionContext().getUserTicket();
+        if (user == null) {
+            return BaseOutput.failure("用户未登录");
+        }
         BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getRealName(),user.getId(), operatorPassword, user.getUserName());
         return output;
 
     }
+
     /**
      * 获取一个comprehensiveFee单
      *
@@ -298,24 +305,9 @@ public class ComprehensiveFeeController {
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
         if (oneByID.isSuccess()) {
             if (Objects.nonNull(oneByID.getData())) {
-                //翻译商品id
-                if (StringUtils.isNotBlank(oneByID.getData().getInspectionItem())) {
-                    List<String> ids = Arrays.asList(oneByID.getData().getInspectionItem().split(","));
-                    CategoryDTO categoryDTO = new CategoryDTO();
-
-                    categoryDTO.setIds(ids);
-                    List<CategoryDTO> list = categoryRpc.getTree(categoryDTO).getData();
-                    if (list != null && list.size() > 0) {
-                        StringBuffer name = new StringBuffer("");
-                        for (CategoryDTO cgdto : list) {
-                            name.append(",");
-                            name.append(cgdto.getName());
-                        }
-                        if (name.length() > 0) {
-                            oneByID.getData().setInspectionItem(name.substring(1));
-                        }
-                    }
-                }
+                //根据商品ID获取商品名称
+                String inspectionItem = oneByID.getData().getInspectionItem();
+                oneByID.getData().setInspectionItem(getItemNameByItemId(inspectionItem));
             }
         }
         return oneByID;
@@ -348,19 +340,46 @@ public class ComprehensiveFeeController {
      * @return
      */
     public String  checkUpDate(ComprehensiveFee comprehensiveFee){
-        StringBuffer tips=new StringBuffer();
+        StringBuffer tips = new StringBuffer();
         if (StringUtils.isBlank(comprehensiveFee.getCustomerCardNo())){
             tips.append(",卡号不能为空");
         }else{
-            if (comprehensiveFee.getCustomerId()==null){
+            if (comprehensiveFee.getCustomerId() == null){
                 tips.append(",客户不存在或者卡号出错请联系管理员");
             }
         }
-        if (tips.length()!=0){
+        if (tips.length() != 0){
             tips.append("!");
             return tips.substring(1);
         }
         return  "";
     }
 
+    /**
+     * 根据商品ID获取商品名称
+     * @param inspectionItem
+     * @return
+     */
+    public String getItemNameByItemId(String inspectionItem) {
+        String returnName = "";
+        if (StringUtils.isNotBlank(inspectionItem)) {
+            List<String> ids = Arrays.asList(inspectionItem.split(","));
+            CategoryDTO categoryDTO = new CategoryDTO();
+
+            categoryDTO.setIds(ids);
+            List<CategoryDTO> list = categoryRpc.getTree(categoryDTO).getData();
+            if (list != null && list.size() > 0) {
+                StringBuffer name=new StringBuffer("");
+                for (CategoryDTO cgdto : list) {
+                    name.append(",");
+                    name.append(cgdto.getName());
+                }
+
+                if (name.length() > 0) {
+                    returnName = name.substring(1);
+                }
+            }
+        }
+        return returnName;
+    }
 }
