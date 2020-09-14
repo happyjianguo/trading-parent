@@ -119,7 +119,6 @@
                 let data = result.data;
                 return {
                     suggestions: $.map(data, function (dataItem) {
-                        debugger
                         return $.extend(dataItem, {
                                 value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
                             }
