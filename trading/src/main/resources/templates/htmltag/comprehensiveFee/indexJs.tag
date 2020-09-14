@@ -15,6 +15,8 @@
             , trigger: 'click'
             , range: false
             , type: 'datetime'
+            , min: getLastYearYestdy(new Date())
+            , max: timeStamp2String(new Date().getTime())
         });
     });
 
@@ -25,6 +27,7 @@
         paramName: 'likeName',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
+        minChars: 2,
         width: 'flex',
         noSuggestionNotice: '不存在，请重新输入！',
         transformResult: function (result) {
@@ -54,6 +57,7 @@
         paramName: 'keyword',
         displayFieldName: 'realName',
         showNoSuggestionNotice: true,
+        minChars: 2,
         //width: 'flex',
         noSuggestionNotice: '结算员不存在',
         transformResult: function (result) {
@@ -353,6 +357,30 @@
         return [
             '<a href=javascript:openViewHandler('+row.id+')>'+value+'</a>'
         ].join("")
+    }
+
+    /** 时间最大控制方法*/
+    function timeStamp2String(time) {
+        var datetime = new Date();
+        datetime.setTime(time);
+        var year = datetime.getFullYear();
+        var month = datetime.getMonth() + 1 < 10 ? "0" + (datetime.getMonth() + 1) : datetime.getMonth() + 1;
+        var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
+        return year + "-" + month + "-" + date+" 23:59:59";
+    }
+
+    /** 时间最小控制方法*/
+    function getLastYearYestdy(date) {
+        var strYear = date.getFullYear() - 1;
+        var strDay = date.getDate();
+        var strMonth = date.getMonth() + 1;
+        if (strMonth < 10) {
+            strMonth = "0" + strMonth;
+        }
+        if (strDay < 10) {
+            strDay = "0" + strDay;
+        }
+        return strYear + "-" + strMonth + "-" + strDay+" 00:00:00";
     }
 
     /*****************************************函数区 end**************************************/
