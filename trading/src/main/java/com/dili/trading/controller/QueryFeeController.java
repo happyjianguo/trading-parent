@@ -9,6 +9,7 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.ss.util.MoneyUtils;
 import com.dili.trading.rpc.ComprehensiveFeeRpc;
 import com.dili.trading.service.ComprehensiveFeeService;
 import com.dili.uap.sdk.domain.UserTicket;
@@ -127,10 +128,9 @@ public class QueryFeeController {
      */
     @RequestMapping(value = "/verificationUsernamePassword.action", method = RequestMethod.GET)
     public String verificationUsernamePassword(ModelMap modelMap, Long id) {
-        BaseOutput oneById = comprehensiveFeeRpc.getOneById(id);
+        BaseOutput<ComprehensiveFee> oneById = comprehensiveFeeRpc.getOneById(id);
         modelMap.put("comprehensiveFee", oneById.getData());
-        Double chargeAmountView = ((ComprehensiveFee)oneById.getData()).getChargeAmount().doubleValue()/100;
-        modelMap.put("chargeAmountView", String.format("%.2f", chargeAmountView));
+        modelMap.put("chargeAmountView", MoneyUtils.centToYuan(oneById.getData().getChargeAmount()));
         return "queryFee/verificationUsernamePassword";
     }
 
