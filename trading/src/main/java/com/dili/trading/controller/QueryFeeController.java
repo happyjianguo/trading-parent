@@ -9,6 +9,7 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.ss.util.MoneyUtils;
 import com.dili.trading.rpc.ComprehensiveFeeRpc;
 import com.dili.trading.service.ComprehensiveFeeService;
 import com.dili.uap.sdk.domain.UserTicket;
@@ -24,6 +25,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -99,15 +101,9 @@ public class QueryFeeController {
     @RequestMapping(value = "/listByQueryParams.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String listByQueryParams(ComprehensiveFee comprehensiveFee) throws Exception {
-        //拿到数据权限，个人或全部
-        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
-        if (CollectionUtils.isNotEmpty(ranges)) {
-            String value = (String) ranges.get(0).get("value");
-            //如果value为0，则为个人
-            if (value.equals("0")) {
-                comprehensiveFee.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
-            }
-        }
+        //拿到部门数据权限
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        comprehensiveFee.setMarketId(userTicket.getFirmId());
         comprehensiveFee.setOrderType(ComprehensiveFeeType.QUERY_CHARGE.getValue());
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(comprehensiveFee, output.getData())).toString();
@@ -132,10 +128,9 @@ public class QueryFeeController {
      */
     @RequestMapping(value = "/verificationUsernamePassword.action", method = RequestMethod.GET)
     public String verificationUsernamePassword(ModelMap modelMap, Long id) {
-        BaseOutput oneById = comprehensiveFeeRpc.getOneById(id);
+        BaseOutput<ComprehensiveFee> oneById = comprehensiveFeeRpc.getOneById(id);
         modelMap.put("comprehensiveFee", oneById.getData());
-        Double chargeAmountView = ((ComprehensiveFee)oneById.getData()).getChargeAmount().doubleValue()/100;
-        modelMap.put("chargeAmountView", String.format("%.2f", chargeAmountView));
+        modelMap.put("chargeAmountView", MoneyUtils.centToYuan(oneById.getData().getChargeAmount()));
         return "queryFee/verificationUsernamePassword";
     }
 
@@ -176,7 +171,7 @@ public class QueryFeeController {
         if(StringUtils.isNotBlank(tips)){
             BaseOutput<ComprehensiveFee> result = new BaseOutput<ComprehensiveFee>();
             result.setCode("500");
-            result.setResult(tips);
+            result.setMessage(tips);
             return result;
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
