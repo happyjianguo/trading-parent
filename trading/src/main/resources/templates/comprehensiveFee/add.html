@@ -18,7 +18,7 @@
             <div class="row row-cols-1">
                 <div class="form-group col">
                     <label for="">客户名称</label>
-                    <input id="customerName" readonly="true" class="form-control" name="customerName"  maxlength="10">
+                    <input id="customerName" readonly="true" class="form-control" name="customerName"  maxlength="40">
                     <input id="customerCode" hidden="true" class="form-control" name="customerCode">
                     <input id="customerId" class="form-control" name="customerId" hidden="true">
                 </div>
@@ -111,8 +111,7 @@
 
         //刷卡监听
         $('#payByCard').on('click',function (e) {
-
-            //let cardNum='888800039006';
+            //let cardNum='888800039037';
             let cardNum;
             let json = JSON.parse(callbackObj.readCardNumber());
             if (json.code == 0) {

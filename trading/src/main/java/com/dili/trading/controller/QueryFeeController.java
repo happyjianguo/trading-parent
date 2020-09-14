@@ -102,13 +102,6 @@ public class QueryFeeController {
     public String listByQueryParams(ComprehensiveFee comprehensiveFee) throws Exception {
         //拿到部门数据权限
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DEPARTMENT.getCode());
-        if (CollectionUtils.isEmpty(ranges)) {
-            return new EasyuiPageOutput(0, new ArrayList<>(0)).toString();
-        }
-        List<Long> projectIds = new ArrayList<>();
-        ranges.forEach(m -> projectIds.add(Long.valueOf(m.get("value").toString())));
-        comprehensiveFee.setDepartments(projectIds);
         comprehensiveFee.setMarketId(userTicket.getFirmId());
         comprehensiveFee.setOrderType(ComprehensiveFeeType.QUERY_CHARGE.getValue());
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
