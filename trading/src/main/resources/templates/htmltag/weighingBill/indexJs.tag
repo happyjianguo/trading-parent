@@ -49,12 +49,13 @@ function doPrintHandler(){
             return false;
         }
         var url='';
-        if (rows[0].statement.$_state==4) {
+        if (rows[0].statement.state==4) {
         	url='/weighingBill/getWeighingBillPrintData.action'
-        }else if (rows[0].statement.$_state==2) {
+        }else if (rows[0].statement.state==2) {
         	url='/weighingBill/getWeighingStatementPrintData.action'
         }else{
         	bs4pop.alert("当前单据状态不能补打单据!", {type: 'error'});
+        	return;
         }
         // 先拿到票据信息，在调用c端打印
         $.ajax({
@@ -63,11 +64,21 @@ function doPrintHandler(){
             url: url,
             data: {serialNo: rows[0].statement.serialNo},
             success: function (data) {
+            	debugger;
                 bui.loading.hide();
                 if (data.code == '200') {
-                // 调用c端打印
-                callbackObj.printDirect(JSON.stringify(data.data),"WeighingServiceDocument");
-                }
+	                // 调用c端打印
+	                if (rows[0].statement.state==4) {
+	                	if(rows[0].measureType==1){
+	        				callbackObj.printDirect(JSON.stringify(data.data),"SettlementDocument");
+	                	}else{
+	                		callbackObj.printDirect(JSON.stringify(data.data),"SettlementPieceDocument ");
+	                	}
+	        		}else if (rows[0].statement.state==2) {
+	        			//冻结单打印过磅单数据        		
+	        			callbackObj.printDirect(JSON.stringify(data.data),"WeighingServiceDocument");
+	                }
+                }     		
             },
             error: function () {
             bui.loading.hide();

@@ -268,28 +268,28 @@ public class WeighingBillController {
 			}
 		});
 
-		Map<Object, Object> metadata = new HashMap<Object, Object>();
-		metadata.put("roughWeight", "weightProvider");
-		metadata.put("tareWeight", "weightProvider");
-		metadata.put("netWeight", "weightProvider");
-		metadata.put("unitWeight", "weightProvider");
+//		Map<Object, Object> metadata = new HashMap<Object, Object>();
+//		metadata.put("roughWeight", "weightProvider");
+//		metadata.put("tareWeight", "weightProvider");
+//		metadata.put("netWeight", "weightProvider");
+//		metadata.put("unitWeight", "weightProvider");
+//
+//		metadata.put("unitPrice", "moneyProvider");
+//		metadata.put("statement.tradeAmount", "moneyProvider");
+//		metadata.put("statement.buyerPoundage", "moneyProvider");
+//		metadata.put("statement.buyerActualAmount", "moneyProvider");
+//		metadata.put("statement.sellerPoundage", "moneyProvider");
+//		metadata.put("statement.sellerActualAmount", "moneyProvider");
+//		metadata.put("statement.state", "weighingStatementStateProvider");
+//
+//		metadata.put("operationRecord.operationTime", "datetimeProvider");
+//
+//		JSONObject ddProvider = new JSONObject();
+//		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
+//		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
+//		metadata.put("tradeType", ddProvider);
 
-		metadata.put("unitPrice", "moneyProvider");
-		metadata.put("statement.tradeAmount", "moneyProvider");
-		metadata.put("statement.buyerPoundage", "moneyProvider");
-		metadata.put("statement.buyerActualAmount", "moneyProvider");
-		metadata.put("statement.sellerPoundage", "moneyProvider");
-		metadata.put("statement.sellerActualAmount", "moneyProvider");
-		metadata.put("statement.state", "weighingStatementStateProvider");
-
-		metadata.put("operationRecord.operationTime", "datetimeProvider");
-
-		JSONObject ddProvider = new JSONObject();
-		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
-		metadata.put("tradeType", ddProvider);
-
-		query.setMetadata(metadata);
+//		query.setMetadata(metadata);
 		try {
 			List<Map> list = ValueProviderUtils.buildDataByProvider(query, output.getData());
 

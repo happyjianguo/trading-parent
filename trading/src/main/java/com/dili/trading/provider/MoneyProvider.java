@@ -52,7 +52,10 @@ public class MoneyProvider implements ValueProvider {
 			}
 			return null;
 		} else {
-			return MoneyUtils.centToYuan((Long) object);
+			if (object instanceof Long) {
+				return MoneyUtils.centToYuan((Long) object);
+			}
+			return object.toString();
 		}
 	}
 }
