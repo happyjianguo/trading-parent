@@ -1,6 +1,6 @@
 <#bs4Body>
 <div class="container-fluid">
-	<#bs4nav>
+
 	<form class="form" id="queryForm" role="form">
 		<div class="row  row-cols-6">
 			<div class="form-group col">
@@ -105,14 +105,14 @@
 			</div>
 		</div>
 	</form>
-	</#bs4nav>
+
 	<hr>
 	<div class="row">
 		<div class="col-12">
 			<div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
 				<#resource code="weighingBillInvalidate">
 				<button id="btn_add" type="button" class="btn btn-primary" onclick="invalidate()">
-					<i class="fa fa-plus"></i> 作废
+					<i class="fa fa-pencil-square-o"></i> 作废
 				</button>
 				</#resource>
 				<#resource code="weighingBillWithdraw">
@@ -122,17 +122,17 @@
 				</#resource>
 				<#resource code="weighingBillDetail">
 				<button type="button" class="btn btn-primary" onclick="openDetailHandler()">
-					<i class="fa fa-trash-o"></i> 查看
+					<i class="fa fa-eye"></i> 查看
 				</button>
 				</#resource>
 				<#resource code="truck_view">
 				<button type="button" class="btn btn-primary" onclick="doReprintHandler()">
-					<i class="fa fa-eye"></i> 补打
+					<i class="fa fa-print"></i> 补打
 				</button>
 				</#resource>
 				<#resource code="truck_on">
 				<button type="button" class="btn btn-primary btn_css_disabled" id="btn_enabled" onclick="doPrintHandler()">
-					<i class="fa fa-play"></i> 打印
+					<i class="fa fa-print"></i> 打印
 				</button>
 				</#resource>
 				<#resource code="truck_off">
@@ -261,6 +261,4 @@
 </script>
 
 
-<script type="text/javascript">
-	<#weighingBill_indexJs />
-</script>
+<#weighingBill_indexJs />

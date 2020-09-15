@@ -1,3 +1,4 @@
+<script>
     /***************************************************************************
 	 * 
 	 * @Date 2019-11-06 17:30:00
@@ -465,16 +466,15 @@ function doPrintHandler(){
         dia = bs4pop.dialog({
             title: '过磅单详情',// 对话框title
             content: '${contextPath}/weighingBill/detail.html?id='+rows[0].id, // 对话框内容，可以是
-																				// string、element，$object
-            width: '80%',// 宽度
+            width: '98%',// 宽度
             height: '95%',// 高度
             isIframe: true,// 默认是页面层，非iframe
             backdrop: 'static',
-            btns: [{
+            /*btns: [{
                 label: '关闭', className: 'btn btn-secondary', onClick(e, $iframe) {
 
                 }
-            }]
+            }]*/
         });
     }
 
@@ -588,3 +588,4 @@ function doPrintHandler(){
 	 * ***************************************自定义事件区
 	 * end*************************************
 	 */
+    </script>

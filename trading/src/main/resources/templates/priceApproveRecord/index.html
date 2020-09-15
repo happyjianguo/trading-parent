@@ -1,8 +1,8 @@
 <#bs4Body>
 <div class="container-fluid">
-	<#bs4nav>
+
 	<form class="form" id="queryForm" role="form">
-		<div class="row  row-cols-6">
+		<div class="row row-cols-6">
 			<div class="form-group col">
 				<label for="">审核状态</label> <select id="state" name="state" class="form-control">
 				</select>
@@ -15,6 +15,9 @@
 			</div>
 			<div class="form-group col">
 				<label for="">商品名称</label> <input type="text" class="form-control" name="goodsSplitStr" placeholder="">
+			</div>
+			<div class="form-group col">
+				<label for="">过磅单号</label> <input type="text" class="form-control" name="weighingBillSerialNo" placeholder="">
 			</div>
 			<div class="form-group col-auto" style="width: 350px">
 				<label for="sellerName" class="">卖方</label>
@@ -42,11 +45,6 @@
 					</div>
 				</div>
 			</div>
-			<div class="form-group col">
-				<label for="">过磅单号</label> <input type="text" class="form-control" name="weighingBillSerialNo" placeholder="">
-			</div>
-
-
 			<div class="col-auto align-self-center mt-3">
 				<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm input').val('');">
 					<i class="fa fa-refresh"></i> 清空
@@ -57,7 +55,7 @@
 			</div>
 		</div>
 	</form>
-	</#bs4nav>
+
 	<hr>
 	<div class="row">
 		<div class="col-12">

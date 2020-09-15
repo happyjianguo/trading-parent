@@ -1,13 +1,12 @@
 <#bs4Body>
 <div class="container-fluid">
-	<#bs4nav>
+
 	<form class="form" id="queryForm" role="form">
-		<div class="row">
-			<div class="form-group col">
-				<h4>基本信息</h4>
-			</div>
+		<div class="breadcrumb" >
+			基本信息
+			<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#baseInfo" aria-expanded="true" aria-controls="baseInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
 		</div>
-		<div class="row  row-cols-4">
+		<div class="row row-cols-6" id="baseInfo">
 			<div class="form-group col">
 				<label for="">过磅单号</label> <input type="text" class="form-control" readonly="readonly" value="${model.serialNo}" placeholder="">
 			</div>
@@ -82,12 +81,11 @@
 				<label for="">检测结果</label> <input type="text" class="form-control" readonly="readonly" value="" placeholder="">
 			</div>
 		</div>
-		<div class="row">
-			<div class="form-group col">
-				<h4>称重信息</h4>
-			</div>
+		<div class="breadcrumb" >
+			称重信息
+			<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#weightInfo" aria-expanded="true" aria-controls="weightInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
 		</div>
-		<div class="row  row-cols-4">
+		<div class="row row-cols-6 collapse show" id="weightInfo">
 			<%if(model.$_measureType==@com.dili.orders.domain.MeasureType.WEIGHT.getValue()){%>
 			<div class="form-group col">
 				<label for="">净重/公斤</label> <input type="text" class="form-control" readonly="readonly" value="${model.netWeight}" placeholder="">
@@ -137,12 +135,11 @@
 			<%}%>
 		</div>
 		<%if(model.statement.state==@com.dili.orders.domain.WeighingStatementState.PAID.getValue()){%>
-		<div class="row">
-			<div class="form-group col">
-				<h4>结算信息</h4>
-			</div>
+		<div class="breadcrumb">
+			结算信息
+			<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#settleInfo" aria-expanded="true" aria-controls="settleInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
 		</div>
-		<div class="row  row-cols-4">
+		<div class="row row-cols-6 collapse show" id="settleInfo">
 			<%if(model.state==@com.dili.orders.domain.WeighingBillState.FROZEN.getValue()){%>
 			<div class="form-group col">
 				<label for="">冻结金额</label>
@@ -172,12 +169,11 @@
 			<%}%>
 		</div>
 		<%}%>
-		<div class="row">
-			<div class="form-group col">
-				<h4>操作信息</h4>
-			</div>
+		<div class="breadcrumb">
+			操作信息
+			<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#editInfo" aria-expanded="true" aria-controls="editInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
 		</div>
-		<div class="row  row-cols-4">
+		<div class="row row-cols-6 collapse show" id="editInfo">
 		<%for(item in model.records){%>
 	        <div class="form-group col">
 				<label for="">${item.operationTypeName}人员</label> 
@@ -190,8 +186,7 @@
 	    <%}%>
 		</div>
 	</form>
-	</#bs4nav>
-	<hr>
+
 </div>
 
 </#bs4Body>
