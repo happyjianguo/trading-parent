@@ -599,6 +599,12 @@ public class WeighingBillController {
 		return output;
 	}
 
+	/**
+	 * 获取登录用户sessionId
+	 * 
+	 * @param req
+	 * @return
+	 */
 	private String getSessionId(HttpServletRequest req) {
 		// 首先读取链接中的session
 		String sessionId = req.getParameter(SessionConstants.SESSION_ID);
