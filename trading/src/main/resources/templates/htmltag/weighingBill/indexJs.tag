@@ -41,7 +41,7 @@ function doPrintHandler(){
     };
 
 
-    function openPrintHandler() {
+    function doReprintHandler() {
     // 获取选中行的数据
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
@@ -49,10 +49,13 @@ function doPrintHandler(){
             return false;
         }
         var url='';
+        var serialNo=null;
         if (rows[0].statement.state==4) {
         	url='/weighingBill/getWeighingBillPrintData.action'
+        	serialNo=rows[0].serialNo;
         }else if (rows[0].statement.state==2) {
         	url='/weighingBill/getWeighingStatementPrintData.action'
+        	serialNo= rows[0].statement.serialNo;
         }else{
         	bs4pop.alert("当前单据状态不能补打单据!", {type: 'error'});
         	return;
@@ -62,9 +65,8 @@ function doPrintHandler(){
             type: "POST",
             dataType: "json",
             url: url,
-            data: {serialNo: rows[0].statement.serialNo},
+            data: {serialNo: serialNo,reprint:true},
             success: function (data) {
-            	debugger;
                 bui.loading.hide();
                 if (data.code == '200') {
 	                // 调用c端打印
@@ -75,7 +77,7 @@ function doPrintHandler(){
 	                		callbackObj.printDirect(JSON.stringify(data.data),"SettlementPieceDocument ");
 	                	}
 	        		}else if (rows[0].statement.state==2) {
-	        			//冻结单打印过磅单数据        		
+	        			// 冻结单打印过磅单数据
 	        			callbackObj.printDirect(JSON.stringify(data.data),"WeighingServiceDocument");
 	                }
                 }     		
@@ -367,6 +369,9 @@ function doPrintHandler(){
                         bui.loading.hide();
                         if (data.code != '200') {
                             bs4pop.alert(data.message, {type: 'error'});
+                            if (data.data&&data.data.locked) {
+                            	window.location.reload();
+                            }
                             return;
                         }
                         window.location.reload();
@@ -408,12 +413,14 @@ function doPrintHandler(){
                         bui.loading.hide();
                         if (data.code != '200') {
                             bs4pop.alert(data.message, {type: 'error'});
+                            if (data.data&&data.data.locked) {
+                            	window.location.reload();
+                            }
                             return;
                         }
                         window.location.reload();
                     },
                     error: function (data) {
-                    	console.log(data);
                         bui.loading.hide();
                         bs4pop.alert("请求失败!", {type: 'error'});
                     }
