@@ -69,9 +69,9 @@
                     <input type="text" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
                     <input type="text" class="form-control" id="show_customer_name" readonly/>
                     <input type="text" class="form-control" id="accountId" name="accountId" hidden/>
-                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
-                        刷卡
-                    </button>
+                    <div class="input-group-append">
+                        <span class="input-group-text" onclick="javascript:swipeCard(this);"><a href="javascript:;" style=" text-decoration: none;" >刷卡</a></span>
+                    </div>
                 </div>
             </div>
             <div class="col align-self-center mt-3">
