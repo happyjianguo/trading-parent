@@ -72,14 +72,14 @@ function doPrintHandler(){
                 if (data.code == '200') {
 	                // 调用c端打印
 	                if (rows[0].statement.state==4) {
-	                	if(rows[0].measureType==1){
-	        				callbackObj.printDirect(JSON.stringify(data.data),"SettlementDocument");
-	                	}else{
-	                		callbackObj.printDirect(JSON.stringify(data.data),"SettlementPieceDocument ");
-	                	}
+	        			callbackObj.printDirect(JSON.stringify(data.data),"WeighingDocument");
 	        		}else if (rows[0].statement.state==2) {
 	        			// 冻结单打印过磅单数据
-	        			callbackObj.printDirect(JSON.stringify(data.data),"WeighingServiceDocument");
+	        			if(rows[0].measureType==1){
+	        				callbackObj.printDirect(JSON.stringify(data.data),"SettlementDocument");
+	                	}else{
+	        				callbackObj.printDirect(JSON.stringify(data.data),"SettlementPieceDocument");
+	                	}
 	                }
                 }     		
             },
