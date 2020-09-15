@@ -161,8 +161,8 @@
         dia = bs4pop.dialog({
             title: '转离场申请',//对话框title
             content: '${contextPath}/transitionDepartureApply/add.html', //对话框内容，可以是 string、element，$object
-            width: '60%',//宽度
-            height: '95%',//高度
+            width: '880px',//宽度
+            height: '570px',//高度
             isIframe: true,//默认是页面层，非iframe
             backdrop: 'static'
         });
@@ -191,8 +191,8 @@
             isIframe: true,
             backdrop: 'static',
             closeBtn: true,
-            width: '60%',
-            height: '95%',
+            width: '880px',//宽度
+            height: '750px',
             btns: [{
                 label: '关闭', className: 'btn-secondary', onClick(e) {
                 }
@@ -218,13 +218,12 @@
         dia = bs4pop.dialog({
             title: '转离场申请--审核',//对话框title
             content: '${contextPath}/transitionDepartureApply/update.html?id=' + rows[0].id, //对话框内容，可以是 string、element，$object
-            width: '60%',//宽度
-            height: '95%',//高度
+            width: '880px',//宽度
+            height: '700px',//高度
             isIframe: true,//默认是页面层，非iframe
             backdrop: 'static',
             btns: [{
                 label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
-
                 }
             }, {
                 label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {

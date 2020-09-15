@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
     <form id="saveForm" role="form" novalidate>
-        <div class="row row-cols-4">
+        <div class="row row-cols-3">
             <div class="form-group col">
                 <label for="">卡号</label>
                 <div class="input-group">
@@ -27,22 +27,6 @@
                 <input id="customerName" readonly="true" required class="form-control" name="customerName"
                        maxlength="100">
             </div>
-
-            <div class="form-group col">
-                <label for="">办理业务<i class="red">*</i></label>
-                <div class="mt-2" id="stateRadioDiv">
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="r_stateRadioDiv1" value="1" name="bizType" required
-                               class="custom-control-input">
-                        <label class="custom-control-label" for="r_stateRadioDiv1">转场</label>
-                    </div>
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="r_stateRadioDiv2" value="2" name="bizType" required
-                               class="custom-control-input">
-                        <label class="custom-control-label" for="r_stateRadioDiv2">离场</label>
-                    </div>
-                </div>
-            </div>
             <div class="form-group col">
                 <label for="">车辆类型<i class="red">*</i></label>
                 <select id="carTypeId" name="carTypeId" class="form-control" required focus-shift></select>
@@ -65,6 +49,21 @@
             <div class="form-group col">
                 <label for="transitionDepartureReason">转离场地址<i class="red">*</i></label>
                 <input id="addr" class="form-control" name="addr" rows="3" maxlength="15" required focus-shift>
+            </div>
+            <div class="form-group col">
+                <label for="">办理业务<i class="red">*</i></label>
+                <div class="mt-2" id="stateRadioDiv">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="r_stateRadioDiv1" value="1" name="bizType" required
+                               class="custom-control-input">
+                        <label class="custom-control-label" for="r_stateRadioDiv1">转场</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="r_stateRadioDiv2" value="2" name="bizType" required
+                               class="custom-control-input">
+                        <label class="custom-control-label" for="r_stateRadioDiv2">离场</label>
+                    </div>
+                </div>
             </div>
             <div class="form-group col">
                 <label for="">发起</label>
