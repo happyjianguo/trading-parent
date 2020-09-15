@@ -270,16 +270,13 @@ public class ComprehensiveFeeController {
     /**
      * 撤销
      *
-     * @param id                 检查收费ID
-     * @param userName           用户真实名字
+     * @param id                 检测收费ID
      * @param operatorPassword   操作人密码
-     * @param modelMap
-     * @param operatorName       操作员登录名
      * @return
      */
     @ResponseBody
     @PostMapping("/revocator.action")
-    public BaseOutput<Object> revocator(Long id,@RequestParam(value = "userName")String userName,@RequestParam(value="password") String operatorPassword, ModelMap modelMap, String operatorName) throws Exception{
+    public BaseOutput<Object> revocator(Long id, @RequestParam(value="password") String operatorPassword) throws Exception{
         UserTicket user = SessionContext.getSessionContext().getUserTicket();
         if (user == null) {
             return BaseOutput.failure("用户未登录");
