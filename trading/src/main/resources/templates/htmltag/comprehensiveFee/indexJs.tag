@@ -51,7 +51,7 @@
 
     // 结算员名称
     var operatorNameAutoCompleteOption = {
-        serviceUrl: '/weighingBill/listOperatorByKeyword.action',
+        serviceUrl: '/comprehensiveFee/listOperatorByKeyword.action',
         paramName: 'keyword',
         displayFieldName: 'realName',
         showNoSuggestionNotice: true,
@@ -79,38 +79,6 @@
             /*$('#show_operator_name').val(suggestion.realName);*/
         }
     };
-
-    // 卡号
-    var customerCardQueryAutoCompleteOption = {
-        serviceUrl: '/weighingBill/listCustomerByCardNo.action',
-        paramName: 'cardNo',
-        displayFieldName: 'code',
-        showNoSuggestionNotice: true,
-        minChars: 12,
-        width: 'flex',
-        noSuggestionNotice: '无此客户, 请重新输入',
-        transformResult: function (result) {
-            if(result.success){
-                let data = result.data;
-                return {
-                    suggestions: $.map(data, function (dataItem) {
-                        return $.extend(dataItem, {
-                                value: dataItem.customerName +"|"+dataItem.cardNo
-                            }
-                        );
-                    })
-                    //888810054629
-                }
-            }else{
-                return false;
-            }
-        },
-        selectFn: function (suggestion) {
-            $('#show_customer_card_no').val(suggestion.customerName);
-            $('#customerCardNo').val(suggestion.cardNo);
-        }
-    };
-
 
     /*********************变量定义区 end***************/
 
