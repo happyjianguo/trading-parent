@@ -9,13 +9,16 @@ import com.dili.orders.rpc.CardRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
+import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.util.MoneyUtils;
 import com.dili.trading.rpc.ComprehensiveFeeRpc;
 import com.dili.trading.service.ComprehensiveFeeService;
 import com.dili.uap.sdk.domain.UserTicket;
+import com.dili.uap.sdk.domain.dto.UserQuery;
 import com.dili.uap.sdk.glossary.DataAuthType;
+import com.dili.uap.sdk.rpc.UserRpc;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
@@ -59,6 +62,10 @@ public class ComprehensiveFeeController {
 
     @Autowired
     CategoryRpc categoryRpc;
+
+    @Autowired
+    private UserRpc useRpc;
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComprehensiveFeeController.class);
 
@@ -270,16 +277,13 @@ public class ComprehensiveFeeController {
     /**
      * 撤销
      *
-     * @param id                 检查收费ID
-     * @param userName           用户真实名字
+     * @param id                 检测收费ID
      * @param operatorPassword   操作人密码
-     * @param modelMap
-     * @param operatorName       操作员登录名
      * @return
      */
     @ResponseBody
     @PostMapping("/revocator.action")
-    public BaseOutput<Object> revocator(Long id,@RequestParam(value = "userName")String userName,@RequestParam(value="password") String operatorPassword, ModelMap modelMap, String operatorName) throws Exception{
+    public BaseOutput<Object> revocator(Long id, @RequestParam(value="password") String operatorPassword) throws Exception{
         UserTicket user = SessionContext.getSessionContext().getUserTicket();
         if (user == null) {
             return BaseOutput.failure("用户未登录");
@@ -311,6 +315,23 @@ public class ComprehensiveFeeController {
             }
         }
         return oneByID;
+    }
+
+    /**
+     * 查询结算员信息
+     *
+     * @param name
+     * @param keyword
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/listOperatorByKeyword.action")
+    public BaseOutput<?> listOperatorByKeyword(String name, String keyword) {
+        UserTicket user = SessionContext.getSessionContext().getUserTicket();
+        UserQuery userQuery = DTOUtils.newInstance(UserQuery.class);
+        userQuery.setKeyword(keyword);
+        userQuery.setFirmCode(user.getFirmCode());
+        return this.useRpc.listByExample(userQuery);
     }
 
     /**
