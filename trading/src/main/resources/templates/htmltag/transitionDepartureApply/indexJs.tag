@@ -350,18 +350,6 @@
         };
         return $.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
     }
-
-    $(function () {
-        $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
-            if (rows[0].$_approvalState != 1) {
-                $("#sp").attr("disabled", "disabled");
-                $("#sp").addClass("btn_css_disabled");
-            }else {
-                $("#sp").removeClass("btn_css_disabled");
-                $("#sp").attr("disabled", false);
-            }
-        })
-    })
     /*****************************************函数区 end**************************************/
 
 </script>
