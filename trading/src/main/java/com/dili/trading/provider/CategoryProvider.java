@@ -35,7 +35,7 @@ public class CategoryProvider extends BatchDisplayTextProviderSupport {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setMarketId(userTicket.getFirmId());
         if (Objects.nonNull(obj)) {
-            categoryDTO.setKeycode(obj.toString());
+            categoryDTO.setKeyword(obj.toString());
         }
         List<CategoryDTO> list = assetsRpc.list(categoryDTO).getData();
         List<ValuePair<?>> resultList = list.stream().map(f -> {
