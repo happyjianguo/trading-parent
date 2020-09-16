@@ -179,7 +179,6 @@
     }
     $(function(){
         $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
-            debugger;
             if (row.$_approvalState != 1) {
                 $("#sp").attr("disabled", "disabled");
                 $("#sp").addClass("btn_css_disabled");
