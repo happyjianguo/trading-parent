@@ -51,10 +51,10 @@ public interface WeighingBillRpc {
 	BaseOutput<WeighingBillDetailDto> findDetailDtoById(@RequestParam(value = "id") Long id);
 
 	@RequestMapping(value = "/api/weighingBill/operatorInvalidate")
-	BaseOutput<Object> operatorInvalidate(@RequestParam(value = "id") Long id, @RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "operatorPassword") String operatorPassword);
+	BaseOutput<Object> operatorInvalidate(@RequestParam(value = "id") Long id, @RequestParam(value = "operatorId") Long operatorId);
 
 	@RequestMapping(value = "/api/weighingBill/operatorWithdraw")
-	BaseOutput<Object> operatorWithdraw(@RequestParam(value = "id") Long id, @RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "operatorPassword") String operatorPassword);
+	BaseOutput<Object> operatorWithdraw(@RequestParam(value = "id") Long id, @RequestParam(value = "operatorId") Long operatorId);
 
 	@RequestMapping(value = "/api/weighingBill/getWeighingBillPrintData")
 	BaseOutput<WeighingBillPrintDto> getWeighingBillPrintData(@RequestParam(value = "serialNo") String serialNo);

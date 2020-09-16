@@ -1,3 +1,5 @@
+<script>
+
     window.domain = 'diligrp.com';
 
     /************* 获取客户信息  start *****************/
@@ -53,3 +55,4 @@
         });
     }
 
+</script>
