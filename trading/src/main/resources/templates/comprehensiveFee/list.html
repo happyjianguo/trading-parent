@@ -57,6 +57,19 @@
                     </div>
                 </div>
             </div>
+            <div class="form-group col">
+                <label for="" class="">单据编号</label>
+                <input type="text" class="form-control isNaturalNum" name="code" placeholder="">
+            </div>
+            <div class="form-group col-3">
+                <label for="" class="">卡号</label>
+                <div class="input-group">
+                    <!--<#bautoCompleteProvider _hiddenDomainId="customerCardNo" _hiddenDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>-->
+                    <input type="number" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
+                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
+                </div>
+            </div>
             <div class="col align-self-center mt-3">
                 <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm input,select').val('');"><i class="fa fa-refresh"></i> 清空</button>
                 <button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()"><i class="fa fa-search"></i> 查询</button>

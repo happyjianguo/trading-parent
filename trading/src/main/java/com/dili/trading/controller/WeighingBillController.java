@@ -31,6 +31,7 @@ import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
 import com.dili.orders.domain.MeasureType;
+import com.dili.orders.domain.WeighingBillState;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.AccountPasswordValidateDto;
@@ -128,22 +129,37 @@ public class WeighingBillController {
 		if (!output.isSuccess()) {
 			return output;
 		}
+		WeighingStatement ws = null;
 		if (StringUtils.isBlank(weighingBill.getSerialNo())) {
 			weighingBill.setCreatorId(user.getId());
 			// 设置市场id
 			weighingBill.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-			output = this.weighingBillRpc.add(weighingBill);
+			BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.add(weighingBill);
+			if (!wsOutput.isSuccess()) {
+				return wsOutput;
+			}
+			ws = wsOutput.getData();
+			output = this.weighingBillRpc.settle(ws.getWeighingSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
 			if (!output.isSuccess()) {
 				return output;
 			}
-			output = this.weighingBillRpc.settle(output.getData().toString(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
 		} else {
 			weighingBill.setModifierId(user.getId());
-			output = this.weighingBillRpc.update(weighingBill);
+			BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.update(weighingBill);
+			if (!wsOutput.isSuccess()) {
+				return output;
+			}
+			ws = wsOutput.getData();
+			output = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
 			if (!output.isSuccess()) {
 				return output;
 			}
-			output = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+		}
+		if (WeighingBillState.FROZEN.getValue().equals(Integer.valueOf(output.getData().toString()))) {
+			return BaseOutput.successData(this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()));
+		}
+		if (WeighingBillState.SETTLED.getValue().equals(Integer.valueOf(output.getData().toString()))) {
+			return BaseOutput.successData(this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()));
 		}
 		return output;
 	}
