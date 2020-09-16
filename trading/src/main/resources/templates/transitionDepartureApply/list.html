@@ -105,7 +105,7 @@
                 </#resource>
             </div>
                 <table id="grid" data-toggle="table" data-title="转离场申请列表" class="table"
-                       data-toolbar="#toolbar" data-pagination="true" data-page-number="1"
+                       data-pagination="true" data-page-number="1"
                        data-page-size="10" data-query-params="queryParams"
                        data-side-pagination="server"
                        data-content-type="application/x-www-form-urlencoded"
@@ -113,51 +113,50 @@
                        data-unique-id="id" data-sort-name="id" data-sort-order="desc"
                        data-icons="bui.variable.icons"
                        data-buttons-class="primary"
-                       data-show-refresh="true" data-show-fullscreen="true"
-                       data-show-columns="true">
+                >
                 <thead>
-                <tr>
-                    <th data-radio="true"></th>
-                    <th data-field="code" data-align="center" data-sortable="true">
-                        申请单号
-                    </th>
-                    <th data-field="customerCode" data-align="center" data-sortable="true">
-                        客户编号
-                    </th>
-                    <th data-field="customerName" data-align="center" data-sortable="true">
-                       客户姓名
-                    </th>
-                    <th data-field="customerCardNo" data-align="center" data-sortable="true">
-                       卡号
-                    </th>
-                    <th data-field="transTypeId" data-align="center" data-provider="tradeTypeProvider"  data-sortable="true" data-sort-name="trans_type_id">
-                        交易类型
-                    </th>
-                    <th data-field="categoryId" data-align="center" data-provider="categoryProvider"  data-sortable="true" data-sort-name="category_id">
-                        商品名称
-                    </th>
-                    <th data-field="carTypeId" data-align="center" data-provider="carTypeProvider" data-sortable="true" data-sort-name="car_type_id">
-                        车型
-                    </th>
-                    <th data-field="plate" data-align="center"  data-sortable="true">
-                        车牌号
-                    </th>
-                    <th data-field="bizType" data-align="center" data-provider="bizTypeProvider" data-sortable="true" data-sort-name="biz_type">
-                        业务类型
-                    </th>
-                    <th data-field="approvalState" data-align="center" data-provider="applyProvider" data-sortable="true" data-sort-name="approval_state">
-                        审批状态
-                    </th>
-                    <th data-field="originatorName" data-align="center" data-sortable="true">
-                        发起人
-                    </th>
-                    <th data-field="originatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true">
-                        发起时间
-                    </th>
-                    <th data-field="approvalName" data-align="center" data-sortable="true">
-                        审批人员
-                    </th>
-                </tr>
+                    <tr>
+                        <th data-radio="true"></th>
+                        <th data-field="code" data-align="center" data-sortable="true">
+                            申请单号
+                        </th>
+                        <th data-field="customerCode" data-align="center" data-sortable="true">
+                            客户编号
+                        </th>
+                        <th data-field="customerName" data-align="center" data-sortable="true">
+                           客户姓名
+                        </th>
+                        <th data-field="customerCardNo" data-align="center" data-sortable="true">
+                           卡号
+                        </th>
+                        <th data-field="transTypeId" data-align="center" data-provider="tradeTypeProvider"  data-sortable="true" data-sort-name="trans_type_id">
+                            交易类型
+                        </th>
+                        <th data-field="categoryId" data-align="center" data-provider="categoryProvider"  data-sortable="true" data-sort-name="category_id">
+                            商品名称
+                        </th>
+                        <th data-field="carTypeId" data-align="center" data-provider="carTypeProvider" data-sortable="true" data-sort-name="car_type_id">
+                            车型
+                        </th>
+                        <th data-field="plate" data-align="center"  data-sortable="true">
+                            车牌号
+                        </th>
+                        <th data-field="bizType" data-align="center" data-provider="bizTypeProvider" data-sortable="true" data-sort-name="biz_type">
+                            业务类型
+                        </th>
+                        <th data-field="approvalState" data-align="center" data-provider="applyProvider" data-sortable="true" data-sort-name="approval_state">
+                            审批状态
+                        </th>
+                        <th data-field="originatorName" data-align="center" data-sortable="true">
+                            发起人
+                        </th>
+                        <th data-field="originatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true">
+                            发起时间
+                        </th>
+                        <th data-field="approvalName" data-align="center" data-sortable="true">
+                            审批人员
+                        </th>
+                    </tr>
                 </thead>
             </table>
         </div>
@@ -180,7 +179,8 @@
     }
     $(function(){
         $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
-            if (rows[0].$_approvalState != 1) {
+            debugger;
+            if (row.$_approvalState != 1) {
                 $("#sp").attr("disabled", "disabled");
                 $("#sp").addClass("btn_css_disabled");
             }else {
