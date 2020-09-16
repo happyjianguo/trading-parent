@@ -31,7 +31,7 @@
 
     // 结算员名称(用户工号（用户名），及姓名查询)
     var operatorNameAutoCompleteOption = {
-        serviceUrl: '/weighingBill/listOperatorByKeyword.action',
+        serviceUrl: '/comprehensiveFee/listOperatorByKeyword.action',
         paramName: 'keyword',
         displayFieldName: 'realName',
         showNoSuggestionNotice: true,
