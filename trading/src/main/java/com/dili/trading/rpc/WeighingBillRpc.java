@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dili.orders.domain.WeighingBill;
+import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
 import com.dili.orders.dto.WeighingBillPrintDto;
@@ -21,10 +22,10 @@ import com.dili.ss.domain.PageOutput;
 public interface WeighingBillRpc {
 
 	@RequestMapping(value = "/api/weighingBill/insert")
-	BaseOutput<String> add(@RequestBody WeighingBill weighingBill);
+	BaseOutput<WeighingStatement> add(@RequestBody WeighingBill weighingBill);
 
 	@RequestMapping(value = "/api/weighingBill/update")
-	BaseOutput<Object> update(@RequestBody WeighingBill weighingBill);
+	BaseOutput<WeighingStatement> update(@RequestBody WeighingBill weighingBill);
 
 	@RequestMapping(value = "/api/weighingBill/settle")
 	BaseOutput<Object> settle(@RequestParam(value = "serialNo") String serialNo, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "operatorId") Long operatorId,
