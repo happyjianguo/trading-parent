@@ -350,7 +350,6 @@
         };
         return $.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
     }
-
     /*****************************************函数区 end**************************************/
 
 </script>
