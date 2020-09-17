@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 模糊查询客户
@@ -84,16 +85,17 @@ public class CustomerController {
     @RequestMapping("/listCustomerByCardNo.action")
     public BaseOutput<?> listCustomerByCardNo(String cardNo) {
         BaseOutput<AccountSimpleResponseDto> cardOutput = this.cardRpc.getOneAccountCard(cardNo);
-        if (!cardOutput.isSuccess()) {
+        if (!cardOutput.isSuccess() || Objects.isNull(cardOutput.getData()) || Objects.isNull(cardOutput.getData().getAccountInfo())) {
             return cardOutput;
         }
         CustomerQueryInput cq = new CustomerQueryInput();
         cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
-        BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
-        if (!firmOutput.isSuccess()) {
-            return firmOutput;
+        //获取当前登录人的市场，和客户市场进行对比
+        //如果不相等，就直接返回
+        if (!Objects.equals(SessionContext.getSessionContext().getUserTicket().getFirmId(), cardOutput.getData().getAccountInfo().getFirmId())) {
+            return BaseOutput.failure("未查询到相关客户信息");
         }
-        cq.setMarketId(firmOutput.getData().getId());
+        cq.setMarketId(cardOutput.getData().getAccountInfo().getFirmId());
         BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
         return output;
     }
