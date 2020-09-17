@@ -457,7 +457,7 @@ function doPrintHandler(){
         _modal.find('.modal-title').text('查看图片');
     }
 
-    function openDetailHandler(id) {
+    function openDetailHandler() {
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
@@ -465,7 +465,7 @@ function doPrintHandler(){
         }
         dia = bs4pop.dialog({
             title: '过磅单详情',// 对话框title
-            content: '${contextPath}/weighingBill/detail.html?id='+rows[0].id, // 对话框内容，可以是
+            content: '${contextPath}/weighingBill/weighingStatement/detail.html?id='+rows[0].statement.id, // 对话框内容，可以是
             width: '98%',// 宽度
             height: '95%',// 高度
             isIframe: true,// 默认是页面层，非iframe
