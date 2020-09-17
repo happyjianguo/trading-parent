@@ -14,7 +14,7 @@
 				<label for="">结算单号</label> <input type="text" class="form-control" readonly="readonly" value="${model.statement.serialNo}" placeholder="">
 			</div>
 			<div class="form-group col">
-				<label for="">单据状态</label> <input type="text" class="form-control" readonly="readonly" value="${model.state}" placeholder="">
+				<label for="">单据状态</label> <input type="text" class="form-control" readonly="readonly" value="${model.statement.state}" placeholder="">
 			</div>
 			<div class="form-group col">
 				<label for="">计量单位</label> <input type="text" class="form-control" readonly="readonly" value="${model.measureType}" placeholder="">
@@ -55,10 +55,6 @@
 				<label for="">交易类型</label> 
 				<input type="text" class="form-control" readonly="readonly" value="${model.tradeType}" placeholder="">
 			</div>
-			<!--<div class="form-group col">-->
-				<!--<label for="">商品编码</label>-->
-				<!--<input type="text" class="form-control" readonly="readonly" value="${model.goodsCode}" placeholder="">-->
-			<!--</div>-->
 			<div class="form-group col">
 				<label for="">商品名称</label> 
 				<input type="text" class="form-control" readonly="readonly" value="${model.goodsName}" placeholder="">
@@ -140,7 +136,7 @@
 			<a href="javascript:;" class="ml-auto" data-toggle="collapse" data-target="#settleInfo" aria-expanded="true" aria-controls="settleInfo">收起 <i class="fa fa-angle-double-up" aria-hidden="true"></i></a>
 		</div>
 		<div class="row row-cols-6 collapse show" id="settleInfo">
-			<%if(model.state==@com.dili.orders.domain.WeighingBillState.FROZEN.getValue()){%>
+			<%if(model.statement.state==@com.dili.orders.domain.WeighingStatementState.FROZEN.getValue()){%>
 			<div class="form-group col">
 				<label for="">冻结金额</label>
 				<input type="text" class="form-control" readonly="readonly" value="${model.statement.frozenAmount}" placeholder="">
