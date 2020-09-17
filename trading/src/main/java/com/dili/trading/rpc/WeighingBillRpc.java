@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dili.orders.domain.WeighingBill;
 import com.dili.orders.domain.WeighingStatement;
+import com.dili.orders.dto.PrintTemplateDataDto;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
 import com.dili.orders.dto.WeighingBillPrintDto;
@@ -48,8 +49,8 @@ public interface WeighingBillRpc {
 	@RequestMapping(value = "/api/weighingBill/listPage", method = RequestMethod.POST)
 	PageOutput<List<WeighingBillListPageDto>> listPage(@RequestBody WeighingBillQueryDto query);
 
-	@RequestMapping(value = "/api/weighingBill/detail")
-	BaseOutput<WeighingBillDetailDto> findDetailDtoById(@RequestParam(value = "id") Long id);
+	@RequestMapping(value = "/api/weighingStatement/detail")
+	BaseOutput<WeighingBillDetailDto> findDetailDtoByStatementId(@RequestParam(value = "id") Long id);
 
 	@RequestMapping(value = "/api/weighingBill/operatorInvalidate")
 	BaseOutput<Object> operatorInvalidate(@RequestParam(value = "id") Long id, @RequestParam(value = "operatorId") Long operatorId);
@@ -58,8 +59,8 @@ public interface WeighingBillRpc {
 	BaseOutput<Object> operatorWithdraw(@RequestParam(value = "id") Long id, @RequestParam(value = "operatorId") Long operatorId);
 
 	@RequestMapping(value = "/api/weighingBill/getWeighingBillPrintData")
-	BaseOutput<WeighingBillPrintDto> getWeighingBillPrintData(@RequestParam(value = "serialNo") String serialNo);
+	BaseOutput<PrintTemplateDataDto<WeighingBillPrintDto>> getWeighingBillPrintData(@RequestParam(value = "serialNo") String serialNo);
 
 	@RequestMapping(value = "/api/weighingBill/getWeighingStatementPrintData")
-	BaseOutput<WeighingStatementPrintDto> getWeighingStatementPrintData(@RequestParam(value = "serialNo") String serialNo);
+	BaseOutput<PrintTemplateDataDto<WeighingStatementPrintDto>> getWeighingStatementPrintData(@RequestParam(value = "serialNo") String serialNo);
 }

@@ -36,6 +36,7 @@ import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.AccountPasswordValidateDto;
 import com.dili.orders.dto.AccountSimpleResponseDto;
+import com.dili.orders.dto.PrintTemplateDataDto;
 import com.dili.orders.dto.UserAccountCardResponseDto;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
@@ -456,9 +457,9 @@ public class WeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
-	@GetMapping("/detail.html")
+	@GetMapping("/weighingStatement/detail.html")
 	public String detail(Long id, ModelMap modelMap) {
-		BaseOutput<WeighingBillDetailDto> output = this.weighingBillRpc.findDetailDtoById(id);
+		BaseOutput<WeighingBillDetailDto> output = this.weighingBillRpc.findDetailDtoByStatementId(id);
 		if (!output.isSuccess()) {
 			LOGGER.error(output.getMessage());
 			return this.index(modelMap);
@@ -473,7 +474,6 @@ public class WeighingBillController {
 		metadata.put("subtractionWeight", "weightProvider");
 		metadata.put("createdTime", "datetimeProvider");
 		metadata.put("measureType", "measureTypeProvider");
-		metadata.put("state", "weighingBillStateProvider");
 
 		metadata.put("unitPrice", "moneyProvider");
 		metadata.put("statement.tradeAmount", "moneyProvider");
@@ -481,6 +481,7 @@ public class WeighingBillController {
 		metadata.put("statement.buyerActualAmount", "moneyProvider");
 		metadata.put("statement.sellerPoundage", "moneyProvider");
 		metadata.put("statement.sellerActualAmount", "moneyProvider");
+		metadata.put("statement.state", "weighingStatementStateProvider");
 
 		JSONObject ddProvider = new JSONObject();
 		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
@@ -663,11 +664,14 @@ public class WeighingBillController {
 	@ResponseBody
 	@RequestMapping("/getWeighingBillPrintData.action")
 	public BaseOutput<?> getWeighingBillPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) throws Exception {
-		BaseOutput<WeighingBillPrintDto> output = this.weighingBillRpc.getWeighingBillPrintData(serialNo);
+		BaseOutput<PrintTemplateDataDto<WeighingBillPrintDto>> output = this.weighingBillRpc.getWeighingBillPrintData(serialNo);
 		if (!output.isSuccess()) {
 			return output;
 		}
-		output.getData().setReprint(reprint);
+		if (output.getData() == null) {
+			return BaseOutput.failure("数据不存在");
+		}
+		output.getData().getData().setReprint(reprint);
 		JSONObject ddProvider = new JSONObject();
 		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
 		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
@@ -685,12 +689,15 @@ public class WeighingBillController {
 	 */
 	@ResponseBody
 	@RequestMapping("/getWeighingStatementPrintData.action")
-	public BaseOutput<WeighingStatementPrintDto> getWeighingStatementPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) {
-		BaseOutput<WeighingStatementPrintDto> output = this.weighingBillRpc.getWeighingStatementPrintData(serialNo);
+	public BaseOutput<?> getWeighingStatementPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) {
+		BaseOutput<PrintTemplateDataDto<WeighingStatementPrintDto>> output = this.weighingBillRpc.getWeighingStatementPrintData(serialNo);
 		if (!output.isSuccess()) {
 			return output;
 		}
-		output.getData().setReprint(reprint);
+		if (output.getData() == null) {
+			return BaseOutput.failure("数据不存在");
+		}
+		output.getData().getData().setReprint(reprint);
 		return output;
 	}
 }
