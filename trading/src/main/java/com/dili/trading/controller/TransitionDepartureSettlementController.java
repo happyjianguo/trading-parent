@@ -53,6 +53,9 @@ public class TransitionDepartureSettlementController {
     public BaseOutput queryAccountBalance(String customerCardNo) {
         BaseOutput<AccountSimpleResponseDto> oneAccountCard = cardRpc.getOneAccountCard(customerCardNo);
         if (oneAccountCard.isSuccess()) {
+            if (!Objects.equals(oneAccountCard.getData().getAccountInfo().getFirmId(), SessionContext.getSessionContext().getUserTicket().getFirmId())) {
+                return BaseOutput.failure("未获取到相关客户信息");
+            }
             HashMap<String, Object> map = new HashMap<>();
             map.put("balance", oneAccountCard.getData().getAccountFund().getAvailableAmount().doubleValue() / 100);
             map.put("customerCode", oneAccountCard.getData().getAccountInfo().getCustomerCode());

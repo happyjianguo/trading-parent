@@ -293,6 +293,9 @@ public class TransitionDepartureApplyController {
             //判断账户是否为空
             if (Objects.nonNull(oneAccountCard.getData())) {
                 //如果账户信息不为空，则发起请求，根据用户id和市场id去拿到客户相关信息
+                if (!Objects.equals(oneAccountCard.getData().getFirmId(), SessionContext.getSessionContext().getUserTicket().getFirmId())) {
+                    return BaseOutput.failure("没有查询到相关客户信息");
+                }
                 customerBaseOutput = customerRpc.get(oneAccountCard.getData().getCustomerId(), oneAccountCard.getData().getFirmId());
             } else {
                 //没有查询到相关的账号信息
