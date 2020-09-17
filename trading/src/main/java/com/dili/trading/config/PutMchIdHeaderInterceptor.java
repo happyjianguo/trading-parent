@@ -20,7 +20,9 @@ public class PutMchIdHeaderInterceptor extends HandlerInterceptorAdapter {
 			FirmIdHolder.setFirmId(mchid);
 		} else {
 			UserTicket user = SessionContext.getSessionContext().getUserTicket();
-			FirmIdHolder.setFirmId(user.getFirmId().toString());
+			if (user != null) {
+				FirmIdHolder.setFirmId(user.getFirmId().toString());
+			}
 		}
 		return true;
 	}
