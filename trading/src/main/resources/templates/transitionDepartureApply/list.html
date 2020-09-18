@@ -1,7 +1,7 @@
 <#bs4Body>
 
 <div class="container-fluid">
-    <#bs4nav>
+
     <form class="form collapse show" id="queryForm" role="form" >
         <div class="row  row-cols-6">
             <div class="form-group col">
@@ -14,7 +14,12 @@
                 </select>
             </div>
             <div class="form-group col">
-                <label for="">类型</label>
+                <label for="">交易类型</label>
+                <select id="transTypeId" name="transTypeId" class="form-control"></select>
+                <#bselect2 _id="transTypeId" _mode="remote"  _provider="tradeTypeProvider"/>
+            </div>
+            <div class="form-group col">
+                <label for="">业务类型</label>
                 <select id="bizType" name="bizType" class="form-control">
                     <option value="">--全部--</option>
                     <option value="1">转场</option>
@@ -22,7 +27,7 @@
                 </select>
             </div>
             <div class="form-group col">
-                <label for="">车牌</label>
+                <label for="">车牌号</label>
                 <input type="text" class="form-control" name="plate" maxlength="8" minlength="3" placeholder="">
             </div>
             <div class="form-group col">
@@ -64,9 +69,9 @@
                     <input type="text" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
                     <input type="text" class="form-control" id="show_customer_name" readonly/>
                     <input type="text" class="form-control" id="accountId" name="accountId" hidden/>
-                    <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
-                        刷卡
-                    </button>
+                    <div class="input-group-append">
+                        <span class="input-group-text" onclick="javascript:swipeCard(this);"><a href="javascript:;" style=" text-decoration: none;" >刷卡</a></span>
+                    </div>
                 </div>
             </div>
             <div class="col align-self-center mt-3">
@@ -76,7 +81,7 @@
         </div>
 
     </form>
-</#bs4nav>
+
 <hr>
 
     <div class="row">
@@ -88,7 +93,7 @@
 	                </button>
                 </#resource>
                 <#resource code="transitionDepartureApply_update">
-	                <button type="button" class="btn btn-primary" onclick="openUpdateHandler()">
+	                <button type="button" class="btn btn-primary" id="sp" onclick="openUpdateHandler()">
 	                    <i class="fa fa-pencil-square-o"></i> 审批
 	                </button>
                 </#resource>
@@ -99,57 +104,63 @@
                     <button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')"><i class="fa fa-download"></i> 导出</button>
                 </#resource>
             </div>
-            <table id="grid" data-toggle="table" data-title="转离场申请单列表" data-id-field="id" data-tree-show-field="name" data-parent-id-field="parentId" data-query-params="queryParams" data-sort-name="id"
-                   data-sort-order="desc" data-pagination="true" data-page-number="1" data-page-size="10" data-side-pagination="server" data-single-select="true" data-click-to-select="true" data-ignore-click-to-select-on="ignoreExpandClick">
+                <table id="grid" data-toggle="table" data-title="转离场申请列表" class="table"
+                       data-pagination="true" data-page-number="1"
+                       data-page-size="10" data-query-params="queryParams"
+                       data-side-pagination="server"
+                       data-content-type="application/x-www-form-urlencoded"
+                       data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
+                       data-unique-id="id" data-sort-name="id" data-sort-order="desc"
+                       data-icons="bui.variable.icons"
+                       data-buttons-class="primary"
+                >
                 <thead>
-                <tr>
-                    <th data-radio="true"></th>
-                    <th data-field="code" data-align="center" data-sortable="true">
-                        申请单号
-                    </th>
-                    <th data-field="customerCode" data-align="center" data-sortable="true">
-                        客户编号
-                    </th>
-                    <th data-field="customerName" data-align="center" data-sortable="true">
-                       客户姓名
-                    </th>
-                    <th data-field="customerCardNo" data-align="center" data-sortable="true">
-                       卡号
-                    </th>
-                    <th data-field="transTypeId" data-align="center" data-provider="dataDictionaryValueProvider"  data-sortable="true" data-sort-name="trans_type_id" data-query-params='{dd_code:"trade_type"}'>
-                        交易类型
-                    </th>
-                    <th data-field="categoryId" data-align="center" data-provider="categoryProvider"  data-sortable="true" data-sort-name="category_id">
-                        商品名称
-                    </th>
-                    <th data-field="carTypeId" data-align="center" data-provider="carTypeProvider" data-sortable="true" data-sort-name="car_type_id">
-                        车型
-                    </th>
-                    <th data-field="plate" data-align="center"  data-sortable="true">
-                        车牌号
-                    </th>
-                    <th data-field="bizType" data-align="center" data-provider="bizTypeProvider" data-sortable="true" data-sort-name="biz_type">
-                        类型
-                    </th>
-                    <th data-field="approvalState" data-align="center" data-provider="applyProvider" data-sortable="true" data-sort-name="approval_state">
-                        审批状态
-                    </th>
-                    <th data-field="originatorName" data-align="center" data-sortable="true">
-                        发起人
-                    </th>
-                    <th data-field="originatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true">
-                        发起时间
-                    </th>
-                    <th data-field="approvalName" data-align="center" data-sortable="true">
-                        审批人员
-                    </th>
-                </tr>
+                    <tr>
+                        <th data-radio="true"></th>
+                        <th data-field="code" data-align="center" data-sortable="true">
+                            申请单号
+                        </th>
+                        <th data-field="customerCode" data-align="center" data-sortable="true">
+                            客户编号
+                        </th>
+                        <th data-field="customerName" data-align="center" data-sortable="true">
+                           客户姓名
+                        </th>
+                        <th data-field="customerCardNo" data-align="center" data-sortable="true">
+                           卡号
+                        </th>
+                        <th data-field="transTypeId" data-align="center" data-provider="tradeTypeProvider"  data-sortable="true" data-sort-name="trans_type_id">
+                            交易类型
+                        </th>
+                        <th data-field="categoryId" data-align="center" data-provider="categoryProvider"  data-sortable="true" data-sort-name="category_id">
+                            商品名称
+                        </th>
+                        <th data-field="carTypeId" data-align="center" data-provider="carTypeProvider" data-sortable="true" data-sort-name="car_type_id">
+                            车型
+                        </th>
+                        <th data-field="plate" data-align="center"  data-sortable="true">
+                            车牌号
+                        </th>
+                        <th data-field="bizType" data-align="center" data-provider="bizTypeProvider" data-sortable="true" data-sort-name="biz_type">
+                            业务类型
+                        </th>
+                        <th data-field="approvalState" data-align="center" data-provider="applyProvider" data-sortable="true" data-sort-name="approval_state">
+                            审批状态
+                        </th>
+                        <th data-field="originatorName" data-align="center" data-sortable="true">
+                            发起人
+                        </th>
+                        <th data-field="originatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true">
+                            发起时间
+                        </th>
+                        <th data-field="approvalName" data-align="center" data-sortable="true">
+                            审批人员
+                        </th>
+                    </tr>
                 </thead>
             </table>
         </div>
-</div>
-
-
+    </div>
 </div>
 
 </#bs4Body>
@@ -167,24 +178,15 @@
     	queryDataHandler();
     }
     $(function(){
-    	$('#grid').on('click-row.bs.table', function (e, row, $element, field) {
-            if(row.$_status == 1){
-            	$("#btn_enabled").attr("disabled", "disabled");
-            	$("#btn_disabled").attr("disabled", false);
-            	$("#btn_enabled").addClass("btn_css_disabled");
-            	$("#btn_disabled").removeClass("btn_css_disabled");
-            }else if(row.$_status == 2){
-            	$("#btn_disabled").attr("disabled", "disabled");
-            	$("#btn_enabled").removeClass("btn_css_disabled");
-            	$("#btn_disabled").addClass("btn_css_disabled");
-            	$("#btn_enabled").attr("disabled", false);
-            }else{
-            	$("#btn_disabled").attr("disabled", "disabled");
-            	$("#btn_enabled").attr("disabled", "disabled");
-            	$("#btn_disabled").addClass("btn_css_disabled");
-            	$("#btn_enabled").addClass("btn_css_disabled");
+        $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
+            if (row.$_approvalState != 1) {
+                $("#sp").attr("disabled", "disabled");
+                $("#sp").addClass("btn_css_disabled");
+            }else {
+                $("#sp").removeClass("btn_css_disabled");
+                $("#sp").attr("disabled", false);
             }
-      	})
+        })
     	$('#show_customer_card').on('input', function (cardNo) {
             $.ajax({
                 type: "POST",

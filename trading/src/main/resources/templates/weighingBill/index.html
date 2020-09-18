@@ -1,12 +1,12 @@
 <#bs4Body>
 <div class="container-fluid">
-	<#bs4nav>
+
 	<form class="form" id="queryForm" role="form">
 		<div class="row  row-cols-6">
 			<div class="form-group col">
-				<label for="">单据状态</label> <select id="state" name="state" class="form-control">
+				<label for="">单据状态</label> <select id="state" name="statementStates" class="form-control">
 				</select>
-				<#bcomboProvider _id="state" _provider="weighingBillStateProvider" _queryParams='{emptyText:"-- 全部 --"}' />
+				<#bcomboProvider _id="state" _provider="weighingStatementStateProvider" _queryParams='{emptyText:"-- 全部 --"}' />
 			</div>
 			<div class="form-group col">
 				<label for="">交易类型</label> <select id="tradeType" name="tradeType" class="form-control">
@@ -43,7 +43,6 @@
 				<div class="input-group">
 					<#bautoCompleteProvider _hiddenDomainId="operatorId" _hiddenDomainName="operatorId" _displayDomainId="realName" _displayDomainName="realName" _placeholder=""
 						_optionVariable="operatorNameAutoCompleteOption" />
-					<!--<input type="text" class="form-control" id="show_operator_name" readonly/>-->
 				</div>
 			</div>
 			<div class="form-group col-auto" style="width: 350px">
@@ -106,14 +105,14 @@
 			</div>
 		</div>
 	</form>
-	</#bs4nav>
+
 	<hr>
 	<div class="row">
 		<div class="col-12">
 			<div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
 				<#resource code="weighingBillInvalidate">
 				<button id="btn_add" type="button" class="btn btn-primary" onclick="invalidate()">
-					<i class="fa fa-plus"></i> 作废
+					<i class="fa fa-pencil-square-o"></i> 作废
 				</button>
 				</#resource>
 				<#resource code="weighingBillWithdraw">
@@ -123,17 +122,17 @@
 				</#resource>
 				<#resource code="weighingBillDetail">
 				<button type="button" class="btn btn-primary" onclick="openDetailHandler()">
-					<i class="fa fa-trash-o"></i> 查看
+					<i class="fa fa-eye"></i> 查看
 				</button>
 				</#resource>
 				<#resource code="truck_view">
-				<button type="button" class="btn btn-primary" onclick="openPrintHandler()">
-					<i class="fa fa-eye"></i> 补打
+				<button type="button" class="btn btn-primary" onclick="doReprintHandler()">
+					<i class="fa fa-print"></i> 补打
 				</button>
 				</#resource>
 				<#resource code="truck_on">
 				<button type="button" class="btn btn-primary btn_css_disabled" id="btn_enabled" onclick="doPrintHandler()">
-					<i class="fa fa-play"></i> 打印
+					<i class="fa fa-print"></i> 打印
 				</button>
 				</#resource>
 				<#resource code="truck_off">
@@ -163,7 +162,7 @@
 						<th data-field="tareWeight" data-align="center" data-sortable="true">皮重</th>
 						<th data-field="netWeight" data-align="center" data-sortable="true" data-provider="weightProvider">净重</th>
 						<th data-field="unitAmount" data-align="center" data-sortable="true">件数</th>
-						<th data-field="unitWeight" data-align="center" data-sortable="true" data-provider="weightProvider">件重</th>
+						<th data-field="unitWeight" data-align="center" data-sortable="true" data-provider="weightProvider">件重（斤）</th>
 						<th data-field="unitPiecePrice" data-align="center" data-sortable="true" data-provider="moneyProvider">件价(元/件)</th>
 						<th data-field="unitWeightPrice" data-align="center" data-sortable="true" data-provider="moneyProvider">单价(元/公斤)</th>
 						<th data-field="statement.tradeAmount" data-align="center" data-sortable="true" data-provider="moneyProvider">交易金额</th>
@@ -174,7 +173,7 @@
 						<th data-field="tradeType" data-align="center" data-sortable="true" data-provider="tradeTypeProvider">交易类型</th>
 						<th data-field="plateNumber" data-align="center" data-sortable="true">车牌号</th>
 						<th data-field="statement.state" data-align="center" data-sortable="true" data-provider="weighingStatementStateProvider">单据状态</th>
-						<th data-field="operationRecord.operatorId" data-align="center" data-sortable="true">结算员工号</th>
+						<th data-field="operationRecord.operatorUserName" data-align="center" data-sortable="true">结算员工号</th>
 						<th data-field="operationRecord.operatorName" data-align="center" data-sortable="true">结算员名称</th>
 						<th data-field="operationRecord.operationTime" data-align="center" data-sortable="true" data-provider="datetimeProvider">结算时间</th>
 					</tr>
@@ -262,6 +261,4 @@
 </script>
 
 
-<script type="text/javascript">
-	<#weighingBill_indexJs />
-</script>
+<#weighingBill_indexJs />

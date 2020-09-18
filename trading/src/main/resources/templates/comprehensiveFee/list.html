@@ -1,9 +1,25 @@
 <#bs4Body>
 
 <div class="container-fluid">
-    <#bs4nav>
+
     <form class="form collapse show" id="queryForm" role="form" >
         <div class="row  row-cols-6">
+            <div class="form-group col-3">
+                <label for="">客户</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_customer_name" readonly/>
+                </div>
+            </div>
+            <div class="form-group col-auto" style="width: 350px">
+                <label for="" class="">卡号</label>
+                <div class="input-group">
+                    <!--<#bautoCompleteProvider _hiddenDomainId="customerCardNo" _hiddenDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
+                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>-->
+                    <input type="text" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
+                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
+                </div>
+            </div>
             <div class="form-group col">
                 <label for="">单据状态</label>
                 <select id="orderStatus" name="orderStatus" class="form-control">
@@ -39,8 +55,7 @@
                 <label for="" class="">单据编号</label>
                 <input type="text" class="form-control isNaturalNum" name="code" placeholder="">
             </div>
-        </div>
-        <div class="row  row-cols-6">
+
             <div class="form-group col-auto">
                 <label for="createdStart" >结算时间</label>
                 <div class="form-inline">
@@ -65,8 +80,8 @@
         </div>
 
     </form>
-</#bs4nav>
 
+    <hr>
 
 <div class="">
     <div class="row">
@@ -87,7 +102,7 @@
                 </#resource>
                 <#resource code="comprehensiveFee_print">
                     <button type="button" class="btn btn-primary" onclick="openPrintHandler()">
-                        <i class="fa fa-eye"></i> 补打
+                        <i class="fa fa-print"></i> 补打
                     </button>
                 </#resource>
                 <#resource code="comprehensiveFee_export">

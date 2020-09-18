@@ -1,12 +1,13 @@
 package com.dili.trading.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.customer.sdk.domain.Customer;
@@ -28,10 +30,13 @@ import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
+import com.dili.orders.domain.MeasureType;
+import com.dili.orders.domain.WeighingBillState;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.AccountPasswordValidateDto;
 import com.dili.orders.dto.AccountSimpleResponseDto;
+import com.dili.orders.dto.PrintTemplateDataDto;
 import com.dili.orders.dto.UserAccountCardResponseDto;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
@@ -50,6 +55,7 @@ import com.dili.ss.idempotent.annotation.Token;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
+import com.dili.trading.rpc.AuthenticationRpc;
 import com.dili.trading.rpc.WeighingBillRpc;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.domain.Firm;
@@ -58,7 +64,9 @@ import com.dili.uap.sdk.domain.dto.UserQuery;
 import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import com.dili.uap.sdk.rpc.FirmRpc;
 import com.dili.uap.sdk.rpc.UserRpc;
+import com.dili.uap.sdk.session.SessionConstants;
 import com.dili.uap.sdk.session.SessionContext;
+import com.dili.uap.sdk.util.WebContent;
 
 /**
  * WeighingBillController
@@ -84,6 +92,10 @@ public class WeighingBillController {
 	private PayRpc payRpc;
 	@Autowired
 	private DataDictionaryRpc dataDictionaryRpc;
+	@Autowired
+	private UserRpc userRpc;
+	@Autowired
+	private AuthenticationRpc authRpc;
 
 	/**
 	 * 列表页
@@ -118,22 +130,37 @@ public class WeighingBillController {
 		if (!output.isSuccess()) {
 			return output;
 		}
+		WeighingStatement ws = null;
 		if (StringUtils.isBlank(weighingBill.getSerialNo())) {
 			weighingBill.setCreatorId(user.getId());
 			// 设置市场id
 			weighingBill.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-			output = this.weighingBillRpc.add(weighingBill);
+			BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.add(weighingBill);
+			if (!wsOutput.isSuccess()) {
+				return wsOutput;
+			}
+			ws = wsOutput.getData();
+			output = this.weighingBillRpc.settle(ws.getWeighingSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
 			if (!output.isSuccess()) {
 				return output;
 			}
-			output = this.weighingBillRpc.settle(output.getData().toString(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
 		} else {
 			weighingBill.setModifierId(user.getId());
-			output = this.weighingBillRpc.update(weighingBill);
+			BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.update(weighingBill);
+			if (!wsOutput.isSuccess()) {
+				return output;
+			}
+			ws = wsOutput.getData();
+			output = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
 			if (!output.isSuccess()) {
 				return output;
 			}
-			output = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+		}
+		if (WeighingBillState.FROZEN.getValue().equals(Integer.valueOf(output.getData().toString()))) {
+			return BaseOutput.successData(this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()));
+		}
+		if (WeighingBillState.SETTLED.getValue().equals(Integer.valueOf(output.getData().toString()))) {
+			return BaseOutput.successData(this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()));
 		}
 		return output;
 	}
@@ -261,29 +288,34 @@ public class WeighingBillController {
 			query.setStatementStates(Arrays.asList(WeighingStatementState.PAID.getValue()));
 		}
 		PageOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listPage(query);
+		output.getData().forEach(wb -> {
+			if (wb.getMeasureType().equals(MeasureType.WEIGHT.getValue())) {
+				wb.setUnitPrice(wb.getUnitPrice() * 2);
+			}
+		});
 
-		Map<Object, Object> metadata = new HashMap<Object, Object>();
-		metadata.put("roughWeight", "weightProvider");
-		metadata.put("tareWeight", "weightProvider");
-		metadata.put("netWeight", "weightProvider");
-		metadata.put("unitWeight", "weightProvider");
+//		Map<Object, Object> metadata = new HashMap<Object, Object>();
+//		metadata.put("roughWeight", "weightProvider");
+//		metadata.put("tareWeight", "weightProvider");
+//		metadata.put("netWeight", "weightProvider");
+//		metadata.put("unitWeight", "weightProvider");
+//
+//		metadata.put("unitPrice", "moneyProvider");
+//		metadata.put("statement.tradeAmount", "moneyProvider");
+//		metadata.put("statement.buyerPoundage", "moneyProvider");
+//		metadata.put("statement.buyerActualAmount", "moneyProvider");
+//		metadata.put("statement.sellerPoundage", "moneyProvider");
+//		metadata.put("statement.sellerActualAmount", "moneyProvider");
+//		metadata.put("statement.state", "weighingStatementStateProvider");
+//
+//		metadata.put("operationRecord.operationTime", "datetimeProvider");
+//
+//		JSONObject ddProvider = new JSONObject();
+//		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
+//		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
+//		metadata.put("tradeType", ddProvider);
 
-		metadata.put("unitPrice", "moneyProvider");
-		metadata.put("statement.tradeAmount", "moneyProvider");
-		metadata.put("statement.buyerPoundage", "moneyProvider");
-		metadata.put("statement.buyerActualAmount", "moneyProvider");
-		metadata.put("statement.sellerPoundage", "moneyProvider");
-		metadata.put("statement.sellerActualAmount", "moneyProvider");
-		metadata.put("statement.state", "weighingStatementStateProvider");
-
-		metadata.put("operationRecord.operationTime", "datetimeProvider");
-
-		JSONObject ddProvider = new JSONObject();
-		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
-		metadata.put("tradeType", ddProvider);
-
-		query.setMetadata(metadata);
+//		query.setMetadata(metadata);
 		try {
 			List<Map> list = ValueProviderUtils.buildDataByProvider(query, output.getData());
 
@@ -408,7 +440,12 @@ public class WeighingBillController {
 	@ResponseBody
 	@RequestMapping("/listOperatorByKeyword.action")
 	public BaseOutput<?> listOperatorByKeyword(String name, String keyword) {
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		if (user == null) {
+			return BaseOutput.failure("用户未登录");
+		}
 		UserQuery userQuery = DTOUtils.newInstance(UserQuery.class);
+		userQuery.setFirmCode(user.getFirmCode());
 		userQuery.setKeyword(keyword);
 		return this.useRpc.listByExample(userQuery);
 	}
@@ -420,9 +457,9 @@ public class WeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
-	@GetMapping("/detail.html")
+	@GetMapping("/weighingStatement/detail.html")
 	public String detail(Long id, ModelMap modelMap) {
-		BaseOutput<WeighingBillDetailDto> output = this.weighingBillRpc.findDetailDtoById(id);
+		BaseOutput<WeighingBillDetailDto> output = this.weighingBillRpc.findDetailDtoByStatementId(id);
 		if (!output.isSuccess()) {
 			LOGGER.error(output.getMessage());
 			return this.index(modelMap);
@@ -437,7 +474,6 @@ public class WeighingBillController {
 		metadata.put("subtractionWeight", "weightProvider");
 		metadata.put("createdTime", "datetimeProvider");
 		metadata.put("measureType", "measureTypeProvider");
-		metadata.put("state", "weighingBillStateProvider");
 
 		metadata.put("unitPrice", "moneyProvider");
 		metadata.put("statement.tradeAmount", "moneyProvider");
@@ -445,6 +481,7 @@ public class WeighingBillController {
 		metadata.put("statement.buyerActualAmount", "moneyProvider");
 		metadata.put("statement.sellerPoundage", "moneyProvider");
 		metadata.put("statement.sellerActualAmount", "moneyProvider");
+		metadata.put("statement.state", "weighingStatementStateProvider");
 
 		JSONObject ddProvider = new JSONObject();
 		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
@@ -494,9 +531,33 @@ public class WeighingBillController {
 	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/operatorInvalidate.action")
-	public BaseOutput<Object> operatorInvalidate(Long id, String operatorPassword, ModelMap modelMap) {
+	public BaseOutput<Object> operatorInvalidate(Long id, String operatorPassword, HttpServletRequest request, ModelMap modelMap) {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
-		BaseOutput<Object> output = this.weighingBillRpc.operatorInvalidate(id, user.getId(), operatorPassword);
+		// 校验操作员密码
+		BaseOutput<Object> pwdOutput = this.userRpc.validatePassword(user.getId(), operatorPassword);
+		if (!pwdOutput.isSuccess()) {
+			if (pwdOutput.getData() != null) {
+				JSONObject jsonObj = JSON.parseObject(pwdOutput.getData().toString());
+				// 如果用户被锁定则强制下线
+				if (jsonObj.getBooleanValue("locked")) {
+					BaseOutput<Object> logoutOutput = this.authRpc.loginout(new HashMap<String, String>() {
+						{
+							put("sessionId", getSessionId(request));
+						}
+					});
+					if (!logoutOutput.isSuccess()) {
+						return BaseOutput.failure("密码错误次数超限，强制注销登录失败");
+					}
+					return BaseOutput.successData(new HashMap<String, Object>() {
+						{
+							put("locked", true);
+						}
+					});
+				}
+			}
+			return pwdOutput;
+		}
+		BaseOutput<Object> output = this.weighingBillRpc.operatorInvalidate(id, user.getId());
 		return output;
 	}
 
@@ -525,10 +586,54 @@ public class WeighingBillController {
 	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/operatorWithdraw.action")
-	public BaseOutput<Object> operatorWithdraw(Long id, String operatorPassword, ModelMap modelMap) {
+	public BaseOutput<Object> operatorWithdraw(Long id, String operatorPassword, HttpServletRequest request, ModelMap modelMap) {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
-		BaseOutput<Object> output = this.weighingBillRpc.operatorWithdraw(id, user.getId(), operatorPassword);
+		// 校验操作员密码
+		BaseOutput<Object> pwdOutput = this.userRpc.validatePassword(user.getId(), operatorPassword);
+		if (!pwdOutput.isSuccess()) {
+			if (pwdOutput.getData() != null) {
+				JSONObject jsonObj = JSON.parseObject(pwdOutput.getData().toString());
+				// 如果用户被锁定则强制下线
+				if (jsonObj.getBooleanValue("locked")) {
+					BaseOutput<Object> logoutOutput = this.authRpc.loginout(new HashMap<String, String>() {
+						{
+							put("sessionId", getSessionId(request));
+						}
+					});
+					if (!logoutOutput.isSuccess()) {
+						return BaseOutput.failure("密码错误次数超限，强制注销登录失败");
+					}
+					return BaseOutput.successData(new HashMap<String, Object>() {
+						{
+							put("locked", true);
+						}
+					});
+				}
+			}
+			return pwdOutput;
+		}
+		BaseOutput<Object> output = this.weighingBillRpc.operatorWithdraw(id, user.getId());
 		return output;
+	}
+
+	/**
+	 * 获取登录用户sessionId
+	 * 
+	 * @param req
+	 * @return
+	 */
+	private String getSessionId(HttpServletRequest req) {
+		// 首先读取链接中的session
+		String sessionId = req.getParameter(SessionConstants.SESSION_ID);
+		if (StringUtils.isBlank(sessionId)) {
+			sessionId = req.getHeader(SessionConstants.SESSION_ID);
+		}
+		if (StringUtils.isNotBlank(sessionId)) {
+			WebContent.setCookie(SessionConstants.SESSION_ID, sessionId);
+		} else {
+			sessionId = WebContent.getCookieVal(SessionConstants.SESSION_ID);
+		}
+		return sessionId;
 	}
 
 	/**
@@ -554,16 +659,26 @@ public class WeighingBillController {
 	 *
 	 * @param serialNo 过磅单编号
 	 * @return
+	 * @throws Exception
 	 */
 	@ResponseBody
 	@RequestMapping("/getWeighingBillPrintData.action")
-	public BaseOutput<WeighingBillPrintDto> getWeighingBillPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) {
-		BaseOutput<WeighingBillPrintDto> output = this.weighingBillRpc.getWeighingBillPrintData(serialNo);
+	public BaseOutput<?> getWeighingBillPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) throws Exception {
+		BaseOutput<PrintTemplateDataDto<WeighingBillPrintDto>> output = this.weighingBillRpc.getWeighingBillPrintData(serialNo);
 		if (!output.isSuccess()) {
 			return output;
 		}
-		output.getData().setReprint(reprint);
-		return output;
+		if (output.getData() == null) {
+			return BaseOutput.failure("数据不存在");
+		}
+		output.getData().getData().setReprint(reprint);
+		JSONObject ddProvider = new JSONObject();
+		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
+		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
+		Map<Object, Object> metadata = new HashMap<Object, Object>();
+		metadata.put("tradeType", ddProvider);
+		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData()));
+		return BaseOutput.successData(listMap.get(0));
 	}
 
 	/**
@@ -574,12 +689,15 @@ public class WeighingBillController {
 	 */
 	@ResponseBody
 	@RequestMapping("/getWeighingStatementPrintData.action")
-	public BaseOutput<WeighingStatementPrintDto> getWeighingStatementPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) {
-		BaseOutput<WeighingStatementPrintDto> output = this.weighingBillRpc.getWeighingStatementPrintData(serialNo);
+	public BaseOutput<?> getWeighingStatementPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) {
+		BaseOutput<PrintTemplateDataDto<WeighingStatementPrintDto>> output = this.weighingBillRpc.getWeighingStatementPrintData(serialNo);
 		if (!output.isSuccess()) {
 			return output;
 		}
-		output.getData().setReprint(reprint);
+		if (output.getData() == null) {
+			return BaseOutput.failure("数据不存在");
+		}
+		output.getData().getData().setReprint(reprint);
 		return output;
 	}
 }

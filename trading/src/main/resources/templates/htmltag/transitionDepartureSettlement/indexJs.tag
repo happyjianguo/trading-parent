@@ -11,6 +11,7 @@
     lay('.settletime').each(function () {
         laydate.render({
             elem: this
+            ,theme: '#007bff'
             , trigger: 'click'
             , range: false
             , type: 'date'
@@ -120,7 +121,6 @@
                 let data = result.data;
                 return {
                     suggestions: $.map(data, function (dataItem) {
-                        debugger
                         return $.extend(dataItem, {
                                 value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
                             }
@@ -163,8 +163,8 @@
         dia = bs4pop.dialog({
             title: '转离场结算单',//对话框title
             content: '${contextPath}/transitionDepartureSettlement/add.html', //对话框内容，可以是 string、element，$object
-            width: '900px',//宽度
-            height: '500px',//高度
+            width: '880px',//宽度
+            height: '540px',//高度
             isIframe: true,//默认是页面层，非iframe
             backdrop: 'static',
         });

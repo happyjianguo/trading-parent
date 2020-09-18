@@ -1,11 +1,11 @@
 <#bs4Body>
 
 <div class="container-fluid">
-    <#bs4nav>
+
     <form class="form collapse show" id="queryForm" role="form" >
         <div class="row  row-cols-6">
             <div class="form-group col">
-                <label for="">类型</label>
+                <label for="">业务类型</label>
                 <select id="bizType" name="bizType" class="form-control">
                     <option value="">--全部--</option>
                     <option value="1">转场</option>
@@ -21,6 +21,11 @@
                 </select>
             </div>
             <div class="form-group col">
+                <label for="">交易类型</label>
+                <select id="transTypeId" name="transTypeId" class="form-control"></select>
+                <#bselect2 _id="transTypeId" _mode="remote"  _provider="tradeTypeProvider"/>
+            </div>
+            <div class="form-group col">
                 <label for="">车型</label>
                 <select id="carTypeId" name="carTypeId" class="form-control"></select>
                 <#bcomboProvider _id="carTypeId" _provider="carTypeProvider" _validatorMethod="isSelected" _queryParams='{emptyText:"-- 全部 --"}' />
@@ -32,6 +37,10 @@
             <div class="form-group col">
                 <label for="" class="">结算单号</label>
                 <input type="text" class="form-control isNaturalNum" name="code" placeholder="">
+            </div>
+            <div class="form-group col">
+                <label for="">车牌号</label>
+                <input type="text" class="form-control" name="plate" maxlength="8" minlength="3" placeholder="">
             </div>
             <div class="form-group col-auto">
                 <label for="createdStart" >结算时间</label>
@@ -50,10 +59,6 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group col">
-                <label for="">车牌号</label>
-                <input type="text" class="form-control" name="plate" maxlength="8" minlength="3" placeholder="">
-            </div>
             <div class="form-group col-auto" style="width: 350px">
                 <label for="" class="">客户</label>
                 <div class="input-group">
@@ -69,9 +74,9 @@
                         <input type="text" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
                         <input type="text" class="form-control" id="show_customer_name" readonly/>
                         <input type="text" class="form-control" id="accountId" name="accountId" hidden/>
-                        <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:swipeCard(this);">
-                            刷卡
-                        </button>
+                        <div class="input-group-append">
+                            <span class="input-group-text" onclick="javascript:swipeCard(this);"><a href="javascript:;" style=" text-decoration: none;" >刷卡</a></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,7 +87,7 @@
         </div>
 
     </form>
-</#bs4nav>
+
 <hr>
 
     <div class="row">
@@ -94,19 +99,27 @@
 	                </button>
                 </#resource>
                 <#resource code="transitionDepartureSettlement_update">
-	                <button type="button" class="btn btn-primary" onclick="openUpdateHandler()">
+	                <button type="button" class="btn btn-primary" id="cx" onclick="openUpdateHandler()">
 	                    <i class="fa fa-pencil-square-o"></i> 撤销
 	                </button>
                 </#resource>
                 <#resource code="transitionDepartureSettlement_print">
-                    <button id="btn_view" type="button" class="btn btn-primary" onclick="openPrintHandler()"><i class="fa fa-eye"></i> 补打</button>
+                    <button id="bd" type="button" class="btn btn-primary" onclick="openPrintHandler()"><i class="fa fa-print"></i> 补打</button>
                 </#resource>
                 <#resource code="transitionDepartureSettlement_export">
                     <button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')"><i class="fa fa-download"></i> 导出</button>
                 </#resource>
             </div>
-            <table id="grid" data-toggle="table" data-id-field="id" data-title="转离场结算单列表" data-tree-show-field="name" data-parent-id-field="parentId" data-query-params="queryParams" data-sort-name="id"
-                   data-sort-order="desc" data-pagination="true" data-page-number="1" data-page-size="10" data-side-pagination="server" data-single-select="true" data-click-to-select="true" data-ignore-click-to-select-on="ignoreExpandClick">
+            <table id="grid" data-toggle="table" data-title="转离场称重缴费列表" class="table"
+                   data-toolbar="#toolbar" data-pagination="true" data-page-number="1"
+                   data-page-size="10" data-query-params="queryParams"
+                   data-side-pagination="server"
+                   data-content-type="application/x-www-form-urlencoded"
+                   data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
+                   data-unique-id="id" data-sort-name="id" data-sort-order="desc"
+                   data-icons="bui.variable.icons"
+                   data-buttons-class="primary"
+                  >
                 <thead>
                 <tr>
                     <th data-radio="true"></th>
@@ -125,7 +138,7 @@
                     <th data-field="customerCardNo" data-align="center" data-sortable="true">
                        卡号
                     </th>
-                    <th data-field="transTypeId" data-align="center" data-provider="dataDictionaryValueProvider"  data-query-params='{dd_code:"trade_type"}' data-sortable="true">
+                    <th data-field="transTypeId" data-align="center" data-provider="tradeTypeProvider"  data-sortable="true">
                         交易类型
                     </th>
                     <th data-field="categoryId" data-align="center" data-provider="categoryProvider"  data-sortable="true" data-sort-name="category_id">
@@ -194,24 +207,20 @@
     	queryDataHandler();
     }
     $(function(){
-    	$('#grid').on('click-row.bs.table', function (e, row, $element, field) {
-            if(row.$_status == 1){
-            	$("#btn_enabled").attr("disabled", "disabled");
-            	$("#btn_disabled").attr("disabled", false);
-            	$("#btn_enabled").addClass("btn_css_disabled");
-            	$("#btn_disabled").removeClass("btn_css_disabled");
-            }else if(row.$_status == 2){
-            	$("#btn_disabled").attr("disabled", "disabled");
-            	$("#btn_enabled").removeClass("btn_css_disabled");
-            	$("#btn_disabled").addClass("btn_css_disabled");
-            	$("#btn_enabled").attr("disabled", false);
-            }else{
-            	$("#btn_disabled").attr("disabled", "disabled");
-            	$("#btn_enabled").attr("disabled", "disabled");
-            	$("#btn_disabled").addClass("btn_css_disabled");
-            	$("#btn_enabled").addClass("btn_css_disabled");
+        $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
+            debugger;
+            if (row.$_payStatus != 2) {
+                $("#cx").attr("disabled", "disabled");
+                $("#cx").addClass("btn_css_disabled");
+                $("#bd").attr("disabled", "disabled");
+                $("#bd").addClass("btn_css_disabled");
+            }else {
+                $("#cx").removeClass("btn_css_disabled");
+                $("#cx").attr("disabled", false);
+                $("#bd").removeClass("btn_css_disabled");
+                $("#bd").attr("disabled", false);
             }
-      	})
+        })
         $('#show_customer_card').on('input', function (cardNo) {
             $.ajax({
                 type: "POST",

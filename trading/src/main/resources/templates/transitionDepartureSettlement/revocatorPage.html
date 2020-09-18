@@ -16,7 +16,7 @@
             </div>
             <div class="form-group col">
                 <label for="">用户密码</label>
-                <input id="password" type="password" class="form-control" required name="password"/>
+                <input id="password" type="password" class="form-control" required name="password"  maxlength="6" minlength="6"/>
             </div>
         </div>
     </form>
@@ -32,6 +32,9 @@
 
     function revocator() {
         let _formData = new FormData($('#saveForm')[0]);
+        if (!$('#saveForm').validate().form()) {
+            return false;
+        }
         bui.loading.show('努力提交中，请稍候。。。');
         $.ajax({
             type: "POST",
@@ -50,12 +53,12 @@
                     // });
                 } else {
                     bui.loading.hide();
-                    bs4pop.alert(res.result, {width:'350px',type: 'error'});
+                    bs4pop.alert(res.message, {width:'350px',type: 'error'});
                 }
             },
             error: function (error) {
                 bui.loading.hide();
-                bs4pop.alert(error.result, {width:'350px',type: 'error'});
+                bs4pop.alert(error.message, {width:'350px',type: 'error'});
             }
         });
     }

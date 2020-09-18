@@ -1,3 +1,4 @@
+<script>
     /***************************************************************************
 	 * 
 	 * @Date 2019-11-06 17:30:00
@@ -41,7 +42,7 @@ function doPrintHandler(){
     };
 
 
-    function openPrintHandler() {
+    function doReprintHandler() {
     // 获取选中行的数据
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
@@ -49,25 +50,38 @@ function doPrintHandler(){
             return false;
         }
         var url='';
-        if (rows[0].statement.$_state==4) {
+        var serialNo=null;
+        if (rows[0].statement.state==4) {
         	url='/weighingBill/getWeighingBillPrintData.action'
-        }else if (rows[0].statement.$_state==2) {
+        	serialNo=rows[0].serialNo;
+        }else if (rows[0].statement.state==2) {
         	url='/weighingBill/getWeighingStatementPrintData.action'
+        	serialNo= rows[0].statement.serialNo;
         }else{
         	bs4pop.alert("当前单据状态不能补打单据!", {type: 'error'});
+        	return;
         }
         // 先拿到票据信息，在调用c端打印
         $.ajax({
             type: "POST",
             dataType: "json",
             url: url,
-            data: {serialNo: rows[0].statement.serialNo},
+            data: {serialNo: serialNo,reprint:true},
             success: function (data) {
                 bui.loading.hide();
                 if (data.code == '200') {
-                // 调用c端打印
-                callbackObj.printDirect(JSON.stringify(data.data),"WeighingServiceDocument");
-                }
+	                // 调用c端打印
+	                if (rows[0].statement.state==4) {
+	        			callbackObj.printDirect(JSON.stringify(data.data),"WeighingDocument");
+	        		}else if (rows[0].statement.state==2) {
+	        			// 冻结单打印过磅单数据
+	        			if(rows[0].measureType==1){
+	        				callbackObj.printDirect(JSON.stringify(data.data),"SettlementDocument");
+	                	}else{
+	        				callbackObj.printDirect(JSON.stringify(data.data),"SettlementPieceDocument");
+	                	}
+	                }
+                }     		
             },
             error: function () {
             bui.loading.hide();
@@ -245,7 +259,7 @@ function doPrintHandler(){
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
-                                value: dataItem.serialNumber + '|' + dataItem.realName
+                                value: dataItem.userName + '|' + dataItem.realName
                             }
                         );
                     })
@@ -356,6 +370,9 @@ function doPrintHandler(){
                         bui.loading.hide();
                         if (data.code != '200') {
                             bs4pop.alert(data.message, {type: 'error'});
+                            if (data.data&&data.data.locked) {
+                            	window.location.reload();
+                            }
                             return;
                         }
                         window.location.reload();
@@ -397,13 +414,14 @@ function doPrintHandler(){
                         bui.loading.hide();
                         if (data.code != '200') {
                             bs4pop.alert(data.message, {type: 'error'});
+                            if (data.data&&data.data.locked) {
+                            	window.location.reload();
+                            }
                             return;
                         }
                         window.location.reload();
                     },
                     error: function (data) {
-                    	debugger;
-                    	console.log(data);
                         bui.loading.hide();
                         bs4pop.alert("请求失败!", {type: 'error'});
                     }
@@ -439,7 +457,7 @@ function doPrintHandler(){
         _modal.find('.modal-title').text('查看图片');
     }
 
-    function openDetailHandler(id) {
+    function openDetailHandler() {
         let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
@@ -447,17 +465,16 @@ function doPrintHandler(){
         }
         dia = bs4pop.dialog({
             title: '过磅单详情',// 对话框title
-            content: '${contextPath}/weighingBill/detail.html?id='+rows[0].id, // 对话框内容，可以是
-																				// string、element，$object
-            width: '80%',// 宽度
+            content: '${contextPath}/weighingBill/weighingStatement/detail.html?id='+rows[0].statement.id, // 对话框内容，可以是
+            width: '98%',// 宽度
             height: '95%',// 高度
             isIframe: true,// 默认是页面层，非iframe
             backdrop: 'static',
-            btns: [{
+            /*btns: [{
                 label: '关闭', className: 'btn btn-secondary', onClick(e, $iframe) {
 
                 }
-            }]
+            }]*/
         });
     }
 
@@ -571,3 +588,4 @@ function doPrintHandler(){
 	 * ***************************************自定义事件区
 	 * end*************************************
 	 */
+    </script>

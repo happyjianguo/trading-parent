@@ -1,5 +1,6 @@
 package com.dili.trading.rpc;
 
+import com.dili.orders.config.PayServiceFeignConfig;
 import com.dili.orders.domain.TransitionDepartureSettlement;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc")
+@FeignClient(name = "order-service", contextId = "transitionDepartureSettlementRpc", url = "${orderService.url:}", configuration = PayServiceFeignConfig.class)
 public interface TransitionDepartureSettlementRpc {
 
 
