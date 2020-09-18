@@ -111,35 +111,27 @@
 		<div class="col-12">
 			<div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
 				<#resource code="weighingBillInvalidate">
-				<button id="btn_add" type="button" class="btn btn-primary" onclick="invalidate()">
+				<button id="btn_invalidate" type="button" class="btn btn-primary" onclick="invalidate()">
 					<i class="fa fa-pencil-square-o"></i> 作废
 				</button>
 				</#resource>
 				<#resource code="weighingBillWithdraw">
-				<button type="button" class="btn btn-primary" onclick="withdraw()">
+				<button id="btn_withdraw" type="button" class="btn btn-primary" onclick="withdraw()">
 					<i class="fa fa-pencil-square-o"></i> 撤销
 				</button>
 				</#resource>
-				<#resource code="weighingBillDetail">
 				<button type="button" class="btn btn-primary" onclick="openDetailHandler()">
 					<i class="fa fa-eye"></i> 查看
 				</button>
-				</#resource>
-				<#resource code="truck_view">
-				<button type="button" class="btn btn-primary" onclick="doReprintHandler()">
+				<button id="btn_reprint" type="button" class="btn btn-primary" onclick="doReprintHandler()">
 					<i class="fa fa-print"></i> 补打
 				</button>
-				</#resource>
-				<#resource code="truck_on">
-				<button type="button" class="btn btn-primary btn_css_disabled" id="btn_enabled" onclick="doPrintHandler()">
+				<button type="btn_print" class="btn btn-primary btn_css_disabled" id="btn_enabled" onclick="doPrintHandler()">
 					<i class="fa fa-print"></i> 打印
 				</button>
-				</#resource>
-				<#resource code="truck_off">
 				<button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')">
 					<i class="fa fa-download"></i> 导出
 				</button>
-				</#resource>
 			</div>
 			<table id="grid" data-toggle="table" data-title="过磅单列表" class="table" data-toolbar="#toolbar" data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
 				data-side-pagination="server" data-method="POST" data-content-type="application/x-www-form-urlencoded" data-single-select="true" data-click-to-select="true" data-checkbox-header="true"

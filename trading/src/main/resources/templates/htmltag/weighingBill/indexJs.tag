@@ -566,21 +566,34 @@ function doPrintHandler(){
     }
     $(function(){
         $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
-            if(row.$_status == 1){
-                $("#btn_enabled").attr("disabled", "disabled");
-                $("#btn_disabled").attr("disabled", false);
-                $("#btn_enabled").addClass("btn_css_disabled");
-                $("#btn_disabled").removeClass("btn_css_disabled");
-            }else if(row.$_status == 2){
-                $("#btn_disabled").attr("disabled", "disabled");
-                $("#btn_enabled").removeClass("btn_css_disabled");
-                $("#btn_disabled").addClass("btn_css_disabled");
-                $("#btn_enabled").attr("disabled", false);
-            }else{
-                $("#btn_disabled").attr("disabled", "disabled");
-                $("#btn_enabled").attr("disabled", "disabled");
-                $("#btn_disabled").addClass("btn_css_disabled");
-                $("#btn_enabled").addClass("btn_css_disabled");
+            if(row.statement.state == ${@com.dili.orders.domain.WeighingStatementState.UNPAID.getValue()}){
+                $("#btn_invalidate").attr("disabled", false);
+                $("#btn_invalidate").removeClass("btn_css_disabled");
+                $("#btn_withdraw").attr("disabled", "btn_css_disabled");
+                $("#btn_withdraw").addClass("btn_css_disabled");
+                $("#btn_reprint").attr("disabled", "disabled");
+                $("#btn_reprint").addClass("btn_css_disabled");
+            }else if(row.statement.state == ${@com.dili.orders.domain.WeighingStatementState.PAID.getValue()}){
+               	$("#btn_invalidate").attr("disabled", "disabled");
+                $("#btn_invalidate").addClass("btn_css_disabled");
+                $("#btn_withdraw").attr("disabled", false);
+                $("#btn_withdraw").removeClass("btn_css_disabled");
+                $("#btn_reprint").attr("disabled", false);
+                $("#btn_reprint").removeClass("btn_css_disabled");
+            }else if(row.statement.state == ${@com.dili.orders.domain.WeighingStatementState.FROZEN.getValue()}){
+                $("#btn_invalidate").attr("disabled", false);
+                $("#btn_invalidate").addClass("btn_css_disabled");
+                $("#btn_withdraw").attr("disabled", "disabled");
+                $("#btn_withdraw").removeClass("btn_css_disabled");
+                $("#btn_reprint").attr("disabled", false);
+                $("#btn_reprint").removeClass("btn_css_disabled");
+            }else {
+            	$("#btn_invalidate").attr("disabled", "disabled");
+                $("#btn_invalidate").addClass("btn_css_disabled");
+                $("#btn_withdraw").attr("disabled", "disabled");
+                $("#btn_withdraw").addClass("btn_css_disabled");
+                $("#btn_reprint").attr("disabled", "disabled");
+                $("#btn_reprint").addClass("btn_css_disabled");
             }
         })
     })
