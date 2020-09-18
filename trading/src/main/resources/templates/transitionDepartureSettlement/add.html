@@ -194,6 +194,8 @@
                         bs4pop.alert("计费规则获取失败!", {type: 'error'});
                     }
                 });
+            }else{
+                $('#netWeight').val("");
             }
         })
         $('#tareWeight').on('keyup', function (e) {
@@ -228,6 +230,8 @@
                         bs4pop.alert("计费规则获取失败!", {type: 'error'});
                     }
                 });
+            }else{
+                $('#netWeight').val("");
             }
         })
         $('#payByCard').on('click', function (e) {
