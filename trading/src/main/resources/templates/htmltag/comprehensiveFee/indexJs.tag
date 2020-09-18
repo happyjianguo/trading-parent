@@ -106,22 +106,10 @@
         dia = bs4pop.dialog({
             title: '检测收费单',//对话框title
             content: '${contextPath}/comprehensiveFee/add.html', //对话框内容，可以是 string、element，$object
-            width: '60%',//宽度
-            height: '95%',//高度
+            width: '880px',//宽度
+            height: '500px',//高度
             backdrop: 'static',
-            isIframe: true,//默认是页面层，非iframe
-            btns: [
-                {
-                    label: '下一步', className: 'btn btn-primary', onClick(e, $iframe) {
-                        let diaWindow = $iframe[0].contentWindow;
-                        bui.util.debounce(diaWindow.saveOrUpdateHandler, 1000, true)()
-                        return false;
-                    }
-                }, {
-                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
-
-                    }
-                }]
+            isIframe: true//默认是页面层，非iframe
         });
 
     }
@@ -133,21 +121,10 @@
         dia = bs4pop.dialog({
             title: '支付确认',//对话框title
             content: '${contextPath}/comprehensiveFee/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
-            width: '60%',//宽度
-            height: '60%',//高度
+            width: '400px',//宽度
+            height: '390px',//高度
             backdrop: 'static',
-            isIframe: true,//默认是页面层，非iframe
-            btns:
-                [{
-                    label: '付款', className: 'btn btn-primary', onClick(e, $iframe) {
-                        let diaWindow = $iframe[0].contentWindow;
-                        bui.util.debounce(diaWindow.pay, 1000, true)()
-                        return false;
-                    }
-                }, {
-                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
-                    }
-                }]
+            isIframe: true//默认是页面层，非iframe
         });
 
     }
