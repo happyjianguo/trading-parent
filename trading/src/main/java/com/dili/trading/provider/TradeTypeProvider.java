@@ -38,7 +38,7 @@ public class TradeTypeProvider extends BatchDisplayTextProviderSupport {
         }
         List<TradeTypeDto> rows = this.tradeTypeRpc.query(tradeTypeQuery).getRows();
         return rows.stream().map(f -> {
-            return (ValuePair<?>) new ValuePairImpl(f.getName(), f.getCode());
+            return (ValuePair<?>) new ValuePairImpl(f.getName(), f.getId());
         }).collect(Collectors.toList());
     }
 
@@ -50,7 +50,7 @@ public class TradeTypeProvider extends BatchDisplayTextProviderSupport {
         // 忽略大小写关联
         batchProviderMeta.setIgnoreCaseToRef(true);
         // 关联(数据库)表的主键的字段名，默认取id
-        batchProviderMeta.setRelationTablePkField("code");
+        batchProviderMeta.setRelationTablePkField("id");
         // 当未匹配到数据时，返回的值
         batchProviderMeta.setMismatchHandler(t -> "-");
         return batchProviderMeta;
