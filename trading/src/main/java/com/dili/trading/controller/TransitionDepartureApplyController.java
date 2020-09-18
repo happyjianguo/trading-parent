@@ -95,7 +95,7 @@ public class TransitionDepartureApplyController {
         //设置商品提供者
         map.put("categoryId", getProvider("categoryProvider", "categoryId"));
         //设置交易类型提供者
-        map.put("transTypeId", getProvider("dataDictionaryValueProvider", "transTypeId"));
+        map.put("transTypeId", getProvider("tradeTypeProvider", "transTypeId"));
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
         transitionDepartureApply.setMetadata(map);
@@ -215,7 +215,7 @@ public class TransitionDepartureApplyController {
             //设置商品提供者
             map.put("categoryId", getProvider("categoryProvider", "categoryId"));
             //设置交易类型提供者
-            map.put("transTypeId", getProvider("dataDictionaryValueProvider", "transTypeId"));
+            map.put("transTypeId", getProvider("tradeTypeProvider", "transTypeId"));
             //设置车类型提供者
             map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
             transitionDepartureApply.setMetadata(map);
@@ -258,7 +258,7 @@ public class TransitionDepartureApplyController {
         //设置商品提供者
         map.put("categoryId", getProvider("categoryProvider", "categoryId"));
         //设置交易类型提供者
-        map.put("transTypeId", getProvider("dataDictionaryValueProvider", "transTypeId"));
+        map.put("transTypeId", getProvider("tradeTypeProvider", "transTypeId"));
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
         transitionDepartureApply.setMetadata(map);
@@ -388,7 +388,7 @@ public class TransitionDepartureApplyController {
         //设置商品提供者
         map.put("categoryId", getProvider("categoryProvider", "categoryId"));
         //设置交易类型提供者
-        map.put("transTypeId", getProvider("dataDictionaryValueProvider", "transTypeId"));
+        map.put("transTypeId", getProvider("tradeTypeProvider", "transTypeId"));
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
         transitionDepartureApply.setMetadata(map);
