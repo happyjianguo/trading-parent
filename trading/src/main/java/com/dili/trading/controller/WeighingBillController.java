@@ -157,10 +157,10 @@ public class WeighingBillController {
 			}
 		}
 		if (WeighingBillState.FROZEN.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return BaseOutput.successData(this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()));
+			return this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo());
 		}
 		if (WeighingBillState.SETTLED.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return BaseOutput.successData(this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()));
+			return this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo());
 		}
 		return output;
 	}
@@ -232,16 +232,12 @@ public class WeighingBillController {
 	@ResponseBody
 	@RequestMapping("/getGoodsByKeyword.action")
 	public BaseOutput<List<CategoryDTO>> getGoodsByKeyword(String keyword) {
-		BaseOutput<Firm> output = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
-		if (!output.isSuccess()) {
-			LOGGER.error(output.getMessage());
-			return BaseOutput.failure("查询市场信息失败");
-		}
-		if (output.getData() == null) {
-			return BaseOutput.failure("市场信息不存在");
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		if (user == null) {
+			return BaseOutput.failure("用户未登录");
 		}
 		CategoryDTO query = new CategoryDTO();
-		query.setMarketId(output.getData().getId());
+		query.setMarketId(user.getFirmId());
 		query.setKeyword(keyword);
 		return this.categoryRpc.getTree(query);
 	}
@@ -255,7 +251,14 @@ public class WeighingBillController {
 	@ResponseBody
 	@RequestMapping(value = "/getCustomerInfoByCardNo.action")
 	public BaseOutput<AccountSimpleResponseDto> getCustomerInfoByCardNo(String cardNo) {
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		if (user == null) {
+			return BaseOutput.failure("用户未登录");
+		}
 		BaseOutput<AccountSimpleResponseDto> output = this.cardRpc.getOneAccountCard(cardNo);
+		if (!output.getData().getAccountInfo().getFirmId().equals(user.getFirmId())) {
+			return BaseOutput.success();
+		}
 		return output;
 	}
 
@@ -387,13 +390,13 @@ public class WeighingBillController {
 	@ResponseBody
 	@RequestMapping("/listCustomerByKeyword.action")
 	public BaseOutput<?> listCustomerByKeyword(String name, String keyword) {
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		if (user == null) {
+			return BaseOutput.failure("用户未登录");
+		}
 		CustomerQueryInput cq = new CustomerQueryInput();
 		cq.setKeyword(name);
-		BaseOutput<Firm> firmOutput = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
-		if (!firmOutput.isSuccess()) {
-			return firmOutput;
-		}
-		cq.setMarketId(firmOutput.getData().getId());
+		cq.setMarketId(user.getFirmId());
 		BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
 		return output;
 	}
@@ -474,9 +477,10 @@ public class WeighingBillController {
 		metadata.put("subtractionWeight", "weightProvider");
 		metadata.put("createdTime", "datetimeProvider");
 		metadata.put("measureType", "measureTypeProvider");
-
 		metadata.put("unitPrice", "moneyProvider");
+
 		metadata.put("statement.tradeAmount", "moneyProvider");
+		metadata.put("statement.frozenAmount", "moneyProvider");
 		metadata.put("statement.buyerPoundage", "moneyProvider");
 		metadata.put("statement.buyerActualAmount", "moneyProvider");
 		metadata.put("statement.sellerPoundage", "moneyProvider");
@@ -487,10 +491,6 @@ public class WeighingBillController {
 		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
 		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
 		metadata.put("tradeType", ddProvider);
-		// 未结算的，不展示结算信息
-		if (Objects.equals(output.getData().getState(), 1)) {
-			output.getData().setStatement(new WeighingStatement());
-		}
 		try {
 			List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData()));
 			metadata = new HashMap<Object, Object>();
