@@ -4,22 +4,6 @@
 
     <form class="form collapse show" id="queryForm" role="form" >
         <div class="row  row-cols-6">
-            <div class="form-group col-3">
-                <label for="">客户</label>
-                <div class="input-group">
-                    <#bautoCompleteProvider _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"/>
-                    <input type="text" class="form-control" id="show_customer_name" readonly/>
-                </div>
-            </div>
-            <div class="form-group col-auto" style="width: 350px">
-                <label for="" class="">卡号</label>
-                <div class="input-group">
-                    <!--<#bautoCompleteProvider _hiddenDomainId="customerCardNo" _hiddenDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
-                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>-->
-                    <input type="text" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
-                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
-                </div>
-            </div>
             <div class="form-group col">
                 <label for="">单据状态</label>
                 <select id="orderStatus" name="orderStatus" class="form-control">
