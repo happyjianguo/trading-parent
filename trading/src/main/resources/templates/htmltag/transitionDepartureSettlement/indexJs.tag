@@ -197,7 +197,7 @@
             bs4pop.alert('只有已结算的单子可以撤销');
             return false;
         }
-        var flag=false;
+        let flag=false;
         $.ajax({
             type: "POST",
             url: "/transitionDepartureSettlement/getOneById.action?id="+rows[0].id,
