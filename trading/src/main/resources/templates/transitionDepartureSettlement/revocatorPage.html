@@ -53,12 +53,12 @@
                     // });
                 } else {
                     bui.loading.hide();
-                    bs4pop.alert(res.message, {width:'350px',type: 'error'});
+                    bs4pop.alert(res.message, {width:'350px',height:"200px",type: 'error'});
                 }
             },
             error: function (error) {
                 bui.loading.hide();
-                bs4pop.alert(error.message, {width:'350px',type: 'error'});
+                bs4pop.alert(error.message, {width:'350px',height:"200px",type: 'error'});
             }
         });
     }

@@ -197,26 +197,48 @@
             bs4pop.alert('只有已结算的单子可以撤销');
             return false;
         }
-        dia = bs4pop.dialog({
-            title: '撤销校验',//对话框title
-            content: '${contextPath}/transitionDepartureSettlement/revocatorPage.html?id=' + rows[0].id,
-            width: '400px',//宽度
-            height: '400px',//高度
-            isIframe: true,//默认是页面层，非iframe
-            backdrop: 'static',
-            btns: [{
-                label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
-
+        let flag=false;
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: "/transitionDepartureSettlement/getOneById.action?id="+rows[0].id,
+            processData: false,
+            contentType: false,
+            async: false,
+            success: function (res) {
+                bui.loading.hide();
+                if (res.code == "200") {
+                    flag=true;
+                } else {
+                    bs4pop.alert(res.message, {width:'350px',height:"200px",type: 'error'});
                 }
-            }, {
-                label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
-                    let diaWindow = $iframe[0].contentWindow;
-                    bui.util.debounce(diaWindow.revocator, 1000, true)()
-                    return false;
-                }
-            }]
-
+            },
+            error: function (error) {
+                bs4pop.alert(error.message, {width:'350px',height:"200px",type: 'error'});
+            }
         });
+        if(flag){
+            dia = bs4pop.dialog({
+                title: '撤销校验',//对话框title
+                content: '${contextPath}/transitionDepartureSettlement/revocatorPage.html?id=' + rows[0].id,
+                width: '400px',//宽度
+                height: '400px',//高度
+                isIframe: true,//默认是页面层，非iframe
+                backdrop: 'static',
+                btns: [{
+                    label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
+
+                    }
+                }, {
+                    label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
+                        let diaWindow = $iframe[0].contentWindow;
+                        bui.util.debounce(diaWindow.revocator, 1000, true)()
+                        return false;
+                    }
+                }]
+
+            });
+        }
     }
 
     function openPrintHandler() {
@@ -241,6 +263,9 @@
                 if (data.code == '200') {
                     //调用c端打印
                     callbackObj.printDirect(JSON.stringify(data.data), "TransitionDocument");
+                }else{
+                    debugger;
+                    bs4pop.alert(data.message, {type: 'error'});
                 }
             },
             error: function () {
