@@ -4,7 +4,15 @@
 
     <form class="form collapse show" id="queryForm" role="form" >
         <div class="row  row-cols-6">
-            <div class="form-group col-3">
+            <div class="form-group col">
+                <label for="">单据状态</label>
+                <select id="orderStatus" name="orderStatus" class="form-control">
+                    <option value="">--全部--</option>
+                    <option value="2">已结算</option>
+                    <option value="3">已撤销</option>
+                </select>
+            </div>
+            <div class="form-group col-auto" style="width: 350px">
                 <label for="">客户</label>
                 <div class="input-group">
                     <#bautoCompleteProvider _hiddenDomainId="customerId" _hiddenDomainName="customerId" _displayDomainId="customerName" _displayDomainName="customerName" _placeholder=""  _optionVariable="customerNameAutoCompleteOption"/>
@@ -16,17 +24,9 @@
                 <div class="input-group">
                     <!--<#bautoCompleteProvider _hiddenDomainId="customerCardNo" _hiddenDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
                     <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>-->
-                    <input type="text" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
+                    <input type="number" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
                     <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
                 </div>
-            </div>
-            <div class="form-group col">
-                <label for="">单据状态</label>
-                <select id="orderStatus" name="orderStatus" class="form-control">
-                    <option value="">--全部--</option>
-                    <option value="2">已结算</option>
-                    <option value="3">已撤销</option>
-                </select>
             </div>
             <div class="form-group col">
                 <label for="" class="">结算员</label>
@@ -55,19 +55,6 @@
                             <label for=""  class="input-group-text fa fa-calendar"></label>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="form-group col">
-                <label for="" class="">单据编号</label>
-                <input type="text" class="form-control isNaturalNum" name="code" placeholder="">
-            </div>
-            <div class="form-group col-3">
-                <label for="" class="">卡号</label>
-                <div class="input-group">
-                    <!--<#bautoCompleteProvider _hiddenDomainId="customerCardNo" _hiddenDomainName="customerCardNo" _placeholder="" _optionVariable="customerCardQueryAutoCompleteOption"/>
-                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>-->
-                    <input type="number" class="form-control" id="show_customer_card" minlength="12" name="customerCardNo"/>
-                    <input type="text" class="form-control" id="show_buyer_name_by_card_no" readonly/>
                 </div>
             </div>
             <div class="col align-self-center mt-3">
