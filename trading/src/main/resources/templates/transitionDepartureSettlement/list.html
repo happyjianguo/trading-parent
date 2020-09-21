@@ -6,6 +6,15 @@
         <div class="row  row-cols-6">
             <div class="form-group col">
                 <label for="">业务类型</label>
+                <select id="aaa" name="aaa" class="form-control" multiple>
+                    <option value="1">转场</option>
+                    <option value="2">离场</option>
+                    <option value="3">已撤销</option>
+
+                </select>
+            </div>
+            <div class="form-group col">
+                <label for="">业务类型</label>
                 <select id="bizType" name="bizType" class="form-control">
                     <option value="">--全部--</option>
                     <option value="1">转场</option>
@@ -81,7 +90,7 @@
                 </div>
             </div>
             <div class="col align-self-center mt-3">
-                <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm .form-control').val('');"><i class="fa fa-refresh"></i> 清空</button>
+                <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm .form-control').val('');$('#transTypeId').val(null).trigger('change');"><i class="fa fa-refresh"></i> 清空</button>
                 <button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()"><i class="fa fa-search"></i> 查询</button>
             </div>
         </div>
