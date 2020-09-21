@@ -270,7 +270,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping("/revocatorPage.html")
     public String revocatorPage(Long id, ModelMap modelMap) {
-        modelMap.addAttribute("comprehensiveFeeId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "revocator");
+        modelMap.addAttribute("comprehensiveFeeId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket());
         return "comprehensiveFee/revocatorPage";
     }
 
