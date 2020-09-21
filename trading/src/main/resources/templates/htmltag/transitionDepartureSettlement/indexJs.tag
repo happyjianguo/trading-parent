@@ -241,6 +241,9 @@
                 if (data.code == '200') {
                     //调用c端打印
                     callbackObj.printDirect(JSON.stringify(data.data), "TransitionDocument");
+                }else{
+                    debugger;
+                    bs4pop.alert(data.message, {type: 'error'});
                 }
             },
             error: function () {
