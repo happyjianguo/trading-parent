@@ -198,6 +198,7 @@
             return false;
         }
         let flag=false;
+        debugger;
         $.ajax({
             type: "POST",
             url: "/transitionDepartureSettlement/getOneById.action?id="+rows[0].id,
@@ -207,16 +208,12 @@
             success: function (res) {
                 bui.loading.hide();
                 if (res.code == "200") {
-                    parent.dia.hide();
-                    parent.location.reload();
                     flag=true;
                 } else {
-                    bui.loading.hide();
                     bs4pop.alert(res.message, {width:'350px',height:"200px",type: 'error'});
                 }
             },
             error: function (error) {
-                bui.loading.hide();
                 bs4pop.alert(error.message, {width:'350px',height:"200px",type: 'error'});
             }
         });
