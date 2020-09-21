@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,10 +158,10 @@ public class WeighingBillController {
 			}
 		}
 		if (WeighingBillState.FROZEN.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo());
+			return this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()).setMessage("付款成功");
 		}
 		if (WeighingBillState.SETTLED.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo());
+			return this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()).setMessage("付款成功");
 		}
 		return output;
 	}
@@ -213,7 +214,7 @@ public class WeighingBillController {
 	@PostMapping("/listByExample.action")
 	public BaseOutput<Object> listByExample(@RequestBody WeighingBillQueryDto dto) {
 		// 判断，如果是已结算的话，需要加入参数，操作员，如果是查询的结算的，只会有一个状态
-		if (Objects.equals(dto.getStatementStates().size(), 1)) {
+		if (CollectionUtils.isNotEmpty(dto.getStatementStates()) && Objects.equals(dto.getStatementStates().size(), 1)) {
 			dto.setOperatorId(SessionContext.getSessionContext().getUserTicket().getId());
 		}
 		// 需要加入市场

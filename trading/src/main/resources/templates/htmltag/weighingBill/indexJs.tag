@@ -8,9 +8,23 @@
 
 
 function doPrintHandler(){
-	$.post('/weighingBill/list.action',queryParams(),function(res){
-		callbackObj.printDirect(res.data,'SettlementDocument');
-	});
+	var visibleColumns= $('#grid').bootstrapTable('getVisibleColumns');
+    	$.post('/weighingBill/listPage.action',queryParams({
+            limit: 99999,   // 页面大小
+            page: 1 // 页码
+        }),function(res){
+        	var printObj={
+        		columns:[],
+        		data:res.rows
+        	};
+        	$(visibleColumns).each(function(index,item){
+        		printObj.columns.push({
+        			field:item.field,
+        			title:item.title
+        		});
+        	});
+        	console.log(printObj);
+        },'json');
 }
 
   var buyerNameQueryAutoCompleteOption = {
@@ -378,7 +392,6 @@ function doPrintHandler(){
                         window.location.reload();
                     },
                     error: function (data) {
-                    	console.log(data);
                         bui.loading.hide();
                         bs4pop.alert("请求失败!", {type: 'error'});
                     }
@@ -470,11 +483,10 @@ function doPrintHandler(){
             height: '95%',// 高度
             isIframe: true,// 默认是页面层，非iframe
             backdrop: 'static',
-            /*btns: [{
-                label: '关闭', className: 'btn btn-secondary', onClick(e, $iframe) {
-
-                }
-            }]*/
+            /*
+			 * btns: [{ label: '关闭', className: 'btn btn-secondary', onClick(e,
+			 * $iframe) { } }]
+			 */
         });
     }
 
@@ -596,7 +608,8 @@ function doPrintHandler(){
                 $("#btn_reprint").addClass("btn_css_disabled");
             }
         })
-    })
+    });
+    
     /**
 	 * ***************************************自定义事件区
 	 * end*************************************
