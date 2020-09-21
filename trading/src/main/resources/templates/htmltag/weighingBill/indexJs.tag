@@ -9,22 +9,32 @@
 
 function doPrintHandler(){
 	var visibleColumns= $('#grid').bootstrapTable('getVisibleColumns');
-    	$.post('/weighingBill/listPage.action',queryParams({
-            limit: 99999,   // 页面大小
-            page: 1 // 页码
-        }),function(res){
-        	var printObj={
-        		columns:[],
-        		data:res.rows
-        	};
-        	$(visibleColumns).each(function(index,item){
-        		printObj.columns.push({
-        			field:item.field,
-        			title:item.title
-        		});
-        	});
-        	console.log(printObj);
-        },'json');
+	$.post('/weighingBill/listPage.action',queryParams({
+        limit: 99999,   // 页面大小
+        page: 1 // 页码
+    }),function(res){
+    	var printObj={
+    		columns:[],
+    		data:res.rows
+    	};
+    	$(visibleColumns).each(function(index,item){
+    		printObj.columns.push({
+    			field:item.field,
+    			title:item.title
+    		});
+    	});
+    	var createdStart=$('#createdStart').val();
+    	var createdEnd=$('#createdEnd').val();
+    	if (!createdStart) {
+	    	createdStart= moment(new Date()).format("YYYY-MM-DD")+' 00:00:00';
+    	}
+    	if (!createdEnd) {
+	    	createdEnd= moment(new Date()).format("YYYY-MM-DD")+' 23:59:59';
+    	}
+    	printObj.startDate=createdStart;
+    	printObj.endDate=createdEnd;
+    	 callbackObj.printPreview(JSON.stringify(printObj),'',"SettlementListDocument",0);
+    },'json');
 }
 
   var buyerNameQueryAutoCompleteOption = {
