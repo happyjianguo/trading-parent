@@ -217,7 +217,7 @@ public class TransitionDepartureSettlementController {
     @ResponseBody
     public BaseOutput revocator(Long id, String password) {
         if (Objects.isNull(id)) {
-            return BaseOutput.failure("该卡号不能进行操作");
+            return BaseOutput.failure("转离场结算单id不能为空");
         }
         //通过用户密码去uap验证，暂未对接
         return transitionDepartureSettlementService.revocator(transitionDepartureSettlementRpc.getOneById(id).getData(), password);
