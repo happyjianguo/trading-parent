@@ -4,7 +4,7 @@
         <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
         <form id="saveForm" role="form" novalidate>
             <input type="text" hidden="true"  id="customerType"  class="form-control" name="customerType"  maxlength="100">
-            <div class="row row-cols-1">
+            <div class="row row-cols-3">
                 <div class="form-group col">
                     <label for="">卡号</label>
                     <div class="input-group">
@@ -14,32 +14,32 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row row-cols-1">
                 <div class="form-group col">
                     <label for="">客户名称</label>
                     <input id="customerName" readonly="true" class="form-control" name="customerName"  maxlength="40">
                     <input id="customerCode" hidden="true" class="form-control" name="customerCode">
                     <input id="customerId" class="form-control" name="customerId" hidden="true">
                 </div>
-            </div>
-            <div class="row row-cols-1">
                 <div class="form-group col">
                     <label for="">可用余额</label>
                     <input type="number" id="availableBalance" readonly="true" class="form-control"  maxlength="100">
                 </div>
             </div>
-            <div class="row row-cols-1">
+            <div class="row row-cols-3">
                 <div class="form-group col">
                     <label for="">缴费金额</label>
                     <input type="number" id="chargeAmountView"  class="form-control"   maxlength="100">
                     <input type="number" hidden="true"  id="chargeAmount"  class="form-control" name="chargeAmount"  maxlength="100">
                 </div>
-            </div>
-            <div class="row row-cols-1">
-                <div class="form-group col">
+                <div class="form-group col-8">
                     <label for="">备注</label>
                     <input id="remark" class="form-control" name="remark"  maxlength="30">
+                </div>
+            </div>
+            <div class="modal-footer-wrap">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary px-5" onclick="bui.util.debounce(saveOrUpdateHandler,1000,true)()" id="formSubmit" data-hotkey="{key: 'Ctrl+S'}">下一步</button>
+                    <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.dia.hide()" data-hotkey="{key: 'Ctrl+E'}">取消</button>
                 </div>
             </div>
         </form>
