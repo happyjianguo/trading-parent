@@ -114,7 +114,7 @@
             if (json.code == 0) {
                 cardNum = json.data;
             } else {
-                bs4pop.alert(json.message, {type: "error"});
+                parent.bs4pop.alert(json.message, {type: "error"});
                 return false;
             }
            //再次刷卡时将检测费用和缴费金额清0
