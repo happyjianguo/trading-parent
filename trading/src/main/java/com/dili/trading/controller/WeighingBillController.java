@@ -677,12 +677,10 @@ public class WeighingBillController {
 		}
 		output.getData().getData().setReprint(reprint);
 		JSONObject ddProvider = new JSONObject();
-		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
 		Map<Object, Object> metadata = new HashMap<Object, Object>();
-		metadata.put("tradeType", ddProvider);
+		metadata.put("tradeTypeId", "tradeTypeProvider");
 		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData().getData()));
-		return BaseOutput.successData(new PrintTemplateDataDto<List<Map>>(output.getData().getTemplate(), listMap));
+		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), listMap.get(0)));
 	}
 
 	/**
