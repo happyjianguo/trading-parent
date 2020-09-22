@@ -91,7 +91,7 @@
 
 
 			<div class="col-auto align-self-center mt-3">
-				<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm input').val('');">
+				<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm input').val('');$('#tradeType').val(null).trigger('change');">
 					<i class="fa fa-refresh"></i> 清空
 				</button>
 				<button type="button" class="btn btn-outline-primary mr-2" onclick="queryDataHandler()">
