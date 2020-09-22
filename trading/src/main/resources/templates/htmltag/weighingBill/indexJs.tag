@@ -301,12 +301,13 @@ function doPrintHandler(){
     };
 
     // 时间范围
-    lay('.laydatetime').each(function () {
+    lay('.settletime').each(function () {
         laydate.render({
             elem: this
             , trigger: 'click'
             , range: false
             , type: 'datetime'
+            , theme: '#007bff'
             , min: getLastYearYestdy(new Date())
             , max: timeStamp2String(new Date().getTime())
         });
