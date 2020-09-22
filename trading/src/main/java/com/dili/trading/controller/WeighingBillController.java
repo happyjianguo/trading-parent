@@ -681,8 +681,8 @@ public class WeighingBillController {
 		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
 		Map<Object, Object> metadata = new HashMap<Object, Object>();
 		metadata.put("tradeType", ddProvider);
-		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData()));
-		return BaseOutput.successData(listMap.get(0));
+		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData().getData()));
+		return BaseOutput.successData(new PrintTemplateDataDto<List<Map>>(output.getData().getTemplate(), listMap));
 	}
 
 	/**
