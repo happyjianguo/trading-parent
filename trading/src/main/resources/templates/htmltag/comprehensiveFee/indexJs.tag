@@ -4,7 +4,6 @@
     // 如 let itemIndex = 0;
     let _grid = $('#grid');
     let _form = $('#_form');
-    let _modal = $('#_modal');
     var dia;
 
 
@@ -200,9 +199,27 @@
             title: "信息确认", btns: [
                 {
                     label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
-                        $('#_modal .modal-body').load("${contextPath}/comprehensiveFee/revocatorPage.html?id=" + rows[0].id);
-                        _modal.find('.modal-title').text('撤销校验');
-                        $("#_modal").modal();
+                        dia = bs4pop.dialog({
+                            title: '撤销校验',//对话框title
+                            content: '${contextPath}/comprehensiveFee/revocatorPage.html?id=' + rows[0].id,
+                            width: '400px',//宽度
+                            height: '400px',//高度
+                            isIframe: true,//默认是页面层，非iframe
+                            backdrop: 'static',
+                            btns: [{
+                                label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
+
+                                }
+                            }, {
+                                label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
+                                    let diaWindow = $iframe[0].contentWindow;
+                                    bui.util.debounce(diaWindow.revocator, 1000, true)()
+                                    return false;
+                                }
+                            }]
+
+                        });
+
                     }
                 }, {
                     label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
@@ -212,34 +229,6 @@
         }, function (sure) {});
     }
 
-    /*
-    *
-    * 撤销实现
-    * */
-    function revocator() {
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: '/comprehensiveFee/revocator.action',
-            data: $('#UserPasswordForm').serialize(),
-            success: function (data) {
-                bui.loading.hide();
-                if (data.code != '200') {
-                    bs4pop.alert(data.message, {type: 'error'});
-                    return;
-                } else{
-                    bs4pop.alert("退款成功","",function (){window.location.reload();});
-                    return;
-                }
-                window.location.reload();
-            },
-            error: function (data) {
-                console.log(data);
-                bui.loading.hide();
-                bs4pop.alert("请求失败!", {type: 'error'});
-            }
-        });
-    }
 
     /**
      * 打开查看

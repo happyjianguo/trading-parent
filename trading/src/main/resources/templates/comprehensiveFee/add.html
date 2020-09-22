@@ -109,7 +109,6 @@
 
         //刷卡监听
         $('#payByCard').on('click',function (e) {
-            //let cardNum='888800039037';
             let cardNum;
             let json = JSON.parse(callbackObj.readCardNumber());
             if (json.code == 0) {
@@ -175,7 +174,7 @@
                         });
                     }else {
                         bui.loading.hide();
-                        bs4pop.alert(res.result, {type: 'error'});
+                        parent.bs4pop.alert(res.result, {type: 'error'});
                     }
                 }
             });
@@ -210,12 +209,12 @@
                         parent.verificationUsernamePassword(res.data.id);
                     } else {
                         bui.loading.hide();
-                        bs4pop.alert(res.message, {type: 'error'});
+                        parent.bs4pop.alert(res.message, {type: 'error'});
                     }
                 },
                 error: function (error) {
                     bui.loading.hide();
-                    bs4pop.alert(error.message, {type: 'error'});
+                    parent.bs4pop.alert(error.message, {type: 'error'});
                 }
             });
         }

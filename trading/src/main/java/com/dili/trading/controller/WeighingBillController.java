@@ -174,7 +174,7 @@ public class WeighingBillController {
 	 * @param sellerPassword
 	 * @return
 	 */
-	@Idempotent(Idempotent.HEADER)
+//	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/withdraw.action")
 	public BaseOutput<Object> withdraw(String serialNo, String buyerPassword, String sellerPassword) {
@@ -193,7 +193,7 @@ public class WeighingBillController {
 	 * @param sellerPassword
 	 * @return
 	 */
-	@Idempotent(Idempotent.HEADER)
+//	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/invalidate.action")
 	public BaseOutput<Object> invalidate(String serialNo, String buyerPassword, String sellerPassword) {
@@ -257,6 +257,9 @@ public class WeighingBillController {
 			return BaseOutput.failure("用户未登录");
 		}
 		BaseOutput<AccountSimpleResponseDto> output = this.cardRpc.getOneAccountCard(cardNo);
+		if (!output.isSuccess()) {
+			return BaseOutput.failure(output.getMessage());
+		}
 		if (!output.getData().getAccountInfo().getFirmId().equals(user.getFirmId())) {
 			return BaseOutput.success();
 		}
@@ -529,7 +532,7 @@ public class WeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
-	@Idempotent(Idempotent.HEADER)
+//	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/operatorInvalidate.action")
 	public BaseOutput<Object> operatorInvalidate(Long id, String operatorPassword, HttpServletRequest request, ModelMap modelMap) {
@@ -584,7 +587,7 @@ public class WeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
-	@Idempotent(Idempotent.HEADER)
+//	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/operatorWithdraw.action")
 	public BaseOutput<Object> operatorWithdraw(Long id, String operatorPassword, HttpServletRequest request, ModelMap modelMap) {

@@ -1,30 +1,66 @@
-<div class="container-fluid">
-    <form class="form" id="UserPasswordForm" role="form">
-        <input type="hidden" name="id" value="${comprehensiveFeeId}">
-        <div class="row  row-cols-1">
-            <div class="row row-cols-12">
-                <div class="form-group col">
-                    <label for="">输入正确的登录密码后，才能撤销。请谨慎操作。</label>
-<!--                    <input type="text" name="id" class="form-control" value="${transitionDepartureSettlement.id!}" hidden/>-->
-                </div>
-            </div>
-            <div class="form-group col">
-                <label for="">用户账号</label> <input type="text" class="form-control" readonly="readonly" name="userName" value="${model.userName}" placeholder="">
-            </div>
-            <div class="form-group col">
-                <label for="" >用户密码</label> <input type="password" class="form-control" name="password" value="" placeholder="">
-            </div>
-            <div class="col-auto align-self-center mt-3">
-                <button type="button" class="btn btn-outline-primary" onclick="${submitHandler}()">确定</button>
-            </div>
-            <div class="col-auto align-self-center mt-3">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" >取消</button>
-            </div>
+<#bs4Body>
 
+<div class="container-fluid">
+    <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
+    <form id="saveForm" role="form" novalidate>
+        <div class="row row-cols-12">
+            <div class="form-group col">
+                <label for=""><i class="red">输入正确的登录密码后，才能撤销。请谨慎操作。</i></label>
+                <input type="text" name="id" class="form-control" value="${comprehensiveFeeId}" hidden/>
+            </div>
+        </div>
+        <div class="row row-cols-1">
+            <div class="form-group col">
+                <label for="">用户账号</label>
+                <input type="text" class="form-control" value="${model.userName}" required readonly/>
+            </div>
+            <div class="form-group col">
+                <label for="">用户密码</label>
+                <input id="password" type="password" class="form-control" required name="password"/>
+            </div>
         </div>
     </form>
 </div>
+</#bs4Body>
 
+<script>
+    $(function () {
+        $('#inputPassword').on('click', function (e) {
+            $('#password').val("123456");
+        });
+    })
 
+    function revocator() {
+        let _formData = new FormData($('#saveForm')[0]);
+        if (!$('#saveForm').validate().form()) {
+            return false;
+        }
+        bui.loading.show('努力提交中，请稍候。。。');
+        $.ajax({
+            type: "POST",
+            url: "/comprehensiveFee/revocator.action",
+            data: _formData,
+            processData: false,
+            contentType: false,
+            async: false,
+            success: function (res) {
+                bui.loading.hide();
+                if (res.code == "200") {
+                    parent.dia.hide();
+                    parent.location.reload();
+                    // bs4pop.alert('成功', {type: 'success'}, function () {
+                    //
+                    // });
+                } else {
+                    bui.loading.hide();
+                    bs4pop.alert(res.message, {width:'350px',type: 'error'});
+                }
+            },
+            error: function (error) {
+                bui.loading.hide();
+                bs4pop.alert(error.message, {width:'350px',type: 'error'});
+            }
+        });
+    }
 
-
+</script>
