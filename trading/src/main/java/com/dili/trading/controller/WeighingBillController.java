@@ -257,6 +257,9 @@ public class WeighingBillController {
 			return BaseOutput.failure("用户未登录");
 		}
 		BaseOutput<AccountSimpleResponseDto> output = this.cardRpc.getOneAccountCard(cardNo);
+		if (!output.isSuccess()) {
+			return BaseOutput.failure(output.getMessage());
+		}
 		if (!output.getData().getAccountInfo().getFirmId().equals(user.getFirmId())) {
 			return BaseOutput.success();
 		}
