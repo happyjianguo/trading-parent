@@ -21,7 +21,7 @@
                     <input id="customerId" class="form-control" name="customerId" hidden="true">
                 </div>
                 <div class="form-group col">
-                    <label for="">车牌号</label>
+                    <label for="plate">车牌号</label>
                     <input id="plate" class="form-control" name="plate"  maxlength="8">
                 </div>
             </div>
@@ -42,14 +42,14 @@
             </div>
             <div class="row row-cols-1">
                 <div class="form-group col">
-                    <label tlog >商品名称</label>
+                    <label tlog  for="inspectionItem">商品名称</label>
                     <select id="inspectionItem" name="inspectionItem" class="form-control" required="true"  multiple disabled></select>
                     <#bselect2 _id="inspectionItem" _mode="remote" _value="[2,4,8,55]" _option="" _text=""  _optionVariable="assetsNamesAutoCompleteOption" _required="true"/>
                 </div>
             </div>
             <div class="row row-cols-1">
                 <div class="form-group col">
-                    <label for="">备注</label>
+                    <label for="remark">备注</label>
                     <input id="remark" class="form-control" name="remark"  maxlength="30">
                 </div>
             </div>
