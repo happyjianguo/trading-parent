@@ -33,8 +33,7 @@ function doPrintHandler(){
     	}
     	printObj.startDate=createdStart;
     	printObj.endDate=createdEnd;
-    	var aaa=JSON.stringify(printObj);
-    	 callbackObj.printPreview(aaa,"1","SettlementListDocument",0);
+    	 callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
     },'json');
 }
 
