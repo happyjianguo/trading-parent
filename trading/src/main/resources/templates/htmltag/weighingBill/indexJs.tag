@@ -15,13 +15,26 @@ function doPrintHandler(){
     }),function(res){
     	var printObj={
     		columns:[],
-    		data:res.rows
+    		data:[]
     	};
     	$(visibleColumns).each(function(index,item){
     		printObj.columns.push({
     			field:item.field,
     			title:item.title
     		});
+    	});
+    	$(res.rows).each(function(index,item){
+    		var obj={};
+    		for(var key in item){
+    			if (item[key] instanceof Object) {
+    				for(var k in item[key]){
+    					obj[key+'.'+k]=item[key][k];
+    				}
+    			}else{
+    				obj[key]=item[key];
+    			}
+    		}
+    		printObj.data.push(obj);
     	});
     	var createdStart=$('#createdStart').val();
     	var createdEnd=$('#createdEnd').val();
@@ -33,7 +46,8 @@ function doPrintHandler(){
     	}
     	printObj.startDate=createdStart;
     	printObj.endDate=createdEnd;
-    	 callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
+    	console.log(printObj);
+    	callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
     },'json');
 }
 
