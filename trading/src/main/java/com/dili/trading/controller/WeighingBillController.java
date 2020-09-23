@@ -699,10 +699,11 @@ public class WeighingBillController {
 	 *
 	 * @param serialNo 结算单号
 	 * @return
+	 * @throws Exception 
 	 */
 	@ResponseBody
 	@RequestMapping("/getWeighingStatementPrintData.action")
-	public BaseOutput<?> getWeighingStatementPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) {
+	public BaseOutput<?> getWeighingStatementPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) throws Exception {
 		BaseOutput<PrintTemplateDataDto<WeighingStatementPrintDto>> output = this.weighingBillRpc.getWeighingStatementPrintData(serialNo);
 		if (!output.isSuccess()) {
 			return output;
@@ -711,6 +712,11 @@ public class WeighingBillController {
 			return BaseOutput.failure("数据不存在");
 		}
 		output.getData().getData().setReprint(reprint);
-		return output;
+		Map<Object, Object> metadata = new HashMap<Object, Object>();
+		metadata.put("tradeTypeId", "tradeTypeProvider");
+		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData().getData()));
+		Map map = listMap.get(0);
+		map.put("tradeType", map.get("tradeTypeId").toString());
+		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map));
 	}
 }

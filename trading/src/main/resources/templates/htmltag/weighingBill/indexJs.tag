@@ -246,6 +246,7 @@ function doPrintHandler(){
                                 $('#show_seller_name_by_card_name').val(result.data.customerName);
                             }
                         }else{
+                        	 bs4pop.alert(result.message, {type: "error"});
                             $('#buyerCardNo').val('');
                             $('#show_buyer_name_by_card_name').val('');
                             $('#sellerCardNo').val('');
