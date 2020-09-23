@@ -239,10 +239,10 @@ function doPrintHandler(){
                         if (result.success) {
                             // 1-买家 2-卖家
                             if(result.data.accountType==1){
-                                $('#buyerCardNo').val(cardNo);
+                                $('#buyerCardNo').val(cardNum);
                                 $('#show_buyer_name_by_card_name').val(result.data.customerName);
                             }else if(result.data.accountType==2){
-                                $('#sellerCardNo').val(cardNo);
+                                $('#sellerCardNo').val(cardNum);
                                 $('#show_seller_name_by_card_name').val(result.data.customerName);
                             }
                         }else{
