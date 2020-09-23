@@ -61,7 +61,7 @@
 			</div>
 			<div class="form-group col">
 				<label for="">单价(元/公斤)</label> 
-				<input type="text" class="form-control" readonly="readonly" value="${model.unitPrice}" placeholder="">
+				<input type="text" class="form-control" readonly="readonly" value="<%if(model.$_measureType==@com.dili.orders.domain.MeasureType.WEIGHT.getValue()){%>${model.unitWeightPrice}<%}else{%>${model.unitPiecePrice}<%}%>" placeholder="">
 			</div>
 			<div class="form-group col">
 				<label for="">商品产地</label>

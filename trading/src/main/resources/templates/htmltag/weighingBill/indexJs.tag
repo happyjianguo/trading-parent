@@ -230,7 +230,7 @@ function doPrintHandler(){
             bs4pop.alert(json.message, {type: "error"});
             return false;
         }
-            if (cardNo!=-1) {
+            if (cardNum!=-1) {
                 $.ajax({
                     type:'GET',
                     url:'${contextPath!}/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
