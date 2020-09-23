@@ -62,6 +62,7 @@ import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.domain.dto.UserQuery;
+import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import com.dili.uap.sdk.rpc.FirmRpc;
 import com.dili.uap.sdk.rpc.UserRpc;
@@ -293,6 +294,15 @@ public class WeighingBillController {
 		// 判断是否选择了操作员，如果选择了操作员，那就增加状态为已结算
 		if (Objects.nonNull(query.getOperatorId())) {
 			query.setStatementStates(Arrays.asList(WeighingStatementState.PAID.getValue()));
+		}
+
+		List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
+		if (CollectionUtils.isNotEmpty(ranges)) {
+			String value = (String) ranges.get(0).get("value");
+			// 如果value为0，则为个人
+			if (value.equals("0")) {
+				query.setOperatorId(SessionContext.getSessionContext().getUserTicket().getId());
+			}
 		}
 		PageOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listPage(query);
 		output.getData().forEach(wb -> {
@@ -676,11 +686,12 @@ public class WeighingBillController {
 			return BaseOutput.failure("数据不存在");
 		}
 		output.getData().getData().setReprint(reprint);
-		JSONObject ddProvider = new JSONObject();
 		Map<Object, Object> metadata = new HashMap<Object, Object>();
 		metadata.put("tradeTypeId", "tradeTypeProvider");
 		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData().getData()));
-		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), listMap.get(0)));
+		Map map = listMap.get(0);
+		map.put("tradeType", map.get("tradeTypeId").toString());
+		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map));
 	}
 
 	/**
