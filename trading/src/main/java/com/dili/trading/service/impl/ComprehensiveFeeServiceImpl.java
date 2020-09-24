@@ -83,4 +83,27 @@ public class ComprehensiveFeeServiceImpl implements ComprehensiveFeeService {
         }
         return pay;
     }
+
+    @Override
+    @BusinessLogger(businessType = "trading_orders", content = "检测收费结算单撤销", operationType = "update", systemCode = "ORDERS")
+    @Transactional(propagation = Propagation.REQUIRED)
+    public BaseOutput<ComprehensiveFee> revocator(ComprehensiveFee comprehensiveFee, String operatorPassword) {
+        //获取当前登录用户
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        //修改结算单的支付状态
+        //设置撤销人员相关信息
+        LocalDateTime now = LocalDateTime.now();
+        comprehensiveFee.setRevocatorId(userTicket.getId());
+        comprehensiveFee.setRevocatorName(userTicket.getRealName());
+        comprehensiveFee.setRevocatorTime(now);
+        BaseOutput<ComprehensiveFee> revocator = this.comprehensiveFeeRpc.revocator(comprehensiveFee, userTicket.getRealName(),userTicket.getId(), operatorPassword, userTicket.getUserName());
+        if (revocator.isSuccess()) {
+            ComprehensiveFee data = revocator.getData();
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, data.getCode());
+            LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
+            LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
+        }
+        return revocator;
+    }
 }

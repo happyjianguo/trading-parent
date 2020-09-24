@@ -26,5 +26,13 @@ public interface ComprehensiveFeeService {
 	 * @return
 	 */
 	BaseOutput pay(Long id, String password);
+	/**
+	 * 撤销结算单，需要调用支付系统退钱，再更改对应申请单的支付状态为已撤销
+	 *
+	 * @param comprehensiveFee
+	 * @param operatorPassword
+	 * @return
+	 */
+	BaseOutput<ComprehensiveFee> revocator(ComprehensiveFee comprehensiveFee, String operatorPassword);
 
 }

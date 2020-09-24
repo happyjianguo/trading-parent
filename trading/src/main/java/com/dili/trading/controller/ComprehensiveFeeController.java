@@ -283,13 +283,14 @@ public class ComprehensiveFeeController {
      */
     @ResponseBody
     @PostMapping("/revocator.action")
-    public BaseOutput<Object> revocator(Long id, @RequestParam(value="password") String operatorPassword) throws Exception{
-        UserTicket user = SessionContext.getSessionContext().getUserTicket();
-        if (user == null) {
-            return BaseOutput.failure("用户未登录");
-        }
-        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getRealName(),user.getId(), operatorPassword, user.getUserName());
-        return output;
+    public BaseOutput<ComprehensiveFee> revocator(Long id, @RequestParam(value="password") String operatorPassword) throws Exception{
+//        UserTicket user = SessionContext.getSessionContext().getUserTicket();
+//        if (user == null) {
+//            return BaseOutput.failure("用户未登录");
+//        }
+//        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getRealName(),user.getId(), operatorPassword, user.getUserName());
+//        return output;
+        return comprehensiveFeeService.revocator(comprehensiveFeeRpc.getOneById(id).getData(), operatorPassword);
 
     }
 
