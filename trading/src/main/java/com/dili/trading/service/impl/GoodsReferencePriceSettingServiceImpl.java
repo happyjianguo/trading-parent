@@ -35,7 +35,7 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
      */
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "品类参考价新增", operationType = "add", systemCode = "ORDERS")
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public BaseOutput<GoodsReferencePriceSetting> insertGoodsReferencePriceSetting(GoodsReferencePriceSetting goodsReferencePriceSetting) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //设置创建人id
