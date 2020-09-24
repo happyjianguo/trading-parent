@@ -78,7 +78,7 @@ public interface ComprehensiveFeeRpc {
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/fee", method = {RequestMethod.POST})
-    BaseOutput getFee(@RequestParam(value = "marketId") Long marketId, @RequestParam(value = "customerId") Long customerId,@RequestParam(value = "type") String type);
+    BaseOutput<?> getFee(@RequestParam(value = "marketId") Long marketId, @RequestParam(value = "customerId") Long customerId,@RequestParam(value = "type") String type);
 
     /**
      *撤销调用
@@ -97,5 +97,5 @@ public interface ComprehensiveFeeRpc {
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/scheduleUpdate", method = {RequestMethod.POST})
-    BaseOutput scheduleUpdate();
+    BaseOutput<String> scheduleUpdate();
 }

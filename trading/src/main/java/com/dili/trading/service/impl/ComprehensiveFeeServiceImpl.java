@@ -71,7 +71,7 @@ public class ComprehensiveFeeServiceImpl implements ComprehensiveFeeService {
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "检测收费结算单支付", operationType = "update", systemCode = "ORDERS")
     @Transactional(propagation = Propagation.REQUIRED)
-    public BaseOutput pay(Long id, String password) {
+    public BaseOutput<ComprehensiveFee> pay(Long id, String password) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         BaseOutput<ComprehensiveFee> pay = comprehensiveFeeRpc.pay(id, password, userTicket.getFirmId(), userTicket.getId(), userTicket.getRealName(), userTicket.getUserName());
         if (pay.isSuccess()) {

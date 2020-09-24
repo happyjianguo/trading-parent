@@ -156,7 +156,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/pay.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput pay(Long id, String password) throws Exception{
+    public BaseOutput<ComprehensiveFee> pay(Long id, String password) throws Exception{
         return comprehensiveFeeService.pay(id, password);
     }
 
@@ -168,7 +168,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/queryAccountBalance.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput queryAccountBalance(String customerCardNo) {
+    public BaseOutput<?> queryAccountBalance(String customerCardNo) {
         return cardRpc.getOneAccountCard(customerCardNo);
     }
 
@@ -180,7 +180,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput insert(ComprehensiveFee comprehensiveFee) throws Exception{
+    public BaseOutput<ComprehensiveFee> insert(ComprehensiveFee comprehensiveFee) throws Exception{
         String tips = checkUpDate(comprehensiveFee);
         if(StringUtils.isNotBlank(tips)){
             BaseOutput<ComprehensiveFee> result = new BaseOutput<ComprehensiveFee>();
@@ -232,7 +232,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput getFee(Long customerId, String type) {
+    public BaseOutput<?> getFee(Long customerId, String type) {
         if (Objects.isNull(customerId)) {
             return BaseOutput.failure("顾客编号不能为空");
         }
@@ -248,7 +248,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/scheduleUpdate.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput scheduleUpdate() {
+    public BaseOutput<String> scheduleUpdate() {
         ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 3, 120L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1));
         // 任务1
         pool.execute(() -> {
@@ -284,14 +284,7 @@ public class ComprehensiveFeeController {
     @ResponseBody
     @PostMapping("/revocator.action")
     public BaseOutput<ComprehensiveFee> revocator(Long id, @RequestParam(value="password") String operatorPassword) throws Exception{
-//        UserTicket user = SessionContext.getSessionContext().getUserTicket();
-//        if (user == null) {
-//            return BaseOutput.failure("用户未登录");
-//        }
-//        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getRealName(),user.getId(), operatorPassword, user.getUserName());
-//        return output;
         return comprehensiveFeeService.revocator(comprehensiveFeeRpc.getOneById(id).getData(), operatorPassword);
-
     }
 
     /**
@@ -302,7 +295,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/printOneById.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput printOneById( ComprehensiveFee comprehensiveFee) throws Exception {
+    public BaseOutput<ComprehensiveFee> printOneById( ComprehensiveFee comprehensiveFee) throws Exception {
         Map<Object, Object> map = new HashMap<>();
         //设置单据状态提供者
         map.put("orderStatus", getProvider("payStatusProvider", "orderStatus"));
