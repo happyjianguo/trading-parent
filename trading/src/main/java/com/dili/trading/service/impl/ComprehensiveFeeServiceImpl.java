@@ -34,28 +34,7 @@ public class ComprehensiveFeeServiceImpl implements ComprehensiveFeeService {
     @Transactional(propagation = Propagation.REQUIRED)
     public BaseOutput<ComprehensiveFee> insertComprehensiveFee(ComprehensiveFee comprehensiveFee) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        //设置创建时间
-        comprehensiveFee.setCreatedTime(LocalDateTime.now());
-        //设置结算员id
-        comprehensiveFee.setOperatorId(userTicket.getId());
-        //设置结算员姓名
-        comprehensiveFee.setOperatorName(userTicket.getRealName());
-        //结算时间
-        comprehensiveFee.setOperatorTime(LocalDateTime.now());
-        //设置创建人id
-        comprehensiveFee.setCreatorId(userTicket.getId());
-        //设置数据创建时间
-        comprehensiveFee.setCreatedTime(LocalDateTime.now());
-        //设置数据修改人ID
-        comprehensiveFee.setModifierId(userTicket.getId());
-        //设置数据修改时间
-        comprehensiveFee.setModifiedTime(LocalDateTime.now());
-        //设置检测收费单归属部门
-        comprehensiveFee.setDepartmentId(userTicket.getDepartmentId());
-        //将车牌号的小写变为大写
-        if (StringUtils.isNotBlank(comprehensiveFee.getPlate())) {
-            comprehensiveFee.setPlate(comprehensiveFee.getPlate().toUpperCase());
-        }
+        setComprehensiveFeeValue(comprehensiveFee, userTicket);
         BaseOutput<ComprehensiveFee> comprehensiveFeeBaseOutput = comprehensiveFeeRpc.insert(comprehensiveFee);
         if (comprehensiveFeeBaseOutput.isSuccess()) {
             ComprehensiveFee data = comprehensiveFeeBaseOutput.getData();
@@ -66,7 +45,6 @@ public class ComprehensiveFeeServiceImpl implements ComprehensiveFeeService {
         }
         return comprehensiveFeeBaseOutput;
     }
-
 
     @Override
     @BusinessLogger(businessType = "trading_orders", content = "检测收费结算单支付", operationType = "update", systemCode = "ORDERS")
@@ -105,5 +83,33 @@ public class ComprehensiveFeeServiceImpl implements ComprehensiveFeeService {
             LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
         }
         return revocator;
+    }
+
+    /**
+     * 设置综合收费单据值
+     * @param comprehensiveFee 综合收费单据
+     * @param userTicket 登录人信息
+     */
+    private void setComprehensiveFeeValue(ComprehensiveFee comprehensiveFee, UserTicket userTicket) {
+        //设置创建时间
+        comprehensiveFee.setCreatedTime(LocalDateTime.now());
+        //设置结算员id
+        comprehensiveFee.setOperatorId(userTicket.getId());
+        //设置结算员姓名
+        comprehensiveFee.setOperatorName(userTicket.getRealName());
+        //结算时间
+        comprehensiveFee.setOperatorTime(LocalDateTime.now());
+        //设置创建人id
+        comprehensiveFee.setCreatorId(userTicket.getId());
+        //设置数据修改人ID
+        comprehensiveFee.setModifierId(userTicket.getId());
+        //设置数据修改时间
+        comprehensiveFee.setModifiedTime(LocalDateTime.now());
+        //设置检测收费单归属部门
+        comprehensiveFee.setDepartmentId(userTicket.getDepartmentId());
+        //将车牌号的小写变为大写
+        if (StringUtils.isNotBlank(comprehensiveFee.getPlate())) {
+            comprehensiveFee.setPlate(comprehensiveFee.getPlate().toUpperCase());
+        }
     }
 }
