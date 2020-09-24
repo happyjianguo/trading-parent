@@ -89,7 +89,7 @@ public interface ComprehensiveFeeRpc {
      * @param userName
      * @return
      */
-    @RequestMapping(value = "/api/comprehensiveFee/revocator")
+    @RequestMapping(value = "/api/comprehensiveFee/revocator", method = {RequestMethod.POST})
     BaseOutput<ComprehensiveFee> revocator(@RequestBody ComprehensiveFee comprehensiveFee, @RequestParam String realName, @RequestParam Long operatorId, @RequestParam String operatorPassword, @RequestParam String userName);
 
     /**
