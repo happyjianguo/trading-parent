@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.assets.sdk.rpc.AssetsRpc;
 import com.dili.orders.constants.TradingConstans;
+import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.domain.GoodsReferencePriceSetting;
 
+import com.dili.orders.domain.ReferenceRule;
 import com.dili.orders.rpc.CategoryRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.exception.AppException;
@@ -15,6 +17,7 @@ import com.dili.trading.service.GoodsReferencePriceSettingService;
 import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.rpc.FirmRpc;
 import com.dili.uap.sdk.session.SessionContext;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Description: 品类参考价功能Controller类
@@ -236,6 +240,14 @@ public class GoodsReferencePriceSettingController {
             return output;
         }
 
+        String tips = checkUpDate(goodsReferencePriceSetting);
+        if(StringUtils.isNotBlank(tips)){
+            BaseOutput<GoodsReferencePriceSetting> result = new BaseOutput<GoodsReferencePriceSetting>();
+            result.setCode("500");
+            result.setMessage(tips);
+            return result;
+        }
+
         if (output.getData() == null) {
             return goodsReferencePriceSettingService.insertGoodsReferencePriceSetting(goodsReferencePriceSetting);
         } else {
@@ -245,6 +257,27 @@ public class GoodsReferencePriceSettingController {
             goodsReferencePriceSetting.setCreatorId(output.getData().getCreatorId());
             return goodsReferencePriceSettingService.updateGoodsReferencePriceSetting(goodsReferencePriceSetting);
         }
+    }
+
+    /**
+     * 校验goodsReferencePriceSetting
+     * @param goodsReferencePriceSetting
+     * @return
+     */
+    public String  checkUpDate(GoodsReferencePriceSetting goodsReferencePriceSetting){
+        StringBuilder tips = new StringBuilder();
+        if (ReferenceRule.RESCINDED.getCode().equals(goodsReferencePriceSetting.getReferenceRule())) {
+            Long fixedPrice = goodsReferencePriceSetting.getFixedPrice();
+            String regex = "^\\d{1,3}(\\.\\d{1,2})?$";
+            if (fixedPrice == null || Pattern.matches(regex, String.valueOf(fixedPrice))) {
+                tips.append(",固定价格必须是0.01-999.99之间的数字且最多两位小数");
+            }
+        }
+        if (tips.length() != 0) {
+            tips.append("!");
+            return tips.substring(1);
+        }
+        return  "";
     }
 
     /**

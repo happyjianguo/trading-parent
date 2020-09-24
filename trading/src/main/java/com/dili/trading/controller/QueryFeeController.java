@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Description: 查询收费功能Controller类
@@ -128,7 +129,7 @@ public class QueryFeeController {
      */
     @RequestMapping(value = "/pay.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput pay(Long id, String password) {
+    public BaseOutput<ComprehensiveFee> pay(Long id, String password) {
         return comprehensiveFeeService.pay(id, password);
     }
 
@@ -140,7 +141,7 @@ public class QueryFeeController {
      */
     @RequestMapping(value = "/queryAccountBalance.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput queryAccountBalance(String customerCardNo) {
+    public BaseOutput<?> queryAccountBalance(String customerCardNo) {
         BaseOutput<AccountSimpleResponseDto> oneAccountCard = cardRpc.getOneAccountCard(customerCardNo);
         return oneAccountCard;
     }
@@ -153,7 +154,7 @@ public class QueryFeeController {
      */
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput insert(ComprehensiveFee comprehensiveFee) {
+    public BaseOutput<ComprehensiveFee> insert(ComprehensiveFee comprehensiveFee) {
         String tips = checkUpDate(comprehensiveFee);
         if(StringUtils.isNotBlank(tips)){
             BaseOutput<ComprehensiveFee> result = new BaseOutput<ComprehensiveFee>();
@@ -173,13 +174,17 @@ public class QueryFeeController {
      * @return
      */
     public String  checkUpDate(ComprehensiveFee comprehensiveFee){
-        StringBuffer tips = new StringBuffer();
+        StringBuilder tips = new StringBuilder();
         if (StringUtils.isBlank(comprehensiveFee.getCustomerCardNo())) {
             tips.append(",卡号不能为空");
-        } else {
-            if (comprehensiveFee.getCustomerId() == null) {
-                tips.append(",客户不存在或者卡号出错请联系管理员");
-            }
+        }
+        if (comprehensiveFee.getCustomerId() == null) {
+            tips.append(",客户不存在");
+        }
+        Long chargeAmount = comprehensiveFee.getChargeAmount();
+        String regex = "^\\d{1,5}(\\.\\d{1,2})?$";
+        if (chargeAmount == null || Pattern.matches(regex, String.valueOf(chargeAmount))) {
+            tips.append(",缴费金额必须是0.01-99999.99之间的数字且最多两位小数");
         }
         if (tips.length() != 0) {
             tips.append("!");
