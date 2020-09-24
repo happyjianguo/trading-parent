@@ -52,15 +52,14 @@
          * 点击刷卡获取客户信息
          */
         $('#payByCard').on('click',function (e) {
-            let cardNum='888800039006';
-            /*let cardNum;
+            let cardNum;
             let json = JSON.parse(callbackObj.readCardNumber());
             if (json.code == 0) {
                 cardNum = json.data;
             } else {
                 parent.bs4pop.alert(json.message, {type: "error"});
                 return false;
-            }*/
+            }
             $.ajax({
                 type: "POST",
                 data:{cardNo:cardNum},
