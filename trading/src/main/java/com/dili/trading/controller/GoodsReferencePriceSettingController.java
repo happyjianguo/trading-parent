@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.assets.sdk.rpc.AssetsRpc;
 import com.dili.orders.constants.TradingConstans;
-import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.domain.GoodsReferencePriceSetting;
 
 import com.dili.orders.domain.ReferenceRule;
