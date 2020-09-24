@@ -260,13 +260,13 @@ public class GoodsReferencePriceSettingController {
             BaseOutput<Firm> output = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
             if (!output.isSuccess()) {
                 LOGGER.error(output.getMessage());
-                throw new AppException("查询市场信息失败");
+                throw new AppException(output.getMessage());
             }
             if (output.getData() == null) {
                 throw new AppException("市场信息不存在");
             }
             Map<Object, Object> metadata = new HashMap<Object, Object>();
-            metadata.put("referenceRule", "referenceRuleProvider");
+            metadata.put(REFERENCE_RULE, REFERENCE_RULE_PROVIDER);
 
             CategoryDTO query = new CategoryDTO();
             query.setMarketId(output.getData().getId());

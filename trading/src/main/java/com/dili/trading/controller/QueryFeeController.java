@@ -1,6 +1,5 @@
 package com.dili.trading.controller;
 
-import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.domain.ComprehensiveFeeType;
 import com.dili.orders.dto.AccountSimpleResponseDto;
@@ -14,8 +13,6 @@ import com.dili.trading.rpc.ComprehensiveFeeRpc;
 import com.dili.trading.service.ComprehensiveFeeService;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.glossary.DataAuthType;
-import com.dili.uap.sdk.rpc.FirmRpc;
-import com.dili.uap.sdk.rpc.UserRpc;
 import com.dili.uap.sdk.session.SessionContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,14 +45,6 @@ public class QueryFeeController {
     @Autowired
     private CardRpc cardRpc;
 
-    @Autowired
-    private FirmRpc firmRpc;
-
-    @Autowired
-    private CustomerRpc customerRpc;
-    @Autowired
-    private UserRpc useRpc;
-
     /**
      * 跳转到列表页面
      *
@@ -68,8 +57,6 @@ public class QueryFeeController {
         modelMap.put("operatorTimeEnd", LocalDate.now() + " 23:59:59");
         return "queryFee/list";
     }
-
-
 
     /**
      * 分页查询
