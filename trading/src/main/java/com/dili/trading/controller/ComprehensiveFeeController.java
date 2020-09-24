@@ -268,7 +268,7 @@ public class ComprehensiveFeeController {
      * @param modelMap
      * @return
      */
-    @RequestMapping("/revocatorPage.html")
+    @RequestMapping(value = "/revocatorPage.html", method = RequestMethod.GET)
     public String revocatorPage(Long id, ModelMap modelMap) {
         modelMap.addAttribute("comprehensiveFeeId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket());
         return "comprehensiveFee/revocatorPage";
@@ -282,7 +282,7 @@ public class ComprehensiveFeeController {
      * @return
      */
     @ResponseBody
-    @PostMapping("/revocator.action")
+    @RequestMapping(value = "/revocator.action", method = {RequestMethod.GET, RequestMethod.POST})
     public BaseOutput<ComprehensiveFee> revocator(Long id, @RequestParam(value="password") String operatorPassword) throws Exception{
         return comprehensiveFeeService.revocator(comprehensiveFeeRpc.getOneById(id).getData(), operatorPassword);
     }
