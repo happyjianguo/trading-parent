@@ -180,11 +180,7 @@ public class QueryFeeController {
         if (comprehensiveFee.getCustomerId() == null) {
             tips.append(",客户不存在");
         }
-        Long chargeAmount = comprehensiveFee.getChargeAmount();
-        String regex = "^\\d{1,5}(\\.\\d{1,2})?$";
-        if (chargeAmount == null || Pattern.matches(regex, String.valueOf(chargeAmount))) {
-            tips.append(",缴费金额必须是0.01-99999.99之间的数字且最多两位小数");
-        }
+
         if (tips.length() != 0) {
             tips.append("!");
             return tips.substring(1);
