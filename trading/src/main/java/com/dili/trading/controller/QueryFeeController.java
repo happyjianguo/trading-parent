@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -180,7 +181,11 @@ public class QueryFeeController {
         if (comprehensiveFee.getCustomerId() == null) {
             tips.append(",客户不存在");
         }
-
+        Long chargeAmount = comprehensiveFee.getChargeAmount();
+        String regex = "^\\+?[1-9]\\d{0,6}(\\.\\d*)?$";
+        if (chargeAmount == null || !Pattern.matches(regex, String.valueOf(chargeAmount))) {
+            tips.append(",缴费金额必须是0.01-99999.99之间的数字且最多两位小数");
+        }
         if (tips.length() != 0) {
             tips.append("!");
             return tips.substring(1);

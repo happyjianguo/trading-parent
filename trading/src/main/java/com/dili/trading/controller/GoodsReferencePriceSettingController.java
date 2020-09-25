@@ -266,7 +266,11 @@ public class GoodsReferencePriceSettingController {
     public String  checkUpDate(GoodsReferencePriceSetting goodsReferencePriceSetting){
         StringBuilder tips = new StringBuilder();
         if (ReferenceRule.RESCINDED.getCode().equals(goodsReferencePriceSetting.getReferenceRule())) {
-
+            Long fixedPrice = goodsReferencePriceSetting.getFixedPrice();
+            String regex = "^\\+?[1-9]\\d{0,4}(\\.\\d*)?$";
+            if (fixedPrice == null || !Pattern.matches(regex, String.valueOf(fixedPrice))) {
+                tips.append(",固定价格必须是0.01-999.99之间的数字且最多两位小数");
+            }
         }
         if (tips.length() != 0) {
             tips.append("!");
