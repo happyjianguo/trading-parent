@@ -68,7 +68,6 @@ public class ComprehensiveFeeServiceImpl implements ComprehensiveFeeService {
     public BaseOutput<ComprehensiveFee> revocator(ComprehensiveFee comprehensiveFee, String operatorPassword) {
         //获取当前登录用户
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        //修改结算单的支付状态
         //设置撤销人员相关信息
         LocalDateTime now = LocalDateTime.now();
         comprehensiveFee.setRevocatorId(userTicket.getId());
