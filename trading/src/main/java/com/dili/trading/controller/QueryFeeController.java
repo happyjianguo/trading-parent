@@ -157,10 +157,7 @@ public class QueryFeeController {
     public BaseOutput<ComprehensiveFee> insert(ComprehensiveFee comprehensiveFee) {
         String tips = checkUpDate(comprehensiveFee);
         if(StringUtils.isNotBlank(tips)){
-            BaseOutput<ComprehensiveFee> result = new BaseOutput<ComprehensiveFee>();
-            result.setCode("500");
-            result.setMessage(tips);
-            return result;
+            return BaseOutput.failure(tips);
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         comprehensiveFee.setMarketId(userTicket.getFirmId());

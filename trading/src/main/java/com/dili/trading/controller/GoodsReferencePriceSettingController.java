@@ -241,10 +241,7 @@ public class GoodsReferencePriceSettingController {
 
         String tips = checkUpDate(goodsReferencePriceSetting);
         if(StringUtils.isNotBlank(tips)){
-            BaseOutput<GoodsReferencePriceSetting> result = new BaseOutput<GoodsReferencePriceSetting>();
-            result.setCode("500");
-            result.setMessage(tips);
-            return result;
+            return BaseOutput.failure(tips);
         }
 
         if (output.getData() == null) {
