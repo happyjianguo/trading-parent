@@ -284,7 +284,11 @@ public class ComprehensiveFeeController {
     @ResponseBody
     @RequestMapping(value = "/revocator.action", method = {RequestMethod.GET, RequestMethod.POST})
     public BaseOutput<ComprehensiveFee> revocator(Long id, @RequestParam(value="password") String operatorPassword) throws Exception{
-        return comprehensiveFeeService.revocator(comprehensiveFeeRpc.getOneById(id).getData(), operatorPassword);
+        BaseOutput<ComprehensiveFee> oneById=comprehensiveFeeRpc.getOneById(id);
+        if(!oneById.isSuccess()) {
+            return BaseOutput.failure("检测单不存在");
+        }
+        return comprehensiveFeeService.revocator(oneById.getData(), operatorPassword);
     }
 
     /**
