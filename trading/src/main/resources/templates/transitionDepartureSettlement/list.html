@@ -216,7 +216,7 @@
     	queryDataHandler();
     }
     $(function(){
-        $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
+        $('#grid').on('check.bs.table', function (e, row, $element, field) {
             debugger;
             let time=row.pay_time;
             if (row.$_payStatus == 2) {
