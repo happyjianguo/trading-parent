@@ -16,7 +16,7 @@ import java.net.SocketTimeoutException;
  * @author:
  * @date: 2020/4/8 11:22
  */
-@ControllerAdvice
+@ControllerAdvice(basePackages = "com.dili.trading.controller")
 public class GenericGlobalExceptionResolver {
     @Autowired
     private HttpServletRequest request;
