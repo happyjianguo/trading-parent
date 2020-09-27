@@ -89,7 +89,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col align-self-center mt-3">
+            <div class="col-auto align-self-center mt-3">
                 <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm .form-control').val('');$('#transTypeId').val(null).trigger('change');"><i class="fa fa-refresh"></i> 清空</button>
                 <button type="button" class="btn btn-outline-primary" onclick="queryDataHandler()"><i class="fa fa-search"></i> 查询</button>
             </div>
@@ -216,18 +216,24 @@
     	queryDataHandler();
     }
     $(function(){
-        $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
+        $('#grid').on('check.bs.table', function (e, row, $element, field) {
             debugger;
-            if (row.$_payStatus != 2) {
+            let time=row.pay_time;
+            if (row.$_payStatus == 2) {
+                if (new Date(time).toDateString() !== new Date().toDateString()){
+                    $("#cx").attr("disabled", "disabled");
+                    $("#cx").addClass("btn_css_disabled");
+                }else{
+                    $("#cx").removeClass("btn_css_disabled");
+                    $("#cx").attr("disabled", false);
+                }
+                $("#bd").removeClass("btn_css_disabled");
+                $("#bd").attr("disabled", false);
+            }else {
                 $("#cx").attr("disabled", "disabled");
                 $("#cx").addClass("btn_css_disabled");
                 $("#bd").attr("disabled", "disabled");
                 $("#bd").addClass("btn_css_disabled");
-            }else {
-                $("#cx").removeClass("btn_css_disabled");
-                $("#cx").attr("disabled", false);
-                $("#bd").removeClass("btn_css_disabled");
-                $("#bd").attr("disabled", false);
             }
         })
         $('#show_customer_card').on('input', function (cardNo) {
