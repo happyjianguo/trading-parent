@@ -247,6 +247,7 @@
             elem: this
             , trigger: 'click'
             , range: false
+            , theme: '#007bff'
             , type: 'datetime'
             , min: getLastYearYestdy(new Date())
             , max: timeStamp2String(new Date().getTime())

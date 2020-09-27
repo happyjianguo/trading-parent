@@ -13,6 +13,7 @@
             elem: this
             , trigger: 'click'
             , range: false
+            , theme: '#007bff'
             , type: 'datetime'
         });
     });
