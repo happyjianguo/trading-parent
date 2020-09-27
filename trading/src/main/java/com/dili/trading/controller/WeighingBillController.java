@@ -504,10 +504,7 @@ public class WeighingBillController {
 		metadata.put("statement.sellerActualAmount", "moneyProvider");
 		metadata.put("statement.state", "weighingStatementStateProvider");
 
-		JSONObject ddProvider = new JSONObject();
-		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
-		metadata.put("tradeType", ddProvider);
+		metadata.put("tradeTypeId", "tradeTypeProvider");
 		try {
 			List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData()));
 			metadata = new HashMap<Object, Object>();
