@@ -202,38 +202,28 @@
             bs4pop.alert('只有当天的结算单可以撤销');
             return;
         }
-        bs4pop.confirm(" <div style='font-size: large' align='center' >确定撤销当前单据？</div>", {
-            title: "信息确认", btns: [
-                {
-                    label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
-                        dia = bs4pop.dialog({
-                            title: '撤销校验',//对话框title
-                            content: '${contextPath}/comprehensiveFee/revocatorPage.html?id=' + rows[0].id,
-                            width: '400px',//宽度
-                            height: '400px',//高度
-                            isIframe: true,//默认是页面层，非iframe
-                            backdrop: 'static',
-                            btns: [{
-                                label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
-
-                                }
-                            }, {
-                                label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
-                                    let diaWindow = $iframe[0].contentWindow;
-                                    bui.util.debounce(diaWindow.revocator, 1000, true)()
-                                    return false;
-                                }
-                            }]
-
-                        });
-
-                    }
-                }, {
-                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
-
-                    }
-                }]
-        }, function (sure) {});
+        bs4pop.confirm(" 确定撤销当前单据吗？", {title: "信息确认"}, function (sure) {
+            if (sure) {
+                dia = bs4pop.dialog({
+                    title: '撤销校验',//对话框title
+                    content: '${contextPath}/comprehensiveFee/revocatorPage.html?id=' + rows[0].id,
+                    width: '400px',//宽度
+                    height: '400px',//高度
+                    isIframe: true,//默认是页面层，非iframe
+                    backdrop: 'static',
+                    btns: [{
+                        label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
+                        }
+                    }, {
+                        label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
+                            let diaWindow = $iframe[0].contentWindow;
+                            bui.util.debounce(diaWindow.revocator, 1000, true)()
+                            return false;
+                        }
+                    }]
+                });
+            }
+        });
     }
 
 
