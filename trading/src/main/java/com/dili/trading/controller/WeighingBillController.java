@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CategoryDTO;
+import com.dili.commons.glossary.EnabledStateEnum;
 import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
@@ -106,10 +107,8 @@ public class WeighingBillController {
 	 */
 	@GetMapping("/index.html")
 	public String index(ModelMap modelMap) {
-		System.out.println("11111111111");
 		modelMap.put("createdStart", LocalDate.now() + " 00:00:00");
 		modelMap.put("createdEnd", LocalDate.now() + " 23:59:59");
-		System.out.println("22222222222");
 		return "weighingBill/index";
 	}
 
@@ -118,11 +117,12 @@ public class WeighingBillController {
 	 *
 	 * @param weighingBill 过磅单和卖家密码数据
 	 * @return
+	 * @throws Exception
 	 */
 	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/saveAndSettle.action")
-	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) {
+	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) throws Exception {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
@@ -161,10 +161,10 @@ public class WeighingBillController {
 			}
 		}
 		if (WeighingBillState.FROZEN.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()).setMessage("付款成功");
+			return this.getWeighingBillPrintData(ws.getWeighingSerialNo(), false).setMessage("付款成功");
 		}
 		if (WeighingBillState.SETTLED.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()).setMessage("付款成功");
+			return this.getWeighingStatementPrintData(ws.getSerialNo(), false).setMessage("付款成功");
 		}
 		return output;
 	}
@@ -242,6 +242,7 @@ public class WeighingBillController {
 		}
 		CategoryDTO query = new CategoryDTO();
 		query.setMarketId(user.getFirmId());
+		query.setState(EnabledStateEnum.ENABLED.getCode());
 		query.setKeyword(keyword);
 		return this.categoryRpc.getTree(query);
 	}
@@ -701,7 +702,7 @@ public class WeighingBillController {
 	 *
 	 * @param serialNo 结算单号
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@ResponseBody
 	@RequestMapping("/getWeighingStatementPrintData.action")
