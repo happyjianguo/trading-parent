@@ -206,21 +206,11 @@
             if (sure) {
                 dia = bs4pop.dialog({
                     title: '撤销校验',//对话框title
-                    content: '${contextPath}/comprehensiveFee/revocatorPage.html?id=' + rows[0].id,
+                    content: '${contextPath}/comprehensiveFee/revocatorPage.html?id=' + rows[0].id, //对话框内容，可以是 string、element，$object
                     width: '400px',//宽度
                     height: '400px',//高度
-                    isIframe: true,//默认是页面层，非iframe
                     backdrop: 'static',
-                    btns: [{
-                        label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
-                        }
-                    }, {
-                        label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
-                            let diaWindow = $iframe[0].contentWindow;
-                            bui.util.debounce(diaWindow.revocator, 1000, true)()
-                            return false;
-                        }
-                    }]
+                    isIframe: true//默认是页面层，非iframe
                 });
             }
         });
