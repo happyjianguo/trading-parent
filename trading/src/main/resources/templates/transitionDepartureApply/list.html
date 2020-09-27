@@ -179,7 +179,8 @@
     }
     $(function(){
         $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
-            if (row.$_approvalState != 1) {
+            let time=row.originatorTime;
+            if (row.$_approvalState != 1 || new Date(time).toDateString() !== new Date().toDateString()) {
                 $("#sp").attr("disabled", "disabled");
                 $("#sp").addClass("btn_css_disabled");
             }else {
