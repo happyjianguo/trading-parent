@@ -218,16 +218,20 @@
     $(function(){
         $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
             debugger;
-            if (row.$_payStatus != 2) {
-                $("#cx").attr("disabled", "disabled");
-                $("#cx").addClass("btn_css_disabled");
-                $("#bd").attr("disabled", "disabled");
-                $("#bd").addClass("btn_css_disabled");
+            let time=row.pay_time;
+            if (row.$_payStatus == 2) {
+                if (new Date(time).toDateString() !== new Date().toDateString()){
+                    $("#cx").attr("disabled", "disabled");
+                    $("#cx").addClass("btn_css_disabled");
+                }
+
+                $("#bd").removeClass("btn_css_disabled");
+                $("#bd").attr("disabled", false);
             }else {
                 $("#cx").removeClass("btn_css_disabled");
                 $("#cx").attr("disabled", false);
-                $("#bd").removeClass("btn_css_disabled");
-                $("#bd").attr("disabled", false);
+                $("#bd").attr("disabled", "disabled");
+                $("#bd").addClass("btn_css_disabled");
             }
         })
         $('#show_customer_card').on('input', function (cardNo) {
