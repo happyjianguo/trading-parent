@@ -186,6 +186,10 @@
     * */
     function openUpdateHandler() {
         let rows = _grid.bootstrapTable('getSelections');
+        let createTime=new Date(rows[0].createdTime);
+        let createTimeToLocal=createTime.toLocaleDateString();
+        let todaysDate = new Date();
+        let todaysDateToLocal=todaysDate.toLocaleDateString();
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
             return;
@@ -194,7 +198,10 @@
             bs4pop.alert('该单据当前状态不能进行撤销操作！');
             return;
         }
-
+        if(createTimeToLocal != todaysDateToLocal){
+            bs4pop.alert('只有当天的结算单可以撤销');
+            return;
+        }
         bs4pop.confirm(" <div style='font-size: large' align='center' >确定撤销当前单据？</div>", {
             title: "信息确认", btns: [
                 {
