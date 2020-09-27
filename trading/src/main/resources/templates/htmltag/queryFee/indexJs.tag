@@ -96,6 +96,7 @@
             , trigger: 'click'
             , range: false
             , type: 'datetime'
+            , theme: '#007bff'
         });
     });
 

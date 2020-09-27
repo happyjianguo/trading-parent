@@ -509,10 +509,7 @@ function doPrintHandler(){
             height: '95%',// 高度
             isIframe: true,// 默认是页面层，非iframe
             backdrop: 'static',
-            /*
-			 * btns: [{ label: '关闭', className: 'btn btn-secondary', onClick(e,
-			 * $iframe) { } }]
-			 */
+          btns: [{ label: '关闭', className: 'btn btn-secondary', onClick(e, $iframe) { } }]
         });
     }
 

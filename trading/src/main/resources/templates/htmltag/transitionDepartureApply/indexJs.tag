@@ -14,6 +14,7 @@
             , trigger: 'click'
             , range: false
             , type: 'date'
+            , theme: '#007bff'
             // , min: getLastYearYestdy(new Date())
             , max: timeStamp2String(new Date().getTime()),
             done: function (value, date) {

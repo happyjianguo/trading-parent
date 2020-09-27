@@ -38,23 +38,6 @@
                 <label for="" class="">发起人员</label>
                 <#bautoCompleteProvider _hiddenDomainClass="form-control" _hiddenDomainId="originatorId" _hiddenDomainName="originatorId" _displayDomainId="_originatorId" _displayDomainName="_originatorId" _placeholder="" _provider="userProvider"  _value="" _text="" />
             </div>
-            <div class="form-group col-auto">
-                <label for="createdStart" >发起时间</label>
-                <div class="form-inline">
-                    <div class="input-group">
-                        <input type="text" name="beginTime" id="createdStart" value="${beginDate!}" class="form-control sendtime laystart"/>
-                        <div class="input-group-append">
-                            <label for="createdStart"  class="input-group-text fa fa-calendar"></label>
-                        </div>
-                    </div>&nbsp;&nbsp;至&nbsp;&nbsp;
-                    <div class="input-group">
-                        <input type="text" name="endTime" id="createdEnd" value="${endDate!}" class="form-control sendtime layend" value=""/>
-                        <div class="input-group-append">
-                            <label for="createdEnd"  class="input-group-text fa fa-calendar"></label>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="form-group col-auto" style="width: 350px">
                 <label for="" class="">客户</label>
                 <div class="input-group">
@@ -71,6 +54,23 @@
                     <input type="text" class="form-control" id="accountId" name="accountId" hidden/>
                     <div class="input-group-append">
                         <span class="input-group-text" onclick="javascript:swipeCard(this);"><a href="javascript:;" style=" text-decoration: none;" >刷卡</a></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-auto">
+                <label for="createdStart" >发起时间</label>
+                <div class="form-inline">
+                    <div class="input-group">
+                        <input type="text" name="beginTime" id="createdStart" value="${beginDate!}" class="form-control sendtime laystart"/>
+                        <div class="input-group-append">
+                            <label for="createdStart"  class="input-group-text fa fa-calendar"></label>
+                        </div>
+                    </div>&nbsp;&nbsp;至&nbsp;&nbsp;
+                    <div class="input-group">
+                        <input type="text" name="endTime" id="createdEnd" value="${endDate!}" class="form-control sendtime layend" value=""/>
+                        <div class="input-group-append">
+                            <label for="createdEnd"  class="input-group-text fa fa-calendar"></label>
+                        </div>
                     </div>
                 </div>
             </div>
