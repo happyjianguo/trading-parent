@@ -218,7 +218,7 @@
     $(function(){
         $('#grid').on('check.bs.table', function (e, row, $element, field) {
             debugger;
-            let time=row.pay_time;
+            let time=row.payTime;
             if (row.$_payStatus == 2) {
                 if (new Date(time).toDateString() !== new Date().toDateString()){
                     $("#cx").attr("disabled", "disabled");
