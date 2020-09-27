@@ -1,49 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration >
     <!--<include resource="org/springframework/boot/logging/logback/base.xml"/>-->
-
+    <!-- 日志名称 -->
+    <property name="LOG_NAME" value="trading" />
+    <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+    <property name="LOG_HOME" value="logs" />
     <!-- 文件输出格式 -->
-    <property name="PATTERN" value="[order-dev]%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%L] -| %msg%n" />
+    <property name="PATTERN" value="[trading-dev]%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%L] -| %msg%n" />
 
+    <!-- 开发环境 -->
     <!-- 开发环境 -->
     <springProfile name="dev">
         <appender name="appender" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
-                <pattern>${PATTERN}</pattern>
+                <pattern>[${LOG_NAME}-dev] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
+            </encoder>
+        </appender>
+        <!-- 按照每天生成日志文件 -->
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_HOME}/${LOG_NAME}.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <!--日志文件输出的文件名-->
+                <fileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}/${LOG_NAME}_%i.log.zip</fileNamePattern>
+                <!--日志文件保留天数(FileNamePattern中的%d 格式有关，如果yyyy-MM-dd 则是天数)-->
+                <maxHistory>10</maxHistory>
+                <!--日志文件最大的大小-->
+                <maxFileSize>10MB</maxFileSize>
+            </rollingPolicy>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>[${LOG_NAME}-dev] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
             </encoder>
         </appender>
         <logger name="org.springframework.web" level="INFO"/>
-        <logger name="com.dili.order" level="DEBUG"/>
-
+        <logger name="com.dili.trading" level="DEBUG"/>
+        <!--        不打印心跳日志     -->
+        <logger name="io.seata.core.rpc.netty" level="info"/>
+        <jmxConfigurator/>
     </springProfile>
-
     <!-- 测试环境 -->
     <springProfile name="test">
         <appender name="appender" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
-                <pattern>[order-test]%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%L] -| %msg%n</pattern>
+                <pattern>[${LOG_NAME}-test] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
             </encoder>
         </appender>
-        <!-- 每天产生一个文件 -->
-        <appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <!-- 文件路径 -->
-            <!--<file>D:/logs-test</file>-->
-            <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
-                <!--&lt;!&ndash; 文件名称 &ndash;&gt;-->
-                <!--<fileNamePattern>D:/logs-test/info.%d{yyyy-MM-dd}.log</fileNamePattern>-->
-                <!--&lt;!&ndash; 文件最大保存历史数量 &ndash;&gt;-->
-                <!--<MaxHistory>100</MaxHistory>-->
-            <!--</rollingPolicy>-->
-
-            <layout class="ch.qos.logback.classic.PatternLayout">
-                <pattern>+++%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%L] -| %msg%n</pattern>
-            </layout>
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_HOME}/${LOG_NAME}.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <!--日志文件输出的文件名-->
+                <fileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}/${LOG_NAME}_%i.log.zip</fileNamePattern>
+                <!--日志文件保留天数(FileNamePattern中的%d 格式有关，如果yyyy-MM-dd 则是天数)-->
+                <maxHistory>10</maxHistory>
+                <!--日志文件最大的大小-->
+                <maxFileSize>10MB</maxFileSize>
+            </rollingPolicy>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>[${LOG_NAME}-test] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
+            </encoder>
         </appender>
         <logger name="org.springframework.web" level="INFO"/>
-        <logger name="com.dili.order" level="INFO"/>
+        <logger name="com.dili.trading" level="INFO"/>
+        <!--        不打印心跳日志     -->
+        <logger name="io.seata.core.rpc.netty" level="info"/>
+        <jmxConfigurator/>
+    </springProfile>
+
+
+    <!-- 生产环境 -->
+    <springProfile name="prod">
+        <appender name="appender" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>[${LOG_NAME}-test] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
+            </encoder>
+        </appender>
+        <!-- 按照每天生成日志文件 -->
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_HOME}/${LOG_NAME}.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <!--日志文件输出的文件名-->
+                <fileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}/${LOG_NAME}_%i.log.zip</fileNamePattern>
+                <!--日志文件保留天数(FileNamePattern中的%d 格式有关，如果yyyy-MM-dd 则是天数)-->
+                <maxHistory>30</maxHistory>
+                <!--日志文件最大的大小-->
+                <maxFileSize>10MB</maxFileSize>
+            </rollingPolicy>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>[${LOG_NAME}-prod] %d |-%highlight(%-5level) [%t] %highlight(%c) [%L] -| %msg%n</pattern>
+            </encoder>
+        </appender>
+        <!--        不打印心跳日志     -->
+        <logger name="io.seata.core.rpc.netty" level="info"/>
+        <!-- 不显示Flushing UNDO LOG  -->
+        <logger name="io.seata.rm.datasource.undo" level="info"/>
     </springProfile>
 
     <root level="info">
-        <appender-ref ref="appender" />
+        <appender-ref ref="appender"/>
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>

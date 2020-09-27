@@ -230,7 +230,7 @@ function doPrintHandler(){
             bs4pop.alert(json.message, {type: "error"});
             return false;
         }
-            if (cardNo!=-1) {
+            if (cardNum!=-1) {
                 $.ajax({
                     type:'GET',
                     url:'${contextPath!}/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
@@ -239,13 +239,14 @@ function doPrintHandler(){
                         if (result.success) {
                             // 1-买家 2-卖家
                             if(result.data.accountType==1){
-                                $('#buyerCardNo').val(cardNo);
+                                $('#buyerCardNo').val(cardNum);
                                 $('#show_buyer_name_by_card_name').val(result.data.customerName);
                             }else if(result.data.accountType==2){
-                                $('#sellerCardNo').val(cardNo);
+                                $('#sellerCardNo').val(cardNum);
                                 $('#show_seller_name_by_card_name').val(result.data.customerName);
                             }
                         }else{
+                        	 bs4pop.alert(result.message, {type: "error"});
                             $('#buyerCardNo').val('');
                             $('#show_buyer_name_by_card_name').val('');
                             $('#sellerCardNo').val('');
