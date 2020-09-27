@@ -223,13 +223,15 @@
                 if (new Date(time).toDateString() !== new Date().toDateString()){
                     $("#cx").attr("disabled", "disabled");
                     $("#cx").addClass("btn_css_disabled");
+                }else{
+                    $("#cx").removeClass("btn_css_disabled");
+                    $("#cx").attr("disabled", false);
                 }
-
                 $("#bd").removeClass("btn_css_disabled");
                 $("#bd").attr("disabled", false);
             }else {
-                $("#cx").removeClass("btn_css_disabled");
-                $("#cx").attr("disabled", false);
+                $("#cx").attr("disabled", "disabled");
+                $("#cx").addClass("btn_css_disabled");
                 $("#bd").attr("disabled", "disabled");
                 $("#bd").addClass("btn_css_disabled");
             }
