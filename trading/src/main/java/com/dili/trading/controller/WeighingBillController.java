@@ -133,6 +133,7 @@ public class WeighingBillController {
 			return output;
 		}
 		WeighingStatement ws = null;
+		boolean priceApprove = false;
 		if (StringUtils.isBlank(weighingBill.getSerialNo())) {
 			weighingBill.setCreatorId(user.getId());
 			// 设置市场id
@@ -146,6 +147,7 @@ public class WeighingBillController {
 			if (!output.isSuccess()) {
 				return output;
 			}
+			priceApprove = Boolean.valueOf(output.getData().toString());
 		} else {
 			weighingBill.setModifierId(user.getId());
 			BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.update(weighingBill);
@@ -157,12 +159,13 @@ public class WeighingBillController {
 			if (!output.isSuccess()) {
 				return output;
 			}
+			priceApprove = Boolean.valueOf(output.getData().toString());
 		}
 		if (WeighingBillState.FROZEN.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()).setMessage("付款成功");
+			return this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()).setMessage(priceApprove ? "交易单价低于参考价，需人工审核" : "付款成功");
 		}
 		if (WeighingBillState.SETTLED.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()).setMessage("付款成功");
+			return this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()).setMessage(priceApprove ? "交易单价低于参考价，需人工审核" : "付款成功");
 		}
 		return output;
 	}
@@ -699,7 +702,7 @@ public class WeighingBillController {
 	 *
 	 * @param serialNo 结算单号
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@ResponseBody
 	@RequestMapping("/getWeighingStatementPrintData.action")
