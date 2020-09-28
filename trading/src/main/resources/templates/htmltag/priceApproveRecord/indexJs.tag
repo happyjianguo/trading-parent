@@ -310,8 +310,10 @@
             bs4pop.alert('请选中一条数据');
             return false;
         }
-        alert(rows.isHandleProcess);
-        return;
+        if (!rows[0].isHandleProcess) {
+        	bs4pop.alert("当前用户没有审批该条记录权限!", {type: 'error'});
+        	return;
+        }
     	dia = bs4pop.dialog({
             title: '价格异常--审核',// 对话框title
             content: '${contextPath}/priceApproveRecord/approve.html?businessKey='+rows[0].id+"&modal=true&taskId="+rows[0].taskId+"&isNeedClaim="+rows[0].isNeedClaim, // 对话框内容，可以是

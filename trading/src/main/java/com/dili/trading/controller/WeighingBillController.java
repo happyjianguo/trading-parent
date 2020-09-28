@@ -106,10 +106,8 @@ public class WeighingBillController {
 	 */
 	@GetMapping("/index.html")
 	public String index(ModelMap modelMap) {
-		System.out.println("11111111111");
 		modelMap.put("createdStart", LocalDate.now() + " 00:00:00");
 		modelMap.put("createdEnd", LocalDate.now() + " 23:59:59");
-		System.out.println("22222222222");
 		return "weighingBill/index";
 	}
 

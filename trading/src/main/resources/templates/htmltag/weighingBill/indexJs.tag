@@ -6,6 +6,11 @@
 	 * 
 	 **************************************************************************/
 
+function clearQueryForm(){
+	$('#queryForm input').val('');
+	$('#statementStates').val(null).trigger('change');
+	$('#tradeTypeId').val(null).trigger('change');
+}
 
 function doPrintHandler(){
 	var visibleColumns= $('#grid').bootstrapTable('getVisibleColumns');
