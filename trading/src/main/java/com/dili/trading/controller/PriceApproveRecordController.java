@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.bpmc.sdk.rpc.TaskRpc;
 import com.dili.orders.domain.PriceApproveRecord;
@@ -71,6 +72,13 @@ public class PriceApproveRecordController {
 	@ResponseBody
 	@PostMapping("/listPage.action")
 	public String listPage(PriceApproveRecordQueryDto query) {
+
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		if (user == null) {
+			return JSON.toJSONString(BaseOutput.failure("用户未登录"));
+		}
+		query.setMarketId(user.getFirmId());
+
 		PageOutput<List<PriceApproveRecord>> output = this.priceApproveRpc.listPage(query);
 
 		if (!output.isSuccess()) {
