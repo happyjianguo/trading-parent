@@ -262,7 +262,7 @@
                 bui.loading.hide();
                 if (data.code == '200') {
                     //调用c端打印
-                    callbackObj.printDirect(JSON.stringify(data.data), "TransitionDocument");
+                    callbackObj.printPreview(JSON.stringify(data.data),"1","TransitionDocument",0);
                 }else{
                     debugger;
                     bs4pop.alert(data.message, {type: 'error'});
