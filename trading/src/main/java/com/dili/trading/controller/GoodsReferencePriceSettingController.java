@@ -2,6 +2,8 @@ package com.dili.trading.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.dili.assets.sdk.dto.CategoryDTO;
+import com.dili.assets.sdk.dto.CusCategoryDTO;
+import com.dili.assets.sdk.dto.CusCategoryQuery;
 import com.dili.assets.sdk.rpc.AssetsRpc;
 import com.dili.commons.glossary.EnabledStateEnum;
 import com.dili.orders.constants.TradingConstans;
@@ -74,11 +76,11 @@ public class GoodsReferencePriceSettingController {
     public String getAllGoods(GoodsReferencePriceSetting goodsReferencePriceSetting) {
         Map<Object, Object> metadata = new HashMap<Object, Object>();
         metadata.put("referenceRule", "referenceRuleProvider");
-        CategoryDTO categoryDTO = new CategoryDTO();
+        CusCategoryQuery categoryDTO = new CusCategoryQuery();
         categoryDTO.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         categoryDTO.setParent(goodsReferencePriceSetting.getParentGoodsId());
         categoryDTO.setState(EnabledStateEnum.ENABLED.getCode());
-        BaseOutput<List<CategoryDTO>> categoryDTOList = assetsRpc.list(categoryDTO);
+        BaseOutput<List<CusCategoryDTO>> categoryDTOList = assetsRpc.listCusCategory(categoryDTO);
 
         try {
             List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, categoryDTOList.getData());
@@ -100,14 +102,14 @@ public class GoodsReferencePriceSettingController {
     public String getGoodsByParentId(GoodsReferencePriceSetting goodsReferencePriceSetting) {
         Map<Object, Object> metadata = new HashMap<Object, Object>();
         metadata.put("referenceRule", "referenceRuleProvider");
-        CategoryDTO categoryDTO = new CategoryDTO();
+        CusCategoryQuery categoryDTO = new CusCategoryQuery();
         categoryDTO.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         categoryDTO.setParent(goodsReferencePriceSetting.getParentGoodsId());
         categoryDTO.setState(EnabledStateEnum.ENABLED.getCode());
         //获取当前节点本身的数据
-        BaseOutput<CategoryDTO> categoryDTOOneSelf = assetsRpc.get(goodsReferencePriceSetting.getParentGoodsId());
+        BaseOutput<CusCategoryDTO> categoryDTOOneSelf = assetsRpc.getCusCategory(goodsReferencePriceSetting.getParentGoodsId());
         //获取节点下面子节点的数据
-        BaseOutput<List<CategoryDTO>> categoryDTOList = assetsRpc.list(categoryDTO);
+        BaseOutput<List<CusCategoryDTO>> categoryDTOList = assetsRpc.listCusCategory(categoryDTO);
         goodsReferencePriceSetting.setGoodsName(null);
         goodsReferencePriceSetting.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         //获取节点子节点的数据（goods_reference_price_setting）
@@ -122,11 +124,11 @@ public class GoodsReferencePriceSettingController {
                 return this.index();
             }
             //组装数据
-            List<CategoryDTO> categoryList = new ArrayList<CategoryDTO>();
-            CategoryDTO categoryOneSelf = categoryDTOOneSelf.getData();
+            List<CusCategoryDTO> categoryList = new ArrayList<>();
+            CusCategoryDTO categoryOneSelf = categoryDTOOneSelf.getData();
             if (categoryOneSelf != null) {
                 categoryList.add(categoryOneSelf);
-                List<CategoryDTO> categoryListTemp = categoryDTOList.getData();
+                List<CusCategoryDTO> categoryListTemp = categoryDTOList.getData();
                 if (categoryListTemp != null) {
                     categoryList.addAll(categoryListTemp);
                 }
@@ -142,27 +144,25 @@ public class GoodsReferencePriceSettingController {
                 goodsReferencePriceSettings.add(tempGoods);
             }
             List<GoodsReferencePriceSetting> finalSettings = new ArrayList<GoodsReferencePriceSetting>();
-            if (categoryList != null) {
-                if (goodsReferencePriceSettings != null) {
-                    for(CategoryDTO category : categoryList){
-                        boolean flag = false;
-                        for(GoodsReferencePriceSetting goodsSetting : goodsReferencePriceSettings)
-                        {
-                            if (category.getId().equals(goodsSetting.getGoodsId())) {
-                                finalSettings.add(goodsSetting);
-                                flag = true;
-                                break;
-                            }
+            if (goodsReferencePriceSettings != null) {
+                for(CusCategoryDTO category : categoryList){
+                    boolean flag = false;
+                    for(GoodsReferencePriceSetting goodsSetting : goodsReferencePriceSettings)
+                    {
+                        if (category.getId().equals(goodsSetting.getGoodsId())) {
+                            finalSettings.add(goodsSetting);
+                            flag = true;
+                            break;
                         }
+                    }
 
-                        if (!flag) {
-                            GoodsReferencePriceSetting tempSetting = new GoodsReferencePriceSetting();
-                            tempSetting.setGoodsId(category.getId());
-                            tempSetting.setGoodsName(category.getName());
-                            tempSetting.setParentGoodsId(category.getParent());
-                            tempSetting.setReferenceRule(null);
-                            finalSettings.add(tempSetting);
-                        }
+                    if (!flag) {
+                        GoodsReferencePriceSetting tempSetting = new GoodsReferencePriceSetting();
+                        tempSetting.setGoodsId(category.getId());
+                        tempSetting.setGoodsName(category.getName());
+                        tempSetting.setParentGoodsId(category.getParent());
+                        tempSetting.setReferenceRule(null);
+                        finalSettings.add(tempSetting);
                     }
                 }
             }
