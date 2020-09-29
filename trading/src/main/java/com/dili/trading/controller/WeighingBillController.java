@@ -115,11 +115,12 @@ public class WeighingBillController {
 	 *
 	 * @param weighingBill 过磅单和卖家密码数据
 	 * @return
+	 * @throws Exception 
 	 */
 	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/saveAndSettle.action")
-	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) {
+	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) throws Exception {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
@@ -160,10 +161,10 @@ public class WeighingBillController {
 			ws = settlementOutput.getData();
 		}
 		if (WeighingStatementState.FROZEN.getValue().equals(ws.getState())) {
-			return this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()).setMessage("付款成功");
+			return this.getWeighingBillPrintData(ws.getWeighingSerialNo(), false).setMessage("付款成功");
 		}
 		if (WeighingStatementState.PAID.getValue().equals(ws.getState())) {
-			return this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()).setMessage( "付款成功");
+			return this.getWeighingStatementPrintData(ws.getSerialNo(), false).setMessage("付款成功");
 		}
 		return output;
 	}
@@ -502,10 +503,7 @@ public class WeighingBillController {
 		metadata.put("statement.sellerActualAmount", "moneyProvider");
 		metadata.put("statement.state", "weighingStatementStateProvider");
 
-		JSONObject ddProvider = new JSONObject();
-		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
-		metadata.put("tradeType", ddProvider);
+		metadata.put("tradeTypeId", "tradeTypeProvider");
 		try {
 			List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData()));
 			metadata = new HashMap<Object, Object>();
