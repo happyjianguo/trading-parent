@@ -1,7 +1,10 @@
 package com.dili.trading.provider;
 
 import com.dili.assets.sdk.dto.CategoryDTO;
+import com.dili.assets.sdk.dto.CusCategoryDTO;
+import com.dili.assets.sdk.dto.CusCategoryQuery;
 import com.dili.assets.sdk.rpc.AssetsRpc;
+import com.dili.commons.glossary.EnabledStateEnum;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.FieldMeta;
@@ -32,12 +35,13 @@ public class CategoryProvider extends BatchDisplayTextProviderSupport {
     @Override
     public List<ValuePair<?>> getLookupList(Object obj, Map metaMap, FieldMeta fieldMeta) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        CategoryDTO categoryDTO = new CategoryDTO();
+        CusCategoryQuery categoryDTO = new CusCategoryQuery();
         categoryDTO.setMarketId(userTicket.getFirmId());
         if (Objects.nonNull(obj)) {
             categoryDTO.setKeyword(obj.toString());
         }
-        List<CategoryDTO> list = assetsRpc.list(categoryDTO).getData();
+        categoryDTO.setState(EnabledStateEnum.ENABLED.getCode());
+        List<CusCategoryDTO> list = assetsRpc.listCusCategory(categoryDTO).getData();
         List<ValuePair<?>> resultList = list.stream().map(f -> {
             return (ValuePair<?>) new ValuePairImpl(f.getName(), f.getId());
         }).collect(Collectors.toList());
@@ -64,9 +68,9 @@ public class CategoryProvider extends BatchDisplayTextProviderSupport {
             return Collections.EMPTY_LIST;
         }
         relationIds = relationIds.stream().distinct().collect(Collectors.toList());
-        CategoryDTO categoryDTO = new CategoryDTO();
+        CusCategoryQuery categoryDTO = new CusCategoryQuery();
         categoryDTO.setIds(relationIds);
         categoryDTO.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-        return assetsRpc.list(categoryDTO).getData();
+        return assetsRpc.listCusCategory(categoryDTO).getData();
     }
 }
