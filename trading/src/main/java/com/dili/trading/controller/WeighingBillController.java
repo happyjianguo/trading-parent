@@ -38,6 +38,7 @@ import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.AccountPasswordValidateDto;
 import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.dto.PrintTemplateDataDto;
+import com.dili.orders.dto.SettlementResultDto;
 import com.dili.orders.dto.UserAccountCardResponseDto;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
@@ -133,7 +134,7 @@ public class WeighingBillController {
 			return output;
 		}
 		WeighingStatement ws = null;
-		boolean priceApprove = false;
+		SettlementResultDto result = null;
 		if (StringUtils.isBlank(weighingBill.getSerialNo())) {
 			weighingBill.setCreatorId(user.getId());
 			// 设置市场id
@@ -143,11 +144,11 @@ public class WeighingBillController {
 				return wsOutput;
 			}
 			ws = wsOutput.getData();
-			output = this.weighingBillRpc.settle(ws.getWeighingSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (!output.isSuccess()) {
-				return output;
+			BaseOutput<SettlementResultDto> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+			if (!settlementOutput.isSuccess()) {
+				return settlementOutput;
 			}
-			priceApprove = Boolean.valueOf(output.getData().toString());
+			result = settlementOutput.getData();
 		} else {
 			weighingBill.setModifierId(user.getId());
 			BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.update(weighingBill);
@@ -155,17 +156,17 @@ public class WeighingBillController {
 				return output;
 			}
 			ws = wsOutput.getData();
-			output = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (!output.isSuccess()) {
-				return output;
+			BaseOutput<SettlementResultDto> settlementOutput = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+			if (!settlementOutput.isSuccess()) {
+				return settlementOutput;
 			}
-			priceApprove = Boolean.valueOf(output.getData().toString());
+			result = settlementOutput.getData();
 		}
-		if (WeighingBillState.FROZEN.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()).setMessage(priceApprove ? "交易单价低于参考价，需人工审核" : "付款成功");
+		if (WeighingBillState.FROZEN.getValue().equals(result.getStatement().getState())) {
+			return this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()).setMessage(result.getPriceApprove() ? "交易单价低于参考价，需人工审核" : "付款成功");
 		}
-		if (WeighingBillState.SETTLED.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()).setMessage(priceApprove ? "交易单价低于参考价，需人工审核" : "付款成功");
+		if (WeighingBillState.SETTLED.getValue().equals(result.getStatement().getState())) {
+			return this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()).setMessage(result.getPriceApprove() ? "交易单价低于参考价，需人工审核" : "付款成功");
 		}
 		return output;
 	}
