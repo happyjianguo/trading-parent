@@ -38,6 +38,7 @@ import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.AccountPasswordValidateDto;
 import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.dto.PrintTemplateDataDto;
+import com.dili.orders.dto.SettlementResultDto;
 import com.dili.orders.dto.UserAccountCardResponseDto;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
@@ -106,10 +107,8 @@ public class WeighingBillController {
 	 */
 	@GetMapping("/index.html")
 	public String index(ModelMap modelMap) {
-		System.out.println("11111111111");
 		modelMap.put("createdStart", LocalDate.now() + " 00:00:00");
 		modelMap.put("createdEnd", LocalDate.now() + " 23:59:59");
-		System.out.println("22222222222");
 		return "weighingBill/index";
 	}
 
@@ -135,6 +134,7 @@ public class WeighingBillController {
 			return output;
 		}
 		WeighingStatement ws = null;
+		SettlementResultDto result = null;
 		if (StringUtils.isBlank(weighingBill.getSerialNo())) {
 			weighingBill.setCreatorId(user.getId());
 			// 设置市场id
@@ -144,10 +144,11 @@ public class WeighingBillController {
 				return wsOutput;
 			}
 			ws = wsOutput.getData();
-			output = this.weighingBillRpc.settle(ws.getWeighingSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (!output.isSuccess()) {
-				return output;
+			BaseOutput<SettlementResultDto> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+			if (!settlementOutput.isSuccess()) {
+				return settlementOutput;
 			}
+			result = settlementOutput.getData();
 		} else {
 			weighingBill.setModifierId(user.getId());
 			BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.update(weighingBill);
@@ -155,16 +156,17 @@ public class WeighingBillController {
 				return output;
 			}
 			ws = wsOutput.getData();
-			output = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (!output.isSuccess()) {
-				return output;
+			BaseOutput<SettlementResultDto> settlementOutput = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+			if (!settlementOutput.isSuccess()) {
+				return settlementOutput;
 			}
+			result = settlementOutput.getData();
 		}
-		if (WeighingBillState.FROZEN.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()).setMessage("付款成功");
+		if (WeighingBillState.FROZEN.getValue().equals(result.getStatement().getState())) {
+			return this.weighingBillRpc.getWeighingBillPrintData(ws.getWeighingSerialNo()).setMessage(result.getPriceApprove() ? "交易单价低于参考价，需人工审核" : "付款成功");
 		}
-		if (WeighingBillState.SETTLED.getValue().equals(Integer.valueOf(output.getData().toString()))) {
-			return this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()).setMessage("付款成功");
+		if (WeighingBillState.SETTLED.getValue().equals(result.getStatement().getState())) {
+			return this.weighingBillRpc.getWeighingStatementPrintData(ws.getSerialNo()).setMessage(result.getPriceApprove() ? "交易单价低于参考价，需人工审核" : "付款成功");
 		}
 		return output;
 	}
@@ -701,7 +703,7 @@ public class WeighingBillController {
 	 *
 	 * @param serialNo 结算单号
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@ResponseBody
 	@RequestMapping("/getWeighingStatementPrintData.action")

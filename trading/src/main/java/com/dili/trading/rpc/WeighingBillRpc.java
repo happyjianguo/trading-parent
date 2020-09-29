@@ -12,6 +12,7 @@ import com.dili.orders.config.PayServiceFeignConfig;
 import com.dili.orders.domain.WeighingBill;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.dto.PrintTemplateDataDto;
+import com.dili.orders.dto.SettlementResultDto;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
 import com.dili.orders.dto.WeighingBillPrintDto;
@@ -30,7 +31,7 @@ public interface WeighingBillRpc {
 	BaseOutput<WeighingStatement> update(@RequestBody WeighingBill weighingBill);
 
 	@RequestMapping(value = "/api/weighingBill/settle")
-	BaseOutput<Object> settle(@RequestParam(value = "serialNo") String serialNo, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "operatorId") Long operatorId,
+	BaseOutput<SettlementResultDto> settle(@RequestParam(value = "serialNo") String serialNo, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "operatorId") Long operatorId,
 			@RequestParam(value = "marketId") Long marketId);
 
 	@RequestMapping(value = "/api/weighingBill/withdraw")
