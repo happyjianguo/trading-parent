@@ -1,9 +1,13 @@
 package com.dili.trading.controller;
 
 import com.dili.assets.sdk.dto.CategoryDTO;
-import com.dili.orders.rpc.AssetsRpc;
+import com.dili.assets.sdk.dto.CusCategoryDTO;
+import com.dili.assets.sdk.dto.CusCategoryQuery;
+import com.dili.assets.sdk.rpc.AssetsRpc;
+import com.dili.commons.glossary.EnabledStateEnum;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.session.SessionContext;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +18,8 @@ import java.util.List;
 
 /**
  * 模糊查询商品
- * @author  Henry.Huang
+ *
+ * @author Henry.Huang
  * @date 2020/08/20
  */
 @RequestMapping("/assets")
@@ -31,12 +36,15 @@ public class AssetsController {
      */
     @RequestMapping(value = "/listNormal.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public List<CategoryDTO> listNormal(String keyword) {
+    public List<CusCategoryDTO> listNormal(String keyword) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        CategoryDTO categoryDTO = new CategoryDTO();
+        CusCategoryQuery categoryDTO = new CusCategoryQuery();
         categoryDTO.setMarketId(userTicket.getFirmId());
-        categoryDTO.setKeyword(keyword);
-        List<CategoryDTO> list = assetsRpc.list(categoryDTO).getData();
+        if (StringUtils.isNotBlank(keyword)) {
+            categoryDTO.setKeyword(keyword);
+        }
+        categoryDTO.setState(EnabledStateEnum.ENABLED.getCode());
+        List<CusCategoryDTO> list = assetsRpc.listCusCategory(categoryDTO).getData();
         return list;
     }
 }

@@ -1,7 +1,7 @@
 package com.dili.trading.provider;
 
 import com.dili.assets.sdk.dto.CategoryDTO;
-import com.dili.orders.rpc.AssetsRpc;
+import com.dili.assets.sdk.rpc.AssetsRpc;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.FieldMeta;

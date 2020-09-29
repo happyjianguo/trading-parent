@@ -20,7 +20,7 @@ public interface PriceApproveRecordRpc {
 	PageOutput<List<PriceApproveRecord>> listPage(@RequestBody PriceApproveRecordQueryDto query);
 
 	@RequestMapping(value = "/api/priceApproveRecord/getById")
-	BaseOutput<PriceApproveRecord> getById(@RequestParam Long id);
+	BaseOutput<PriceApproveRecord> getById(@RequestParam(value = "id") Long id);
 
 	/**
 	 * 审批通过
@@ -31,7 +31,7 @@ public interface PriceApproveRecordRpc {
 	 * @return
 	 */
 	@RequestMapping(value = "/api/priceApproveRecord/approveAccept")
-	BaseOutput<Object> approveAccept(@RequestParam Long id, @RequestParam Long approverId, @RequestParam String taskId);
+	BaseOutput<Object> approveAccept(@RequestParam(value = "id") Long id, @RequestParam(value = "approverId") Long approverId, @RequestParam(value = "taskId") String taskId);
 
 	/**
 	 * 审批拒绝
@@ -42,5 +42,5 @@ public interface PriceApproveRecordRpc {
 	 * @return
 	 */
 	@RequestMapping(value = "/api/priceApproveRecord/approveReject")
-	BaseOutput<Object> approveReject(@RequestParam Long id, @RequestParam Long approverId, @RequestParam String taskId);
+	BaseOutput<Object> approveReject(@RequestParam(value = "id") Long id, @RequestParam(value = "approverId") Long approverId, @RequestParam(value = "taskId") String taskId);
 }
