@@ -6,11 +6,10 @@
 	 * 
 	 **************************************************************************/
 
-
-function clearForm(){
+function clearQueryForm(){
 	$('#queryForm input').val('');
-	$('#tradeTypeId').val(null).trigger('change');
 	$('#statementStates').val(null).trigger('change');
+	$('#tradeTypeId').val(null).trigger('change');
 }
 
 function doPrintHandler(){
@@ -344,7 +343,7 @@ function doPrintHandler(){
     if (strDay < 10) {
     strDay = "0" + strDay;
     }
-    return strYear + "-" + strMonth + "-" + strDay;
+    return strYear + "-" + strMonth + "-" + strDay+' 00:00:00';
     }
 
     function timeStamp2String(time) {
@@ -353,7 +352,7 @@ function doPrintHandler(){
     var year = datetime.getFullYear();
     var month = datetime.getMonth() + 1 < 10 ? "0" + (datetime.getMonth() + 1) : datetime.getMonth() + 1;
     var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
-    return year + "-" + month + "-" + date;
+    return year + "-" + month + "-" + date + ' 23:59:59';
     }
 
     /** *******************变量定义区 begin************ */

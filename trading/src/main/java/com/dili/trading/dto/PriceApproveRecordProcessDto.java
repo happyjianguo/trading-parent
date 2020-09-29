@@ -44,4 +44,9 @@ public class PriceApproveRecordProcessDto extends PriceApproveRecord implements 
 		this.isNeedClaim = isNeedClaim;
 	}
 
+	@Override
+	public Long getUnitPrice() {
+		return super.getUnitPrice() == null ? null : super.getUnitPrice() * 2;
+	}
+
 }

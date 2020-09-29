@@ -18,16 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.dili.bpmc.sdk.rpc.TaskRpc;
 import com.dili.orders.domain.PriceApproveRecord;
 import com.dili.orders.dto.PriceApproveRecordQueryDto;
-import com.dili.orders.dto.WeighingBillListPageDto;
-import com.dili.orders.dto.WeighingBillQueryDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
-import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.util.BeanConver;
 import com.dili.trading.component.BpmcUtil;
@@ -77,8 +73,8 @@ public class PriceApproveRecordController {
 		if (user == null) {
 			return JSON.toJSONString(BaseOutput.failure("用户未登录"));
 		}
+		query.setMarketId(user.getFirmId());
 
-//		query.setMarketId(user.getFirmId());
 		PageOutput<List<PriceApproveRecord>> output = this.priceApproveRpc.listPage(query);
 
 		if (!output.isSuccess()) {
@@ -125,10 +121,7 @@ public class PriceApproveRecordController {
 		metadata.put("unitPrice", "moneyProvider");
 		metadata.put("referencePrice", "moneyProvider");
 
-		JSONObject ddProvider = new JSONObject();
-		ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"trade_type\"}");
-		metadata.put("tradeType", ddProvider);
+		metadata.put("tradeType", "tradeTypeCodeProvider");
 
 		modelMap.addAttribute("model", ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData())).get(0)).addAttribute("taskId", taskId).addAttribute("isNeedClaim", isNeedClaim)
 				.addAttribute("modal", modal);
@@ -147,7 +140,7 @@ public class PriceApproveRecordController {
 	 */
 	@ResponseBody
 	@RequestMapping("/approveAccept.action")
-	public BaseOutput<Object> approveAccept(@RequestParam Long id, @RequestParam String taskId, @RequestParam Boolean isNeedClaim, ModelMap modelMap) throws Exception {
+	public BaseOutput<Object> approveAccept(@RequestParam Long id, @RequestParam String notes, @RequestParam String taskId, @RequestParam Boolean isNeedClaim, ModelMap modelMap) throws Exception {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
@@ -158,7 +151,7 @@ public class PriceApproveRecordController {
 				return BaseOutput.failure("签收流程任务失败");
 			}
 		}
-		return this.priceApproveRpc.approveAccept(id, user.getId(), taskId);
+		return this.priceApproveRpc.approveAccept(id, user.getId(), notes, taskId);
 	}
 
 	/**
@@ -173,7 +166,7 @@ public class PriceApproveRecordController {
 	 */
 	@ResponseBody
 	@RequestMapping("/approveReject.action")
-	public BaseOutput<Object> approveReject(@RequestParam Long id, @RequestParam String taskId, @RequestParam Boolean isNeedClaim, ModelMap modelMap) throws Exception {
+	public BaseOutput<Object> approveReject(@RequestParam Long id, @RequestParam String notes, @RequestParam String taskId, @RequestParam Boolean isNeedClaim, ModelMap modelMap) throws Exception {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
@@ -184,7 +177,7 @@ public class PriceApproveRecordController {
 				return BaseOutput.failure("签收流程任务失败");
 			}
 		}
-		return this.priceApproveRpc.approveReject(id, user.getId(), taskId);
+		return this.priceApproveRpc.approveReject(id, user.getId(), notes, taskId);
 	}
 
 }

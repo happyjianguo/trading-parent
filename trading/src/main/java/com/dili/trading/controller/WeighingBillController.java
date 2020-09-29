@@ -26,14 +26,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CategoryDTO;
-import com.dili.commons.glossary.EnabledStateEnum;
 import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
 import com.dili.orders.domain.MeasureType;
-import com.dili.orders.domain.WeighingBillState;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.AccountPasswordValidateDto;
@@ -117,7 +115,7 @@ public class WeighingBillController {
 	 *
 	 * @param weighingBill 过磅单和卖家密码数据
 	 * @return
-	 * @throws Exception
+	 * @throws Exception 
 	 */
 	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
@@ -144,10 +142,11 @@ public class WeighingBillController {
 				return wsOutput;
 			}
 			ws = wsOutput.getData();
-			output = this.weighingBillRpc.settle(ws.getWeighingSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (!output.isSuccess()) {
-				return output;
+			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+			if (!settlementOutput.isSuccess()) {
+				return settlementOutput;
 			}
+			ws = settlementOutput.getData();
 		} else {
 			weighingBill.setModifierId(user.getId());
 			BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.update(weighingBill);
@@ -155,15 +154,16 @@ public class WeighingBillController {
 				return output;
 			}
 			ws = wsOutput.getData();
-			output = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (!output.isSuccess()) {
-				return output;
+			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+			if (!settlementOutput.isSuccess()) {
+				return settlementOutput;
 			}
+			ws = settlementOutput.getData();
 		}
-		if (WeighingBillState.FROZEN.getValue().equals(Integer.valueOf(output.getData().toString()))) {
+		if (WeighingStatementState.FROZEN.getValue().equals(ws.getState())) {
 			return this.getWeighingBillPrintData(ws.getWeighingSerialNo(), false).setMessage("付款成功");
 		}
-		if (WeighingBillState.SETTLED.getValue().equals(Integer.valueOf(output.getData().toString()))) {
+		if (WeighingStatementState.PAID.getValue().equals(ws.getState())) {
 			return this.getWeighingStatementPrintData(ws.getSerialNo(), false).setMessage("付款成功");
 		}
 		return output;
@@ -242,7 +242,6 @@ public class WeighingBillController {
 		}
 		CategoryDTO query = new CategoryDTO();
 		query.setMarketId(user.getFirmId());
-		query.setState(EnabledStateEnum.ENABLED.getCode());
 		query.setKeyword(keyword);
 		return this.categoryRpc.getTree(query);
 	}
