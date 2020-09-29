@@ -264,11 +264,11 @@ public class GoodsReferencePriceSettingController {
             Map<Object, Object> metadata = new HashMap<Object, Object>();
             metadata.put("referenceRule", "referenceRuleProvider");
 
-            CategoryDTO query = new CategoryDTO();
+            CusCategoryQuery query = new CusCategoryQuery();
             query.setMarketId(output.getData().getId());
             query.setKeyword(goodsReferencePriceSetting.getGoodsName());
-            BaseOutput<List<CategoryDTO>> categoryDTOList = this.categoryRpc.getTree(query);
-            List<CategoryDTO> categoryList = categoryDTOList.getData();
+            BaseOutput<List<CusCategoryDTO>> categoryDTOList = this.assetsRpc.listCusCategory(query);
+            List<CusCategoryDTO> categoryList = categoryDTOList.getData();
             goodsReferencePriceSetting = new GoodsReferencePriceSetting();
             goodsReferencePriceSetting.setMarketId(output.getData().getId());
             List<GoodsReferencePriceSetting> goodsReferencePriceSettings = goodsReferencePriceSettingRpc.getAllGoods(goodsReferencePriceSetting);
@@ -276,7 +276,7 @@ public class GoodsReferencePriceSettingController {
             List<GoodsReferencePriceSetting> finalSettings = new ArrayList<GoodsReferencePriceSetting>();
             if (categoryList != null) {
                 if (goodsReferencePriceSettings != null) {
-                    for(CategoryDTO category : categoryList){
+                    for(CusCategoryDTO category : categoryList){
                         boolean flag = false;
                         for(GoodsReferencePriceSetting goodsSetting : goodsReferencePriceSettings)
                         {
