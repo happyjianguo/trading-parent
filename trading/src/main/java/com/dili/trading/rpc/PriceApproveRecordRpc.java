@@ -27,20 +27,22 @@ public interface PriceApproveRecordRpc {
 	 * 
 	 * @param id         id
 	 * @param approverId 审批人id
+	 * @param notes      说明
 	 * @param taskId     流程任务id
 	 * @return
 	 */
 	@RequestMapping(value = "/api/priceApproveRecord/approveAccept")
-	BaseOutput<Object> approveAccept(@RequestParam Long id, @RequestParam Long approverId, @RequestParam String taskId);
+	BaseOutput<Object> approveAccept(@RequestParam Long id, @RequestParam Long approverId, @RequestParam String notes, @RequestParam String taskId);
 
 	/**
 	 * 审批拒绝
 	 * 
 	 * @param id         id
 	 * @param approverId 审批人id
+	 * @param notes      说明
 	 * @param taskId     流程任务id
 	 * @return
 	 */
 	@RequestMapping(value = "/api/priceApproveRecord/approveReject")
-	BaseOutput<Object> approveReject(@RequestParam Long id, @RequestParam Long approverId, @RequestParam String taskId);
+	BaseOutput<Object> approveReject(@RequestParam Long id, @RequestParam Long approverId, @RequestParam String notes, @RequestParam String taskId);
 }
