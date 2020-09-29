@@ -1,6 +1,6 @@
 package com.dili.trading.provider;
 
-import com.dili.orders.rpc.AssetsRpc;
+import com.dili.assets.sdk.rpc.AssetsRpc;
 import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.ValueProvider;

@@ -8,19 +8,20 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+
 /**
  * 检测收费RPC
  *
- *@author  Henry.Huang
- *@date  2020/08/20
- *
+ * @author Henry.Huang
+ * @date 2020/08/20
  */
-@FeignClient(name = "order-service", contextId = "comprehensiveFeeRpc",url="${orderService.url:}")
+@FeignClient(name = "order-service", contextId = "comprehensiveFeeRpc", url = "${orderService.url:}")
 public interface ComprehensiveFeeRpc {
 
 
     /**
      * 分页查询
+     *
      * @param comprehensiveFee
      * @return String
      * @throws Exception
@@ -59,6 +60,7 @@ public interface ComprehensiveFeeRpc {
 
     /**
      * 检测收费单支付
+     *
      * @param id
      * @param password
      * @param marketId
@@ -72,16 +74,18 @@ public interface ComprehensiveFeeRpc {
 
     /**
      * 获取费用信息
+     *
      * @param marketId
      * @param customerId
      * @param type
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/fee", method = {RequestMethod.POST})
-    BaseOutput getFee(@RequestParam(value = "marketId") Long marketId, @RequestParam(value = "customerId") Long customerId,@RequestParam(value = "type") String type);
+    BaseOutput getFee(@RequestParam(value = "marketId") Long marketId, @RequestParam(value = "customerId") Long customerId, @RequestParam(value = "type") String type);
 
     /**
-     *撤销调用
+     * 撤销调用
+     *
      * @param id
      * @param realName
      * @param operatorId
@@ -90,10 +94,11 @@ public interface ComprehensiveFeeRpc {
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/revocator")
-    BaseOutput<Object> revocator(@RequestParam Long id, @RequestParam String realName, @RequestParam Long operatorId, @RequestParam String operatorPassword, @RequestParam String userName);
+    BaseOutput<Object> revocator(@RequestParam(value = "id") Long id, @RequestParam(value = "realName") String realName, @RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "operatorPassword") String operatorPassword, @RequestParam(value = "userName") String userName);
 
     /**
      * 获取费用信息
+     *
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/scheduleUpdate", method = {RequestMethod.POST})

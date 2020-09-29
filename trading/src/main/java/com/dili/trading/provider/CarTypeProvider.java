@@ -1,19 +1,8 @@
 package com.dili.trading.provider;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import com.dili.orders.dto.MyBusinessType;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.dili.assets.sdk.dto.CarTypeForBusinessDTO;
-import com.dili.orders.rpc.AssetsRpc;
+import com.dili.assets.sdk.rpc.AssetsRpc;
+import com.dili.orders.dto.MyBusinessType;
 import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.BatchProviderMeta;
 import com.dili.ss.metadata.FieldMeta;
@@ -22,6 +11,16 @@ import com.dili.ss.metadata.ValuePairImpl;
 import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.session.SessionContext;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 车类型模糊匹配
@@ -44,7 +43,7 @@ public class CarTypeProvider extends BatchDisplayTextProviderSupport {
 //        carTypeForJmsfDTO.setBusinessCode("kcjm");
         carTypeForJmsfDTO.setBusinessCode(MyBusinessType.KCJM.getCode());
         carTypeForJmsfDTO.setMarketId(userTicket.getFirmId());
-        List<CarTypeForBusinessDTO> list = assetsRpc.listCarType(carTypeForJmsfDTO).getData();
+        List<CarTypeForBusinessDTO> list = assetsRpc.listCarTypePublicByBusiness(carTypeForJmsfDTO).getData();
         List<ValuePair<?>> resultList = list.stream().map(f -> {
             return (ValuePair<?>) new ValuePairImpl(f.getCarTypeName(), f.getId());
         }).collect(Collectors.toList());
@@ -74,6 +73,6 @@ public class CarTypeProvider extends BatchDisplayTextProviderSupport {
         List<Long> ids = relationIds.stream().distinct().map(f -> Long.valueOf(f)).collect(Collectors.toList());
         CarTypeForBusinessDTO carTypeForJmsfDTO = new CarTypeForBusinessDTO();
         carTypeForJmsfDTO.setIds(ids);
-        return assetsRpc.listCarType(carTypeForJmsfDTO).getData();
+        return assetsRpc.listCarTypePublicByBusiness(carTypeForJmsfDTO).getData();
     }
 }
