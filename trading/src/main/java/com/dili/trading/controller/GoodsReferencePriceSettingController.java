@@ -77,7 +77,7 @@ public class GoodsReferencePriceSettingController {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         categoryDTO.setParent(goodsReferencePriceSetting.getParentGoodsId());
-
+        categoryDTO.setState(EnabledStateEnum.ENABLED.getCode());
         BaseOutput<List<CategoryDTO>> categoryDTOList = assetsRpc.list(categoryDTO);
 
         try {
