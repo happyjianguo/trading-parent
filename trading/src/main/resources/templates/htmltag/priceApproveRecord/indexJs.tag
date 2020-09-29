@@ -264,7 +264,7 @@
     if (strDay < 10) {
     strDay = "0" + strDay;
     }
-    return strYear + "-" + strMonth + "-" + strDay;
+    return strYear + "-" + strMonth + "-" + strDay+' 00:00:00';
     }
 
     function timeStamp2String(time) {
@@ -273,7 +273,7 @@
     var year = datetime.getFullYear();
     var month = datetime.getMonth() + 1 < 10 ? "0" + (datetime.getMonth() + 1) : datetime.getMonth() + 1;
     var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
-    return year + "-" + month + "-" + date;
+    return year + "-" + month + "-" + date+' 23:59:59';
     }
 
     /** *******************变量定义区 begin************ */
@@ -310,6 +310,10 @@
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
             return false;
+        }
+        if (rows[0].$_state!=${@com.dili.orders.domain.PriceState.APPROVING.getValue()}) {
+        	bs4pop.alert("该条记录已审批，不能重复审批!", {type: 'error'});
+        	return;
         }
         if (!rows[0].isHandleProcess) {
         	bs4pop.alert("当前用户没有审批该条记录权限!", {type: 'error'});
