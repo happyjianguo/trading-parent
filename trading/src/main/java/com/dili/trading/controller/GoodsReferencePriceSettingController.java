@@ -3,6 +3,7 @@ package com.dili.trading.controller;
 import com.alibaba.fastjson.JSON;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.assets.sdk.rpc.AssetsRpc;
+import com.dili.commons.glossary.EnabledStateEnum;
 import com.dili.orders.constants.TradingConstans;
 import com.dili.orders.domain.GoodsReferencePriceSetting;
 
@@ -76,7 +77,7 @@ public class GoodsReferencePriceSettingController {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         categoryDTO.setParent(goodsReferencePriceSetting.getParentGoodsId());
-
+        categoryDTO.setState(EnabledStateEnum.ENABLED.getCode());
         BaseOutput<List<CategoryDTO>> categoryDTOList = assetsRpc.list(categoryDTO);
 
         try {
@@ -102,6 +103,7 @@ public class GoodsReferencePriceSettingController {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         categoryDTO.setParent(goodsReferencePriceSetting.getParentGoodsId());
+        categoryDTO.setState(EnabledStateEnum.ENABLED.getCode());
         //获取当前节点本身的数据
         BaseOutput<CategoryDTO> categoryDTOOneSelf = assetsRpc.get(goodsReferencePriceSetting.getParentGoodsId());
         //获取节点下面子节点的数据
