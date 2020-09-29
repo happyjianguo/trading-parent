@@ -7,6 +7,12 @@
 	 **************************************************************************/
 
 
+function clearForm(){
+	$('#queryForm input').val('');
+	$('#tradeTypeId').val(null).trigger('change');
+	$('#statementStates').val(null).trigger('change');
+}
+
 function doPrintHandler(){
 	var visibleColumns= $('#grid').bootstrapTable('getVisibleColumns');
 	$.post('/weighingBill/listPage.action',queryParams({
