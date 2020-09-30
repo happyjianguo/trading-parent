@@ -174,6 +174,7 @@
     function verificationUsernamePassword(id) {
         dia = bs4pop.dialog({
             title: '支付确认',//对话框title
+            className: 'modal-fixed',
             content: '${contextPath}/transitionDepartureSettlement/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
             width: '400px',//宽度
             height: '400px',//高度
@@ -220,6 +221,7 @@
         if(flag){
             dia = bs4pop.dialog({
                 title: '撤销校验',//对话框title
+                className: 'modal-fixed',
                 content: '${contextPath}/transitionDepartureSettlement/revocatorPage.html?id=' + rows[0].id,
                 width: '400px',//宽度
                 height: '400px',//高度
@@ -262,7 +264,7 @@
                 bui.loading.hide();
                 if (data.code == '200') {
                     //调用c端打印
-                    callbackObj.printDirect(JSON.stringify(data.data), "TransitionDocument");
+                    callbackObj.printPreview(JSON.stringify(data.data),"1","TransitionDocument",1);
                 }else{
                     debugger;
                     bs4pop.alert(data.message, {type: 'error'});
