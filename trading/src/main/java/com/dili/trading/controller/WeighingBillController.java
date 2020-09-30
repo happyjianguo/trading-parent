@@ -115,7 +115,7 @@ public class WeighingBillController {
 	 *
 	 * @param weighingBill 过磅单和卖家密码数据
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
@@ -215,7 +215,7 @@ public class WeighingBillController {
 	 */
 	@ResponseBody
 	@PostMapping("/listByExample.action")
-	public BaseOutput<Object> listByExample(@RequestBody WeighingBillQueryDto dto) {
+	public BaseOutput<?> listByExample(@RequestBody WeighingBillQueryDto dto) {
 		// 判断，如果是已结算的话，需要加入参数，操作员，如果是查询的结算的，只会有一个状态
 		if (CollectionUtils.isNotEmpty(dto.getStatementStates()) && Objects.equals(dto.getStatementStates().size(), 1)) {
 			dto.setOperatorId(SessionContext.getSessionContext().getUserTicket().getId());
@@ -224,7 +224,26 @@ public class WeighingBillController {
 		if (Objects.isNull(dto.getMarketId())) {
 			dto.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
 		}
-		return this.weighingBillRpc.listByExample(dto);
+		BaseOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listByExample(dto);
+		if (!output.isSuccess()) {
+			return output;
+		}
+
+		Map<Object, Object> metadata = new HashMap<Object, Object>();
+
+		metadata.put("tradeTypeId", "tradeTypeProvider");
+		try {
+			List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, output.getData());
+			list.forEach(m -> {
+				if (m.containsKey("tradeTypeId")) {
+					m.put("tradeTypeName", m.get("tradeTypeId").toString());
+					m.put("tradeTypeId", m.get("$_tradeTypeId").toString());
+				}
+			});
+			return BaseOutput.successData(list);
+		} catch (Exception e) {
+			return BaseOutput.failure(e.getMessage());
+		}
 	}
 
 	/**
