@@ -45,7 +45,7 @@ public interface WeighingBillRpc {
 	BaseOutput<Object> autoClose();
 
 	@RequestMapping(value = "/api/weighingBill/listByExample", method = RequestMethod.POST)
-	BaseOutput<Object> listByExample(@RequestBody WeighingBillQueryDto queryDto);
+	BaseOutput<List<WeighingBillListPageDto>> listByExample(@RequestBody WeighingBillQueryDto queryDto);
 
 	@RequestMapping(value = "/api/weighingBill/listPage", method = RequestMethod.POST)
 	PageOutput<List<WeighingBillListPageDto>> listPage(@RequestBody WeighingBillQueryDto query);
