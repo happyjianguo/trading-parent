@@ -12,6 +12,7 @@ import com.dili.orders.config.PayServiceFeignConfig;
 import com.dili.orders.domain.WeighingBill;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.dto.PrintTemplateDataDto;
+import com.dili.orders.dto.WeighingBillClientListDto;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
 import com.dili.orders.dto.WeighingBillPrintDto;
@@ -45,7 +46,7 @@ public interface WeighingBillRpc {
 	BaseOutput<Object> autoClose();
 
 	@RequestMapping(value = "/api/weighingBill/listByExample", method = RequestMethod.POST)
-	BaseOutput<List<WeighingBillListPageDto>> listByExample(@RequestBody WeighingBillQueryDto queryDto);
+	BaseOutput<List<WeighingBillClientListDto>> listByExample(@RequestBody WeighingBillQueryDto queryDto);
 
 	@RequestMapping(value = "/api/weighingBill/listPage", method = RequestMethod.POST)
 	PageOutput<List<WeighingBillListPageDto>> listPage(@RequestBody WeighingBillQueryDto query);
