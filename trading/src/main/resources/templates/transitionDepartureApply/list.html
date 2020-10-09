@@ -110,7 +110,7 @@
                        data-side-pagination="server"
                        data-content-type="application/x-www-form-urlencoded"
                        data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
-                       data-unique-id="id" data-sort-name="id" data-sort-order="desc"
+                       data-unique-id="code" data-sort-name="id" data-sort-order="desc"
                        data-icons="bui.variable.icons"
                        data-buttons-class="primary"
                 >
@@ -120,13 +120,13 @@
                         <th data-field="code" data-align="center" data-sortable="true">
                             申请单号
                         </th>
-                        <th data-field="customerCode" data-align="center" data-sortable="true">
+                        <th data-field="customerCode" data-align="center" data-sortable="true" data-sort-name="customer_code">
                             客户编号
                         </th>
-                        <th data-field="customerName" data-align="center" data-sortable="true">
+                        <th data-field="customerName" data-align="center" data-sortable="true" data-sort-name="CONVERT(customer_name using gbk)">
                            客户姓名
                         </th>
-                        <th data-field="customerCardNo" data-align="center" data-sortable="true">
+                        <th data-field="customerCardNo" data-align="center" data-sortable="true" data-sort-name="customer_card_no">
                            卡号
                         </th>
                         <th data-field="transTypeId" data-align="center" data-provider="tradeTypeProvider"  data-sortable="true" data-sort-name="trans_type_id">
@@ -138,7 +138,7 @@
                         <th data-field="carTypeId" data-align="center" data-provider="carTypeProvider" data-sortable="true" data-sort-name="car_type_id">
                             车型
                         </th>
-                        <th data-field="plate" data-align="center"  data-sortable="true">
+                        <th data-field="plate" data-align="center"  data-sortable="true" data-sort-name="CONVERT(plate using gbk)">
                             车牌号
                         </th>
                         <th data-field="bizType" data-align="center" data-provider="bizTypeProvider" data-sortable="true" data-sort-name="biz_type">
@@ -147,13 +147,13 @@
                         <th data-field="approvalState" data-align="center" data-provider="applyProvider" data-sortable="true" data-sort-name="approval_state">
                             审批状态
                         </th>
-                        <th data-field="originatorName" data-align="center" data-sortable="true">
+                        <th data-field="originatorName" data-align="center" data-sortable="true" data-sort-name="CONVERT(originator_name using gbk)">
                             发起人
                         </th>
-                        <th data-field="originatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true">
+                        <th data-field="originatorTime" data-align="center" data-provider="datetimeProvider" data-sortable="true" data-sort-name="CONVERT(originator_time using gbk)">
                             发起时间
                         </th>
-                        <th data-field="approvalName" data-align="center" data-sortable="true">
+                        <th data-field="approvalName" data-align="center" data-sortable="true" data-sort-name="CONVERT(approval_name using gbk)">
                             审批人员
                         </th>
                     </tr>
@@ -209,6 +209,9 @@
                         bs4pop.alert("客户获取失败!", {type: 'error'});
                     }
                 });
+            }else{
+                $('#show_customer_name').val('');
+                $('#accountId').val('');
             }
       	})
     })
