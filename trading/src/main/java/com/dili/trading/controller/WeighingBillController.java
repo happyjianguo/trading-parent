@@ -1,7 +1,6 @@
 package com.dili.trading.controller;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +41,7 @@ import com.dili.orders.dto.AccountPasswordValidateDto;
 import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.dto.PrintTemplateDataDto;
 import com.dili.orders.dto.UserAccountCardResponseDto;
+import com.dili.orders.dto.WeighingBillClientListDto;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
 import com.dili.orders.dto.WeighingBillPrintDto;
@@ -230,7 +230,7 @@ public class WeighingBillController {
 		if (Objects.isNull(dto.getMarketId())) {
 			dto.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
 		}
-		BaseOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listByExample(dto);
+		BaseOutput<List<WeighingBillClientListDto>> output = this.weighingBillRpc.listByExample(dto);
 		if (!output.isSuccess()) {
 			return output;
 		}
