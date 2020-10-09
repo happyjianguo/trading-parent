@@ -1,6 +1,7 @@
 package com.dili.trading.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CategoryDTO;
+import com.dili.assets.sdk.dto.TradeTypeDto;
+import com.dili.assets.sdk.dto.TradeTypeQuery;
+import com.dili.assets.sdk.rpc.TradeTypeRpc;
 import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
@@ -97,6 +101,8 @@ public class WeighingBillController {
 	private UserRpc userRpc;
 	@Autowired
 	private AuthenticationRpc authRpc;
+	@Autowired
+	private TradeTypeRpc tradeTypeRpc;
 
 	/**
 	 * 列表页
@@ -228,22 +234,15 @@ public class WeighingBillController {
 		if (!output.isSuccess()) {
 			return output;
 		}
-
-		Map<Object, Object> metadata = new HashMap<Object, Object>();
-
-		metadata.put("tradeTypeId", "tradeTypeProvider");
-		try {
-			List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, output.getData());
-			list.forEach(m -> {
-				if (m.containsKey("tradeTypeId")) {
-					m.put("tradeTypeName", m.get("tradeTypeId").toString());
-					m.put("tradeTypeId", m.get("$_tradeTypeId").toString());
-				}
-			});
-			return BaseOutput.successData(list);
-		} catch (Exception e) {
-			return BaseOutput.failure(e.getMessage());
-		}
+		TradeTypeQuery tradeTypeQuery = new TradeTypeQuery();
+		List<TradeTypeDto> rows = this.tradeTypeRpc.query(tradeTypeQuery).getRows();
+		output.getData().forEach(wb -> {
+			TradeTypeDto target = rows.stream().filter(t -> t.getId().equals(wb.getTradeTypeId())).findFirst().orElse(null);
+			if (target != null) {
+				wb.setTradeTypeName(target.getName());
+			}
+		});
+		return output;
 	}
 
 	/**
