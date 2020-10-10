@@ -38,7 +38,7 @@ public class TradeTypeCodeProvider extends BatchDisplayTextProviderSupport {
         }
         List<TradeTypeDto> rows = this.tradeTypeRpc.query(tradeTypeQuery).getRows();
         return rows.stream().map(f -> {
-            return (ValuePair<?>) new ValuePairImpl(f.getName(), f.getId());
+            return (ValuePair<?>) new ValuePairImpl(f.getName(), f.getCode());
         }).collect(Collectors.toList());
     }
 
