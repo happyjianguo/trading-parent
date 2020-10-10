@@ -135,19 +135,19 @@
                     <th data-field="code" data-align="center" data-sortable="true">
                         结算单号
                     </th>
-                    <th data-field="applyCode" data-align="center" data-sortable="true">
+                    <th data-field="applyCode" data-align="center" data-sortable="true" data-sort-name="apply_code">
                         申请单号
                     </th>
-                    <th data-field="customerCode" data-align="center" data-sortable="true">
+                    <th data-field="customerCode" data-align="center" data-sortable="true" data-sort-name="customer_code">
                         客户编号
                     </th>
-                    <th data-field="customerName" data-align="center" data-sortable="true">
+                    <th data-field="customerName" data-align="center" data-sortable="true" data-sort-name="CONVERT(customer_name using gbk)">
                         客户姓名
                     </th>
-                    <th data-field="customerCardNo" data-align="center" data-sortable="true">
+                    <th data-field="customerCardNo" data-align="center" data-sortable="true" data-sort-name="customer_card_no">
                        卡号
                     </th>
-                    <th data-field="transTypeId" data-align="center" data-provider="tradeTypeProvider"  data-sortable="true">
+                    <th data-field="transTypeId" data-align="center" data-provider="tradeTypeProvider"  data-sortable="true" data-sort-name="trans_type_id">
                         交易类型
                     </th>
                     <th data-field="categoryId" data-align="center" data-provider="categoryProvider"  data-sortable="true" data-sort-name="category_id">
@@ -156,40 +156,40 @@
                     <th data-field="carTypeId" data-align="center" data-provider="carTypeProvider" data-sortable="true" data-sort-name="car_type_id">
                         车型
                     </th>
-                    <th data-field="plate" data-align="center"  data-sortable="true">
+                    <th data-field="plate" data-align="center"  data-sortable="true" data-sort-name="CONVERT(plate using gbk)">
                         车牌号
                     </th>
-                    <th data-field="grossWeight" data-align="center" data-sortable="true">
+                    <th data-field="grossWeight" data-align="center" data-sortable="true" data-sort-name="gross_weight">
                         毛重
                     </th>
-                    <th data-field="tareWeight" data-align="center" data-sortable="true">
+                    <th data-field="tareWeight" data-align="center" data-sortable="true" data-sort-name="tare_weight">
                         皮重
                     </th>
-                    <th data-field="netWeight" data-align="center" data-sortable="true" >
+                    <th data-field="netWeight" data-align="center" data-sortable="true" data-sort-name="net_weight">
                         净重
                     </th>
-                    <th data-field="chargeAmount" data-align="center" data-sortable="true" data-provider="moneyProvider" >
+                    <th data-field="chargeAmount" data-align="center" data-sortable="true" data-provider="moneyProvider" data-sort-name="charge_amount">
                         收费金额
                     </th>
-                    <th data-field="bizType" data-provider="bizTypeProvider" data-align="center" data-sortable="true">
+                    <th data-field="bizType" data-provider="bizTypeProvider" data-align="center" data-sortable="true" data-sort-name="biz_type">
                         类型
                     </th>
-                    <th data-field="payStatus" data-provider="payStatusProvider" data-align="center" data-sortable="true">
+                    <th data-field="payStatus" data-provider="payStatusProvider" data-align="center" data-sortable="true" data-sort-name="pay_status">
                         状态
                     </th>
-                    <th data-field="operatorCode" data-align="center" data-sortable="true">
+                    <th data-field="operatorCode" data-align="center" data-sortable="true" data-sort-name="operator_code">
                         操作员工号
                     </th>
-                    <th data-field="operatorName" data-align="center" data-sortable="true">
+                    <th data-field="operatorName" data-align="center" data-sortable="true" data-sort-name="operator_name">
                         操作员
                     </th>
-                    <th data-field="payTime" data-align="center" data-provider="datetimeProvider" data-sortable="true">
+                    <th data-field="payTime" data-align="center" data-provider="datetimeProvider" data-sortable="true" data-sort-name="pay_time">
                         结算时间
                     </th>
-                    <th data-field="revocatorName" data-align="center" data-sortable="true">
+                    <th data-field="revocatorName" data-align="center" data-sortable="true" data-sort-name="CONVERT(revocator_name using gbk)">
                         撤销员
                     </th>
-                    <th data-field="revocatorTime" data-align="center" data-provider="datetimeProviderPlus" data-sortable="true">
+                    <th data-field="revocatorTime" data-align="center" data-provider="datetimeProviderPlus" data-sortable="true" data-sort-name="revocator_time">
                         撤销时间
                     </th>
                 </tr>
@@ -256,6 +256,9 @@
                         bs4pop.alert("客户获取失败!", {type: 'error'});
                     }
                 });
+            }else{
+                $('#show_customer_name').val('');
+                $('#accountId').val('');
             }
         })
 
