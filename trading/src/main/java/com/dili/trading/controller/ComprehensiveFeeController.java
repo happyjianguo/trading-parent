@@ -303,12 +303,8 @@ public class ComprehensiveFeeController {
         map.put("orderStatus", getProvider("payStatusProvider", "orderStatus"));
         comprehensiveFee.setMetadata(map);
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
-        if (oneByID.isSuccess()) {
-            if (Objects.nonNull(oneByID.getData())) {
-                //根据商品ID获取商品名称
-                String inspectionItem = oneByID.getData().getInspectionItem();
-                oneByID.getData().setInspectionItem(getItemNameByItemId(inspectionItem,oneByID.getData().getMarketId()));
-            }
+        if (!oneByID.isSuccess()) {
+            return BaseOutput.failure("检测单不存在");
         }
         return oneByID;
     }
