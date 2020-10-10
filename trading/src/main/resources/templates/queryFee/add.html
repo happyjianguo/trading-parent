@@ -27,19 +27,19 @@
             </div>
             <div class="row row-cols-3">
                 <div class="form-group col">
-                    <label for="">缴费金额</label>
+                    <label for="chargeAmountView">缴费金额</label>
                     <input type="number" id="chargeAmountView"  class="form-control"   maxlength="100">
                     <input type="number" hidden="true"  id="chargeAmount"  class="form-control" name="chargeAmount"  maxlength="100">
                 </div>
                 <div class="form-group col-8">
-                    <label for="">备注</label>
+                    <label for="remark">备注</label>
                     <input id="remark" class="form-control" name="remark"  maxlength="30">
                 </div>
             </div>
             <div class="modal-footer-wrap">
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary px-5" onclick="bui.util.debounce(saveOrUpdateHandler,1000,true)()" id="formSubmit" data-hotkey="{key: 'Ctrl+S'}">下一步</button>
                     <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.dia.hide()" data-hotkey="{key: 'Ctrl+E'}">取消</button>
+                    <button type="button" class="btn btn-primary px-5" onclick="bui.util.debounce(saveOrUpdateHandler,1000,true)()" id="formSubmit" data-hotkey="{key: 'Ctrl+S'}">下一步</button>
                 </div>
             </div>
         </form>
@@ -52,13 +52,12 @@
          * 点击刷卡获取客户信息
          */
         $('#payByCard').on('click',function (e) {
-            //let cardNum='888800039006';
             let cardNum;
             let json = JSON.parse(callbackObj.readCardNumber());
             if (json.code == 0) {
                 cardNum = json.data;
             } else {
-                bs4pop.alert(json.message, {type: "error"});
+                parent.bs4pop.alert(json.message, {type: "error"});
                 return false;
             }
             $.ajax({
@@ -90,7 +89,7 @@
                         });
                     }else {
                         bui.loading.hide();
-                        bs4pop.alert(res.result, {type: 'error'});
+                        parent.bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
             });
@@ -104,7 +103,7 @@
             var num = $('#chargeAmountView').val();
             var exp = /^\d{1,5}(\.\d{1,2})?$/;
             if(!exp.test(num) || num == 0){
-                bs4pop.alert("缴费金额必须是0.01-99999.99之间的数字且最多两位小数", {type: 'error'});
+                parent.bs4pop.alert("缴费金额必须是0.01-99999.99之间的数字且最多两位小数", {type: 'error'});
                 return;
             }
             // 提交保存
@@ -130,19 +129,14 @@
                     if (res.code == "200") {
                         parent.dia.hide();
                         parent.verificationUsernamePassword(res.data.id);
-                        /*bs4pop.alert('成功', {type: 'success'}, function () {
-                            /!* 应该要带条件刷新 *!/
-                            parent.dia.hide();
-                            parent.location.reload();
-                        });*/
                     } else {
                         bui.loading.hide();
-                        bs4pop.alert(res.message, {type: 'error'});
+                        parent.bs4pop.alert(res.message, {type: 'error'});
                     }
                 },
                 error: function (error) {
                     bui.loading.hide();
-                    bs4pop.alert(error.message, {type: 'error'});
+                    parent.bs4pop.alert(error.message, {type: 'error'});
                 }
             });
         }

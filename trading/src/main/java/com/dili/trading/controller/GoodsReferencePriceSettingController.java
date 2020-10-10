@@ -9,14 +9,17 @@ import com.dili.commons.glossary.EnabledStateEnum;
 import com.dili.orders.constants.TradingConstans;
 import com.dili.orders.domain.GoodsReferencePriceSetting;
 
+import com.dili.orders.domain.ReferenceRule;
 import com.dili.orders.rpc.CategoryRpc;
 import com.dili.ss.domain.BaseOutput;
+import com.dili.ss.exception.AppException;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.rpc.GoodsReferencePriceSettingRpc;
 import com.dili.trading.service.GoodsReferencePriceSettingService;
 import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.rpc.FirmRpc;
 import com.dili.uap.sdk.session.SessionContext;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Description: 品类参考价功能Controller类
@@ -39,6 +43,11 @@ import java.util.*;
 public class GoodsReferencePriceSettingController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GoodsReferencePriceSettingController.class);
+
+    /** 品类参考价 参考价规则  */
+    private static final String REFERENCE_RULE = "referenceRule";
+
+    private static final String REFERENCE_RULE_PROVIDER = "referenceRuleProvider";
 
     @Autowired
     private GoodsReferencePriceSettingRpc goodsReferencePriceSettingRpc;
@@ -75,7 +84,7 @@ public class GoodsReferencePriceSettingController {
     @ResponseBody
     public String getAllGoods(GoodsReferencePriceSetting goodsReferencePriceSetting) {
         Map<Object, Object> metadata = new HashMap<Object, Object>();
-        metadata.put("referenceRule", "referenceRuleProvider");
+        metadata.put(REFERENCE_RULE, REFERENCE_RULE_PROVIDER);
         CusCategoryQuery categoryDTO = new CusCategoryQuery();
         categoryDTO.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         categoryDTO.setParent(goodsReferencePriceSetting.getParentGoodsId());
@@ -101,7 +110,7 @@ public class GoodsReferencePriceSettingController {
     @ResponseBody
     public String getGoodsByParentId(GoodsReferencePriceSetting goodsReferencePriceSetting) {
         Map<Object, Object> metadata = new HashMap<Object, Object>();
-        metadata.put("referenceRule", "referenceRuleProvider");
+        metadata.put(REFERENCE_RULE, REFERENCE_RULE_PROVIDER);
         CusCategoryQuery categoryDTO = new CusCategoryQuery();
         categoryDTO.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         categoryDTO.setParent(goodsReferencePriceSetting.getParentGoodsId());
@@ -133,7 +142,7 @@ public class GoodsReferencePriceSettingController {
                     categoryList.addAll(categoryListTemp);
                 }
             } else {
-                throw new Exception("未获取到当前节点的商品数据");
+                throw new AppException("未获取到当前节点的商品数据");
             }
 
             GoodsReferencePriceSetting tempGoods = output.getData();
@@ -196,7 +205,7 @@ public class GoodsReferencePriceSettingController {
             return this.index();
         }
         Map<Object, Object> metadata = new HashMap<Object, Object>();
-        metadata.put("referenceRule", "referenceRuleProvider");
+        metadata.put(REFERENCE_RULE, REFERENCE_RULE_PROVIDER);
         try {
             if (output.getData() == null) {
                 goodsReferencePriceSetting = new GoodsReferencePriceSetting();
@@ -224,12 +233,17 @@ public class GoodsReferencePriceSettingController {
      */
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput insert(GoodsReferencePriceSetting goodsReferencePriceSetting) {
+    public BaseOutput<GoodsReferencePriceSetting> insert(GoodsReferencePriceSetting goodsReferencePriceSetting) {
         goodsReferencePriceSetting.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         BaseOutput<GoodsReferencePriceSetting> output = goodsReferencePriceSettingRpc.findDetailDtoById(goodsReferencePriceSetting);
         if (!output.isSuccess()) {
             LOGGER.error(output.getMessage());
             return output;
+        }
+
+        String tips = checkUpDate(goodsReferencePriceSetting);
+        if(StringUtils.isNotBlank(tips)){
+            return BaseOutput.failure(tips);
         }
 
         if (output.getData() == null) {
@@ -241,6 +255,27 @@ public class GoodsReferencePriceSettingController {
             goodsReferencePriceSetting.setCreatorId(output.getData().getCreatorId());
             return goodsReferencePriceSettingService.updateGoodsReferencePriceSetting(goodsReferencePriceSetting);
         }
+    }
+
+    /**
+     * 校验goodsReferencePriceSetting
+     * @param goodsReferencePriceSetting
+     * @return
+     */
+    public String  checkUpDate(GoodsReferencePriceSetting goodsReferencePriceSetting){
+        StringBuilder tips = new StringBuilder();
+        if (ReferenceRule.RESCINDED.getCode().equals(goodsReferencePriceSetting.getReferenceRule())) {
+            Long fixedPrice = goodsReferencePriceSetting.getFixedPrice();
+            String regex = "^\\+?[1-9]\\d{0,4}(\\.\\d*)?$";
+            if (fixedPrice == null || !Pattern.matches(regex, String.valueOf(fixedPrice))) {
+                tips.append(",固定价格必须是0.01-999.99之间的数字且最多两位小数");
+            }
+        }
+        if (tips.length() != 0) {
+            tips.append("!");
+            return tips.substring(1);
+        }
+        return  "";
     }
 
     /**
@@ -256,13 +291,13 @@ public class GoodsReferencePriceSettingController {
             BaseOutput<Firm> output = this.firmRpc.getByCode(TradingConstans.SHOUGUANG_FIRM_CODE);
             if (!output.isSuccess()) {
                 LOGGER.error(output.getMessage());
-                throw new Exception("查询市场信息失败");
+                throw new AppException(output.getMessage());
             }
             if (output.getData() == null) {
-                throw new Exception("市场信息不存在");
+                throw new AppException("市场信息不存在");
             }
             Map<Object, Object> metadata = new HashMap<Object, Object>();
-            metadata.put("referenceRule", "referenceRuleProvider");
+            metadata.put(REFERENCE_RULE, REFERENCE_RULE_PROVIDER);
 
             CusCategoryQuery query = new CusCategoryQuery();
             query.setMarketId(output.getData().getId());

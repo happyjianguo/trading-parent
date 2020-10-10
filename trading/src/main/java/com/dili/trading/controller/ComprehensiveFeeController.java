@@ -1,8 +1,9 @@
 package com.dili.trading.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dili.assets.sdk.dto.CategoryDTO;
-import com.dili.assets.sdk.rpc.CategoryRpc;
+import com.dili.assets.sdk.dto.CusCategoryDTO;
+import com.dili.assets.sdk.dto.CusCategoryQuery;
+import com.dili.assets.sdk.rpc.AssetsRpc;
 import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.domain.ComprehensiveFeeType;
 import com.dili.orders.rpc.CardRpc;
@@ -61,7 +62,7 @@ public class ComprehensiveFeeController {
     private CardRpc cardRpc;
 
     @Autowired
-    CategoryRpc categoryRpc;
+    AssetsRpc assetsRpc;
 
     @Autowired
     private UserRpc useRpc;
@@ -156,7 +157,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/pay.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput pay(Long id, String password) throws Exception{
+    public BaseOutput<ComprehensiveFee> pay(Long id, String password) throws Exception{
         return comprehensiveFeeService.pay(id, password);
     }
 
@@ -168,7 +169,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/queryAccountBalance.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput queryAccountBalance(String customerCardNo) {
+    public BaseOutput<?> queryAccountBalance(String customerCardNo) {
         return cardRpc.getOneAccountCard(customerCardNo);
     }
 
@@ -180,13 +181,10 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput insert(ComprehensiveFee comprehensiveFee) throws Exception{
+    public BaseOutput<ComprehensiveFee> insert(ComprehensiveFee comprehensiveFee) throws Exception{
         String tips = checkUpDate(comprehensiveFee);
         if(StringUtils.isNotBlank(tips)){
-            BaseOutput<ComprehensiveFee> result = new BaseOutput<ComprehensiveFee>();
-            result.setCode("500");
-            result.setMessage(tips);
-            return result;
+            return BaseOutput.failure(tips);
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         comprehensiveFee.setMarketId(userTicket.getFirmId());
@@ -232,7 +230,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/fee.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput getFee(Long customerId, String type) {
+    public BaseOutput<?> getFee(Long customerId, String type) {
         if (Objects.isNull(customerId)) {
             return BaseOutput.failure("顾客编号不能为空");
         }
@@ -248,7 +246,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/scheduleUpdate.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput scheduleUpdate() {
+    public BaseOutput<String> scheduleUpdate() {
         ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 3, 120L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1));
         // 任务1
         pool.execute(() -> {
@@ -268,7 +266,7 @@ public class ComprehensiveFeeController {
      * @param modelMap
      * @return
      */
-    @RequestMapping("/revocatorPage.html")
+    @RequestMapping(value = "/revocatorPage.html", method = RequestMethod.GET)
     public String revocatorPage(Long id, ModelMap modelMap) {
         modelMap.addAttribute("comprehensiveFeeId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket());
         return "comprehensiveFee/revocatorPage";
@@ -282,15 +280,13 @@ public class ComprehensiveFeeController {
      * @return
      */
     @ResponseBody
-    @PostMapping("/revocator.action")
-    public BaseOutput<Object> revocator(Long id, @RequestParam(value="password") String operatorPassword) throws Exception{
-        UserTicket user = SessionContext.getSessionContext().getUserTicket();
-        if (user == null) {
-            return BaseOutput.failure("用户未登录");
+    @RequestMapping(value = "/revocator.action", method = {RequestMethod.GET, RequestMethod.POST})
+    public BaseOutput<ComprehensiveFee> revocator(Long id, @RequestParam(value="password") String operatorPassword) throws Exception{
+        BaseOutput<ComprehensiveFee> oneById=comprehensiveFeeRpc.getOneById(id);
+        if(!oneById.isSuccess()) {
+            return BaseOutput.failure("检测单不存在");
         }
-        BaseOutput<Object> output = this.comprehensiveFeeRpc.revocator(id, user.getRealName(),user.getId(), operatorPassword, user.getUserName());
-        return output;
-
+        return comprehensiveFeeService.revocator(oneById.getData(), operatorPassword);
     }
 
     /**
@@ -301,7 +297,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/printOneById.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public BaseOutput printOneById( ComprehensiveFee comprehensiveFee) throws Exception {
+    public BaseOutput<ComprehensiveFee> printOneById( ComprehensiveFee comprehensiveFee) throws Exception {
         Map<Object, Object> map = new HashMap<>();
         //设置单据状态提供者
         map.put("orderStatus", getProvider("payStatusProvider", "orderStatus"));
@@ -382,16 +378,18 @@ public class ComprehensiveFeeController {
      * @return
      */
     public String getItemNameByItemId(String inspectionItem) {
+        UserTicket user = SessionContext.getSessionContext().getUserTicket();
         String returnName = "";
         if (StringUtils.isNotBlank(inspectionItem)) {
             List<String> ids = Arrays.asList(inspectionItem.split(","));
-            CategoryDTO categoryDTO = new CategoryDTO();
-
-            categoryDTO.setIds(ids);
-            List<CategoryDTO> list = categoryRpc.getTree(categoryDTO).getData();
+            CusCategoryQuery cusCategoryQuery=new CusCategoryQuery();
+            cusCategoryQuery.setIds(ids);
+            cusCategoryQuery.setMarketId(user.getFirmId());
+            BaseOutput<List<CusCategoryDTO>> result=assetsRpc.listCusCategory(cusCategoryQuery);
+            List<CusCategoryDTO> list = result.getData();
             if (list != null && list.size() > 0) {
                 StringBuffer name=new StringBuffer("");
-                for (CategoryDTO cgdto : list) {
+                for (CusCategoryDTO cgdto : list) {
                     name.append(",");
                     name.append(cgdto.getName());
                 }

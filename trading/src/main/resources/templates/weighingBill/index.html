@@ -131,22 +131,29 @@
 					<i class="fa fa-download"></i> 导出
 				</button>
 			</div>
-			<table id="grid" data-toggle="table" data-title="过磅单列表" class="table" data-toolbar="#toolbar" data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
-				data-side-pagination="server" data-method="POST" data-content-type="application/x-www-form-urlencoded" data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
-				data-unique-id="id" data-sort-name="id" data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary" data-show-refresh="true" data-show-fullscreen="true"
-				data-show-columns="true">
+			<table id="grid" data-toggle="table" 
+				data-title="过磅单列表" 
+				data-pagination="true" data-page-number="1"
+				data-method="post"
+                       data-page-size="10" data-query-params="queryParams"
+                       data-side-pagination="server"
+                       data-content-type="application/x-www-form-urlencoded"
+                       data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
+                       data-unique-id="serialNo" data-sort-name="serial_no" data-sort-order="desc"
+                       data-icons="bui.variable.icons"
+                       data-buttons-class="primary">
 				<thead>
 					<tr>
 						<th data-radio="true"></th>
-						<th data-field="serialNo" data-align="center" data-sortable="true">过磅单号</th>
-						<th data-field="statement.serialNo" data-align="center" data-sortable="true">结算单号</th>
-						<th data-field="buyerCode" data-align="center" data-sortable="true">买方编号</th>
-						<th data-field="buyerName" data-align="center" data-sortable="true">买方名称</th>
-						<th data-field="buyerCardNo" data-align="center" data-sortable="true">买方卡号</th>
-						<th data-field="sellerCode" data-align="center" data-sortable="true">卖方编号</th>
-						<th data-field="sellerName" data-align="center" data-sortable="true">卖方名称</th>
-						<th data-field="sellerCardNo" data-align="center" data-sortable="true">卖方卡号</th>
-						<th data-field="goodsName" data-align="center" data-sortable="true">商品</th>
+						<th data-field="serialNo" data-sort-name="serial_no" data-align="center" data-sortable="true">过磅单号</th>
+						<th data-field="statement.serialNo" data-sort-name="ws.serial_no"  data-align="center" data-sortable="true">结算单号</th>
+						<th data-field="buyerCode" data-align="center" data-sort-name="buyer_code" data-sortable="true">买方编号</th>
+						<th data-field="buyerName" data-align="center" data-sort-name="CONVERT(wb.buyer_name using gbk)" data-sortable="true">买方名称</th>
+						<th data-field="buyerCardNo" data-align="center" data-sort-name="wb.buyer_card_no" data-sortable="true">买方卡号</th>
+						<th data-field="sellerCode" data-align="center" data-sort-name="wb.seller_code" data-sortable="true">卖方编号</th>
+						<th data-field="sellerName" data-align="center" data-sort-name="CONVERT(wb.seller_name using gbk)" data-sortable="true">卖方名称</th>
+						<th data-field="sellerCardNo" data-align="center" data-sort-name="wb.seller_card_no" data-sortable="true">卖方卡号</th>
+						<th data-field="goodsName" data-align="center" data-sort-name="wb.goods_name" data-sortable="true">商品</th>
 						<!-- <th data-field="goodsName" data-align="center" data-sort-name="created" data-provider="datetimeProvider" data-sortable="true">商品</th> -->
 						<th data-field="roughWeight" data-align="center" data-sortable="true" data-provider="weightProvider">毛重</th>
 						<th data-field="tareWeight" data-align="center" data-sortable="true" data-provider="weightProvider">皮重</th>

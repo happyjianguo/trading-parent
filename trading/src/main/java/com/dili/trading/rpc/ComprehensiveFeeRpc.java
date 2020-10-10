@@ -81,20 +81,19 @@ public interface ComprehensiveFeeRpc {
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/fee", method = {RequestMethod.POST})
-    BaseOutput getFee(@RequestParam(value = "marketId") Long marketId, @RequestParam(value = "customerId") Long customerId, @RequestParam(value = "type") String type);
+    BaseOutput<?> getFee(@RequestParam(value = "marketId") Long marketId, @RequestParam(value = "customerId") Long customerId,@RequestParam(value = "type") String type);
 
     /**
-     * 撤销调用
-     *
-     * @param id
+     *撤销调用
+     * @param comprehensiveFee
      * @param realName
      * @param operatorId
      * @param operatorPassword
      * @param userName
      * @return
      */
-    @RequestMapping(value = "/api/comprehensiveFee/revocator")
-    BaseOutput<Object> revocator(@RequestParam(value = "id") Long id, @RequestParam(value = "realName") String realName, @RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "operatorPassword") String operatorPassword, @RequestParam(value = "userName") String userName);
+    @RequestMapping(value = "/api/comprehensiveFee/revocator", method = {RequestMethod.POST})
+    BaseOutput<ComprehensiveFee> revocator(@RequestBody ComprehensiveFee comprehensiveFee, @RequestParam String realName, @RequestParam Long operatorId, @RequestParam String operatorPassword, @RequestParam String userName);
 
     /**
      * 获取费用信息
@@ -102,5 +101,5 @@ public interface ComprehensiveFeeRpc {
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/scheduleUpdate", method = {RequestMethod.POST})
-    BaseOutput scheduleUpdate();
+    BaseOutput<String> scheduleUpdate();
 }

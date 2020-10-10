@@ -187,6 +187,10 @@
     * */
     function openUpdateHandler() {
         let rows = _grid.bootstrapTable('getSelections');
+        let createTime=new Date(rows[0].createdTime);
+        let createTimeToLocal=createTime.toLocaleDateString();
+        let todaysDate = new Date();
+        let todaysDateToLocal=todaysDate.toLocaleDateString();
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
             return;
@@ -195,39 +199,22 @@
             bs4pop.alert('该单据当前状态不能进行撤销操作！');
             return;
         }
-
-        bs4pop.confirm(" <div style='font-size: large' align='center' >确定撤销当前单据？</div>", {
-            title: "信息确认", btns: [
-                {
-                    label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
-                        dia = bs4pop.dialog({
-                            title: '撤销校验',//对话框title
-                            content: '${contextPath}/comprehensiveFee/revocatorPage.html?id=' + rows[0].id,
-                            width: '400px',//宽度
-                            height: '400px',//高度
-                            isIframe: true,//默认是页面层，非iframe
-                            backdrop: 'static',
-                            btns: [{
-                                label: '返回', className: 'btn btn-secondary', onClick(e, $iframe) {
-
-                                }
-                            }, {
-                                label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
-                                    let diaWindow = $iframe[0].contentWindow;
-                                    bui.util.debounce(diaWindow.revocator, 1000, true)()
-                                    return false;
-                                }
-                            }]
-
-                        });
-
-                    }
-                }, {
-                    label: '取消', className: 'btn btn-secondary', onClick(e, $iframe) {
-
-                    }
-                }]
-        }, function (sure) {});
+        if(createTimeToLocal != todaysDateToLocal){
+            bs4pop.alert('只有当天的结算单可以撤销');
+            return;
+        }
+        bs4pop.confirm(" 确定撤销当前单据吗？", {title: "信息确认"}, function (sure) {
+            if (sure) {
+                dia = bs4pop.dialog({
+                    title: '撤销校验',//对话框title
+                    content: '${contextPath}/comprehensiveFee/revocatorPage.html?id=' + rows[0].id, //对话框内容，可以是 string、element，$object
+                    width: '400px',//宽度
+                    height: '400px',//高度
+                    backdrop: 'static',
+                    isIframe: true//默认是页面层，非iframe
+                });
+            }
+        });
     }
 
 
