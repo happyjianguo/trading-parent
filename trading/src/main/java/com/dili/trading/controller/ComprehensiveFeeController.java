@@ -1,8 +1,9 @@
 package com.dili.trading.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dili.assets.sdk.dto.CategoryDTO;
-import com.dili.assets.sdk.rpc.CategoryRpc;
+import com.dili.assets.sdk.dto.CusCategoryDTO;
+import com.dili.assets.sdk.dto.CusCategoryQuery;
+import com.dili.assets.sdk.rpc.AssetsRpc;
 import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.domain.ComprehensiveFeeType;
 import com.dili.orders.rpc.CardRpc;
@@ -61,7 +62,7 @@ public class ComprehensiveFeeController {
     private CardRpc cardRpc;
 
     @Autowired
-    CategoryRpc categoryRpc;
+    AssetsRpc assetsRpc;
 
     @Autowired
     private UserRpc useRpc;
@@ -377,16 +378,18 @@ public class ComprehensiveFeeController {
      * @return
      */
     public String getItemNameByItemId(String inspectionItem) {
+        UserTicket user = SessionContext.getSessionContext().getUserTicket();
         String returnName = "";
         if (StringUtils.isNotBlank(inspectionItem)) {
             List<String> ids = Arrays.asList(inspectionItem.split(","));
-            CategoryDTO categoryDTO = new CategoryDTO();
-
-            categoryDTO.setIds(ids);
-            List<CategoryDTO> list = categoryRpc.getTree(categoryDTO).getData();
+            CusCategoryQuery cusCategoryQuery=new CusCategoryQuery();
+            cusCategoryQuery.setIds(ids);
+            cusCategoryQuery.setMarketId(user.getFirmId());
+            BaseOutput<List<CusCategoryDTO>> result=assetsRpc.listCusCategory(cusCategoryQuery);
+            List<CusCategoryDTO> list = result.getData();
             if (list != null && list.size() > 0) {
                 StringBuffer name=new StringBuffer("");
-                for (CategoryDTO cgdto : list) {
+                for (CusCategoryDTO cgdto : list) {
                     name.append(",");
                     name.append(cgdto.getName());
                 }
