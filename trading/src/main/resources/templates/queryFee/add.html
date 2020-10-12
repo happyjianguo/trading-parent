@@ -83,7 +83,7 @@
                             async: false,
                             success: function (res) {
                                 if (res.code == "200") {
-                                    $('#availableBalance').val((res.data.accountFund.balance/100).toFixed(2));
+                                    $('#availableBalance').val((res.data.accountFund.availableAmount/100).toFixed(2));
                                 }
                             }
                         });

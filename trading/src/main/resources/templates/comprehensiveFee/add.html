@@ -151,7 +151,7 @@
                             async: false,
                             success: function (resulst) {
                                 if (resulst.code == "200") {
-                                    $('#availableBalance').val((resulst.data.accountFund.balance/100).toFixed(2));
+                                    $('#availableBalance').val((resulst.data.accountFund.availableAmount/100).toFixed(2));
                                 }
                             }
                         });
