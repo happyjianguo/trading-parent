@@ -151,32 +151,16 @@
             success: function (data) {
                 bui.loading.hide();
                 if (data.code == '200') {
-                    let comprehensiveFee= data.data;
-                    //查询余额
-                    $.ajax({
-                        type: "POST",
-                        dataType: "json",
-                        url: '/comprehensiveFee/queryAccountBalance.action',
-                        data: {customerCardNo: rows[0].customerCardNo},
-                        success: function (res) {
-                            bui.loading.hide();
-                            if (res.code == '200') {
-                                //调用c端打印
-                                comprehensiveFee.balance = res.data.accountFund.balance;
-                                callbackObj.printDirect(JSON.stringify(comprehensiveFee), "CheckRechargeDocument");
-                            }
-                        },
-                        error: function () {
-                            bui.loading.hide();
-                            bs4pop.alert("打印失败!", {type: 'error'});
-                        }
-                    });
-
+                    //调用c端打印
+                    callbackObj.printDirect(JSON.stringify(data.data), "CheckRechargeDocument");
+                }else{
+                    parent.bui.loading.hide();
+                    parent.bs4pop.alert(data.message, {type: 'error'});
                 }
             },
             error: function () {
-                bui.loading.hide();
-                bs4pop.alert("打印失败!", {type: 'error'});
+                parent.bui.loading.hide();
+                parent.bs4pop.alert("打印失败!", {type: 'error'});
             }
         });
 
