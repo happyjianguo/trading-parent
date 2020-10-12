@@ -18,7 +18,7 @@ import com.dili.trading.config.PutMchIdHeaderInterceptor;
 /**
  * 由MyBatis Generator工具自动生成
  */
-@SpringBootApplication(scanBasePackages = {"com.dili.trading"})
+@SpringBootApplication
 @ComponentScan(basePackages = { "com.dili.ss", "com.dili.trading", "com.dili.orders.config", "com.dili.uap.sdk", "com.dili.logger.sdk" })
 @RestfulScan({ "com.dili.trading.rpc", "com.dili.uap.sdk.rpc", "com.dili.bpmc.sdk.rpc" })
 //@DTOScan(value = {"com.dili.ss"})
