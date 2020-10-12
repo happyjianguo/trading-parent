@@ -189,6 +189,9 @@ public class ComprehensiveFeeController {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         comprehensiveFee.setMarketId(userTicket.getFirmId());
         comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
+        //设置测试商品名称
+        String itemName=getItemNameByItemId(comprehensiveFee.getInspectionItem(),userTicket.getFirmId());
+        comprehensiveFee.setInspectionItemName(itemName);
         return comprehensiveFeeService.insertComprehensiveFee(comprehensiveFee);
     }
 
@@ -212,9 +215,6 @@ public class ComprehensiveFeeController {
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
         if (oneByID.isSuccess()) {
             if (Objects.nonNull(oneByID.getData())) {
-                //根据商品ID获取商品名称
-                String inspectionItem = oneByID.getData().getInspectionItem();
-                oneByID.getData().setInspectionItem(getItemNameByItemId(inspectionItem));
                 modelMap.put("comprehensiveFee", ValueProviderUtils.buildDataByProvider(comprehensiveFee, Lists.newArrayList(oneByID.getData())).get(0));
             }
         }
@@ -303,12 +303,8 @@ public class ComprehensiveFeeController {
         map.put("orderStatus", getProvider("payStatusProvider", "orderStatus"));
         comprehensiveFee.setMetadata(map);
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
-        if (oneByID.isSuccess()) {
-            if (Objects.nonNull(oneByID.getData())) {
-                //根据商品ID获取商品名称
-                String inspectionItem = oneByID.getData().getInspectionItem();
-                oneByID.getData().setInspectionItem(getItemNameByItemId(inspectionItem));
-            }
+        if (!oneByID.isSuccess()) {
+            return BaseOutput.failure("检测单不存在");
         }
         return oneByID;
     }
@@ -377,14 +373,13 @@ public class ComprehensiveFeeController {
      * @param inspectionItem
      * @return
      */
-    public String getItemNameByItemId(String inspectionItem) {
-        UserTicket user = SessionContext.getSessionContext().getUserTicket();
+    public String getItemNameByItemId(String inspectionItem,Long marketId) {
         String returnName = "";
         if (StringUtils.isNotBlank(inspectionItem)) {
             List<String> ids = Arrays.asList(inspectionItem.split(","));
             CusCategoryQuery cusCategoryQuery=new CusCategoryQuery();
             cusCategoryQuery.setIds(ids);
-            cusCategoryQuery.setMarketId(user.getFirmId());
+            cusCategoryQuery.setMarketId(marketId);
             BaseOutput<List<CusCategoryDTO>> result=assetsRpc.listCusCategory(cusCategoryQuery);
             List<CusCategoryDTO> list = result.getData();
             if (list != null && list.size() > 0) {

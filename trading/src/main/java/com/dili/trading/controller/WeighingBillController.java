@@ -167,10 +167,18 @@ public class WeighingBillController {
 			ws = settlementOutput.getData();
 		}
 		if (WeighingStatementState.FROZEN.getValue().equals(ws.getState())) {
-			return this.getWeighingBillPrintData(ws.getWeighingSerialNo(), false).setMessage("付款成功");
+			output = this.getWeighingBillPrintData(ws.getWeighingSerialNo(), false);
+			if (!output.isSuccess()) {
+				return output;
+			}
+			return output.setMessage("付款成功");
 		}
 		if (WeighingStatementState.PAID.getValue().equals(ws.getState())) {
-			return this.getWeighingStatementPrintData(ws.getSerialNo(), false).setMessage("付款成功");
+			output = this.getWeighingStatementPrintData(ws.getSerialNo(), false);
+			if (!output.isSuccess()) {
+				return output;
+			}
+			return output.setMessage("付款成功");
 		}
 		return output;
 	}
