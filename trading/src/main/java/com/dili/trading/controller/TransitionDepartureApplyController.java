@@ -413,7 +413,7 @@ public class TransitionDepartureApplyController {
     }
 
     /**
-     * 根据参数查询数据
+     * app使用，根据参数查询数据
      *
      * @param transitionDepartureApply
      * @return
@@ -470,7 +470,7 @@ public class TransitionDepartureApplyController {
     }
 
     /**
-     * 根据id获取申请单，并且使用provider
+     * app使用，根据id获取申请单，并且使用provider
      *
      * @param transitionDepartureApply
      * @return
