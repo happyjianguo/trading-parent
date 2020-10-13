@@ -421,7 +421,7 @@ public class TransitionDepartureApplyController {
      */
     @RequestMapping(value = "/listForApp.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public String listForApp(TransitionDepartureApply transitionDepartureApply) throws Exception {
+    public PageOutput listForApp(TransitionDepartureApply transitionDepartureApply) throws Exception {
         //app端，会传过来一个登录人信息，根据这个登录人
         List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
         //根据市场id查询
@@ -450,7 +450,9 @@ public class TransitionDepartureApplyController {
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
         transitionDepartureApply.setMetadata(map);
-        return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(transitionDepartureApply, output.getData())).toString();
+        PageOutput<List<Map>> pageOutput = PageOutput.success();
+        pageOutput.setData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, output.getData())).setPageNum(output.getPageNum()).setTotal(output.getTotal()).setPageSize(output.getPageSize()).setPages(output.getPages());
+        return pageOutput;
     }
 
     /**
