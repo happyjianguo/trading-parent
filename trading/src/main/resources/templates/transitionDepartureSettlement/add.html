@@ -410,7 +410,7 @@
             success: function (res) {
                 bui.loading.hide();
                 if (res.code == "200") {
-                    parent.dia.hide();
+                    // parent.dia.hide();
                     parent.verificationUsernamePassword(res.data.id);
                 } else {
                     bui.loading.hide();
