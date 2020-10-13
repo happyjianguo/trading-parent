@@ -498,7 +498,7 @@ public class TransitionDepartureApplyController {
         BaseOutput<TransitionDepartureApply> oneByID = transitionDepartureApplyRpc.getOneByID(transitionDepartureApply.getId());
         if (oneByID.isSuccess()) {
             List<Map> maps = ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Arrays.asList(oneByID.getData()));
-            return BaseOutput.successData(maps);
+            return BaseOutput.successData(maps.get(0));
         }
         return oneByID;
     }
