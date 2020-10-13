@@ -69,4 +69,9 @@ public class TransitionDepartureApplyServiceImpl implements TransitionDepartureA
         return update;
     }
 
+    @Override
+    public BaseOutput updateForApp(TransitionDepartureApply transitionDepartureApply) {
+        return transitionDepartureApplyRpc.update(transitionDepartureApply);
+    }
+
 }

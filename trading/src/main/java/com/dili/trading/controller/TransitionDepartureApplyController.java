@@ -13,6 +13,7 @@ import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.trading.glossary.ApplyEnum;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
 import com.dili.trading.service.TransitionDepartureApplyService;
 import com.dili.uap.sdk.glossary.DataAuthType;
@@ -23,11 +24,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -409,4 +412,92 @@ public class TransitionDepartureApplyController {
         return applyAndSettleById;
     }
 
+    /**
+     * 根据参数查询数据
+     *
+     * @param transitionDepartureApply
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/listForApp.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public String listForApp(TransitionDepartureApply transitionDepartureApply) throws Exception {
+        //app端，会传过来一个登录人信息，根据这个登录人
+        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
+        //根据市场id查询
+        if (CollectionUtils.isNotEmpty(ranges)) {
+            String value = (String) ranges.get(0).get("value");
+            //如果value为0，则为个人
+            if (value.equals("0")) {
+                transitionDepartureApply.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
+            }
+        }
+        //只能是当天的数据
+        transitionDepartureApply.setBeginTime(LocalDate.now());
+        transitionDepartureApply.setEndTime(LocalDate.now());
+        //只能查询为审批的单子
+        transitionDepartureApply.setApprovalState(ApplyEnum.TOBEREVIEWED.getCode());
+        PageOutput<List<TransitionDepartureApply>> output = transitionDepartureApplyRpc.listByQueryParams(transitionDepartureApply);
+        Map<Object, Object> map = new HashMap<>();
+        //设置审批状态提供者
+        map.put("approvalState", getProvider("applyProvider", "approvalState"));
+        //设置业务类型提供者
+        map.put("bizType", getProvider("bizTypeProvider", "bizType"));
+        //设置商品提供者
+        map.put("categoryId", getProvider("categoryProvider", "categoryId"));
+        //设置交易类型提供者
+        map.put("transTypeId", getProvider("tradeTypeProvider", "transTypeId"));
+        //设置车类型提供者
+        map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
+        transitionDepartureApply.setMetadata(map);
+        return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(transitionDepartureApply, output.getData())).toString();
+    }
+
+    /**
+     * app更新
+     *
+     * @param transitionDepartureApply
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/updateForApp.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput<?> updateForApp(TransitionDepartureApply transitionDepartureApply) {
+        if (Objects.isNull(transitionDepartureApply.getId())) {
+            return BaseOutput.failure("申请单id不能为空");
+        }
+        return transitionDepartureApplyService.updateForApp(transitionDepartureApply);
+    }
+
+    /**
+     * 根据id获取申请单，并且使用provider
+     *
+     * @param transitionDepartureApply
+     * @return
+     */
+    @RequestMapping(value = "/getOneByIDForApp.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput<?> getOneByIDForApp(TransitionDepartureApply transitionDepartureApply) throws Exception {
+        if (transitionDepartureApply.getId() == null) {
+            return BaseOutput.failure("申请单id不能为空");
+        }
+        Map<Object, Object> map = new HashMap<>();
+        //设置审批状态提供者
+        map.put("approvalState", getProvider("applyProvider", "approvalState"));
+        //设置业务类型提供者
+        map.put("bizType", getProvider("bizTypeProvider", "bizType"));
+        //设置商品提供者
+        map.put("categoryId", getProvider("categoryProvider", "categoryId"));
+        //设置交易类型提供者
+        map.put("transTypeId", getProvider("tradeTypeProvider", "transTypeId"));
+        //设置车类型提供者
+        map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
+        transitionDepartureApply.setMetadata(map);
+        BaseOutput<TransitionDepartureApply> oneByID = transitionDepartureApplyRpc.getOneByID(transitionDepartureApply.getId());
+        if (oneByID.isSuccess()) {
+            List<Map> maps = ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Arrays.asList(oneByID.getData()));
+            return BaseOutput.successData(maps);
+        }
+        return oneByID;
+    }
 }

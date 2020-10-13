@@ -22,4 +22,13 @@ public interface TransitionDepartureApplyService {
      * @return
      */
     BaseOutput approval(TransitionDepartureApply transitionDepartureApply);
+
+    /**
+     * App对申请单做审批
+     *
+     * @param transitionDepartureApply
+     * @return
+     */
+    BaseOutput updateForApp(TransitionDepartureApply transitionDepartureApply);
+
 }
