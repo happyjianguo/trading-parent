@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -24,8 +25,7 @@ import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import com.google.common.collect.Lists;
 
 /**
- * <B>Description</B>
- * <B>Copyright:本软件源代码版权归农丰时代所有,未经许可不得任意复制与传播.</B>
+ * <B>Description</B> <B>Copyright:本软件源代码版权归农丰时代所有,未经许可不得任意复制与传播.</B>
  * <B>农丰时代科技有限公司</B>
  *
  * @author yuehongbo
@@ -35,71 +35,103 @@ import com.google.common.collect.Lists;
 @Scope("prototype")
 public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport {
 
-    //前台需要传入的参数
-    protected static final String DD_CODE_KEY = "dd_code";
-    @Autowired
-    private DataDictionaryRpc dataDictionaryRpc;
+	// 前台需要传入的参数
+	protected static final String DD_CODE_KEY = "dd_code";
+	protected static final String FIRM_ID_KEY = "firm_id";
+	protected static final String FIRM_CODE_KEY = "firm_code";
+	@Autowired
+	private DataDictionaryRpc dataDictionaryRpc;
 
-    @Override
-    public List<ValuePair<?>> getLookupList(Object val, Map metaMap, FieldMeta fieldMeta) {
-        Object queryParams = metaMap.get(QUERY_PARAMS_KEY);
-        if (queryParams == null) {
-            return Lists.newArrayList();
-        }
-        DataDictionaryValue dataDictionaryValue = DTOUtils.newInstance(DataDictionaryValue.class);
-        dataDictionaryValue.setDdCode(getDdCode(queryParams.toString()));
-        if (Objects.nonNull(val)) {
-            dataDictionaryValue.setCode(val.toString());
-        }
-        List<ValuePair<?>> valuePairs = Lists.newArrayList();
-        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValue(dataDictionaryValue);
-        if (output.isSuccess() && CollectionUtils.isNotEmpty(output.getData())) {
-            valuePairs = output.getData().stream().filter(Objects::nonNull).sorted(Comparator.comparing(DataDictionaryValue::getOrderNumber)).map(t -> {
-                ValuePairImpl<?> vp = new ValuePairImpl<>(t.getName(), t.getCode());
-                return vp;
-            }).collect(Collectors.toList());
-        }
-        return valuePairs;
-    }
+	@Override
+	public List<ValuePair<?>> getLookupList(Object val, Map metaMap, FieldMeta fieldMeta) {
+		Object queryParams = metaMap.get(QUERY_PARAMS_KEY);
+		if (queryParams == null) {
+			return Lists.newArrayList();
+		}
+		DataDictionaryValue dataDictionaryValue = DTOUtils.newInstance(DataDictionaryValue.class);
+		dataDictionaryValue.setDdCode(getDdCode(queryParams.toString()));
+		if (Objects.nonNull(val)) {
+			dataDictionaryValue.setCode(val.toString());
+		}
+		List<ValuePair<?>> valuePairs = Lists.newArrayList();
+		BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValue(dataDictionaryValue);
+		if (output.isSuccess() && CollectionUtils.isNotEmpty(output.getData())) {
+			valuePairs = output.getData().stream().filter(Objects::nonNull).sorted(Comparator.comparing(DataDictionaryValue::getOrderNumber)).map(t -> {
+				ValuePairImpl<?> vp = new ValuePairImpl<>(t.getName(), t.getCode());
+				return vp;
+			}).collect(Collectors.toList());
+		}
+		return valuePairs;
+	}
 
-    @Override
-    protected List getFkList(List<String> ddvIds, Map metaMap) {
-        Object queryParams = metaMap.get(QUERY_PARAMS_KEY);
-        if (queryParams == null) {
-            return Lists.newArrayList();
-        }
-        BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueByDdCode(getDdCode(queryParams.toString()));
-        if (output.isSuccess() && CollectionUtils.isNotEmpty(output.getData())) {
-            return output.getData();
-        }
-        return Lists.newArrayList();
-    }
+	@Override
+	protected List getFkList(List<String> ddvIds, Map metaMap) {
+		Object queryParams = metaMap.get(QUERY_PARAMS_KEY);
+		if (queryParams == null) {
+			return Lists.newArrayList();
+		}
+		DataDictionaryValue valueQuery = DTOUtils.newInstance(DataDictionaryValue.class);
+		valueQuery.setDdCode(this.getDdCode(queryParams.toString()));
+		String firmId = this.getFirmId(queryParams.toString());
+		if (StringUtils.isNotBlank(firmId)) {
+			valueQuery.setFirmId(Long.valueOf(firmId));
+		}
+		String firmCode = this.getFirmCode(queryParams.toString());
+		if (StringUtils.isNotBlank(firmCode)) {
+			valueQuery.setFirmCode(firmCode);
+		}
+		BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueWithFirm(valueQuery);
+		if (output.isSuccess() && CollectionUtils.isNotEmpty(output.getData())) {
+			return output.getData();
+		}
+		return Lists.newArrayList();
+	}
 
-    @Override
-    protected BatchProviderMeta getBatchProviderMeta(Map metaMap) {
-        BatchProviderMeta batchProviderMeta = DTOUtils.newInstance(BatchProviderMeta.class);
-        //设置主DTO和关联DTO需要转义的字段名
-        batchProviderMeta.setEscapeFiled("name");
-        //忽略大小写关联
-        batchProviderMeta.setIgnoreCaseToRef(true);
-        //关联(数据库)表的主键的字段名，默认取id
-        batchProviderMeta.setRelationTablePkField("code");
-        //当未匹配到数据时，返回的值
-        batchProviderMeta.setMismatchHandler(t -> "-");
-        return batchProviderMeta;
-    }
+	@Override
+	protected BatchProviderMeta getBatchProviderMeta(Map metaMap) {
+		BatchProviderMeta batchProviderMeta = DTOUtils.newInstance(BatchProviderMeta.class);
+		// 设置主DTO和关联DTO需要转义的字段名
+		batchProviderMeta.setEscapeFiled("name");
+		// 忽略大小写关联
+		batchProviderMeta.setIgnoreCaseToRef(true);
+		// 关联(数据库)表的主键的字段名，默认取id
+		batchProviderMeta.setRelationTablePkField("code");
+		// 当未匹配到数据时，返回的值
+		batchProviderMeta.setMismatchHandler(t -> "-");
+		return batchProviderMeta;
+	}
 
-    /**
-     * 获取数据字典编码
-     *
-     * @return
-     */
-    public String getDdCode(String queryParams) {
-        //清空缓存
-        String ddCode = JSONObject.parseObject(queryParams).getString(DD_CODE_KEY);
-        if (ddCode == null) {
-            throw new RuntimeException("dd_code属性为空");
-        }
-        return ddCode;
-    }
+	/**
+	 * 获取数据字典编码
+	 *
+	 * @return
+	 */
+	public String getDdCode(String queryParams) {
+		// 清空缓存
+		String ddCode = JSONObject.parseObject(queryParams).getString(DD_CODE_KEY);
+		if (ddCode == null) {
+			throw new RuntimeException("dd_code属性为空");
+		}
+		return ddCode;
+	}
+
+	/**
+	 * 获取数据字典市场id
+	 *
+	 * @return
+	 */
+	public String getFirmId(String queryParams) {
+		// 清空缓存
+		return JSONObject.parseObject(queryParams).getString(FIRM_ID_KEY);
+	}
+	
+	/**
+	 * 获取数据字典市场编码
+	 *
+	 * @return
+	 */
+	public String getFirmCode(String queryParams) {
+		// 清空缓存
+		return JSONObject.parseObject(queryParams).getString(FIRM_CODE_KEY);
+	}
 }
