@@ -94,6 +94,9 @@
             url: '/comprehensiveFee/listByQueryParams.action',
             pageSize: parseInt(size)
         });
+        _grid.on('load-success.bs.table', function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
     });
 
     /******************************驱动执行区 end****************************/
@@ -244,7 +247,7 @@
      * 虚浮处理
      */
     function suspensionFun(value, row, index, field) {
-        return "<span style='display: block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;' title='" + value + "'>" + value + "</span>";
+        return "<span data-toggle='tooltip' data-placement='left' data-original-title='" + value + "'>" + value + "</span>";
     }
 
     /**
