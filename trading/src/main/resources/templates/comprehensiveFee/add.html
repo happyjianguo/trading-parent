@@ -21,7 +21,8 @@
                 </div>
                 <div class="form-group col">
                     <label for="customerType">身份类型</label>
-                    <input id="customerType" class="form-control" name="customerType" readonly="true"  data-provider="customerTypeProvider">
+                    <input id="customerTypeView" class="form-control" readonly="true"  data-provider="customerTypeProvider">
+                    <input id="customerType" class="form-control" name="customerType" hidden="true">
                 </div>
             </div>
             <div class="row row-cols-3">
@@ -136,7 +137,7 @@
                 type: "POST",
                 data:{cardNo:cardNum},
                 dataType:"json",
-                url: "/customer/listCustomerByCardNo.action",
+                url: "/comprehensiveFee/listCustomerByCardNo.action",
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
@@ -146,6 +147,8 @@
                         $('#customerCode').val(res.data[0].code);
                         $('#customerId').val(res.data[0].id);
                         $('#customerName').val(res.data[0].name);
+                        //存的临时翻译字段
+                        $('#customerTypeView').val(res.data[0].customerMarket.notes);
                         //查询客户余额
                         $.ajax({
                             type: "POST",
