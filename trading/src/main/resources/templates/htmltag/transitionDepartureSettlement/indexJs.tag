@@ -163,11 +163,15 @@
         dia = bs4pop.dialog({
             title: '转离场结算单',//对话框title
             className: 'dialog-left',
+            onShowStart(){
+                $('.modal').attr('data-drag', 'draged');
+            },
             content: '${contextPath}/transitionDepartureSettlement/add.html', //对话框内容，可以是 string、element，$object
             width: '880px',//宽度
             height: '540px',//高度
             isIframe: true,//默认是页面层，非iframe
             backdrop: 'static',
+
         });
 
     }
@@ -175,9 +179,9 @@
     function verificationUsernamePassword(id) {
         dia = bs4pop.dialog({
             title: '支付确认',//对话框title
-            className: 'modal-fixed',
-            onShowStart(){
-                $('.modal').attr('data-drag', 'draged');
+            className: 'dialog-right',
+            onShowEnd(){
+                $('#password').focus();
             },
             content: '${contextPath}/transitionDepartureSettlement/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
             width: '400px',//宽度
@@ -203,7 +207,6 @@
             return false;
         }
         let flag=false;
-        debugger;
         $.ajax({
             type: "POST",
             url: "/transitionDepartureSettlement/getOneById.action?id="+rows[0].id,
