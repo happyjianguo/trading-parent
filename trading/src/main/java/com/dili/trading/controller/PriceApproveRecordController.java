@@ -148,7 +148,7 @@ public class PriceApproveRecordController {
 		if (isNeedClaim) {
 			BaseOutput<String> output = this.taskRpc.claim(taskId, user.getId().toString());
 			if (!output.isSuccess()) {
-				return BaseOutput.failure("签收流程任务失败");
+				return BaseOutput.failure("签收流程任务失败，该任务已被签收");
 			}
 		}
 		return this.priceApproveRpc.approveAccept(id, user.getId(), notes, taskId);
