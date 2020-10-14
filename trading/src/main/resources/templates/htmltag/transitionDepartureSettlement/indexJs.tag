@@ -4,7 +4,7 @@
         //如 let itemIndex = 0;
     let _grid = $('#grid');
     let _form = $('#_form');
-    var dia;
+    var dia, diaAdd, diaPay;
 
 
     //时间范围
@@ -160,7 +160,7 @@
      * 打开新增窗口
      */
     function openInsertHandler() {
-        dia = bs4pop.dialog({
+        diaAdd = bs4pop.dialog({
             title: '转离场结算单',//对话框title
             className: 'dialog-left',
             onShowStart(){
@@ -177,12 +177,9 @@
     }
 
     function verificationUsernamePassword(id) {
-        dia = bs4pop.dialog({
+        diaPay = bs4pop.dialog({
             title: '支付确认',//对话框title
             className: 'dialog-right',
-            onShowEnd(){
-                $('#password').focus();
-            },
             content: '${contextPath}/transitionDepartureSettlement/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
             width: '400px',//宽度
             height: '400px',//高度
