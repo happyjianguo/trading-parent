@@ -241,6 +241,13 @@
     }
 
     /**
+     * 虚浮处理
+     */
+    function suspensionFun(value, row, index, field) {
+        return "<span style='display: block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;' title='" + value + "'>" + value + "</span>";
+    }
+
+    /**
      * table参数组装
      * 可修改queryParams向服务器发送其余的参数
      * @param params
