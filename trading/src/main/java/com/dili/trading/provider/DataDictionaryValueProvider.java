@@ -80,7 +80,7 @@ public class DataDictionaryValueProvider extends BatchDisplayTextProviderSupport
 		if (StringUtils.isNotBlank(firmCode)) {
 			valueQuery.setFirmCode(firmCode);
 		}
-		BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValueWithFirm(valueQuery);
+		BaseOutput<List<DataDictionaryValue>> output = dataDictionaryRpc.listDataDictionaryValue(valueQuery);
 		if (output.isSuccess() && CollectionUtils.isNotEmpty(output.getData())) {
 			return output.getData();
 		}
