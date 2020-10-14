@@ -5,7 +5,7 @@
         <form id="saveForm" role="form" novalidate>
             <div class="row row-cols-3">
                 <div class="form-group col">
-                    <label for="">卡号</label>
+                    <label for="">卡号<i class="red">*</i></label>
                     <div class="input-group">
                         <input id="customerCardNo" readonly="true"  class="form-control" name="customerCardNo" required="true"  maxlength="20">
                         <div class="input-group-append">
@@ -48,7 +48,7 @@
             </div>
             <div class="row row-cols-1">
                 <div class="form-group col">
-                    <label tlog  for="inspectionItem">商品名称</label>
+                    <label tlog  for="inspectionItem">商品名称<i class="red">*</i></label>
                     <select id="inspectionItem" name="inspectionItem" class="form-control" required="true"  multiple disabled></select>
                     <#bselect2 _id="inspectionItem" _mode="remote" _value="[2,4,8,55]" _option="" _text=""  _optionVariable="assetsNamesAutoCompleteOption" _required="true"/>
                 </div>
@@ -62,7 +62,7 @@
             <div class="modal-footer-wrap">
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.dia.hide()" data-hotkey="{key: 'Ctrl+E'}">取消</button>
-                    <button type="button" class="btn btn-primary px-5" onclick="bui.util.debounce(saveOrUpdateHandler,1000,true)()" id="formSubmit" data-hotkey="{key: 'Ctrl+S'}">下一步</button>
+                    <button id="saveBtn" type="button" class="btn btn-primary px-5" onclick="bui.util.debounce(saveOrUpdateHandler,1000,true)()" id="formSubmit" data-hotkey="{key: 'Ctrl+S'}">下一步</button>
                 </div>
             </div>
         </form>
@@ -115,7 +115,7 @@
 
         //刷卡监听
         $('#payByCard').on('click',function (e) {
-            //let cardNum=888800039030;
+            let cardNum;
             let json = JSON.parse(callbackObj.readCardNumber());
             if (json.code == 0) {
                 cardNum = json.data;
@@ -175,17 +175,21 @@
                                         for(var i=0;i<resulst.data.length;i++){
                                             if(resulst.data[i].code!="200"){
                                                 parent.bs4pop.alert("未匹配到任何规则！", {type: 'error'});
+                                                $("#saveBtn").attr('disabled', true);
                                                 return
                                             }
                                             fee+=resulst.data[i].totalFee;
                                         }
                                         //获取计费规则成功后才可以输入商品
+                                        $("#saveBtn").attr('disabled', false);
                                         $('#inspectionItem').attr('disabled',false);
                                     }else{
+                                        $("#saveBtn").attr('disabled', true);
                                         parent.bs4pop.alert("未匹配到任何规则！", {type: 'error'});
-                                        return
+                                        return;
                                     }
                                 }else {
+                                    $("#saveBtn").attr('disabled', true);
                                     parent.bs4pop.alert(resulst.result, {type: 'error'});
                                 }
                             }
