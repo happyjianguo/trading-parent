@@ -129,7 +129,7 @@ public class ComprehensiveFeeController {
         comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
         JSONObject ddProvider = new JSONObject();
         ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\"}");
+        ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\",\"firm_code\":\""+userTicket.getFirmCode()+"\"}");
 		comprehensiveFee.getMetadata().put("customerType", ddProvider);
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(comprehensiveFee, output.getData())).toString();
@@ -217,6 +217,7 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/view.html", method = {RequestMethod.GET, RequestMethod.POST})
     public String getOneByID(ModelMap modelMap, ComprehensiveFee comprehensiveFee) throws Exception {
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         if (comprehensiveFee.getId() == null) {
             return "查询失败，检测收费单主键不能为空";
         }
@@ -226,7 +227,7 @@ public class ComprehensiveFeeController {
         map.put("chargeAmount", getProvider("moneyProvider", "chargeAmount"));
         JSONObject ddProvider = new JSONObject();
         ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-        ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\"}");
+        ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\",\"firm_code\":\""+userTicket.getFirmCode()+"\"}");
         map.put("customerType", ddProvider);
         comprehensiveFee.setMetadata(map);
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
@@ -352,6 +353,7 @@ public class ComprehensiveFeeController {
     @ResponseBody
     @RequestMapping("/listCustomerByCardNo.action")
     public BaseOutput<?> listCustomerByCardNo(String cardNo, ModelMap modelMap) throws Exception {
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         BaseOutput<AccountSimpleResponseDto> cardOutput = this.cardRpc.getOneAccountCard(cardNo);
         if (!cardOutput.isSuccess() || Objects.isNull(cardOutput.getData()) || Objects.isNull(cardOutput.getData().getAccountInfo())) {
             return cardOutput;
@@ -360,7 +362,7 @@ public class ComprehensiveFeeController {
         cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
         //获取当前登录人的市场，和客户市场进行对比
         //如果不相等，就直接返回
-        if (!Objects.equals(SessionContext.getSessionContext().getUserTicket().getFirmId(), cardOutput.getData().getAccountInfo().getFirmId())) {
+        if (!Objects.equals(userTicket.getFirmId(), cardOutput.getData().getAccountInfo().getFirmId())) {
             return BaseOutput.failure("未查询到相关客户信息");
         }
         cq.setMarketId(cardOutput.getData().getAccountInfo().getFirmId());
@@ -371,7 +373,7 @@ public class ComprehensiveFeeController {
             //设置单据状态提供者
             JSONObject ddProvider = new JSONObject();
             ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-            ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\"}");
+            ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\",\"firm_code\":\""+userTicket.getFirmCode()+"\"}");
             CustomerMarket customerMarket=output.getData().get(0).getCustomerMarket();
             map.put("type", ddProvider);
             customerMarket.setMetadata(map);
