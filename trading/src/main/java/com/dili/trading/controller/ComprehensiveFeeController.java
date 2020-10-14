@@ -118,6 +118,10 @@ public class ComprehensiveFeeController {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         comprehensiveFee.setMarketId(userTicket.getFirmId());
         comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
+        JSONObject ddProvider = new JSONObject();
+        ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
+		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\"}");
+		comprehensiveFee.getMetadata().put("customerType", ddProvider);
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(comprehensiveFee, output.getData())).toString();
     }

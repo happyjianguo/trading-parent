@@ -3,7 +3,6 @@
 <div class="container-fluid">
         <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
         <form id="saveForm" role="form" novalidate>
-            <input type="text" hidden="true"  id="customerType"  class="form-control" name="customerType"  maxlength="100">
             <div class="row row-cols-3">
                 <div class="form-group col">
                     <label for="">卡号</label>
@@ -21,8 +20,8 @@
                     <input id="customerId" class="form-control" name="customerId" hidden="true">
                 </div>
                 <div class="form-group col">
-                    <label for="plate">车牌号</label>
-                    <input id="plate" class="form-control" name="plate"  maxlength="8">
+                    <label for="customerType">身份类型</label>
+                    <input id="customerType" class="form-control" name="customerType" readonly="true"  data-provider="customerTypeProvider">
                 </div>
             </div>
             <div class="row row-cols-3">
@@ -38,6 +37,12 @@
                     <label for="">缴费金额</label>
                     <input type="number" id="chargeAmountView" readonly="true"  class="form-control"   maxlength="100">
                     <input type="number" hidden="true"  id="chargeAmount"  class="form-control" name="chargeAmount"  maxlength="100">
+                </div>
+            </div>
+            <div class="row row-cols-3">
+                <div class="form-group col">
+                    <label for="plate">车牌号</label>
+                    <input id="plate" class="form-control" name="plate"  maxlength="8">
                 </div>
             </div>
             <div class="row row-cols-1">
@@ -109,7 +114,7 @@
 
         //刷卡监听
         $('#payByCard').on('click',function (e) {
-            let cardNum;
+            //let cardNum=888800039030;
             let json = JSON.parse(callbackObj.readCardNumber());
             if (json.code == 0) {
                 cardNum = json.data;
@@ -126,6 +131,7 @@
                 fee=0.00;
             }
             reCardFlag=true;
+            bui.loading.show('努力获取数据中，请稍候。。。');
             $.ajax({
                 type: "POST",
                 data:{cardNo:cardNum},
@@ -134,8 +140,6 @@
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
-                        //刷卡成功后才可以输入商品
-                        $('#inspectionItem').attr('disabled',false);
                         //赋值
                         $('#customerType').val(res.data[0].customerMarket.type);
                         $('#customerCardNo').val(cardNum);
@@ -166,12 +170,24 @@
                                 if (resulst.code == "200") {
                                     if(resulst.data!=null&&resulst.data.length>0){
                                         for(var i=0;i<resulst.data.length;i++){
+                                            if(resulst.data[i].code!="200"){
+                                                parent.bs4pop.alert("未匹配到任何规则！", {type: 'error'});
+                                                return
+                                            }
                                             fee+=resulst.data[i].totalFee;
                                         }
+                                        //获取计费规则成功后才可以输入商品
+                                        $('#inspectionItem').attr('disabled',false);
+                                    }else{
+                                        parent.bs4pop.alert("未匹配到任何规则！", {type: 'error'});
+                                        return
                                     }
+                                }else {
+                                    parent.bs4pop.alert(resulst.result, {type: 'error'});
                                 }
                             }
                         });
+                        bui.loading.hide();
                     }else {
                         bui.loading.hide();
                         parent.bs4pop.alert(res.result, {type: 'error'});
