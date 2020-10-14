@@ -4,7 +4,7 @@
         //如 let itemIndex = 0;
     let _grid = $('#grid');
     let _form = $('#_form');
-    var dia;
+    var dia, diaAdd, diaPay;
 
 
     //时间范围
@@ -160,25 +160,26 @@
      * 打开新增窗口
      */
     function openInsertHandler() {
-        dia = bs4pop.dialog({
+        diaAdd = bs4pop.dialog({
             title: '转离场结算单',//对话框title
             className: 'dialog-left',
+            onShowStart(){
+                $('.modal').attr('data-drag', 'draged');
+            },
             content: '${contextPath}/transitionDepartureSettlement/add.html', //对话框内容，可以是 string、element，$object
             width: '880px',//宽度
             height: '540px',//高度
             isIframe: true,//默认是页面层，非iframe
             backdrop: 'static',
+
         });
 
     }
 
     function verificationUsernamePassword(id) {
-        dia = bs4pop.dialog({
+        diaPay = bs4pop.dialog({
             title: '支付确认',//对话框title
-            className: 'modal-fixed',
-            onShowStart(){
-                $('.modal').attr('data-drag', 'draged');
-            },
+            className: 'dialog-right',
             content: '${contextPath}/transitionDepartureSettlement/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
             width: '400px',//宽度
             height: '400px',//高度
@@ -203,7 +204,6 @@
             return false;
         }
         let flag=false;
-        debugger;
         $.ajax({
             type: "POST",
             url: "/transitionDepartureSettlement/getOneById.action?id="+rows[0].id,

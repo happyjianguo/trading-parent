@@ -98,7 +98,7 @@
 					<i class="fa fa-search"></i> 查询
 				</button>
 				<button type="button" class="btn btn-outline-primary" onclick="javascript:swipeCard();">
-					<i class="fa fa-refresh"></i> 刷卡
+					<i class="fa fa-credit-card-alt"></i> 刷卡
 				</button>
 			</div>
 		</div>
@@ -132,7 +132,7 @@
 				</button>
 			</div>
 			<table id="grid" data-toggle="table" 
-				data-title="过磅单列表" 
+				data-title="过磅单列表"  data-toolbar="#toolbar"
 				data-pagination="true" data-page-number="1"
 				data-method="post"
                        data-page-size="10" data-query-params="queryParams"
@@ -141,7 +141,7 @@
                        data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
                        data-unique-id="serialNo" data-sort-name="serial_no" data-sort-order="desc"
                        data-icons="bui.variable.icons"
-                       data-buttons-class="primary">
+				   		data-buttons-class="primary" data-show-refresh="true" data-show-fullscreen="true" data-show-columns="true">
 				<thead>
 					<tr>
 						<th data-radio="true"></th>

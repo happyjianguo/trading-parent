@@ -107,7 +107,7 @@
             title: '检测收费单',//对话框title
             content: '${contextPath}/comprehensiveFee/add.html', //对话框内容，可以是 string、element，$object
             width: '880px',//宽度
-            height: '500px',//高度
+            height: '550px',//高度
             backdrop: 'static',
             isIframe: true//默认是页面层，非iframe
         });

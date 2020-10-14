@@ -4,13 +4,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CusCategoryDTO;
 import com.dili.assets.sdk.dto.CusCategoryQuery;
 import com.dili.assets.sdk.rpc.AssetsRpc;
+import com.dili.customer.sdk.domain.Customer;
+import com.dili.customer.sdk.domain.CustomerMarket;
+import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
+import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.domain.ComprehensiveFeeType;
+import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.dto.DTOUtils;
+import com.dili.ss.exception.AppException;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.util.MoneyUtils;
@@ -67,6 +73,9 @@ public class ComprehensiveFeeController {
     @Autowired
     private UserRpc useRpc;
 
+    @Autowired
+    private CustomerRpc customerRpc;
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComprehensiveFeeController.class);
 
@@ -118,6 +127,10 @@ public class ComprehensiveFeeController {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         comprehensiveFee.setMarketId(userTicket.getFirmId());
         comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
+        JSONObject ddProvider = new JSONObject();
+        ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
+		ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\"}");
+		comprehensiveFee.getMetadata().put("customerType", ddProvider);
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(comprehensiveFee, output.getData())).toString();
     }
@@ -211,6 +224,10 @@ public class ComprehensiveFeeController {
         //设置单据状态提供者
         map.put("orderStatus", getProvider("payStatusProvider", "orderStatus"));
         map.put("chargeAmount", getProvider("moneyProvider", "chargeAmount"));
+        JSONObject ddProvider = new JSONObject();
+        ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
+        ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\"}");
+        map.put("customerType", ddProvider);
         comprehensiveFee.setMetadata(map);
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
         if (oneByID.isSuccess()) {
@@ -324,6 +341,49 @@ public class ComprehensiveFeeController {
         userQuery.setKeyword(keyword);
         userQuery.setFirmCode(user.getFirmCode());
         return this.useRpc.listByExample(userQuery);
+    }
+
+    /**
+     * 根据卡号获取客户
+     *
+     * @param cardNo
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/listCustomerByCardNo.action")
+    public BaseOutput<?> listCustomerByCardNo(String cardNo, ModelMap modelMap) throws Exception {
+        BaseOutput<AccountSimpleResponseDto> cardOutput = this.cardRpc.getOneAccountCard(cardNo);
+        if (!cardOutput.isSuccess() || Objects.isNull(cardOutput.getData()) || Objects.isNull(cardOutput.getData().getAccountInfo())) {
+            return cardOutput;
+        }
+        CustomerQueryInput cq = new CustomerQueryInput();
+        cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
+        //获取当前登录人的市场，和客户市场进行对比
+        //如果不相等，就直接返回
+        if (!Objects.equals(SessionContext.getSessionContext().getUserTicket().getFirmId(), cardOutput.getData().getAccountInfo().getFirmId())) {
+            return BaseOutput.failure("未查询到相关客户信息");
+        }
+        cq.setMarketId(cardOutput.getData().getAccountInfo().getFirmId());
+        BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
+        List<CustomerMarket> list=new ArrayList<>();
+        if(output!=null&&output.getData()!=null&&output.getData().size()>0){
+            Map<String, Object> map = new HashMap<>();
+            //设置单据状态提供者
+            JSONObject ddProvider = new JSONObject();
+            ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
+            ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\"}");
+            CustomerMarket customerMarket=output.getData().get(0).getCustomerMarket();
+            map.put("type", ddProvider);
+            customerMarket.setMetadata(map);
+            list.add(customerMarket);
+            List<Map> result=ValueProviderUtils.buildDataByProvider(customerMarket, list);
+            if(result!=null&&result.size()>0){
+                String type=(String) result.get(0).get("type");
+                //随便个String类型存翻译
+                customerMarket.setNotes(type);
+            }
+        }
+        return output;
     }
 
     /**
