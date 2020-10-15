@@ -98,6 +98,25 @@ public class QueryFeeController {
     }
 
     /**
+     * 根据参数查询交易总额和交易总数
+     *
+     * @param comprehensiveFee 参数Obj
+     * @return
+     */
+    @RequestMapping(value = "/selectCountAndTotal.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput<ComprehensiveFee> selectCountAndTotal(@RequestBody ComprehensiveFee comprehensiveFee) throws Exception {
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        comprehensiveFee.setMarketId(userTicket.getFirmId());
+        comprehensiveFee.setOrderType(ComprehensiveFeeType.QUERY_CHARGE.getValue());
+        BaseOutput<ComprehensiveFee> res = comprehensiveFeeRpc.selectCountAndTotal(comprehensiveFee);
+        if(res.getData().getTransactionsTotal()==null){
+            res.getData().setTransactionsTotal(0L);
+        }
+        return res;
+    }
+
+    /**
      * 检查询收费单新增页面
      *
      * @param modelMap

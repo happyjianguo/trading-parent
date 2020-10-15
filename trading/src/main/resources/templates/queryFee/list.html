@@ -68,6 +68,8 @@
 			<#resource code="comprehensiveFee_queryFee_export">
 				<button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')"><i class="fa fa-download"></i> 导出</button>
 			</#resource>
+			<h6 id="transactionsNumCount" class="float-left" style="margin-top: auto;margin-left:30px;"></h6>
+			<h6 id="transactionsTotal" class="float-left" style="margin-top: auto;margin-left:30px;"></h6>
 			</div>
 			<table id="grid" data-toggle="table" data-title="查询收费列表" class="table" data-toolbar="#toolbar" data-pagination="true" data-page-number="1" data-page-size="10" data-query-params="queryParams"
 				data-side-pagination="server" data-method="POST" data-content-type="application/x-www-form-urlencoded" data-single-select="true" data-click-to-select="true" data-checkbox-header="true"

@@ -41,6 +41,16 @@ public interface ComprehensiveFeeRpc {
     PageOutput<List<ComprehensiveFee>> listByQueryParams(ComprehensiveFee comprehensiveFee);
 
     /**
+     * 根据参数查询交易总数和交易总额
+     *
+     * @param comprehensiveFee
+     * @return String
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/comprehensiveFee/selectCountAndTotal", method = {RequestMethod.POST})
+    BaseOutput<ComprehensiveFee> selectCountAndTotal(ComprehensiveFee comprehensiveFee);
+
+    /**
      * 新增comprehensiveFee
      *
      * @param comprehensiveFee
