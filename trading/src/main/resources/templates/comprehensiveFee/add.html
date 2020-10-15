@@ -61,7 +61,7 @@
             </div>
             <div class="modal-footer-wrap">
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.dia.hide()" data-hotkey="{key: 'Ctrl+E'}">取消</button>
+                    <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.diaAdd.hide()" data-hotkey="{key: 'Ctrl+E'}">取消</button>
                     <button id="saveBtn" type="button" class="btn btn-primary px-5" onclick="bui.util.debounce(saveOrUpdateHandler,1000,true)()" id="formSubmit" data-hotkey="{key: 'Ctrl+S'}">下一步</button>
                 </div>
             </div>
@@ -174,7 +174,7 @@
                                     if(resulst.data!=null&&resulst.data.length>0){
                                         for(var i=0;i<resulst.data.length;i++){
                                             if(resulst.data[i].code!="200"){
-                                                parent.bs4pop.alert("未匹配到任何规则！", {type: 'error'});
+                                                bs4pop.alert("未匹配到任何规则！", {type: 'error'});
                                                 $("#saveBtn").attr('disabled', true);
                                                 return
                                             }
@@ -185,19 +185,19 @@
                                         $('#inspectionItem').attr('disabled',false);
                                     }else{
                                         $("#saveBtn").attr('disabled', true);
-                                        parent.bs4pop.alert("未匹配到任何规则！", {type: 'error'});
+                                        bs4pop.alert("未匹配到任何规则！", {type: 'error'});
                                         return;
                                     }
                                 }else {
                                     $("#saveBtn").attr('disabled', true);
-                                    parent.bs4pop.alert(resulst.result, {type: 'error'});
+                                    bs4pop.alert(resulst.result, {type: 'error'});
                                 }
                             }
                         });
                         bui.loading.hide();
                     }else {
                         bui.loading.hide();
-                        parent.bs4pop.alert(res.result, {type: 'error'});
+                        bs4pop.alert(res.result, {type: 'error'});
                     }
                 }
             });
@@ -228,16 +228,15 @@
                 success: function (res) {
                     bui.loading.hide();
                     if (res.code == "200") {
-                        parent.dia.hide();
                         parent.verificationUsernamePassword(res.data.id);
                     } else {
                         bui.loading.hide();
-                        parent.bs4pop.alert(res.message, {type: 'error'});
+                        bs4pop.alert(res.message, {type: 'error'});
                     }
                 },
                 error: function (error) {
                     bui.loading.hide();
-                    parent.bs4pop.alert(error.message, {type: 'error'});
+                    bs4pop.alert(error.message, {type: 'error'});
                 }
             });
         }
