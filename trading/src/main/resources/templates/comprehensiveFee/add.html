@@ -115,14 +115,14 @@
 
         //刷卡监听
         $('#payByCard').on('click',function (e) {
-            let cardNum;
-            let json = JSON.parse(callbackObj.readCardNumber());
-            if (json.code == 0) {
-                cardNum = json.data;
-            } else {
-                parent.bs4pop.alert(json.message, {type: "error"});
-                return false;
-            }
+            let cardNum=888800039030;
+            // let json = JSON.parse(callbackObj.readCardNumber());
+            // if (json.code == 0) {
+            //     cardNum = json.data;
+            // } else {
+            //     parent.bs4pop.alert(json.message, {type: "error"});
+            //     return false;
+            // }
            //再次刷卡时将检测费用和缴费金额清0
             if(reCardFlag==true){
                 $('#inspectionNum').val('');

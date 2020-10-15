@@ -118,6 +118,7 @@
         $(window).resize(function () {
             _grid.bootstrapTable('resetView')
         });
+        initTotal();
         let size = ($(window).height() - $('#queryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
         _grid.bootstrapTable('refreshOptions', {
@@ -139,6 +140,33 @@
     /******************************驱动执行区 end****************************/
 
     /*****************************************函数区 begin************************************/
+
+    function initTotal() {
+        var obj={};
+        obj.customerId=$('#customerId').val();
+        obj.customerCardNo=$('#show_customer_card').val();
+        obj.operatorId=$('#operatorId').val();
+        obj.operatorTimeStart=$('#createdStart').val();
+        obj.operatorTimeEnd=$('#createdEnd').val();
+        $.ajax({
+            type: "POST",
+            url: "/queryFee/selectCountAndTotal.action",
+            data: JSON.stringify(obj),
+            processData: false,
+            contentType: false,
+            async: true,
+            success: function (res) {
+                if (res.code == "200") {
+                    $('#transactionsNumCount').html('<span>总笔数：'+res.data.transactionsNumCount+'</span>');
+                    $('#transactionsTotal').html('<span>总金额：'+((res.data.transactionsTotal)/100).toFixed(2)+'</span>');
+                }
+            },
+            error: function (error) {
+                bs4pop.alert(error.message, {type: 'error'});
+            }
+        });
+    }
+
     /**
      * 打开新增窗口
      */
@@ -176,6 +204,7 @@
      * 查询处理
      */
     function queryDataHandler() {
+        initTotal();
         _grid.bootstrapTable('refresh');
     }
 
