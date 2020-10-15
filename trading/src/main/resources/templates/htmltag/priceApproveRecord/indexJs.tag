@@ -534,23 +534,14 @@
     }
     $(function(){
         $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
-            if(row.$_status == 1){
-                $("#btn_enabled").attr("disabled", "disabled");
-                $("#btn_disabled").attr("disabled", false);
-                $("#btn_enabled").addClass("btn_css_disabled");
-                $("#btn_disabled").removeClass("btn_css_disabled");
-            }else if(row.$_status == 2){
-                $("#btn_disabled").attr("disabled", "disabled");
-                $("#btn_enabled").removeClass("btn_css_disabled");
-                $("#btn_disabled").addClass("btn_css_disabled");
-                $("#btn_enabled").attr("disabled", false);
+            if(row.isHandleProcess&&row.$_state==${@com.dili.orders.domain.PriceState.APPROVING.getValue()}){
+                $("#btn_approve").attr("disabled", false);
+                $("#btn_approve").removeClass("btn_css_disabled");
             }else{
-                $("#btn_disabled").attr("disabled", "disabled");
-                $("#btn_enabled").attr("disabled", "disabled");
-                $("#btn_disabled").addClass("btn_css_disabled");
-                $("#btn_enabled").addClass("btn_css_disabled");
+            	$("#btn_approve").attr("disabled", "btn_css_disabled");
+                $("#btn_approve").addClass("btn_css_disabled");
             }
-        })
+        });
     })
     /**
 	 * ***************************************自定义事件区
