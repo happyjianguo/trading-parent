@@ -143,8 +143,12 @@
      * 打开新增窗口
      */
     function openInsertHandler() {
-        dia = bs4pop.dialog({
+        diaAdd = bs4pop.dialog({
             title: '查询收费',//对话框title
+            className: 'dialog-left',
+            onShowStart(){
+                $('.modal').attr('data-drag', 'draged');
+            },
             content: '${contextPath}/queryFee/add.html', //对话框内容，可以是 string、element，$object
             width: '880px',//宽度
             height: '350px',//高度
@@ -157,11 +161,12 @@
      * 打开确认支付页面
      */
     function verificationUsernamePassword(id) {
-        dia = bs4pop.dialog({
+        diaPay = bs4pop.dialog({
             title: '支付确认',//对话框title
+            className: 'dialog-right',
             content: '${contextPath}/queryFee/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
             width: '400px',//宽度
-            height: '390px',//高度
+            height: '400px',//高度
             backdrop: 'static',
             isIframe: true//默认是页面层，非iframe
         });

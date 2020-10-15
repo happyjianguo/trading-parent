@@ -38,7 +38,7 @@
             </div>
             <div class="modal-footer-wrap">
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.dia.hide()" data-hotkey="{key: 'Ctrl+E'}">取消</button>
+                    <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.diaAdd.hide()" data-hotkey="{key: 'Ctrl+E'}">取消</button>
                     <button type="button" class="btn btn-primary px-5" onclick="bui.util.debounce(saveOrUpdateHandler,1000,true)()" id="formSubmit" data-hotkey="{key: 'Ctrl+S'}">下一步</button>
                 </div>
             </div>
@@ -89,7 +89,7 @@
                         });
                     }else {
                         bui.loading.hide();
-                        parent.bs4pop.alert(res.result, {type: 'error'});
+                        bs4pop.alert(res.result, {type: 'error'});
                     }
                 },
             });
@@ -103,7 +103,7 @@
             var num = $('#chargeAmountView').val();
             var exp = /^\d{1,5}(\.\d{1,2})?$/;
             if(!exp.test(num) || num == 0){
-                parent.bs4pop.alert("缴费金额必须是0.01-99999.99之间的数字且最多两位小数", {type: 'error'});
+                bs4pop.alert("缴费金额必须是0.01-99999.99之间的数字且最多两位小数", {type: 'error'});
                 return;
             }
             // 提交保存
@@ -127,16 +127,15 @@
                 success: function (res) {
                     bui.loading.hide();
                     if (res.code == "200") {
-                        parent.dia.hide();
                         parent.verificationUsernamePassword(res.data.id);
                     } else {
                         bui.loading.hide();
-                        parent.bs4pop.alert(res.message, {type: 'error'});
+                        bs4pop.alert(res.message, {type: 'error'});
                     }
                 },
                 error: function (error) {
                     bui.loading.hide();
-                    parent.bs4pop.alert(error.message, {type: 'error'});
+                    bs4pop.alert(error.message, {type: 'error'});
                 }
             });
         }
