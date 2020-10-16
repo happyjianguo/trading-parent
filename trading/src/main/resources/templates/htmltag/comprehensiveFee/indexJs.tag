@@ -88,6 +88,7 @@
         $(window).resize(function () {
             _grid.bootstrapTable('resetView')
         });
+        initTotal();
         let size = ($(window).height() - $('#queryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
         _grid.bootstrapTable('refreshOptions', {
@@ -102,12 +103,45 @@
     /******************************驱动执行区 end****************************/
 
     /*****************************************函数区 begin************************************/
+    function initTotal() {
+        var obj={};
+        obj.orderStatus=$('#orderStatus').val();
+        obj.customerId=$('#customerId').val();
+        obj.customerCardNo=$('#show_customer_card').val();
+        obj.operatorId=$('#operatorId').val();
+        obj.code=$('#code').val();
+        obj.operatorTimeStart=$('#createdStart').val();
+        obj.operatorTimeEnd=$('#createdEnd').val();
+        $.ajax({
+            type: "POST",
+            url: "/comprehensiveFee/selectCountAndTotal.action",
+            data: JSON.stringify(obj),
+            processData: false,
+            contentType: false,
+            async: true,
+            success: function (res) {
+                if (res.code == "200") {
+                    $('#transactionsNumCount').html('<span>总笔数：'+res.data.transactionsNumCount+'</span>');
+                    $('#transactionsTotal').html('<span>总金额：'+((res.data.transactionsTotal)/100).toFixed(2)+'</span>');
+                }
+            },
+            error: function (error) {
+                bs4pop.alert(error.message, {type: 'error'});
+            }
+        });
+    }
+
+
     /**
      * 打开新增窗口
      */
     function openInsertHandler() {
-        dia = bs4pop.dialog({
+        diaAdd = bs4pop.dialog({
             title: '检测收费单',//对话框title
+            className: 'dialog-left',
+            onShowStart(){
+                $('.modal').attr('data-drag', 'draged');
+            },
             content: '${contextPath}/comprehensiveFee/add.html', //对话框内容，可以是 string、element，$object
             width: '880px',//宽度
             height: '550px',//高度
@@ -121,11 +155,12 @@
      * 打开确认支付页面
      * */
     function verificationUsernamePassword(id) {
-        dia = bs4pop.dialog({
+        diaPay = bs4pop.dialog({
             title: '支付确认',//对话框title
+            className: 'dialog-right',
             content: '${contextPath}/comprehensiveFee/verificationUsernamePassword.action?id=' + id, //对话框内容，可以是 string、element，$object
             width: '400px',//宽度
-            height: '390px',//高度
+            height: '400px',//高度
             backdrop: 'static',
             isIframe: true//默认是页面层，非iframe
         });
@@ -240,6 +275,7 @@
      * 查询处理
      */
     function queryDataHandler() {
+        initTotal();
         _grid.bootstrapTable('refresh');
     }
 
