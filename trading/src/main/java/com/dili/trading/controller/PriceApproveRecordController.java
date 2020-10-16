@@ -1,6 +1,7 @@
 package com.dili.trading.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,18 +19,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.dili.bpmc.sdk.domain.TaskMapping;
+import com.dili.bpmc.sdk.dto.TaskDto;
 import com.dili.bpmc.sdk.rpc.TaskRpc;
+import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.domain.PriceApproveRecord;
 import com.dili.orders.dto.PriceApproveRecordQueryDto;
+import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
+import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.util.BeanConver;
 import com.dili.trading.component.BpmcUtil;
 import com.dili.trading.dto.PriceApproveRecordProcessDto;
 import com.dili.trading.rpc.PriceApproveRecordRpc;
+import com.dili.uap.sdk.domain.Role;
 import com.dili.uap.sdk.domain.UserTicket;
+import com.dili.uap.sdk.rpc.RoleRpc;
+import com.dili.uap.sdk.rpc.UserRpc;
 import com.dili.uap.sdk.session.SessionContext;
 
 /**
@@ -46,6 +55,8 @@ public class PriceApproveRecordController {
 	private BpmcUtil bpmcUtil;
 	@Autowired
 	private TaskRpc taskRpc;
+	@Autowired
+	private RoleRpc roleRpc;
 
 	/**
 	 * 列表页
@@ -180,4 +191,42 @@ public class PriceApproveRecordController {
 		return this.priceApproveRpc.approveReject(id, user.getId(), notes, taskId);
 	}
 
+	@ResponseBody
+	@RequestMapping("/listByLoggedUser.action")
+	public BaseOutput<?> listByLoggedUser(PriceApproveRecordQueryDto query) {
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		if (user == null) {
+			return BaseOutput.failure("用户未登录");
+		}
+		BaseOutput<List<TaskMapping>> taskOutput = this.taskRpc.listUserTask(user.getId(), OrdersConstant.PRICE_APPROVE_PROCESS_DEFINITION_KEY);
+		if (!taskOutput.isSuccess()) {
+			LOGGER.error(taskOutput.getMessage());
+			return BaseOutput.failure("查询流程任务失败");
+		}
+		List<String> processInstanceIds = new ArrayList<String>(taskOutput.getData().size());
+		taskOutput.getData().forEach(t -> processInstanceIds.add(t.getProcessInstanceId()));
+		query.setProcessInstanceIds(processInstanceIds);
+		PageOutput<List<PriceApproveRecord>> output = this.priceApproveRpc.listPage(query);
+
+		if (!output.isSuccess()) {
+			LOGGER.error(output.getMessage());
+			return BaseOutput.failure("查询数据失败");
+		}
+
+		List<PriceApproveRecordProcessDto> priceList = BeanConver.copyList(output.getData(), PriceApproveRecordProcessDto.class);
+		this.bpmcUtil.fitLoggedUserIsCanHandledProcess(priceList);
+
+		query.setMetadata(query.getMetadata());
+		try {
+			List<Map> list = ValueProviderUtils.buildDataByProvider(query, priceList);
+
+			PageOutput page = new PageOutput<List<Map>>();
+			page.setCode(ResultCode.OK).setData(list).setTotal(output.getTotal());
+			return page;
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+			return BaseOutput.failure("查询数据失败");
+		}
+	}
 }
