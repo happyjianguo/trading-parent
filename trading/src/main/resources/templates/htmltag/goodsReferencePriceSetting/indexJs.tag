@@ -102,6 +102,7 @@
         });
     }
 
+
     /**
      * 打开新增/修改窗口
      */
@@ -150,13 +151,16 @@
      * @param params
      */
     function queryParams(params) {
+        let val = $("input[name='onlyExistReferencePrice']").prop("checked")
         let temp = {
             rows: params.limit,   //页面大小
             page: ((params.offset / params.limit) + 1) || 1, //页码
             sort: params.sort,
             order: params.order
         };
-        return $.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
+        let extend = $.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
+        extend.onlyExistReferencePrice = val ? 1 : 0;
+        return extend;
     }
 
     /**
