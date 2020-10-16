@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,7 +148,6 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
                 assetsRpc.listCusCategory(query), "assets-service");
 
         GoodsReferencePriceSetting settingQuery = new GoodsReferencePriceSetting();
-        settingQuery.setGoodsName(params.getGoodsName());
         settingQuery.setMarketId(params.getFirmId());
         List<GoodsReferencePriceSetting> referencePriceSettings = goodsReferencePriceSettingRpc.getAllGoods(settingQuery);
         Map<Long, GoodsReferencePriceSetting> referencePriceSettingMap = this.concatSetting2Map(new ArrayList<>(), referencePriceSettings);
