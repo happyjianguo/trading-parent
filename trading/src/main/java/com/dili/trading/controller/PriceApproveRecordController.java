@@ -192,6 +192,12 @@ public class PriceApproveRecordController {
 		return this.priceApproveRpc.approveReject(id, user.getId(), notes, taskId);
 	}
 
+	/**
+	 * 查询登录用户审批数据
+	 * 
+	 * @param query
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping("/listByLoggedUser.action")
 	public BaseOutput<?> listByLoggedUser(PriceApproveRecordQueryDto query) {
