@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "order-service", contextId = "transitionDepartureApplyRpc", url = "localhost:8185", configuration = PayServiceFeignConfig.class)
+@FeignClient(name = "order-service", contextId = "transitionDepartureApplyRpc", url = "${orderService.url:}", configuration = PayServiceFeignConfig.class)
 public interface TransitionDepartureApplyRpc {
 
     /**
