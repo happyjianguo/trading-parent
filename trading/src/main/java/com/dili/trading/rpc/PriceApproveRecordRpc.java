@@ -32,7 +32,7 @@ public interface PriceApproveRecordRpc {
 	 * @return
 	 */
 	@RequestMapping(value = "/api/priceApproveRecord/approveAccept")
-	BaseOutput<Object> approveAccept(@RequestParam Long id, @RequestParam Long approverId, @RequestParam String notes, @RequestParam String taskId);
+	BaseOutput<Object> approveAccept(@RequestParam(value = "id") Long id, @RequestParam(value = "approverId") Long approverId, @RequestParam(value = "notes") String notes, @RequestParam(value = "taskId") String taskId);
 
 	/**
 	 * 审批拒绝
@@ -44,5 +44,5 @@ public interface PriceApproveRecordRpc {
 	 * @return
 	 */
 	@RequestMapping(value = "/api/priceApproveRecord/approveReject")
-	BaseOutput<Object> approveReject(@RequestParam Long id, @RequestParam Long approverId, @RequestParam String notes, @RequestParam String taskId);
+	BaseOutput<Object> approveReject(@RequestParam(value = "id") Long id, @RequestParam(value = "approverId") Long approverId, @RequestParam(value = "notes") String notes, @RequestParam(value = "taskId") String taskId);
 }

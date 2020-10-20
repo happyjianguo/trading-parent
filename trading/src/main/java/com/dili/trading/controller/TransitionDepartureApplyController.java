@@ -179,7 +179,12 @@ public class TransitionDepartureApplyController {
     public BaseOutput insert(TransitionDepartureApply transitionDepartureApply) {
         //新增的时候设置市场id
         transitionDepartureApply.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-        return transitionDepartureApplyService.insert(transitionDepartureApply);
+        //新增之后，推送消息
+        BaseOutput insert = transitionDepartureApplyService.insert(transitionDepartureApply);
+        if (insert.isSuccess()) {
+            //推送消息到三哥那边
+        }
+        return insert;
     }
 
     /**
