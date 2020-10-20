@@ -194,7 +194,7 @@ public class PriceApproveRecordController {
 
 	@ResponseBody
 	@RequestMapping("/listByLoggedUser.action")
-	public BaseOutput<?> listByLoggedUser(@RequestBody PriceApproveRecordQueryDto query) {
+	public BaseOutput<?> listByLoggedUser(PriceApproveRecordQueryDto query) {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");

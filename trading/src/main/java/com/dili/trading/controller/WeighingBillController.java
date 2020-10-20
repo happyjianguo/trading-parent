@@ -157,7 +157,7 @@ public class WeighingBillController {
 			weighingBill.setModifierId(user.getId());
 			BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.update(weighingBill);
 			if (!wsOutput.isSuccess()) {
-				return output;
+				return wsOutput;
 			}
 			ws = wsOutput.getData();
 			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
@@ -314,7 +314,7 @@ public class WeighingBillController {
 	 */
 	@ResponseBody
 	@PostMapping("/listPage.action")
-	public String listPage(WeighingBillQueryDto query) {
+	public String listPage(@RequestBody WeighingBillQueryDto query) {
 		// 如果市场id为空，则加入
 		if (Objects.isNull(query.getMarketId())) {
 			query.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());

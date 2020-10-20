@@ -14,7 +14,11 @@
 				<#bcomboProvider _id="tradeTypeId" _provider="tradeTypeProvider" _queryParams='{emptyText:"-- 全部 --"}' />
 			</div>
 			<div class="form-group col">
-				<label for="">商品名称</label> <input type="text" class="form-control" name="goodsSplitStr" placeholder="">
+				<div class="form-group col">
+                    <label tlog  for="inspectionItem">商品名称</label>
+                    <select id="goodsIds" name="goodsIds" class="form-control" required="true"  multiple="multiple"></select>
+                    <#bselect2 _id="goodsIds" _mode="remote" _value="" _option="" _text=""  _optionVariable="assetsNamesAutoCompleteOption" _required="true"/>
+                </div>
 			</div>
 			<div class="form-group col-auto" style="width: 350px">
 				<label for="buyerName" class="">买家</label>
@@ -137,7 +141,7 @@
 				data-method="post"
                        data-page-size="10" data-query-params="queryParams"
                        data-side-pagination="server"
-                       data-content-type="application/x-www-form-urlencoded"
+                       data-content-type="application/json"
                        data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
                        data-unique-id="serialNo" data-sort-name="serial_no" data-sort-order="desc"
                        data-icons="bui.variable.icons"
@@ -198,6 +202,36 @@
 </div>
 
 <script>
+
+// 商品
+var assetsNamesAutoCompleteOption = {
+    width: '100%',
+    language: 'zh-CN',
+    minimumInputLength:1,
+    maximumSelectionLength: 20,
+    allowClear : true,
+    placeholder: '',
+    ajax: {
+        type:'post',
+        url: '/assets/listNormal.action',
+            data: function (params) {
+            return {
+                keyword: params.term,
+            }
+        },
+        processResults: function (data) {
+            if(data.length){
+                return {
+                    results: $.map(data, function (item) {
+                        item.text =item.name ;
+                        return item;
+                    })
+                };
+            }
+        }
+    }
+}
+
 	$(function() {
 		$('#buyerCardNo').on(
 				'input',
