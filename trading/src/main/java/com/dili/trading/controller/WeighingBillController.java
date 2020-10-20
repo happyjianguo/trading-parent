@@ -314,7 +314,7 @@ public class WeighingBillController {
 	 */
 	@ResponseBody
 	@PostMapping("/listPage.action")
-	public String listPage(WeighingBillQueryDto query) {
+	public String listPage(@RequestBody WeighingBillQueryDto query) {
 		// 如果市场id为空，则加入
 		if (Objects.isNull(query.getMarketId())) {
 			query.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
