@@ -454,6 +454,7 @@ public class TransitionDepartureApplyController {
         map.put("transTypeId", getProvider("tradeTypeProvider", "transTypeId"));
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
+        map.put("originatorTime", getProvider("datetimeProvider", "originatorTime"));
         transitionDepartureApply.setMetadata(map);
         PageOutput<List<Map>> pageOutput = PageOutput.success();
         pageOutput.setData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, output.getData())).setPageNum(output.getPageNum()).setTotal(output.getTotal()).setPageSize(output.getPageSize()).setPages(output.getPages());
@@ -472,6 +473,9 @@ public class TransitionDepartureApplyController {
     public BaseOutput<?> updateForApp(TransitionDepartureApply transitionDepartureApply) {
         if (Objects.isNull(transitionDepartureApply.getId())) {
             return BaseOutput.failure("申请单id不能为空");
+        }
+        if (transitionDepartureApply.getApprovalReason().length() > 30) {
+            return BaseOutput.failure("备注信息不能超过30个字符");
         }
         return transitionDepartureApplyService.updateForApp(transitionDepartureApply);
     }
