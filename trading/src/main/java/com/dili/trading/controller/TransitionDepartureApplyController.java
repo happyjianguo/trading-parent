@@ -454,6 +454,7 @@ public class TransitionDepartureApplyController {
         map.put("transTypeId", getProvider("tradeTypeProvider", "transTypeId"));
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
+        map.put("originatorTime", getProvider("datetimeProvider", "originatorTime"));
         transitionDepartureApply.setMetadata(map);
         PageOutput<List<Map>> pageOutput = PageOutput.success();
         pageOutput.setData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, output.getData())).setPageNum(output.getPageNum()).setTotal(output.getTotal()).setPageSize(output.getPageSize()).setPages(output.getPages());
