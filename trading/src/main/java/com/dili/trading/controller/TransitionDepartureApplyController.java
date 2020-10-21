@@ -473,6 +473,9 @@ public class TransitionDepartureApplyController {
         if (Objects.isNull(transitionDepartureApply.getId())) {
             return BaseOutput.failure("申请单id不能为空");
         }
+        if (transitionDepartureApply.getApprovalReason().length() > 30) {
+            return BaseOutput.failure("备注信息不能超过30个字符");
+        }
         return transitionDepartureApplyService.updateForApp(transitionDepartureApply);
     }
 
