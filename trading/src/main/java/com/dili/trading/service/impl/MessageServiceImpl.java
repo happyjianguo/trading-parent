@@ -1,6 +1,7 @@
 package com.dili.trading.service.impl;
 
 import com.dili.trading.service.MessageService;
+import com.dili.uap.sdk.session.SessionContext;
 import com.diligrp.message.sdk.domain.input.AppPushInput;
 import com.diligrp.message.sdk.rpc.AppPushRpc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class MessageServiceImpl implements MessageService {
         //appPushInput.setPlatform(PushPlatformEnum.Android.getValue());
         Set<Long> users = new HashSet(userIds);
         appPushInput.setUserIds(users);
+        appPushInput.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         appPushRpc.receiveMessage(appPushInput);
     }
 
