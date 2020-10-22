@@ -15,16 +15,18 @@ import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.glossary.ApplyEnum;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
+import com.dili.trading.service.MessageService;
 import com.dili.trading.service.TransitionDepartureApplyService;
+import com.dili.trading.service.UserService;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -38,6 +40,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/transitionDepartureApply")
+@Slf4j
 public class TransitionDepartureApplyController {
 
 
@@ -52,6 +55,12 @@ public class TransitionDepartureApplyController {
 
     @Autowired
     private CustomerRpc customerRpc;
+
+    @Autowired
+    private MessageService messageService;
+
+    @Autowired
+    private UserService userService;
 
 
     /**
@@ -180,9 +189,16 @@ public class TransitionDepartureApplyController {
         //新增的时候设置市场id
         transitionDepartureApply.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         //新增之后，推送消息
-        BaseOutput insert = transitionDepartureApplyService.insert(transitionDepartureApply);
+        BaseOutput<TransitionDepartureApply> insert = transitionDepartureApplyService.insert(transitionDepartureApply);
         if (insert.isSuccess()) {
             //推送消息到三哥那边
+            try {
+                String content = "转离场审核" + insert.getData().getCode();
+                messageService.pushAppMessage(content, content, userService.getPassCheckUserIdsByApp("transitionDepartureApply_updateForApp"));
+            } catch (Exception e) {
+                log.error("消息推送到app失败" + e.getMessage());
+            }
+
         }
         return insert;
     }
