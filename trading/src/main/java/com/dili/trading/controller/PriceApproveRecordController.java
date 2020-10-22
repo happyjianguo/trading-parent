@@ -79,7 +79,7 @@ public class PriceApproveRecordController {
 	 */
 	@ResponseBody
 	@PostMapping("/listPage.action")
-	public String listPage(PriceApproveRecordQueryDto query) {
+	public String listPage(@RequestBody PriceApproveRecordQueryDto query) {
 
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
@@ -138,6 +138,35 @@ public class PriceApproveRecordController {
 		modelMap.addAttribute("model", ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData())).get(0)).addAttribute("taskId", taskId).addAttribute("isNeedClaim", isNeedClaim)
 				.addAttribute("modal", modal);
 		return "priceApproveRecord/approve";
+	}
+
+	/**
+	 * 审批试图
+	 * 
+	 * @param businessKey 业务id
+	 * @param taskId      任务id
+	 * @param isNeedClaim 是否需要签收
+	 * @param modal       是否窗口
+	 * @param modelMap
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping("/appApprove.action")
+	public BaseOutput<?> approveView(@RequestParam Long id) throws Exception {
+		BaseOutput<PriceApproveRecord> output = this.priceApproveRpc.getById(id);
+		if (!output.isSuccess()) {
+			LOGGER.error(output.getMessage());
+			return null;
+		}
+
+		if (output.getData() == null) {
+			return BaseOutput.failure("审批数据不存在");
+
+		}
+		PriceApproveRecordProcessDto dto = BeanConver.copyBean(output.getData(), PriceApproveRecordProcessDto.class);
+		this.bpmcUtil.fitLoggedUserIsCanHandledProcess(Arrays.asList(dto));
+		return BaseOutput.successData(dto);
 	}
 
 	/**
