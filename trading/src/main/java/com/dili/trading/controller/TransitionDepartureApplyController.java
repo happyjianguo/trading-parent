@@ -21,6 +21,7 @@ import com.dili.trading.service.UserService;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/transitionDepartureApply")
+@Slf4j
 public class TransitionDepartureApplyController {
 
 
@@ -190,8 +192,12 @@ public class TransitionDepartureApplyController {
         BaseOutput<TransitionDepartureApply> insert = transitionDepartureApplyService.insert(transitionDepartureApply);
         if (insert.isSuccess()) {
             //推送消息到三哥那边
-            String content = "转离场审核" + insert.getData().getCode();
-            messageService.pushAppMessage(content, content, userService.getPassCheckUserIdsByApp("transitionDepartureApply_updateForApp"));
+            try {
+                String content = "转离场审核" + insert.getData().getCode();
+                messageService.pushAppMessage(content, content, userService.getPassCheckUserIdsByApp("transitionDepartureApply_updateForApp"));
+            } catch (Exception e) {
+                log.error("消息推送到app失败" + e.getMessage());
+            }
 
         }
         return insert;
