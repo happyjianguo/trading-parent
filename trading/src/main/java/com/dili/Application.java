@@ -23,7 +23,7 @@ import com.dili.trading.config.PutMchIdHeaderInterceptor;
 @RestfulScan({ "com.dili.trading.rpc", "com.dili.uap.sdk.rpc", "com.dili.bpmc.sdk.rpc" })
 //@DTOScan(value = {"com.dili.ss"})
 @EnableDiscoveryClient
-@EnableFeignClients
+@EnableFeignClients(basePackages = {"com.dili.customer.sdk.rpc","com.dili.orders.rpc","com.dili.trading.rpc","com.dili.assets.sdk.rpc","com.diligrp.message.sdk.rpc"})
 public class Application extends SpringBootServletInitializer implements WebMvcConfigurer {
 
 	@LoadBalanced
