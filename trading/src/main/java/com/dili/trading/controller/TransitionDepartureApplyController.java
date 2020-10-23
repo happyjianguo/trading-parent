@@ -193,8 +193,7 @@ public class TransitionDepartureApplyController {
         if (insert.isSuccess()) {
             //推送消息到三哥那边
             try {
-                String content = "转离场审核" + insert.getData().getCode();
-                messageService.pushAppMessage(content, content, userService.getPassCheckUserIdsByApp("transitionDepartureApply_updateForApp"), "ORDER_TRANSITION_DEPARTUREAPPLY", String.valueOf(insert.getData().getId()));
+                messageService.pushAppMessage("转离场审批流程待处理", "您有新转离场审批流程待处理", userService.getPassCheckUserIdsByApp("transitionDepartureApply_updateForApp"), "ORDER_TRANSITION_DEPARTUREAPPLY", String.valueOf(insert.getData().getId()));
             } catch (Exception e) {
                 log.error("消息推送到app失败" + e.getMessage());
             }
@@ -519,6 +518,10 @@ public class TransitionDepartureApplyController {
         map.put("transTypeId", getProvider("tradeTypeProvider", "transTypeId"));
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
+        //日期时间格式化
+        map.put("originatorTime", getProvider("datetimeProvider", "originatorTime"));
+        map.put("modifyTime", getProvider("datetimeProvider", "originatorTime"));
+
         transitionDepartureApply.setMetadata(map);
         BaseOutput<TransitionDepartureApply> oneByID = transitionDepartureApplyRpc.getOneByID(transitionDepartureApply.getId());
         if (oneByID.isSuccess()) {
