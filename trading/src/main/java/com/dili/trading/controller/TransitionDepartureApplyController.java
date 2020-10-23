@@ -194,7 +194,7 @@ public class TransitionDepartureApplyController {
             //推送消息到三哥那边
             try {
                 String content = "转离场审核" + insert.getData().getCode();
-                messageService.pushAppMessage(content, content, userService.getPassCheckUserIdsByApp("transitionDepartureApply_updateForApp"));
+                messageService.pushAppMessage(content, content, userService.getPassCheckUserIdsByApp("transitionDepartureApply_updateForApp"), "ORDER_TRANSITION_DEPARTUREAPPLY", String.valueOf(insert.getData().getId()));
             } catch (Exception e) {
                 log.error("消息推送到app失败" + e.getMessage());
             }
