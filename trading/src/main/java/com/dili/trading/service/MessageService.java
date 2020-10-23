@@ -14,5 +14,5 @@ public interface MessageService {
      * @param title
      * @param userIds
      */
-    void pushAppMessage(String content, String title, List<Long> userIds);
+    void pushAppMessage(String content, String title, List<Long> userIds, String code, String id);
 }
