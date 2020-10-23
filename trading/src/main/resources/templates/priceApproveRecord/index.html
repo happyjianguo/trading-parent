@@ -13,7 +13,7 @@
 				</select>
 				<#bcomboProvider _id="tradeType" _provider="tradeTypeCodeProvider" />
 			</div>
-			<div class="form-group col">
+			<div class="form-group col-auto" style="width: 350px">
                     <label tlog  for="inspectionItem">商品名称</label>
                     <select id="goodsIds" name="goodsIds" class="form-control" required="true"  multiple="multiple"></select>
                     <#bselect2 _id="goodsIds" _mode="remote" _value="" _option="" _text=""  _optionVariable="assetsNamesAutoCompleteOption" _required="true"/>
@@ -48,7 +48,7 @@
 				</div>
 			</div>
 			<div class="col-auto align-self-center mt-3">
-				<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:$('#queryForm input').val('');">
+				<button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:clearQueryForm();">
 					<i class="fa fa-refresh"></i> 清空
 				</button>
 				<button type="button" class="btn btn-outline-primary mr-2" onclick="queryDataHandler()">

@@ -154,6 +154,13 @@
             $('#sellerCardNo').val(suggestion.cardNo);
         }
     };
+    
+    function clearQueryForm(){
+    	$('#queryForm input').val('');
+    	$('#state').val(null).trigger('change');
+		$('#tradeType').val(null).trigger('change');
+		$('#goodsIds').val(null).trigger('change');
+    }
 
     function swipeCard(){
             let cardNo=callbackObj.readCardNumber();
