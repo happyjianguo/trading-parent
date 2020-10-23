@@ -10,6 +10,7 @@ function clearQueryForm(){
 	$('#queryForm input').val('');
 	$('#statementStates').val(null).trigger('change');
 	$('#tradeTypeId').val(null).trigger('change');
+	$('#goodsIds').val(null).trigger('change');
 }
 
 function doPrintHandler(){
