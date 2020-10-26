@@ -18,6 +18,7 @@ import com.dili.trading.rpc.TransitionDepartureApplyRpc;
 import com.dili.trading.service.MessageService;
 import com.dili.trading.service.TransitionDepartureApplyService;
 import com.dili.trading.service.UserService;
+import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -492,6 +494,15 @@ public class TransitionDepartureApplyController {
         if (transitionDepartureApply.getApprovalReason().length() > 30) {
             return BaseOutput.failure("备注信息不能超过30个字符");
         }
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        //设置审批时间
+        transitionDepartureApply.setApprovalTime(LocalDateTime.now());
+        //设置审批人id
+        transitionDepartureApply.setApprovalId(userTicket.getId());
+        //设置审批人用户名
+        transitionDepartureApply.setApprovalName(userTicket.getRealName());
+        //设置审批人工号
+        transitionDepartureApply.setApprovalCode(userTicket.getUserName());
         return transitionDepartureApplyService.updateForApp(transitionDepartureApply);
     }
 
