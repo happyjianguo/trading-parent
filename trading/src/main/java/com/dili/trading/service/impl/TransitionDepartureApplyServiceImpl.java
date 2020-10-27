@@ -70,8 +70,17 @@ public class TransitionDepartureApplyServiceImpl implements TransitionDepartureA
     }
 
     @Override
+    @BusinessLogger(businessType = "trading_orders", content = "转离场申请单APP审批，市场编码：${firmCode}", operationType = "updateForApp", systemCode = "ORDERS")
     public BaseOutput updateForApp(TransitionDepartureApply transitionDepartureApply) {
-        return transitionDepartureApplyRpc.update(transitionDepartureApply);
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        BaseOutput update = transitionDepartureApplyRpc.update(transitionDepartureApply);
+        if (update.isSuccess()) {
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, transitionDepartureApply.getId());
+            LoggerContext.put(LoggerConstant.LOG_BUSINESS_CODE_KEY, transitionDepartureApply.getCode());
+            LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
+            LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
+        }
+        return update;
     }
 
 }
