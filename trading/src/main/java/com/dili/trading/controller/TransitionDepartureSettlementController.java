@@ -266,4 +266,18 @@ public class TransitionDepartureSettlementController {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         return transitionDepartureSettlementRpc.getFee(netWeight, userTicket.getFirmId(), userTicket.getDepartmentId(), id, carTypeId);
     }
+
+    /**
+     * 根据code获取对应结算单
+     *
+     * @return
+     */
+    @RequestMapping(value = "/getOneByCode.action", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public BaseOutput<TransitionDepartureSettlement> getOneByCode(String code) {
+        if (StringUtils.isBlank(code)) {
+            return BaseOutput.failure("查询失败，结算单code不能为空");
+        }
+        return transitionDepartureSettlementRpc.getOneByCode(code);
+    }
 }
