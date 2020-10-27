@@ -22,7 +22,7 @@ public class TransitionDepartureApplyServiceImpl implements TransitionDepartureA
     private TransitionDepartureApplyRpc transitionDepartureApplyRpc;
 
     @Override
-    @BusinessLogger(businessType = "trading_orders", content = "新增转离场申请单", operationType = "add", systemCode = "ORDERS")
+    @BusinessLogger(businessType = "trading_orders", content = "新增转离场申请单，市场编码：${firmCode}", operationType = "add", systemCode = "ORDERS")
     public BaseOutput insert(TransitionDepartureApply transitionDepartureApply) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //设置code编号
@@ -48,7 +48,7 @@ public class TransitionDepartureApplyServiceImpl implements TransitionDepartureA
     }
 
     @Override
-    @BusinessLogger(businessType = "trading_orders", content = "转离场申请单审批", operationType = "update", systemCode = "ORDERS")
+    @BusinessLogger(businessType = "trading_orders", content = "转离场申请单审批，市场编码：${firmCode}", operationType = "update", systemCode = "ORDERS")
     public BaseOutput approval(TransitionDepartureApply transitionDepartureApply) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         //设置审批时间
