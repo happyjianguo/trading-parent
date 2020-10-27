@@ -62,7 +62,6 @@ function doPrintHandler(){
 		    	}
 		    	printObj.startDate=createdStart;
 		    	printObj.endDate=createdEnd;
-		    	console.log(printObj);
 		    	callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
             },
             error: function (error) {
