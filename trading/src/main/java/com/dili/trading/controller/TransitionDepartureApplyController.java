@@ -195,7 +195,7 @@ public class TransitionDepartureApplyController {
         if (insert.isSuccess()) {
             //推送消息到三哥那边
             try {
-                messageService.pushAppMessage("转离场审批流程待处理", "您有新转离场审批流程待处理", userService.getPassCheckUserIdsByApp("transitionDepartureApply_updateForApp"), "ORDER_TRANSITION_DEPARTUREAPPLY", String.valueOf(insert.getData().getId()));
+                messageService.pushAppMessage("有待审核的转离场申请单，请及时处理", "有待审核的转离场申请单，请及时处理", userService.getPassCheckUserIdsByApp("transitionDepartureApply_updateForApp"), "ORDER_TRANSITION_DEPARTUREAPPLY", String.valueOf(insert.getData().getId()));
             } catch (Exception e) {
                 log.error("消息推送到app失败" + e.getMessage());
             }
