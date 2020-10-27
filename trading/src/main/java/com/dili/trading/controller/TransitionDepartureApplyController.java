@@ -383,6 +383,16 @@ public class TransitionDepartureApplyController {
             return BaseOutput.failure("客户卡号不能为空");
         }
         TransitionDepartureApply transitionDepartureApply = new TransitionDepartureApply();
+        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
+        //根据市场id查询
+        transitionDepartureApply.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+        if (CollectionUtils.isNotEmpty(ranges)) {
+            String value = (String) ranges.get(0).get("value");
+            //如果value为0，则为个人
+            if (value.equals("0")) {
+                transitionDepartureApply.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
+            }
+        }
         transitionDepartureApply.setCustomerCardNo(customerCardNo);
         transitionDepartureApply.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         return transitionDepartureApplyRpc.listByCustomerCardNo(transitionDepartureApply);
