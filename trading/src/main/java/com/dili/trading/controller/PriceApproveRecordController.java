@@ -4,8 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.dili.bpmc.sdk.domain.TaskMapping;
-import com.dili.bpmc.sdk.dto.TaskDto;
 import com.dili.bpmc.sdk.rpc.TaskRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.domain.PriceApproveRecord;
@@ -30,16 +31,13 @@ import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
-import com.dili.ss.dto.DTOUtils;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.util.BeanConver;
 import com.dili.trading.component.BpmcUtil;
 import com.dili.trading.dto.PriceApproveRecordProcessDto;
 import com.dili.trading.rpc.PriceApproveRecordRpc;
-import com.dili.uap.sdk.domain.Role;
 import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.rpc.RoleRpc;
-import com.dili.uap.sdk.rpc.UserRpc;
 import com.dili.uap.sdk.session.SessionContext;
 
 /**
@@ -79,7 +77,7 @@ public class PriceApproveRecordController {
 	 */
 	@ResponseBody
 	@PostMapping("/listPage.action")
-	public String listPage(PriceApproveRecordQueryDto query) {
+	public String listPage(@RequestBody PriceApproveRecordQueryDto query) {
 
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
@@ -138,6 +136,35 @@ public class PriceApproveRecordController {
 		modelMap.addAttribute("model", ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData())).get(0)).addAttribute("taskId", taskId).addAttribute("isNeedClaim", isNeedClaim)
 				.addAttribute("modal", modal);
 		return "priceApproveRecord/approve";
+	}
+
+	/**
+	 * 审批试图
+	 * 
+	 * @param businessKey 业务id
+	 * @param taskId      任务id
+	 * @param isNeedClaim 是否需要签收
+	 * @param modal       是否窗口
+	 * @param modelMap
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping("/appApprove.action")
+	public BaseOutput<?> approveView(@RequestParam Long id) throws Exception {
+		BaseOutput<PriceApproveRecord> output = this.priceApproveRpc.getById(id);
+		if (!output.isSuccess()) {
+			LOGGER.error(output.getMessage());
+			return null;
+		}
+
+		if (output.getData() == null) {
+			return BaseOutput.failure("审批数据不存在");
+
+		}
+		PriceApproveRecordProcessDto dto = BeanConver.copyBean(output.getData(), PriceApproveRecordProcessDto.class);
+		this.bpmcUtil.fitLoggedUserIsCanHandledProcess(Arrays.asList(dto));
+		return BaseOutput.successData(dto);
 	}
 
 	/**
@@ -210,10 +237,12 @@ public class PriceApproveRecordController {
 			LOGGER.error(taskOutput.getMessage());
 			return BaseOutput.failure("查询流程任务失败");
 		}
-		List<String> processInstanceIds = new ArrayList<String>(taskOutput.getData().size());
+		Set<String> processInstanceIds = new HashSet<String>(taskOutput.getData().size());
 		taskOutput.getData().forEach(t -> processInstanceIds.add(t.getProcessInstanceId()));
-		query.setProcessInstanceIds(processInstanceIds);
-		PageOutput<List<PriceApproveRecord>> output = this.priceApproveRpc.listPage(query);
+		query.setProcessInstanceIds(new ArrayList<String>(processInstanceIds));
+		query.setSort("weighing_time");
+		query.setOrder("desc");
+		PageOutput<List<PriceApproveRecord>> output = this.priceApproveRpc.listPageApp(query);
 
 		if (!output.isSuccess()) {
 			LOGGER.error(output.getMessage());
