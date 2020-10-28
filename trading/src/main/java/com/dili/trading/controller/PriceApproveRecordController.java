@@ -242,7 +242,7 @@ public class PriceApproveRecordController {
 		query.setProcessInstanceIds(new ArrayList<String>(processInstanceIds));
 		query.setSort("weighing_time");
 		query.setOrder("desc");
-		PageOutput<List<PriceApproveRecord>> output = this.priceApproveRpc.listPage(query);
+		PageOutput<List<PriceApproveRecord>> output = this.priceApproveRpc.listPageApp(query);
 
 		if (!output.isSuccess()) {
 			LOGGER.error(output.getMessage());
