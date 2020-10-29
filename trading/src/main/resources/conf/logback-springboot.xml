@@ -43,6 +43,11 @@
 	</springProfile>
 	<!-- 测试环境 -->
 	<springProfile name="test">
+		<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<pattern>[${LOG_NAME}-test] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
+			</encoder>
+		</appender>
 		<logger name="org.springframework.web" level="INFO" />
 		<logger name="com.dili.trading" level="INFO" />
 		<!-- 不打印心跳日志 -->
