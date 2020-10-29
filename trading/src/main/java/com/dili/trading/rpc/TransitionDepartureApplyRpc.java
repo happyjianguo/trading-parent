@@ -79,4 +79,12 @@ public interface TransitionDepartureApplyRpc {
      */
     @RequestMapping(value = "/api/transitionDepartureApply/getApplyAndSettleById", method = {RequestMethod.POST})
     BaseOutput<TransitionDepartureApply> getApplyAndSettleById(@RequestBody TransitionDepartureApply transitionDepartureApply, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId);
+
+    /**
+     * app根据id查询
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/api/transitionDepartureApply/getOneByIdForApp", method = {RequestMethod.POST})
+    BaseOutput<TransitionDepartureApply> getOneByIdForApp(@RequestParam(value = "id") Long id);
 }

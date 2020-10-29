@@ -544,7 +544,7 @@ public class TransitionDepartureApplyController {
         map.put("modifyTime", getProvider("datetimeProvider", "originatorTime"));
 
         transitionDepartureApply.setMetadata(map);
-        BaseOutput<TransitionDepartureApply> oneByID = transitionDepartureApplyRpc.getOneByID(transitionDepartureApply.getId());
+        BaseOutput<TransitionDepartureApply> oneByID = transitionDepartureApplyRpc.getOneByIdForApp(transitionDepartureApply.getId());
         if (oneByID.isSuccess()) {
             List<Map> maps = ValueProviderUtils.buildDataByProvider(transitionDepartureApply, Arrays.asList(oneByID.getData()));
             return BaseOutput.successData(maps.get(0));
