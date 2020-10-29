@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -239,6 +240,9 @@ public class PriceApproveRecordController {
 		if (!taskOutput.isSuccess()) {
 			LOGGER.error(taskOutput.getMessage());
 			return BaseOutput.failure("查询流程任务失败");
+		}
+		if (CollectionUtils.isEmpty(taskOutput.getData())) {
+			return BaseOutput.success();
 		}
 		Set<String> processInstanceIds = new HashSet<String>(taskOutput.getData().size());
 		taskOutput.getData().forEach(t -> processInstanceIds.add(t.getProcessInstanceId()));
