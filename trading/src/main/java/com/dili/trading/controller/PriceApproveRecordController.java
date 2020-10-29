@@ -243,8 +243,6 @@ public class PriceApproveRecordController {
 		Set<String> processInstanceIds = new HashSet<String>(taskOutput.getData().size());
 		taskOutput.getData().forEach(t -> processInstanceIds.add(t.getProcessInstanceId()));
 		query.setProcessInstanceIds(new ArrayList<String>(processInstanceIds));
-		query.setSort("weighing_time");
-		query.setOrder("desc");
 		PageOutput<List<PriceApproveRecord>> output = this.priceApproveRpc.listPageApp(query);
 
 		if (!output.isSuccess()) {
@@ -256,6 +254,7 @@ public class PriceApproveRecordController {
 		this.bpmcUtil.fitLoggedUserIsCanHandledProcess(priceList);
 
 		HashMap<String, Object> metadata = new HashMap<String, Object>();
+		metadata.put("weighingTime", "datetimeProvider");
 		metadata.put("tradeType", "tradeTypeCodeProvider");
 
 		query.setMetadata(metadata);
