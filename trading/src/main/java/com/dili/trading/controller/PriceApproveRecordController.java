@@ -232,6 +232,9 @@ public class PriceApproveRecordController {
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
+		if (query.getMarketId() == null) {
+			query.setMarketId(user.getFirmId());
+		}
 		BaseOutput<List<TaskMapping>> taskOutput = this.taskRpc.listUserTask(user.getId(), OrdersConstant.PRICE_APPROVE_PROCESS_DEFINITION_KEY);
 		if (!taskOutput.isSuccess()) {
 			LOGGER.error(taskOutput.getMessage());
@@ -242,7 +245,7 @@ public class PriceApproveRecordController {
 		query.setProcessInstanceIds(new ArrayList<String>(processInstanceIds));
 		query.setSort("weighing_time");
 		query.setOrder("desc");
-		PageOutput<List<PriceApproveRecord>> output = this.priceApproveRpc.listPage(query);
+		PageOutput<List<PriceApproveRecord>> output = this.priceApproveRpc.listPageApp(query);
 
 		if (!output.isSuccess()) {
 			LOGGER.error(output.getMessage());
@@ -252,7 +255,10 @@ public class PriceApproveRecordController {
 		List<PriceApproveRecordProcessDto> priceList = BeanConver.copyList(output.getData(), PriceApproveRecordProcessDto.class);
 		this.bpmcUtil.fitLoggedUserIsCanHandledProcess(priceList);
 
-		query.setMetadata(query.getMetadata());
+		HashMap<String, Object> metadata = new HashMap<String, Object>();
+		metadata.put("tradeType", "tradeTypeCodeProvider");
+
+		query.setMetadata(metadata);
 		try {
 			List<Map> list = ValueProviderUtils.buildDataByProvider(query, priceList);
 

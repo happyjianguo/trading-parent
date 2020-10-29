@@ -51,7 +51,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
      * @return
      */
     @Override
-    @BusinessLogger(businessType = "trading_orders", content = "转离场结算单新增", operationType = "update", systemCode = "ORDERS")
+    @BusinessLogger(businessType = "trading_orders", content = "转离场结算单新增，市场编码：${firmCode}", operationType = "update", systemCode = "ORDERS")
     @Transactional(propagation = Propagation.REQUIRED)
     public BaseOutput insert(TransitionDepartureSettlement transitionDepartureSettlement) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
@@ -75,7 +75,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
     }
 
     @Override
-    @BusinessLogger(businessType = "trading_orders", content = "转离场结算单撤销", operationType = "update", systemCode = "ORDERS")
+    @BusinessLogger(businessType = "trading_orders", content = "转离场结算单撤销，市场编码：${firmCode}", operationType = "update", systemCode = "ORDERS")
     @Transactional(propagation = Propagation.REQUIRED)
     public BaseOutput revocator(TransitionDepartureSettlement transitionDepartureSettlement, String password) {
         //获取当前登录用户
@@ -97,7 +97,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
     }
 
     @Override
-    @BusinessLogger(businessType = "trading_orders", content = "转离场结算单支付", operationType = "update", systemCode = "ORDERS")
+    @BusinessLogger(businessType = "trading_orders", content = "转离场结算单支付，市场编码：${firmCode}", operationType = "update", systemCode = "ORDERS")
     @Transactional(propagation = Propagation.REQUIRED)
     public BaseOutput pay(Long id, String password) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
