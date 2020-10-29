@@ -1,6 +1,7 @@
 package com.dili.trading.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -318,6 +319,22 @@ public class WeighingBillController {
 		// 如果市场id为空，则加入
 		if (Objects.isNull(query.getMarketId())) {
 			query.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+		}
+
+		if (query.getCreatedStart() == null && query.getCreatedEnd() == null) {
+			query.setCreatedStart(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
+			query.setCreatedEnd(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
+		}
+
+		if (query.getCreatedStart() != null && query.getCreatedEnd() == null) {
+			query.setCreatedEnd(query.getCreatedStart().plusDays(365L).withHour(23).withMinute(59).withSecond(59));
+		}
+
+		if (query.getCreatedStart() == null && query.getCreatedEnd() != null) {
+			query.setCreatedStart(query.getCreatedEnd().plusDays(-365L).withHour(0).withMinute(0).withSecond(0));
+		}
+		if (query.getCreatedEnd().compareTo(LocalDateTime.now()) > 0) {
+			query.setCreatedEnd(LocalDateTime.now());
 		}
 
 		List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
