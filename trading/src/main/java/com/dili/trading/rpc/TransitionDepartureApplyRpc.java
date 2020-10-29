@@ -85,6 +85,6 @@ public interface TransitionDepartureApplyRpc {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/getOneByIdForApp", method = {RequestMethod.POST})
+    @RequestMapping(value = "/api/transitionDepartureApply/getOneByIdForApp", method = {RequestMethod.POST})
     BaseOutput<TransitionDepartureApply> getOneByIdForApp(@RequestParam(value = "id") Long id);
 }
