@@ -15,22 +15,26 @@ import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.glossary.ApplyEnum;
 import com.dili.trading.rpc.TransitionDepartureApplyRpc;
+import com.dili.trading.service.MessageService;
 import com.dili.trading.service.TransitionDepartureApplyService;
+import com.dili.trading.service.UserService;
+import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -38,6 +42,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/transitionDepartureApply")
+@Slf4j
 public class TransitionDepartureApplyController {
 
 
@@ -52,6 +57,12 @@ public class TransitionDepartureApplyController {
 
     @Autowired
     private CustomerRpc customerRpc;
+
+    @Autowired
+    private MessageService messageService;
+
+    @Autowired
+    private UserService userService;
 
 
     /**
@@ -180,9 +191,15 @@ public class TransitionDepartureApplyController {
         //新增的时候设置市场id
         transitionDepartureApply.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         //新增之后，推送消息
-        BaseOutput insert = transitionDepartureApplyService.insert(transitionDepartureApply);
+        BaseOutput<TransitionDepartureApply> insert = transitionDepartureApplyService.insert(transitionDepartureApply);
         if (insert.isSuccess()) {
             //推送消息到三哥那边
+            try {
+                messageService.pushAppMessage("有待审核的转离场申请单，请及时处理", "有待审核的转离场申请单，请及时处理", userService.getPassCheckUserIdsByApp("transitionDepartureApply_updateForApp"), "ORDER_TRANSITION_DEPARTUREAPPLY", String.valueOf(insert.getData().getId()));
+            } catch (Exception e) {
+                log.error("消息推送到app失败" + e.getMessage());
+            }
+
         }
         return insert;
     }
@@ -366,6 +383,16 @@ public class TransitionDepartureApplyController {
             return BaseOutput.failure("客户卡号不能为空");
         }
         TransitionDepartureApply transitionDepartureApply = new TransitionDepartureApply();
+        List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
+        //根据市场id查询
+        transitionDepartureApply.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+        if (CollectionUtils.isNotEmpty(ranges)) {
+            String value = (String) ranges.get(0).get("value");
+            //如果value为0，则为个人
+            if (value.equals("0")) {
+                transitionDepartureApply.setUserId(SessionContext.getSessionContext().getUserTicket().getId());
+            }
+        }
         transitionDepartureApply.setCustomerCardNo(customerCardNo);
         transitionDepartureApply.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
         return transitionDepartureApplyRpc.listByCustomerCardNo(transitionDepartureApply);
@@ -454,6 +481,7 @@ public class TransitionDepartureApplyController {
         map.put("transTypeId", getProvider("tradeTypeProvider", "transTypeId"));
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
+        map.put("originatorTime", getProvider("datetimeProvider", "originatorTime"));
         transitionDepartureApply.setMetadata(map);
         PageOutput<List<Map>> pageOutput = PageOutput.success();
         pageOutput.setData(ValueProviderUtils.buildDataByProvider(transitionDepartureApply, output.getData())).setPageNum(output.getPageNum()).setTotal(output.getTotal()).setPageSize(output.getPageSize()).setPages(output.getPages());
@@ -473,6 +501,18 @@ public class TransitionDepartureApplyController {
         if (Objects.isNull(transitionDepartureApply.getId())) {
             return BaseOutput.failure("申请单id不能为空");
         }
+        if (transitionDepartureApply.getApprovalReason().length() > 30) {
+            return BaseOutput.failure("备注信息不能超过30个字符");
+        }
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        //设置审批时间
+        transitionDepartureApply.setApprovalTime(LocalDateTime.now());
+        //设置审批人id
+        transitionDepartureApply.setApprovalId(userTicket.getId());
+        //设置审批人用户名
+        transitionDepartureApply.setApprovalName(userTicket.getRealName());
+        //设置审批人工号
+        transitionDepartureApply.setApprovalCode(userTicket.getUserName());
         return transitionDepartureApplyService.updateForApp(transitionDepartureApply);
     }
 
@@ -499,6 +539,10 @@ public class TransitionDepartureApplyController {
         map.put("transTypeId", getProvider("tradeTypeProvider", "transTypeId"));
         //设置车类型提供者
         map.put("carTypeId", getProvider("carTypeProvider", "carTypeId"));
+        //日期时间格式化
+        map.put("originatorTime", getProvider("datetimeProvider", "originatorTime"));
+        map.put("modifyTime", getProvider("datetimeProvider", "originatorTime"));
+
         transitionDepartureApply.setMetadata(map);
         BaseOutput<TransitionDepartureApply> oneByID = transitionDepartureApplyRpc.getOneByIdForApp(transitionDepartureApply.getId());
         if (oneByID.isSuccess()) {

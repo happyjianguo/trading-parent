@@ -107,4 +107,13 @@ public interface TransitionDepartureSettlementRpc {
      */
     @RequestMapping(value = "/api/transitionDepartureSettlement/fee", method = {RequestMethod.POST})
     BaseOutput getFee(@RequestParam(value = "netWeight") BigDecimal netWeight, @RequestParam(value = "marketId") Long marketId, @RequestParam(value = "departmentId") Long departmentId, @RequestParam(value = "id") Long id, @RequestParam(value = "carTypeId") Long carTypeId);
+
+    /**
+     * 根据code获取一天缴费单信息
+     *
+     * @param code
+     * @return
+     */
+    @RequestMapping(value = "/api/transitionDepartureSettlement/getOneByCode", method = {RequestMethod.POST})
+    BaseOutput<TransitionDepartureSettlement> getOneByCode(@RequestParam(value = "code") String code);
 }

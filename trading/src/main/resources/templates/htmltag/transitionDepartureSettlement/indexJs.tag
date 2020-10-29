@@ -232,7 +232,7 @@
                 isIframe: true,//默认是页面层，非iframe
                 backdrop: 'static',
                 btns: [{
-                    label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
+                    label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
                         let diaWindow = $iframe[0].contentWindow;
                         bui.util.debounce(diaWindow.revocator, 1000, true)()
                         return false;

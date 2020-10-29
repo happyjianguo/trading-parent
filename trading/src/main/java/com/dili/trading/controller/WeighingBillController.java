@@ -319,10 +319,6 @@ public class WeighingBillController {
 		if (Objects.isNull(query.getMarketId())) {
 			query.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
 		}
-		// 判断是否选择了操作员，如果选择了操作员，那就增加状态为已结算
-		if (Objects.nonNull(query.getOperatorId())) {
-			query.setStatementStates(Arrays.asList(WeighingStatementState.PAID.getValue()));
-		}
 
 		List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
 		if (CollectionUtils.isNotEmpty(ranges)) {
@@ -333,11 +329,6 @@ public class WeighingBillController {
 			}
 		}
 		PageOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listPage(query);
-		output.getData().forEach(wb -> {
-			if (wb.getMeasureType().equals(MeasureType.WEIGHT.getValue())) {
-				wb.setUnitPrice(wb.getUnitPrice() * 2);
-			}
-		});
 
 //		Map<Object, Object> metadata = new HashMap<Object, Object>();
 //		metadata.put("roughWeight", "weightProvider");

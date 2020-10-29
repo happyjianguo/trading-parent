@@ -10,50 +10,65 @@ function clearQueryForm(){
 	$('#queryForm input').val('');
 	$('#statementStates').val(null).trigger('change');
 	$('#tradeTypeId').val(null).trigger('change');
+	$('#goodsIds').val(null).trigger('change');
 }
 
 function doPrintHandler(){
+	
 	var visibleColumns= $('#grid').bootstrapTable('getVisibleColumns');
-	$.post('/weighingBill/listPage.action',queryParams({
-        limit: 99999,   // 页面大小
-        page: 1 // 页码
-    }),function(res){
-    	var printObj={
-    		columns:[],
-    		data:[]
-    	};
-    	$(visibleColumns).each(function(index,item){
-    		printObj.columns.push({
-    			field:item.field,
-    			title:item.title
-    		});
-    	});
-    	$(res.rows).each(function(index,item){
-    		var obj={};
-    		for(var key in item){
-    			if (item[key] instanceof Object) {
-    				for(var k in item[key]){
-    					obj[key+'.'+k]=item[key][k];
-    				}
-    			}else{
-    				obj[key]=item[key];
-    			}
-    		}
-    		printObj.data.push(obj);
-    	});
-    	var createdStart=$('#createdStart').val();
-    	var createdEnd=$('#createdEnd').val();
-    	if (!createdStart) {
-	    	createdStart= moment(new Date()).format("YYYY-MM-DD")+' 00:00:00';
-    	}
-    	if (!createdEnd) {
-	    	createdEnd= moment(new Date()).format("YYYY-MM-DD")+' 23:59:59';
-    	}
-    	printObj.startDate=createdStart;
-    	printObj.endDate=createdEnd;
-    	console.log(printObj);
-    	callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
-    },'json');
+	
+	$.ajax({
+            type: "POST",
+            url: "/weighingBill/listPage.action",
+            data: JSON.stringify(queryParams({
+		        limit: 99999,   // 页面大小
+		        page: 1 // 页码
+		    })),
+		    dataType: "json",
+            processData: false,
+            contentType: "application/json",
+            async: true,
+            success: function (res) {
+                var printObj={
+		    		columns:[],
+		    		data:[]
+		    	};
+		    	$(visibleColumns).each(function(index,item){
+		    		printObj.columns.push({
+		    			field:item.field,
+		    			title:item.title
+		    		});
+		    	});
+		    	$(res.rows).each(function(index,item){
+		    		var obj={};
+		    		for(var key in item){
+		    			if (item[key] instanceof Object) {
+		    				for(var k in item[key]){
+		    					obj[key+'.'+k]=item[key][k];
+		    				}
+		    			}else{
+		    				obj[key]=item[key];
+		    			}
+		    		}
+		    		printObj.data.push(obj);
+		    	});
+		    	var createdStart=$('#createdStart').val();
+		    	var createdEnd=$('#createdEnd').val();
+		    	if (!createdStart) {
+			    	createdStart= moment(new Date()).format("YYYY-MM-DD")+' 00:00:00';
+		    	}
+		    	if (!createdEnd) {
+			    	createdEnd= moment(new Date()).format("YYYY-MM-DD")+' 23:59:59';
+		    	}
+		    	printObj.startDate=createdStart;
+		    	printObj.endDate=createdEnd;
+		    	callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
+            },
+            error: function (error) {
+                bs4pop.alert(error.message, {type: 'error'});
+            }
+        });
+	
 }
 
   var buyerNameQueryAutoCompleteOption = {
@@ -581,7 +596,9 @@ function doPrintHandler(){
             sort: params.sort,
             order: params.order
         };
-        return $.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
+        var aaa=$.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
+        console.log(aaa);
+        return aaa;
     }
 
     /**
