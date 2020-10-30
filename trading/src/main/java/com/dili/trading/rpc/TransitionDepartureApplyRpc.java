@@ -1,13 +1,18 @@
 package com.dili.trading.rpc;
 
+import java.util.List;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.dili.orders.config.FeignHeaderConfig;
 import com.dili.orders.domain.TransitionDepartureApply;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @FeignClient(name = "order-service", contextId = "transitionDepartureApplyRpc", url = "${orderService.url:}", configuration = FeignHeaderConfig.class)
 public interface TransitionDepartureApplyRpc {
