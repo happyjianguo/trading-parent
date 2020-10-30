@@ -347,6 +347,10 @@ public class WeighingBillController {
 		}
 		PageOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listPage(query);
 
+		if (!output.isSuccess()) {
+			return null;
+		}
+
 //		Map<Object, Object> metadata = new HashMap<Object, Object>();
 //		metadata.put("roughWeight", "weightProvider");
 //		metadata.put("tareWeight", "weightProvider");
