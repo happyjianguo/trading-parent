@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.dili.orders.config.PayServiceFeignConfig;
+import com.dili.orders.config.FeignHeaderConfig;
 import com.dili.orders.domain.WeighingBill;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.dto.PrintTemplateDataDto;
@@ -21,7 +21,7 @@ import com.dili.orders.dto.WeighingStatementPrintDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 
-@FeignClient(name = "order-service", contextId = "weighingBill", url = "${orderService.url:}",configuration = PayServiceFeignConfig.class)
+@FeignClient(name = "order-service", contextId = "weighingBill", url = "${orderService.url:}",configuration = FeignHeaderConfig.class)
 public interface WeighingBillRpc {
 
 	@RequestMapping(value = "/api/weighingBill/insert")
