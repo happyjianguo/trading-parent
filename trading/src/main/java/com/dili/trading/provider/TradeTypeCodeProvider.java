@@ -36,6 +36,8 @@ public class TradeTypeCodeProvider extends BatchDisplayTextProviderSupport {
         if (Objects.nonNull(obj)) {
             tradeTypeQuery.setKeyword(obj.toString());
         }
+        tradeTypeQuery.setPageNum(1);
+        tradeTypeQuery.setPageSize(Integer.MAX_VALUE);
         List<TradeTypeDto> rows = this.tradeTypeRpc.query(tradeTypeQuery).getRows();
         return rows.stream().map(f -> {
             return (ValuePair<?>) new ValuePairImpl(f.getName(), f.getCode());
@@ -59,6 +61,8 @@ public class TradeTypeCodeProvider extends BatchDisplayTextProviderSupport {
     @Override
     protected List getFkList(List<String> relationIds, Map metaMap) {
         TradeTypeQuery tradeTypeQuery = new TradeTypeQuery();
+        tradeTypeQuery.setPageNum(1);
+        tradeTypeQuery.setPageSize(Integer.MAX_VALUE);
         List<TradeTypeDto> rows = this.tradeTypeRpc.query(tradeTypeQuery).getRows();
         return rows;
     }
