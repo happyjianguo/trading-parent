@@ -42,16 +42,12 @@ function doPrintHandler(){
 		    	$(res.rows).each(function(index,item){
 		    		var obj={};
 		    		for(var key in item){
-		    			if (item[key] instanceof Object) {
-		    				for(var k in item[key]){
-		    					obj[key+'.'+k]=item[key][k];
-		    				}
-		    			}else{
+		    			
 		    				obj[key]=item[key];
-		    			}
 		    		}
 		    		printObj.data.push(obj);
 		    	});
+		    	console.log(printObj);
 		    	var createdStart=$('#createdStart').val();
 		    	var createdEnd=$('#createdEnd').val();
 		    	if (!createdStart) {
