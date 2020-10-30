@@ -61,6 +61,8 @@ public class TradeTypeProvider extends BatchDisplayTextProviderSupport {
     @Override
     protected List getFkList(List<String> relationIds, Map metaMap) {
         TradeTypeQuery tradeTypeQuery = new TradeTypeQuery();
+        tradeTypeQuery.setPageNum(1);
+        tradeTypeQuery.setPageSize(Integer.MAX_VALUE);
         List<TradeTypeDto> rows = this.tradeTypeRpc.query(tradeTypeQuery).getRows();
         return rows;
     }
