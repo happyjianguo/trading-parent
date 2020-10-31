@@ -244,6 +244,8 @@ public class WeighingBillController {
 			return output;
 		}
 		TradeTypeQuery tradeTypeQuery = new TradeTypeQuery();
+		tradeTypeQuery.setPageNum(1);
+        tradeTypeQuery.setPageSize(Integer.MAX_VALUE);
 		List<TradeTypeDto> rows = this.tradeTypeRpc.query(tradeTypeQuery).getRows();
 		output.getData().forEach(wb -> {
 			TradeTypeDto target = rows.stream().filter(t -> t.getId().equals(wb.getTradeTypeId())).findFirst().orElse(null);
