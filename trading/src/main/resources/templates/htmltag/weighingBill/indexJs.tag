@@ -39,15 +39,24 @@ function doPrintHandler(){
 		    			title:item.title
 		    		});
 		    	});
+		    	console.log(res.rows);
 		    	$(res.rows).each(function(index,item){
 		    		var obj={};
 		    		for(var key in item){
-		    			
+	    				if (item[key] instanceof Object) {
+		    				for(var k in item[key]){
+		    					if(item[key+'.'+k]){
+		    						continue;
+		    					}
+		    					obj[key+'.'+k]=item[key][k];
+		    				}
+		    			}else{
 		    				obj[key]=item[key];
+		    			}
 		    		}
+		    		console.log(obj);
 		    		printObj.data.push(obj);
 		    	});
-		    	console.log(printObj);
 		    	var createdStart=$('#createdStart').val();
 		    	var createdEnd=$('#createdEnd').val();
 		    	if (!createdStart) {
@@ -130,10 +139,10 @@ function doPrintHandler(){
 	        		}else if (rows[0].statement.state==2) {
 	        			// 冻结单打印过磅单数据
 	        			if(rows[0].measureType==1){
-//	        				callbackObj.printDirect(JSON.stringify(data.data),"SettlementDocument");
+// callbackObj.printDirect(JSON.stringify(data.data),"SettlementDocument");
 	        				callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementDocument",0);
 	                	}else{
-//	        				callbackObj.printDirect(JSON.stringify(data.data),"SettlementPieceDocument");
+// callbackObj.printDirect(JSON.stringify(data.data),"SettlementPieceDocument");
 	        				callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementPieceDocument",0);
 	                	}
 	                }
@@ -593,7 +602,6 @@ function doPrintHandler(){
             order: params.order
         };
         var aaa=$.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
-        console.log(aaa);
         return aaa;
     }
 
