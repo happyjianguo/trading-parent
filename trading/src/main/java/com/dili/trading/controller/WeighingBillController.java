@@ -723,10 +723,9 @@ public class WeighingBillController {
 		}
 		output.getData().getData().setReprint(reprint);
 		Map<Object, Object> metadata = new HashMap<Object, Object>();
-		metadata.put("tradeTypeId", "tradeTypeProvider");
+		metadata.put("tradeType", "tradeTypeCodeProvider");
 		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData().getData()));
 		Map map = listMap.get(0);
-		map.put("tradeType", map.get("tradeTypeId").toString());
 		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map));
 	}
 
@@ -749,10 +748,9 @@ public class WeighingBillController {
 		}
 		output.getData().getData().setReprint(reprint);
 		Map<Object, Object> metadata = new HashMap<Object, Object>();
-		metadata.put("tradeTypeId", "tradeTypeProvider");
+		metadata.put("tradeType", "tradeTypeCodeProvider");
 		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData().getData()));
 		Map map = listMap.get(0);
-		map.put("tradeType", map.get("tradeTypeId").toString());
 		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map));
 	}
 }
