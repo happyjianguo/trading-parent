@@ -45,7 +45,7 @@ function doPrintHandler(){
 		    		for(var key in item){
 	    				if (item[key] instanceof Object) {
 		    				for(var k in item[key]){
-		    					if(item[key+'.'+k]){
+		    					if(typeof item[key+'.'+k] !== "undefined" && item[key+'.'+k] !== null){
 		    						continue;
 		    					}
 		    					obj[key+'.'+k]=item[key][k];

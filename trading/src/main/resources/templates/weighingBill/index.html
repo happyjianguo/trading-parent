@@ -9,9 +9,9 @@
 				<#bcomboProvider _id="statementStates" _provider="weighingStatementStateProvider" _queryParams='{emptyText:"-- 全部 --"}' />
 			</div>
 			<div class="form-group col">
-				<label for="">交易类型</label> <select id="tradeTypeId" name="tradeTypeId" class="form-control">
+				<label for="">交易类型</label> <select id="tradeType" name="tradeType" class="form-control">
 				</select>
-				<#bcomboProvider _id="tradeTypeId" _provider="tradeTypeProvider" _queryParams='{emptyText:"-- 全部 --"}' />
+				<#bcomboProvider _id="tradeType" _provider="tradeTypeCodeProvider" _queryParams='{emptyText:"-- 全部 --"}' />
 			</div>
 			<div class="form-group col-auto" style="width: 350px">
 				<div class="form-group col">
@@ -171,7 +171,7 @@
 						<th data-field="statement.buyerActualAmount" data-align="center" data-sort-name="buyer_actual_amount" data-sortable="true" data-provider="moneyProvider">买方实付</th>
 						<th data-field="statement.sellerPoundage" data-align="center" data-sort-name="seller_poundage" data-sortable="true" data-provider="moneyProvider">卖方手续费</th>
 						<th data-field="statement.sellerActualAmount" data-align="center" data-sort-name="seller_actual_amount" data-sortable="true" data-provider="moneyProvider">卖方实收</th>
-						<th data-field="tradeTypeId" data-align="center" data-sort-name="trade_type_id" data-sortable="true" data-provider="tradeTypeProvider">交易类型</th>
+						<th data-field="tradeType" data-align="center" data-sort-name="trade_type" data-sortable="true" data-provider="tradeTypeCodeProvider">交易类型</th>
 						<th data-field="plateNumber" data-align="center" data-sort-name="plate_number" data-sortable="true">车牌号</th>
 						<th data-field="statement.state" data-align="center" data-sort-name="ws_state" data-sortable="true" data-provider="weighingStatementStateProvider">单据状态</th>
 						<th data-field="operationRecord.operatorUserName" data-sort-name="operator_user_name" data-align="center" data-sortable="true">操作员工号</th>

@@ -1,5 +1,6 @@
 package com.dili.trading.provider;
 
+import com.alibaba.fastjson.JSON;
 import com.dili.assets.sdk.dto.TradeTypeDto;
 import com.dili.assets.sdk.dto.TradeTypeQuery;
 import com.dili.assets.sdk.rpc.TradeTypeRpc;
