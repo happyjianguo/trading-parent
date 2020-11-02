@@ -65,8 +65,8 @@ public class PriceApproveRecordController {
 	 */
 	@GetMapping("/index.html")
 	public String index(ModelMap modelMap) {
-		modelMap.put("createdStart", LocalDate.now() + " 00:00:00");
-		modelMap.put("createdEnd", LocalDate.now() + " 23:59:59");
+		modelMap.put("weighingStartTime", LocalDate.now() + " 00:00:00");
+		modelMap.put("weighingEndTime", LocalDate.now() + " 23:59:59");
 		return "priceApproveRecord/index";
 	}
 
