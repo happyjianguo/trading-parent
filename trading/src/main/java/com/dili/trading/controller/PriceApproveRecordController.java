@@ -1,6 +1,7 @@
 package com.dili.trading.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -85,6 +86,22 @@ public class PriceApproveRecordController {
 			return JSON.toJSONString(BaseOutput.failure("用户未登录"));
 		}
 		query.setMarketId(user.getFirmId());
+		
+		if (query.getWeighingStartTime() == null && query.getWeighingEndTime() == null) {
+			query.setWeighingStartTime(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
+			query.setWeighingEndTime(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
+		}
+
+		if (query.getWeighingStartTime() != null && query.getWeighingEndTime() == null) {
+			query.setWeighingEndTime(query.getWeighingStartTime().plusDays(366L).withHour(23).withMinute(59).withSecond(59));
+		}
+
+		if (query.getWeighingStartTime() == null && query.getWeighingEndTime() != null) {
+			query.setWeighingStartTime(query.getWeighingEndTime().plusDays(-366L).withHour(0).withMinute(0).withSecond(0));
+		}
+		if (query.getWeighingEndTime().compareTo(LocalDateTime.now()) > 0) {
+			query.setWeighingEndTime(LocalDateTime.now());
+		}
 
 		PageOutput<List<PriceApproveRecord>> output = this.priceApproveRpc.listPage(query);
 
