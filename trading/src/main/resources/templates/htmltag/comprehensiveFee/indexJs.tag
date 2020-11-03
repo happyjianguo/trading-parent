@@ -201,7 +201,7 @@
                             if (res.code == '200') {
                                 //调用c端打印
                                 comprehensiveFee.balance = res.data.accountFund.balance;
-                                callbackObj.printDirect(JSON.stringify(comprehensiveFee), "CheckRechargeDocument");
+                                callbackObj.printPreview(JSON.stringify(comprehensiveFee), "1","CheckRechargeDocument",0);
                             }
                         },
                         error: function () {

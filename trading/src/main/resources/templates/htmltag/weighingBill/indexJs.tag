@@ -1,22 +1,22 @@
 <script>
     /***************************************************************************
-	 * 
+	 *
 	 * @Date 2019-11-06 17:30:00
 	 * @author jiangchengyong
-	 * 
+	 *
 	 **************************************************************************/
 
 function clearQueryForm(){
 	$('#queryForm input').val('');
 	$('#statementStates').val(null).trigger('change');
-	$('#tradeType').val(null).trigger('change');
+	$('#tradeTypeId').val(null).trigger('change');
 	$('#goodsIds').val(null).trigger('change');
 }
 
 function doPrintHandler(){
-	
+
 	var visibleColumns= $('#grid').bootstrapTable('getVisibleColumns');
-	
+
 	$.ajax({
             type: "POST",
             url: "/weighingBill/listPage.action",
@@ -45,7 +45,7 @@ function doPrintHandler(){
 		    		for(var key in item){
 	    				if (item[key] instanceof Object) {
 		    				for(var k in item[key]){
-		    					if(typeof item[key+'.'+k] !== "undefined" && item[key+'.'+k] !== null){
+		    					if(item[key+'.'+k]){
 		    						continue;
 		    					}
 		    					obj[key+'.'+k]=item[key][k];
@@ -73,7 +73,7 @@ function doPrintHandler(){
                 bs4pop.alert(error.message, {type: 'error'});
             }
         });
-	
+
 }
 
   var buyerNameQueryAutoCompleteOption = {
@@ -146,7 +146,7 @@ function doPrintHandler(){
 	        				callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementPieceDocument",0);
 	                	}
 	                }
-                }     		
+                }
             },
             error: function () {
             bui.loading.hide();
@@ -591,7 +591,7 @@ function doPrintHandler(){
 
     /**
 	 * table参数组装 可修改queryParams向服务器发送其余的参数
-	 * 
+	 *
 	 * @param params
 	 */
     function queryParams(params) {
@@ -660,7 +660,7 @@ function doPrintHandler(){
             }
         })
     });
-    
+
     /**
 	 * ***************************************自定义事件区
 	 * end*************************************
