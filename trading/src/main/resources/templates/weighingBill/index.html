@@ -9,9 +9,9 @@
 				<#bcomboProvider _id="statementStates" _provider="weighingStatementStateProvider" _queryParams='{emptyText:"-- 全部 --"}' />
 			</div>
 			<div class="form-group col">
-				<label for="">交易类型</label> <select id="tradeTypeId" name="tradeTypeId" class="form-control">
+				<label for="">交易类型</label> <select id="tradeType" name="tradeType" class="form-control">
 				</select>
-				<#bcomboProvider _id="tradeTypeId" _provider="tradeTypeProvider" _queryParams='{emptyText:"-- 全部 --"}' />
+				<#bcomboProvider _id="tradeType" _provider="tradeTypeCodeProvider" _queryParams='{emptyText:"-- 全部 --"}' />
 			</div>
 			<div class="form-group col-auto" style="width: 350px">
 				<div class="form-group col">
@@ -75,19 +75,19 @@
 				</div>
 			</div>
 			<div class="form-group col-auto">
-				<label for="createdStart">操作时间</label>
+				<label for="operationStartTime">操作时间</label>
 				<div class="form-inline">
 					<div class="input-group">
-						<input type="text" value="${createdStart!}" name="createdStart" id="createdStart" class="form-control settletime laystart" />
+						<input type="text" value="${operationStartTime!}" name="operationStartTime" id="operationStartTime" class="form-control settletime laystart" />
 						<div class="input-group-append">
-							<label for="createdStart" class="input-group-text fa fa-calendar"></label>
+							<label for="operationStartTime" class="input-group-text fa fa-calendar"></label>
 						</div>
 					</div>
 					&nbsp;&nbsp;至&nbsp;&nbsp;
 					<div class="input-group">
-						<input type="text" value="${createdEnd!}" name="createdEnd" id="createdEnd" class="form-control settletime layend" value="" />
+						<input type="text" value="${operationEndTime!}" name="operationEndTime" id="operationEndTime" class="form-control settletime layend" value="" />
 						<div class="input-group-append">
-							<label for="createdEnd" class="input-group-text fa fa-calendar"></label>
+							<label for="operationEndTime" class="input-group-text fa fa-calendar"></label>
 						</div>
 					</div>
 				</div>
@@ -164,14 +164,14 @@
 						<th data-field="netWeight" data-align="center" data-sort-name="net_weight" data-sortable="true" data-provider="weightProvider">净重</th>
 						<th data-field="unitAmount" data-align="center" data-sort-name="unit_amount" data-sortable="true">件数</th>
 						<th data-field="unitWeight" data-align="center" data-sort-name="unit_weight" data-sortable="true" data-provider="weightProvider">件重（斤）</th>
-						<th data-field="unitPiecePrice" data-align="center" data-sort-name="unit_piece_price" data-sortable="true" data-provider="moneyProvider">件价(元/件)</th>
-						<th data-field="unitWeightPrice" data-align="center" data-sort-name="unit_weight_price" data-sortable="true" data-provider="moneyProvider">单价(元/公斤)</th>
+						<th data-field="unitPiecePrice" data-align="center" data-sort-name="unit_piece_price" data-sortable="true" data-provider="moneyProvider">件价</th>
+						<th data-field="unitWeightPrice" data-align="center" data-sort-name="unit_weight_price" data-sortable="true" data-provider="moneyProvider">单价</th>
 						<th data-field="statement.tradeAmount" data-align="center" data-sort-name="trade_amount" data-sortable="true" data-provider="moneyProvider">交易金额</th>
 						<th data-field="statement.buyerPoundage" data-align="center" data-sort-name="buyer_poundage" data-sortable="true" data-provider="moneyProvider">买方手续费</th>
 						<th data-field="statement.buyerActualAmount" data-align="center" data-sort-name="buyer_actual_amount" data-sortable="true" data-provider="moneyProvider">买方实付</th>
 						<th data-field="statement.sellerPoundage" data-align="center" data-sort-name="seller_poundage" data-sortable="true" data-provider="moneyProvider">卖方手续费</th>
 						<th data-field="statement.sellerActualAmount" data-align="center" data-sort-name="seller_actual_amount" data-sortable="true" data-provider="moneyProvider">卖方实收</th>
-						<th data-field="tradeTypeId" data-align="center" data-sort-name="trade_type_id" data-sortable="true" data-provider="tradeTypeProvider">交易类型</th>
+						<th data-field="tradeType" data-align="center" data-sort-name="trade_type" data-sortable="true" data-provider="tradeTypeCodeProvider">交易类型</th>
 						<th data-field="plateNumber" data-align="center" data-sort-name="plate_number" data-sortable="true">车牌号</th>
 						<th data-field="statement.state" data-align="center" data-sort-name="ws_state" data-sortable="true" data-provider="weighingStatementStateProvider">单据状态</th>
 						<th data-field="operationRecord.operatorUserName" data-sort-name="operator_user_name" data-align="center" data-sortable="true">操作员工号</th>

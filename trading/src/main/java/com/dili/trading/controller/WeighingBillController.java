@@ -112,8 +112,8 @@ public class WeighingBillController {
 	 */
 	@GetMapping("/index.html")
 	public String index(ModelMap modelMap) {
-		modelMap.put("createdStart", LocalDate.now() + " 00:00:00");
-		modelMap.put("createdEnd", LocalDate.now() + " 23:59:59");
+		modelMap.put("operationStartTime", LocalDate.now() + " 00:00:00");
+		modelMap.put("operationEndTime", LocalDate.now() + " 23:59:59");
 		return "weighingBill/index";
 	}
 
@@ -244,9 +244,11 @@ public class WeighingBillController {
 			return output;
 		}
 		TradeTypeQuery tradeTypeQuery = new TradeTypeQuery();
+		tradeTypeQuery.setPageNum(1);
+		tradeTypeQuery.setPageSize(Integer.MAX_VALUE);
 		List<TradeTypeDto> rows = this.tradeTypeRpc.query(tradeTypeQuery).getRows();
 		output.getData().forEach(wb -> {
-			TradeTypeDto target = rows.stream().filter(t -> t.getId().equals(wb.getTradeTypeId())).findFirst().orElse(null);
+			TradeTypeDto target = rows.stream().filter(t -> t.getCode().equals(wb.getTradeType())).findFirst().orElse(null);
 			if (target != null) {
 				wb.setTradeTypeName(target.getName());
 			}
@@ -321,20 +323,20 @@ public class WeighingBillController {
 			query.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
 		}
 
-		if (query.getCreatedStart() == null && query.getCreatedEnd() == null) {
-			query.setCreatedStart(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
-			query.setCreatedEnd(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
+		if (query.getOperationStartTime() == null && query.getOperationEndTime() == null) {
+			query.setOperationStartTime(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
+			query.setOperationEndTime(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
 		}
 
-		if (query.getCreatedStart() != null && query.getCreatedEnd() == null) {
-			query.setCreatedEnd(query.getCreatedStart().plusDays(365L).withHour(23).withMinute(59).withSecond(59));
+		if (query.getOperationStartTime() != null && query.getOperationEndTime() == null) {
+			query.setOperationEndTime(query.getOperationStartTime().plusDays(366L).withHour(23).withMinute(59).withSecond(59));
 		}
 
-		if (query.getCreatedStart() == null && query.getCreatedEnd() != null) {
-			query.setCreatedStart(query.getCreatedEnd().plusDays(-365L).withHour(0).withMinute(0).withSecond(0));
+		if (query.getOperationStartTime() == null && query.getOperationEndTime() != null) {
+			query.setOperationStartTime(query.getOperationEndTime().plusDays(-366L).withHour(0).withMinute(0).withSecond(0));
 		}
-		if (query.getCreatedEnd().compareTo(LocalDateTime.now()) > 0) {
-			query.setCreatedEnd(LocalDateTime.now());
+		if (query.getOperationEndTime().compareTo(LocalDateTime.now()) > 0) {
+			query.setOperationEndTime(LocalDateTime.now());
 		}
 
 		List<Map> ranges = SessionContext.getSessionContext().dataAuth(DataAuthType.DATA_RANGE.getCode());
@@ -346,6 +348,10 @@ public class WeighingBillController {
 			}
 		}
 		PageOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listPage(query);
+
+		if (!output.isSuccess()) {
+			return null;
+		}
 
 //		Map<Object, Object> metadata = new HashMap<Object, Object>();
 //		metadata.put("roughWeight", "weightProvider");
@@ -538,7 +544,7 @@ public class WeighingBillController {
 		metadata.put("statement.sellerActualAmount", "moneyProvider");
 		metadata.put("statement.state", "weighingStatementStateProvider");
 
-		metadata.put("tradeTypeId", "tradeTypeProvider");
+		metadata.put("tradeType", "tradeTypeCodeProvider");
 		try {
 			List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData()));
 			metadata = new HashMap<Object, Object>();
@@ -721,10 +727,9 @@ public class WeighingBillController {
 		}
 		output.getData().getData().setReprint(reprint);
 		Map<Object, Object> metadata = new HashMap<Object, Object>();
-		metadata.put("tradeTypeId", "tradeTypeProvider");
+		metadata.put("tradeType", "tradeTypeCodeProvider");
 		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData().getData()));
 		Map map = listMap.get(0);
-		map.put("tradeType", map.get("tradeTypeId").toString());
 		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map));
 	}
 
@@ -747,10 +752,10 @@ public class WeighingBillController {
 		}
 		output.getData().getData().setReprint(reprint);
 		Map<Object, Object> metadata = new HashMap<Object, Object>();
-		metadata.put("tradeTypeId", "tradeTypeProvider");
+		metadata.put("tradeType", "tradeTypeCodeProvider");
 		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData().getData()));
 		Map map = listMap.get(0);
-		map.put("tradeType", map.get("tradeTypeId").toString());
+		System.out.println(JSON.toJSONString(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map)));
 		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map));
 	}
 }
