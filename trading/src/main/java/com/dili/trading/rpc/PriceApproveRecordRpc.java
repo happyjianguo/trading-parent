@@ -16,8 +16,22 @@ import com.dili.ss.domain.PageOutput;
 @FeignClient(name = "order-service", contextId = "priceApproveRecord", url = "${orderService.url:}")
 public interface PriceApproveRecordRpc {
 
+	/**
+	 * 通用分页查询
+	 * @param query
+	 * @return
+	 */
 	@RequestMapping(value = "/api/priceApproveRecord/listPage", method = RequestMethod.POST)
 	PageOutput<List<PriceApproveRecord>> listPage(@RequestBody PriceApproveRecordQueryDto query);
+
+	/**
+	 * app分页查询
+	 * 
+	 * @param query
+	 * @return
+	 */
+	@RequestMapping(value = "/api/priceApproveRecord/listPageApp", method = RequestMethod.POST)
+	PageOutput<List<PriceApproveRecord>> listPageApp(@RequestBody PriceApproveRecordQueryDto query);
 
 	@RequestMapping(value = "/api/priceApproveRecord/getById")
 	BaseOutput<PriceApproveRecord> getById(@RequestParam(value = "id") Long id);

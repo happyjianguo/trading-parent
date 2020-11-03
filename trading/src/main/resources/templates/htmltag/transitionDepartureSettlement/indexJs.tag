@@ -232,7 +232,7 @@
                 isIframe: true,//默认是页面层，非iframe
                 backdrop: 'static',
                 btns: [{
-                    label: '通过', className: 'btn btn-primary', onClick(e, $iframe) {
+                    label: '确定', className: 'btn btn-primary', onClick(e, $iframe) {
                         let diaWindow = $iframe[0].contentWindow;
                         bui.util.debounce(diaWindow.revocator, 1000, true)()
                         return false;
@@ -270,7 +270,6 @@
                     //调用c端打印
                     callbackObj.printPreview(JSON.stringify(data.data),"1","TransitionDocument",1);
                 }else{
-                    debugger;
                     bs4pop.alert(data.message, {type: 'error'});
                 }
             },

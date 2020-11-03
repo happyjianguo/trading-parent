@@ -1,7 +1,5 @@
 package com.dili.trading.dto;
 
-import javax.persistence.Column;
-
 import com.dili.orders.domain.PriceApproveRecord;
 import com.dili.trading.component.ProcessHandleInfoDto;
 
