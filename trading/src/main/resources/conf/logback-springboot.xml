@@ -46,7 +46,7 @@
 	<!-- 灰度、生产环境 -->
 	<springProfile name="pre,prod">
 		<jmxConfigurator/>
-		<root level="warn">
+		<root level="INFO">
 			<appender-ref ref="FILE"/>
 		</root>
 	</springProfile>
