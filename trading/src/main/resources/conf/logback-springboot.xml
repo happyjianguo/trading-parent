@@ -1,71 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 	<!-- 日志名称 -->
-	<property name="LOG_NAME" value="trading" />
-	<!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径 -->
-	<property name="LOG_HOME" value="logs" />
+	<property name="LOG_NAME" value="dili-traidng"/>
+	<!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+	<property name="LOG_HOME" value="logs"/>
 
-	<!-- 日志文件存放的历史天数 可以在nacos 或者 bootstrap.properties 中配置，此处配置的变量名为：log.maxHistory -->
-	<springProperty scope="context" name="maxHistory" source="log.maxHistory" />
+	<!-- 日志文件存放的历史天数  可以在nacos 或者 bootstrap.properties 中配置，此处配置的变量名为：log.maxHistory -->
+	<!--<springProperty scope="context" name="maxHistory" source="log.maxHistory"/>-->
 
 	<!-- 日志控制台输出 -->
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>[${LOG_NAME}-${build.profile.id}] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
+			<pattern>%d %-5level [${LOG_NAME}-${build.profile.id}] [%t] [%c:%L] -| %msg%n</pattern>
 		</encoder>
 	</appender>
 	<!-- 日志文件输出 -->
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${LOG_HOME}/${LOG_NAME}.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<!--日志文件输出的文件名 -->
+			<!--日志文件输出的文件名-->
 			<fileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}/${LOG_NAME}_%i.log.zip</fileNamePattern>
-			<!--日志文件保留天数(FileNamePattern中的%d 格式有关，如果yyyy-MM-dd 则是天数) -->
-			<maxHistory>${maxHistory}</maxHistory>
-			<!--日志文件最大的大小 -->
+			<!--日志文件保留天数(FileNamePattern中的%d 格式有关，如果yyyy-MM-dd 则是天数)-->
+			<maxHistory>30</maxHistory>
+			<!--日志文件最大的大小-->
 			<maxFileSize>10MB</maxFileSize>
 		</rollingPolicy>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<pattern>[${LOG_NAME}-${build.profile.id}] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
+			<pattern>%d %-5level [${LOG_NAME}-${build.profile.id}] [%t] [%c:%L] -| %msg%n</pattern>
 		</encoder>
 	</appender>
 
 	<!-- 开发环境 -->
 	<springProfile name="dev">
-		<logger name="org.springframework.web" level="INFO" />
-		<logger name="com.dili.trading" level="DEBUG" />
-		<!-- 不打印心跳日志 -->
-		<logger name="io.seata.core.rpc.netty" level="info" />
 		<root level="INFO">
-			<appender-ref ref="CONSOLE" />
-			<appender-ref ref="FILE" />
+			<appender-ref ref="CONSOLE"/>
+			<appender-ref ref="FILE"/>
 		</root>
 	</springProfile>
 	<!-- 测试环境 -->
 	<springProfile name="test">
-		<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-			<encoder>
-				<pattern>[${LOG_NAME}-test] %d |-%highlight(%-5level) [%t] [%c:%L] -| %msg%n</pattern>
-			</encoder>
-		</appender>
-		<logger name="org.springframework.web" level="INFO" />
-		<logger name="com.dili.trading" level="INFO" />
-		<!-- 不打印心跳日志 -->
-		<logger name="io.seata.core.rpc.netty" level="info" />
 		<root level="INFO">
-			<appender-ref ref="CONSOLE" />
-			<appender-ref ref="FILE" />
+			<appender-ref ref="FILE"/>
 		</root>
 	</springProfile>
 	<!-- 灰度、生产环境 -->
 	<springProfile name="pre,prod">
-		<!-- 不打印心跳日志 -->
-		<logger name="io.seata.core.rpc.netty" level="info" />
-		<!-- 不显示Flushing UNDO LOG -->
-		<logger name="io.seata.rm.datasource.undo" level="info" />
-		<jmxConfigurator />
+		<jmxConfigurator/>
 		<root level="warn">
-			<appender-ref ref="FILE" />
+			<appender-ref ref="FILE"/>
 		</root>
 	</springProfile>
 
