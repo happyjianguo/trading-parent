@@ -84,6 +84,22 @@ function laydateInt() {
             }
         });
     });
+    lay('.laydatetimeEnd').each(function () {
+        laydate.render({
+            elem: this,
+            trigger: 'click',
+            type: 'datetime',
+            theme: '#007bff',
+            done: function (value, date) {
+                isStartEndDatetime(this.elem, value);
+            },
+            ready: function(date){
+                $(".layui-laydate-footer [lay-type='datetime'].laydate-btns-time").click();
+                $(".laydate-main-list-0 .layui-laydate-content li ol li:last-child").click();
+                $(".layui-laydate-footer [lay-type='date'].laydate-btns-time").click();
+            }
+        });
+    });
 };
 
 //开始结束时间对比
