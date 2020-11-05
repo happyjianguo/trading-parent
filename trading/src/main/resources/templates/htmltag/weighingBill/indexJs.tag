@@ -1,22 +1,22 @@
 <script>
     /***************************************************************************
-	 *
+	 * 
 	 * @Date 2019-11-06 17:30:00
 	 * @author jiangchengyong
-	 *
+	 * 
 	 **************************************************************************/
 
 function clearQueryForm(){
 	$('#queryForm input').val('');
 	$('#statementStates').val(null).trigger('change');
-	$('#tradeTypeId').val(null).trigger('change');
+	$('#tradeType').val(null).trigger('change');
 	$('#goodsIds').val(null).trigger('change');
 }
 
 function doPrintHandler(){
-
+	
 	var visibleColumns= $('#grid').bootstrapTable('getVisibleColumns');
-
+	
 	$.ajax({
             type: "POST",
             url: "/weighingBill/listPage.action",
@@ -45,7 +45,7 @@ function doPrintHandler(){
 		    		for(var key in item){
 	    				if (item[key] instanceof Object) {
 		    				for(var k in item[key]){
-		    					if(item[key+'.'+k]){
+		    					if(typeof item[key+'.'+k] !== "undefined" && item[key+'.'+k] !== null){
 		    						continue;
 		    					}
 		    					obj[key+'.'+k]=item[key][k];
@@ -73,7 +73,7 @@ function doPrintHandler(){
                 bs4pop.alert(error.message, {type: 'error'});
             }
         });
-
+	
 }
 
   var buyerNameQueryAutoCompleteOption = {
@@ -146,7 +146,7 @@ function doPrintHandler(){
 	        				callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementPieceDocument",0);
 	                	}
 	                }
-                }
+                }     		
             },
             error: function () {
             bui.loading.hide();
@@ -351,7 +351,30 @@ function doPrintHandler(){
             , type: 'datetime'
             , theme: '#007bff'
             , min: getLastYearYestdy(new Date())
-            , max: timeStamp2String(new Date().getTime())
+            , max: timeStamp2String(new Date().getTime()),
+            done: function (value, date) {
+                isStartEndDatetime(this.elem, value);
+            }
+        });
+    });
+    // 时间范围
+    lay('.settletimeEnd').each(function () {
+        laydate.render({
+            elem: this
+            , trigger: 'click'
+            , range: false
+            , type: 'datetime'
+            , theme: '#007bff'
+            , min: getLastYearYestdy(new Date())
+            , max: timeStamp2String(new Date().getTime()),
+            done: function (value, date) {
+                isStartEndDatetime(this.elem, value);
+            }
+            ,ready: function(date){
+                $(".layui-laydate-footer [lay-type='datetime'].laydate-btns-time").click();
+                $(".laydate-main-list-0 .layui-laydate-content li ol li:last-child").click();
+                $(".layui-laydate-footer [lay-type='date'].laydate-btns-time").click();
+            }
         });
     });
 
@@ -591,7 +614,7 @@ function doPrintHandler(){
 
     /**
 	 * table参数组装 可修改queryParams向服务器发送其余的参数
-	 *
+	 * 
 	 * @param params
 	 */
     function queryParams(params) {
@@ -660,7 +683,7 @@ function doPrintHandler(){
             }
         })
     });
-
+    
     /**
 	 * ***************************************自定义事件区
 	 * end*************************************
