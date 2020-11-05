@@ -104,7 +104,7 @@ public class GenericGlobalExceptionResolver {
      */
     @ExceptionHandler({Exception.class})
     public String handlerOtherException(Exception e) throws IOException {
-        LOGGER.error("其他异常:{}", e);
+        LOGGER.error(e.getMessage(), e);
         return this.writeErrorResp(ResultCode.APP_ERROR, "服务异常，请联系管理员", e);
     }
 
