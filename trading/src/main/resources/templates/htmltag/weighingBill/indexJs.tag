@@ -351,7 +351,30 @@ function doPrintHandler(){
             , type: 'datetime'
             , theme: '#007bff'
             , min: getLastYearYestdy(new Date())
-            , max: timeStamp2String(new Date().getTime())
+            , max: timeStamp2String(new Date().getTime()),
+            done: function (value, date) {
+                isStartEndDatetime(this.elem, value);
+            }
+        });
+    });
+    // 时间范围
+    lay('.settletimeEnd').each(function () {
+        laydate.render({
+            elem: this
+            , trigger: 'click'
+            , range: false
+            , type: 'datetime'
+            , theme: '#007bff'
+            , min: getLastYearYestdy(new Date())
+            , max: timeStamp2String(new Date().getTime()),
+            done: function (value, date) {
+                isStartEndDatetime(this.elem, value);
+            }
+            ,ready: function(date){
+                $(".layui-laydate-footer [lay-type='datetime'].laydate-btns-time").click();
+                $(".laydate-main-list-0 .layui-laydate-content li ol li:last-child").click();
+                $(".layui-laydate-footer [lay-type='date'].laydate-btns-time").click();
+            }
         });
     });
 

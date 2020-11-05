@@ -89,16 +89,6 @@
         }
     };
 
-    //时间范围
-    lay('.laydatetime').each(function () {
-        laydate.render({
-            elem: this
-            , trigger: 'click'
-            , range: false
-            , type: 'datetime'
-            , theme: '#007bff'
-        });
-    });
 
     /*********************变量定义区 begin*************/
     //行索引计数器

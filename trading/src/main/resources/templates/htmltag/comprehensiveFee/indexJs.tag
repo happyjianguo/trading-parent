@@ -7,16 +7,6 @@
     var dia;
 
 
-    //时间范围
-    lay('.laydatetime').each(function () {
-        laydate.render({
-            elem: this
-            , trigger: 'click'
-            , range: false
-            , theme: '#007bff'
-            , type: 'datetime'
-        });
-    });
 
 
     // 客户名称
