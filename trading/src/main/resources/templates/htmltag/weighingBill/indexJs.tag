@@ -135,7 +135,8 @@ function doPrintHandler(){
                 if (data.code == '200') {
 	                // 调用c端打印
 	                if (rows[0].statement.state==4) {
-	        			callbackObj.printDirect(JSON.stringify(data.data),"WeighingDocument");
+//	        			callbackObj.printDirect(JSON.stringify(data.data),"WeighingDocument");
+	        			callbackObj.printPreview(JSON.stringify(data.data),"1","WeighingDocument",0);
 	        		}else if (rows[0].statement.state==2) {
 	        			// 冻结单打印过磅单数据
 	        			if(rows[0].measureType==1){
