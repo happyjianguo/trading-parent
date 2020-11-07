@@ -755,7 +755,6 @@ public class WeighingBillController {
 		metadata.put("tradeType", "tradeTypeCodeProvider");
 		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData().getData()));
 		Map map = listMap.get(0);
-		System.out.println(JSON.toJSONString(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map)));
 		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map));
 	}
 }
