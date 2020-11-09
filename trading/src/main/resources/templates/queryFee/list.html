@@ -37,7 +37,7 @@
 					</div>
 					&nbsp;&nbsp;至&nbsp;&nbsp;
 					<div class="input-group">
-						<input type="text" name="operatorTimeEnd" id="createdEnd" value="${operatorTimeEnd!}" class="form-control laydatetime layend" value="" />
+						<input type="text" name="operatorTimeEnd" id="createdEnd" value="${operatorTimeEnd!}" class="form-control laydatetimeEnd layend" value="" />
 						<div class="input-group-append">
 							<label for="createdEnd" class="input-group-text fa fa-calendar"></label>
 						</div>
@@ -90,7 +90,7 @@
                         <th data-field="customerCardNo" data-align="center" data-sortable="true" data-sort-name="customer_card_no">
                             卡号
                         </th>
-                        <th data-field="chargeAmount" data-align="center" data-sortable="true" data-provider="moneyProvider" data-sort-name="charge_amount">
+                        <th data-field="chargeAmount" data-align="center" data-sortable="true" data-provider="moneyProvider" data-sort-name="charge_amount" data-format="0.00" data-type="number">
                             收费金额
                         </th>
                         <th data-field="operatorName" data-align="center" data-sortable="true" data-sort-name="operator_name">

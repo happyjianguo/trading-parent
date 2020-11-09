@@ -26,7 +26,6 @@ import com.dili.orders.dto.WeighingBillQueryDto;
 import com.dili.orders.dto.WeighingStatementPrintDto;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.orders.rpc.CategoryRpc;
-import com.dili.orders.rpc.OrderServiceRpc;
 import com.dili.orders.rpc.PayRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
@@ -768,7 +767,6 @@ public class WeighingBillController {
 		metadata.put("tradeType", "tradeTypeCodeProvider");
 		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData().getData()));
 		Map map = listMap.get(0);
-		System.out.println(JSON.toJSONString(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map)));
 		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map));
 	}
 
@@ -793,5 +791,4 @@ public class WeighingBillController {
 			});
 		}
 	}
-
 }

@@ -74,7 +74,7 @@
 				</#resource>
 			</div>
 			<table id="grid" data-toggle="table" 
-				data-title="过磅单列表"  data-toolbar="#toolbar"
+				data-title="价格确认列表"  data-toolbar="#toolbar"
 				data-pagination="true" data-page-number="1"
 				data-method="post"
                        data-page-size="10" data-query-params="queryParams"
@@ -95,13 +95,13 @@
 						<th data-field="buyerCardNo" data-align="center" data-sortable="true">买方卡号</th>
 						<th data-field="tradeType" data-align="center" data-sortable="true" data-provider="tradeTypeCodeProvider">交易类型</th>
 						<th data-field="goodsName" data-align="center" data-sortable="true">商品</th>
-						<th data-field="tradeWeight" data-align="center" data-sortable="true" data-provider="weightProvider">交易量/公斤</th>
-						<th data-field="unitPrice" data-align="center" data-sortable="true" data-provider="moneyProvider">单价(元/斤)</th>
-						<th data-field="referencePrice" data-align="center" data-sortable="true" data-provider="moneyProvider">参考最低价</th>
+						<th data-field="tradeWeight" data-align="center" data-sortable="true" data-provider="weightProvider" data-format="0.00" data-type="number">交易量/公斤</th>
+						<th data-field="unitPrice" data-align="center" data-sortable="true" data-provider="moneyProvider" data-format="0.00" data-type="number">单价(元/斤)</th>
+						<th data-field="referencePrice" data-align="center" data-sortable="true" data-provider="moneyProvider" data-format="0.00" data-type="number">参考最低价</th>
 						<th data-field="state" data-align="center" data-sortable="true" data-provider="priceStateProvider">状态</th>
 						<th data-field="approverName" data-align="center" data-sortable="true">审核员</th>
 						<th data-field="approveTime" data-align="center" data-sortable="true" data-provider="datetimeProvider">审核时间</th>
-						<th data-field="notes" data-align="center" data-sortable="true" data-provider="moneyProvider">备注</th>
+						<th data-field="notes" data-align="center" data-sortable="true">备注</th>
 					</tr>
 				</thead>
 			</table>

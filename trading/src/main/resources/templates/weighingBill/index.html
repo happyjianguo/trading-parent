@@ -85,7 +85,7 @@
 					</div>
 					&nbsp;&nbsp;至&nbsp;&nbsp;
 					<div class="input-group">
-						<input type="text" value="${operationEndTime!}" name="operationEndTime" id="operationEndTime" class="form-control settletime layend" value="" />
+						<input type="text" value="${operationEndTime!}" name="operationEndTime" id="operationEndTime" class="form-control settletimeEnd layend" value="" />
 						<div class="input-group-append">
 							<label for="operationEndTime" class="input-group-text fa fa-calendar"></label>
 						</div>
@@ -135,7 +135,7 @@
 					<i class="fa fa-download"></i> 导出
 				</button>
 			</div>
-			<table id="grid" data-toggle="table" 
+			<table id="grid" data-toggle="table"
 				data-title="过磅单列表"  data-toolbar="#toolbar"
 				data-pagination="true" data-page-number="1"
 				data-method="post"
@@ -150,7 +150,7 @@
 					<tr>
 						<th data-radio="true"></th>
 						<th data-field="serialNo" data-sort-name="serial_no" data-align="center" data-sortable="true">过磅单号</th>
-						<th data-field="operationRecord.operationTime" data-align="center" data-sort-name="settlement_time" data-sortable="true" data-provider="datetimeProviderPlus">操作时间</th>
+						<th data-field="operationRecord.operationTime" data-align="center" data-sort-name="operation_time" data-sortable="true" data-provider="datetimeProviderPlus">操作时间</th>
 						<th data-field="statement.serialNo" data-sort-name="serial_no"  data-align="center" data-sortable="true">结算单号</th>
 						<th data-field="buyerCode" data-align="center" data-sort-name="buyer_code" data-sortable="true">买方编号</th>
 						<th data-field="buyerName" data-align="center" data-sort-name="CONVERT(buyer_name using gbk)" data-sortable="true">买方名称</th>
@@ -159,23 +159,25 @@
 						<th data-field="sellerName" data-align="center" data-sort-name="CONVERT(seller_name using gbk)" data-sortable="true">卖方名称</th>
 						<th data-field="sellerCardNo" data-align="center" data-sort-name="seller_card_no" data-sortable="true">卖方卡号</th>
 						<th data-field="goodsName" data-align="center" data-sort-name="CONVERT(goods_name using gbk)" data-sortable="true">商品</th>
-						<th data-field="roughWeight" data-align="center" data-sort-name="rough_weight" data-sortable="true" data-provider="weightProvider">毛重</th>
-						<th data-field="tareWeight" data-align="center" data-sort-name="tare_weight" data-sortable="true" data-provider="weightProvider">皮重</th>
-						<th data-field="netWeight" data-align="center" data-sort-name="net_weight" data-sortable="true" data-provider="weightProvider">净重</th>
-						<th data-field="unitAmount" data-align="center" data-sort-name="unit_amount" data-sortable="true">件数</th>
-						<th data-field="unitWeight" data-align="center" data-sort-name="unit_weight" data-sortable="true" data-provider="weightProvider">件重（斤）</th>
-						<th data-field="unitPiecePrice" data-align="center" data-sort-name="unit_piece_price" data-sortable="true" data-provider="moneyProvider">件价</th>
-						<th data-field="unitWeightPrice" data-align="center" data-sort-name="unit_weight_price" data-sortable="true" data-provider="moneyProvider">单价</th>
-						<th data-field="statement.tradeAmount" data-align="center" data-sort-name="trade_amount" data-sortable="true" data-provider="moneyProvider">交易金额</th>
-						<th data-field="statement.buyerPoundage" data-align="center" data-sort-name="buyer_poundage" data-sortable="true" data-provider="moneyProvider">买方手续费</th>
-						<th data-field="statement.buyerActualAmount" data-align="center" data-sort-name="buyer_actual_amount" data-sortable="true" data-provider="moneyProvider">买方实付</th>
-						<th data-field="statement.sellerPoundage" data-align="center" data-sort-name="seller_poundage" data-sortable="true" data-provider="moneyProvider">卖方手续费</th>
-						<th data-field="statement.sellerActualAmount" data-align="center" data-sort-name="seller_actual_amount" data-sortable="true" data-provider="moneyProvider">卖方实收</th>
+						<th data-field="roughWeight" data-align="center" data-sort-name="rough_weight" data-sortable="true" data-provider="weightProvider" data-format="0.00" data-type="number">毛重</th>
+						<th data-field="tareWeight" data-align="center" data-sort-name="tare_weight" data-sortable="true" data-provider="weightProvider" data-format="0.00" data-type="number">皮重</th>
+						<th data-field="netWeight" data-align="center" data-sort-name="net_weight" data-sortable="true" data-provider="weightProvider" data-format="0.00" data-type="number">净重</th>
+						<th data-field="unitAmount" data-align="center" data-sort-name="unit_amount" data-sortable="true" data-format="0.00" data-type="number">件数</th>
+						<th data-field="unitWeight" data-align="center" data-sort-name="unit_weight" data-sortable="true" data-provider="weightProvider" data-format="0.00" data-type="number">件重（斤）</th>
+						<th data-field="unitPiecePrice" data-align="center" data-sort-name="unit_piece_price" data-sortable="true" data-provider="moneyProvider" data-format="0.00" data-type="number">件价</th>
+						<th data-field="unitWeightPrice" data-align="center" data-sort-name="unit_weight_price" data-sortable="true" data-provider="moneyProvider" data-format="0.00" data-type="number">单价</th>
+						<th data-field="statement.tradeAmount" data-align="center" data-sort-name="trade_amount" data-sortable="true" data-provider="moneyProvider" data-format="0.00" data-type="number">交易金额</th>
+						<th data-field="statement.buyerPoundage" data-align="center" data-sort-name="buyer_poundage" data-sortable="true" data-provider="moneyProvider" data-format="0.00" data-type="number">买方手续费</th>
+						<th data-field="statement.buyerActualAmount" data-align="center" data-sort-name="buyer_actual_amount" data-sortable="true" data-provider="moneyProvider" data-format="0.00" data-type="number">买方实付</th>
+						<th data-field="statement.sellerPoundage" data-align="center" data-sort-name="seller_poundage" data-sortable="true" data-provider="moneyProvider" data-format="0.00" data-type="number">卖方手续费</th>
+						<th data-field="statement.sellerActualAmount" data-align="center" data-sort-name="seller_actual_amount" data-sortable="true" data-provider="moneyProvider" data-format="0.00" data-type="number">卖方实收</th>
 						<th data-field="tradeType" data-align="center" data-sort-name="trade_type" data-sortable="true" data-provider="tradeTypeCodeProvider">交易类型</th>
 						<th data-field="plateNumber" data-align="center" data-sort-name="plate_number" data-sortable="true">车牌号</th>
 						<th data-field="statement.state" data-align="center" data-sort-name="ws_state" data-sortable="true" data-provider="weighingStatementStateProvider">单据状态</th>
 						<th data-field="operationRecord.operatorUserName" data-sort-name="operator_user_name" data-align="center" data-sortable="true">操作员工号</th>
 						<th data-field="operationRecord.operatorName" data-sort-name="CONVERT(operator_name using gbk)" data-align="center" data-sortable="true">操作员名称</th>
+						<th data-field="latestPdResult"  data-align="center" data-sortable="true">检测数值</th>
+						<th data-field="detectStateDesc" data-align="center" data-sortable="true">检测结果</th>
 					</tr>
 				</thead>
 			</table>
