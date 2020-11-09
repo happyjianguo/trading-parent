@@ -1,29 +1,6 @@
 package com.dili.trading.controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CategoryDTO;
@@ -35,7 +12,6 @@ import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
-import com.dili.orders.domain.MeasureType;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.AccountPasswordValidateDto;
@@ -50,6 +26,7 @@ import com.dili.orders.dto.WeighingBillQueryDto;
 import com.dili.orders.dto.WeighingStatementPrintDto;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.orders.rpc.CategoryRpc;
+import com.dili.orders.rpc.OrderServiceRpc;
 import com.dili.orders.rpc.PayRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
@@ -59,8 +36,10 @@ import com.dili.ss.idempotent.annotation.Idempotent;
 import com.dili.ss.idempotent.annotation.Token;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.trading.dto.TraceTradeBillResponseDto;
 import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
 import com.dili.trading.rpc.AuthenticationRpc;
+import com.dili.trading.rpc.QualityTraceRpc;
 import com.dili.trading.rpc.WeighingBillRpc;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.domain.Firm;
@@ -73,6 +52,30 @@ import com.dili.uap.sdk.rpc.UserRpc;
 import com.dili.uap.sdk.session.SessionConstants;
 import com.dili.uap.sdk.session.SessionContext;
 import com.dili.uap.sdk.util.WebContent;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * WeighingBillController
@@ -104,6 +107,8 @@ public class WeighingBillController {
 	private AuthenticationRpc authRpc;
 	@Autowired
 	private TradeTypeRpc tradeTypeRpc;
+	@Autowired
+	private QualityTraceRpc qualityTraceRpc;
 
 	/**
 	 * 列表页
@@ -300,7 +305,7 @@ public class WeighingBillController {
 
 	/**
 	 * 自动关闭过磅单
-	 * 
+	 *
 	 * @return
 	 */
 	@ResponseBody
@@ -352,6 +357,12 @@ public class WeighingBillController {
 		if (!output.isSuccess()) {
 			return null;
 		}
+		List<WeighingBillListPageDto> result = output.getData();
+		List<Long> orderIds = result.stream()
+				.map(WeighingBillListPageDto::getId)
+				.collect(Collectors.toList());
+		//获取并拼装检测数据
+		this.getQualityTrace(result, orderIds);
 
 //		Map<Object, Object> metadata = new HashMap<Object, Object>();
 //		metadata.put("roughWeight", "weightProvider");
@@ -376,7 +387,7 @@ public class WeighingBillController {
 
 //		query.setMetadata(metadata);
 		try {
-			List<Map> list = ValueProviderUtils.buildDataByProvider(query, output.getData());
+			List<Map> list = ValueProviderUtils.buildDataByProvider(query, result);
 
 			return new EasyuiPageOutput(output.getTotal(), list).toString();
 		} catch (Exception e) {
@@ -384,6 +395,8 @@ public class WeighingBillController {
 			return null;
 		}
 	}
+
+
 
 	/**
 	 * 查询列表
@@ -672,7 +685,7 @@ public class WeighingBillController {
 
 	/**
 	 * 获取登录用户sessionId
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 */
@@ -758,4 +771,27 @@ public class WeighingBillController {
 		System.out.println(JSON.toJSONString(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map)));
 		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map));
 	}
+
+	/**
+	*  获取检测结果
+	* @author miaoguoxin
+	* @date 2020/11/6
+	*/
+	private void getQualityTrace(List<WeighingBillListPageDto> result, List<Long> orderIds) {
+		BaseOutput<List<TraceTradeBillResponseDto>> listBaseOutput = qualityTraceRpc.queryByOrderIdList(orderIds);
+		if (listBaseOutput.isSuccess() && CollectionUtil.isNotEmpty(listBaseOutput.getData())) {
+			Map<Long, TraceTradeBillResponseDto> traceMap = listBaseOutput.getData().stream()
+					.collect(Collectors.toMap(TraceTradeBillResponseDto::getBuild,
+							Function.identity(),
+							(key1, key2) -> key2));
+			result.forEach(dto -> {
+				TraceTradeBillResponseDto resDto = traceMap.get(dto.getId());
+				if (resDto != null) {
+					dto.setDetectStateDesc(resDto.getDetectStateDesc());
+					dto.setLatestPdResult(resDto.getLatestPdResult());
+				}
+			});
+		}
+	}
+
 }
