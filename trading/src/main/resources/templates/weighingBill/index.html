@@ -135,7 +135,7 @@
 					<i class="fa fa-download"></i> 导出
 				</button>
 			</div>
-			<table id="grid" data-toggle="table" 
+			<table id="grid" data-toggle="table"
 				data-title="过磅单列表"  data-toolbar="#toolbar"
 				data-pagination="true" data-page-number="1"
 				data-method="post"
@@ -176,6 +176,8 @@
 						<th data-field="statement.state" data-align="center" data-sort-name="ws_state" data-sortable="true" data-provider="weighingStatementStateProvider">单据状态</th>
 						<th data-field="operationRecord.operatorUserName" data-sort-name="operator_user_name" data-align="center" data-sortable="true">操作员工号</th>
 						<th data-field="operationRecord.operatorName" data-sort-name="CONVERT(operator_name using gbk)" data-align="center" data-sortable="true">操作员名称</th>
+						<th data-field="latestPdResult"  data-align="center" data-sortable="true">检测数值</th>
+						<th data-field="detectStateDesc" data-align="center" data-sortable="true">检测结果</th>
 					</tr>
 				</thead>
 			</table>
