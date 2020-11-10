@@ -357,10 +357,8 @@ public class WeighingBillController {
 			return null;
 		}
 		List<WeighingBillListPageDto> result = output.getData();
-		List<Long> orderIds = result.stream()
-				.map(WeighingBillListPageDto::getId)
-				.collect(Collectors.toList());
-		//获取并拼装检测数据
+		List<Long> orderIds = result.stream().map(WeighingBillListPageDto::getId).collect(Collectors.toList());
+		// 获取并拼装检测数据
 		this.getQualityTrace(result, orderIds);
 
 //		Map<Object, Object> metadata = new HashMap<Object, Object>();
@@ -394,8 +392,6 @@ public class WeighingBillController {
 			return null;
 		}
 	}
-
-
 
 	/**
 	 * 查询列表
@@ -535,6 +531,7 @@ public class WeighingBillController {
 			LOGGER.error(output.getMessage());
 			return this.index(modelMap);
 		}
+		this.getQualityTrace(output.getData());
 		Map<Object, Object> metadata = new HashMap<Object, Object>();
 		metadata.put("netWeight", "weightProvider");
 		metadata.put("unitWeight", "weightProvider");
@@ -771,17 +768,16 @@ public class WeighingBillController {
 	}
 
 	/**
-	*  获取检测结果
-	* @author miaoguoxin
-	* @date 2020/11/6
-	*/
+	 * 获取检测结果
+	 * 
+	 * @author miaoguoxin
+	 * @date 2020/11/6
+	 */
 	private void getQualityTrace(List<WeighingBillListPageDto> result, List<Long> orderIds) {
 		BaseOutput<List<TraceTradeBillResponseDto>> listBaseOutput = qualityTraceRpc.queryByOrderIdList(orderIds);
 		if (listBaseOutput.isSuccess() && CollectionUtil.isNotEmpty(listBaseOutput.getData())) {
 			Map<Long, TraceTradeBillResponseDto> traceMap = listBaseOutput.getData().stream()
-					.collect(Collectors.toMap(TraceTradeBillResponseDto::getBuild,
-							Function.identity(),
-							(key1, key2) -> key2));
+					.collect(Collectors.toMap(TraceTradeBillResponseDto::getBillId, Function.identity(), (key1, key2) -> key2));
 			result.forEach(dto -> {
 				TraceTradeBillResponseDto resDto = traceMap.get(dto.getId());
 				if (resDto != null) {
@@ -789,6 +785,23 @@ public class WeighingBillController {
 					dto.setLatestPdResult(resDto.getLatestPdResult());
 				}
 			});
+		}
+	}
+
+	/**
+	 * 获取详情页结果
+	 * 
+	 * @author miaoguoxin
+	 * @date 2020/11/6
+	 */
+	private void getQualityTrace(WeighingBillDetailDto dto) {
+		BaseOutput<List<TraceTradeBillResponseDto>> listBaseOutput = qualityTraceRpc.queryByOrderIdList(Arrays.asList(dto.getId()));
+		if (listBaseOutput.isSuccess() && CollectionUtil.isNotEmpty(listBaseOutput.getData())) {
+			TraceTradeBillResponseDto resDto = listBaseOutput.getData().get(0);
+			if (resDto != null) {
+				dto.setDetectStateDesc(resDto.getDetectStateDesc());
+				dto.setLatestPdResult(resDto.getLatestPdResult());
+			}
 		}
 	}
 }
