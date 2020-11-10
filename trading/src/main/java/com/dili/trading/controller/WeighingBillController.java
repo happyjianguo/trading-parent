@@ -1,8 +1,11 @@
 package com.dili.trading.controller;
 
 import cn.hutool.core.collection.CollectionUtil;
+
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.assets.sdk.dto.TradeTypeDto;
 import com.dili.assets.sdk.dto.TradeTypeQuery;
@@ -35,6 +38,7 @@ import com.dili.ss.idempotent.annotation.Idempotent;
 import com.dili.ss.idempotent.annotation.Token;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.ss.redis.service.RedisUtil;
 import com.dili.trading.dto.TraceTradeBillResponseDto;
 import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
 import com.dili.trading.rpc.AuthenticationRpc;
@@ -56,6 +60,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,6 +89,9 @@ import java.util.stream.Collectors;
 public class WeighingBillController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WeighingBillController.class);
+
+	private static final String HEADER_CACHE_KEY = "trading_weighing_bill_header_cache:";
+
 	@Autowired
 	private WeighingBillRpc weighingBillRpc;
 	@Autowired
@@ -108,6 +116,8 @@ public class WeighingBillController {
 	private TradeTypeRpc tradeTypeRpc;
 	@Autowired
 	private QualityTraceRpc qualityTraceRpc;
+	@Autowired
+	private RedisUtil redisUtil;
 
 	/**
 	 * 列表页
@@ -765,6 +775,44 @@ public class WeighingBillController {
 		List<Map> listMap = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData().getData()));
 		Map map = listMap.get(0);
 		return BaseOutput.successData(new PrintTemplateDataDto<Map>(output.getData().getTemplate(), map));
+	}
+
+	/**
+	 * 缓存过磅单显示的列头配置
+	 * 
+	 * @param json 列头数组
+	 * @return
+	 */
+	@ResponseBody
+	@PostMapping("/cacheTableHeader.action")
+	public BaseOutput<Object> cacheTableHeader(@RequestBody String json) {
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		if (user == null) {
+			return BaseOutput.failure("用户未登录");
+		}
+		this.redisUtil.set(HEADER_CACHE_KEY + user.getId(), json);
+		return BaseOutput.success();
+	}
+
+	/**
+	 * 缓存过磅单显示的列头配置
+	 * 
+	 * @param json 列头数组
+	 * @return
+	 */
+	@ResponseBody
+	@PostMapping("/getTableHeader.action")
+	public BaseOutput<Object> getTableHeader() {
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		if (user == null) {
+			return BaseOutput.failure("用户未登录");
+		}
+		String json = this.redisUtil.get(HEADER_CACHE_KEY + user.getId()).toString();
+		if (StringUtils.isNotBlank(json)) {
+			return BaseOutput.successData(JSON.parseObject(json, new TypeReference<List<String>>() {
+			}));
+		}
+		return BaseOutput.success();
 	}
 
 	/**
