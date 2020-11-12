@@ -60,6 +60,11 @@ function doPrintHandler(){
 		    	var createdEnd=$('#operationEndTime').val();
 		    	var now=new Date();		 
 		    	
+		    	if (createdStart && createdEnd) {
+		    		createdStart=new Date();
+		    		createdEnd=new Date();
+		    	}
+		    	
 		    	if (!createdStart && !createdEnd) {
                     createdStart= new Date();
                     createdStart.setHours(0);
