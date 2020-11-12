@@ -39,7 +39,6 @@ function doPrintHandler(){
 		    			title:item.title
 		    		});
 		    	});
-		    	console.log(res.rows);
 		    	$(res.rows).each(function(index,item){
 		    		var obj={};
 		    		for(var key in item){
@@ -54,11 +53,10 @@ function doPrintHandler(){
 		    				obj[key]=item[key];
 		    			}
 		    		}
-		    		console.log(obj);
 		    		printObj.data.push(obj);
 		    	});
-		    	var createdStart=$('#createdStart').val();
-		    	var createdEnd=$('#createdEnd').val();
+		    	var createdStart=$('#operationStartTime').val();
+		    	var createdEnd=$('#operationEndTime').val();
 		    	if (!createdStart) {
 			    	createdStart= moment(new Date()).format("YYYY-MM-DD")+' 00:00:00';
 		    	}
