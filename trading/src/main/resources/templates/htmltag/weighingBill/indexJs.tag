@@ -57,7 +57,7 @@ function doPrintHandler(){
 		    	});
 		    	var createdStart=$('#operationStartTime').val();
 		    	var createdEnd=$('#operationEndTime').val();
-		    	
+		    	debugger;
 		    	if (createdStart && createdEnd) {
 		    		createdStart=new Date();
 		    		 createdStart.setHours(0);
@@ -87,7 +87,7 @@ function doPrintHandler(){
                     createdStart.setFullYear(createdStart.getFullYear()-1);
                     createdStart.setDate(createdStart.getDate()-1);
                 }
-                if (createdEnd.getTime()-createdStart.getTime() > 366*24*60*60*1000) {
+                if (daysDistance(createdStart,createdEnd) > 367) {
                     createdEnd=new Date();
                 }
                 createdStart= moment(createdStart).format("YYYY-MM-DD")+' 00:00:00';
@@ -101,6 +101,19 @@ function doPrintHandler(){
             }
         });
 	
+}
+
+
+//date1和date2是2019-06-18格式 
+function daysDistance(startDate, endDate) {     
+    if (startDate>endDate){
+        return 0;
+    }
+    if (startDate==endDate){
+        return 1;
+    }
+    var days=(endDate - startDate)/(1*24*60*60*1000);
+    return  days;
 }
 
   var buyerNameQueryAutoCompleteOption = {
