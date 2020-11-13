@@ -55,13 +55,14 @@ function doPrintHandler(){
 		    		}
 		    		printObj.data.push(obj);
 		    	});
-		    	debugger;
 		    	var createdStart=$('#operationStartTime').val();
 		    	var createdEnd=$('#operationEndTime').val();
-		    	var now=new Date();		 
 		    	
 		    	if (createdStart && createdEnd) {
 		    		createdStart=new Date();
+		    		 createdStart.setHours(0);
+                    createdStart.setMinutes(0);
+                    createdStart.setSeconds(0);
 		    		createdEnd=new Date();
 		    	}
 		    	
@@ -71,9 +72,6 @@ function doPrintHandler(){
                     createdStart.setMinutes(0);
                     createdStart.setSeconds(0);
                     createdEnd= new Date();
-                    createdEnd.setHours(23);
-                    createdEnd.setMinutes(59);
-                    createdEnd.setSeconds(59);
                 }
 		    	
 		    	if (createdStart && !createdEnd) {
@@ -89,8 +87,8 @@ function doPrintHandler(){
                     createdStart.setFullYear(createdStart.getFullYear()-1);
                     createdStart.setDate(createdStart.getDate()-1);
                 }
-                if (createdEnd.getTime() > createdStart.getTime()) {
-                    createdEnd=now;
+                if (createdEnd.getTime()-createdStart.getTime() > 366*24*60*60*1000) {
+                    createdEnd=new Date();
                 }
                 createdStart= moment(createdStart).format("YYYY-MM-DD")+' 00:00:00';
                 createdEnd= moment(createdEnd).format("YYYY-MM-DD")+' 23:59:59';
