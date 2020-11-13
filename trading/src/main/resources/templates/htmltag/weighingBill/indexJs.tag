@@ -59,11 +59,11 @@ function doPrintHandler(){
 		    	var createdEnd=$('#operationEndTime').val();
 		    	debugger;
 		    	if (createdStart && createdEnd) {
-		    		createdStart=new Date();
+		    		createdStart=new Date(createdStart);
 		    		 createdStart.setHours(0);
                     createdStart.setMinutes(0);
                     createdStart.setSeconds(0);
-		    		createdEnd=new Date();
+		    		createdEnd=new Date(createdEnd);
 		    	}
 		    	
 		    	if (!createdStart && !createdEnd) {
