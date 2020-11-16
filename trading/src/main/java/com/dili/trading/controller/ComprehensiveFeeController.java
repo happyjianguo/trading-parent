@@ -221,6 +221,9 @@ public class ComprehensiveFeeController {
             return BaseOutput.failure(tips);
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        if(comprehensiveFee.getPlate()!=null){
+            comprehensiveFee.setPlate(comprehensiveFee.getPlate().trim());
+        }
         comprehensiveFee.setMarketId(userTicket.getFirmId());
         comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
         //设置测试商品名称
