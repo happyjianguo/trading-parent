@@ -57,12 +57,11 @@ function doPrintHandler(){
 		    	});
 		    	var createdStart=$('#operationStartTime').val();
 		    	var createdEnd=$('#operationEndTime').val();
+		    	
 		    	debugger;
+		    	
 		    	if (createdStart && createdEnd) {
 		    		createdStart=new Date(createdStart);
-		    		 createdStart.setHours(0);
-                    createdStart.setMinutes(0);
-                    createdStart.setSeconds(0);
 		    		createdEnd=new Date(createdEnd);
 		    	}
 		    	
@@ -90,8 +89,9 @@ function doPrintHandler(){
                 if (daysDistance(createdStart,createdEnd) > 367) {
                     createdEnd=new Date();
                 }
-                createdStart= moment(createdStart).format("YYYY-MM-DD")+' 00:00:00';
-                createdEnd= moment(createdEnd).format("YYYY-MM-DD")+' 23:59:59';
+                
+                createdStart= moment(createdStart).format("YYYY-MM-DD HH:mm:ss");
+                createdEnd= moment(createdEnd).format("YYYY-MM-DD HH:mm:ss");
 		    	printObj.startDate=createdStart;
 		    	printObj.endDate=createdEnd;
 		    	callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
