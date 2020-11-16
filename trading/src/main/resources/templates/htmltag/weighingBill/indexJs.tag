@@ -57,12 +57,41 @@ function doPrintHandler(){
 		    	});
 		    	var createdStart=$('#operationStartTime').val();
 		    	var createdEnd=$('#operationEndTime').val();
-		    	if (!createdStart) {
-			    	createdStart= moment(new Date()).format("YYYY-MM-DD")+' 00:00:00';
+		    	debugger;
+		    	if (createdStart && createdEnd) {
+		    		createdStart=new Date(createdStart);
+		    		 createdStart.setHours(0);
+                    createdStart.setMinutes(0);
+                    createdStart.setSeconds(0);
+		    		createdEnd=new Date(createdEnd);
 		    	}
-		    	if (!createdEnd) {
-			    	createdEnd= moment(new Date()).format("YYYY-MM-DD")+' 23:59:59';
-		    	}
+		    	
+		    	if (!createdStart && !createdEnd) {
+                    createdStart= new Date();
+                    createdStart.setHours(0);
+                    createdStart.setMinutes(0);
+                    createdStart.setSeconds(0);
+                    createdEnd= new Date();
+                }
+		    	
+		    	if (createdStart && !createdEnd) {
+		    		createdStart=new Date(createdStart);
+                    createdEnd=new Date(createdStart);
+                    createdEnd.setFullYear(createdEnd.getFullYear()+1);
+                    createdEnd.setDate(createdEnd.getDate()+1);
+                }
+        
+                if (!createdStart && createdEnd) {
+                	createdEnd=new Date(createdEnd);
+                    createdStart=new Date(createdEnd);
+                    createdStart.setFullYear(createdStart.getFullYear()-1);
+                    createdStart.setDate(createdStart.getDate()-1);
+                }
+                if (daysDistance(createdStart,createdEnd) > 367) {
+                    createdEnd=new Date();
+                }
+                createdStart= moment(createdStart).format("YYYY-MM-DD")+' 00:00:00';
+                createdEnd= moment(createdEnd).format("YYYY-MM-DD")+' 23:59:59';
 		    	printObj.startDate=createdStart;
 		    	printObj.endDate=createdEnd;
 		    	callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
@@ -72,6 +101,19 @@ function doPrintHandler(){
             }
         });
 	
+}
+
+
+//date1和date2是2019-06-18格式 
+function daysDistance(startDate, endDate) {     
+    if (startDate>endDate){
+        return 0;
+    }
+    if (startDate==endDate){
+        return 1;
+    }
+    var days=(endDate - startDate)/(1*24*60*60*1000);
+    return  days;
 }
 
   var buyerNameQueryAutoCompleteOption = {
@@ -133,7 +175,7 @@ function doPrintHandler(){
                 if (data.code == '200') {
 	                // 调用c端打印
 	                if (rows[0].statement.state==4) {
-//	        			callbackObj.printDirect(JSON.stringify(data.data),"WeighingDocument");
+// callbackObj.printDirect(JSON.stringify(data.data),"WeighingDocument");
 	        			callbackObj.printPreview(JSON.stringify(data.data),"1","WeighingDocument",0);
 	        		}else if (rows[0].statement.state==2) {
 	        			// 冻结单打印过磅单数据
