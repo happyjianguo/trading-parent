@@ -7,7 +7,7 @@
                 <div class="form-group col">
                     <label for="">卡号<i class="red">*</i></label>
                     <div class="input-group">
-                        <input type="number" id="customerCardNo" class="form-control" name="customerCardNo" required="true"  maxlength="18">
+                        <input id="customerCardNo" class="form-control" name="customerCardNo" required="true"  maxlength="12">
                         <div class="input-group-append">
                            <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;" >刷卡</a></span>
                         </div>
@@ -74,6 +74,8 @@
         var fee=0.00;
         //记录是否重新刷卡
         var reCardFlag=false;
+        //记录成功的卡号
+        var oldCardNum="";
 
         //初始化
         $(function () {
@@ -125,10 +127,15 @@
         $("#customerCardNo").keypress(function (even) {
             if (even.which == 13) {
                 let cardNum=$("#customerCardNo").val();
+                var reg=/^([0-9]+|0)$/;
                 if(cardNum.length!=12){
                     bs4pop.alert("卡号必须为12位！", {type: 'error'});
                     return;
+                }else if(!reg.test(cardNum)){
+                    bs4pop.alert("卡号必须填写数字！", {type: 'error'});
+                    return;
                 }else{
+                    oldCardNum=cardNum;
                     //再次回车时将检测费用和缴费金额清0
                     if(reCardFlag==true){
                         $('#inspectionNum').val('');
@@ -181,7 +188,11 @@
                                             if(resulst.data!=null&&resulst.data.length>0){
                                                 for(var i=0;i<resulst.data.length;i++){
                                                     if(resulst.data[i].code!="200"){
-                                                        bs4pop.alert("未匹配到任何规则！", {type: 'error'});
+                                                        bs4pop.alert("未匹配到任何规则！", {type: 'error'},function () {
+                                                            setTimeout(function(){
+                                                                $('#customerCardNo').focus();
+                                                            }, 500)
+                                                        });
                                                         $("#saveBtn").attr('disabled', true);
                                                         return
                                                     }
@@ -190,10 +201,13 @@
                                                 //获取计费规则成功后才可以输入商品
                                                 $("#saveBtn").attr('disabled', false);
                                                 $('#inspectionItem').attr('disabled',false);
-                                                $('#customerCardNo').focus();
                                             }else{
                                                 $("#saveBtn").attr('disabled', true);
-                                                bs4pop.alert("未匹配到任何规则！", {type: 'error'});
+                                                bs4pop.alert("未匹配到任何规则！", {type: 'error'},function () {
+                                                    setTimeout(function(){
+                                                        $('#customerCardNo').focus();
+                                                    }, 500)
+                                                });
                                                 return;
                                             }
                                         }else {
@@ -224,6 +238,7 @@
                 parent.bs4pop.alert(json.message, {type: "error"});
                 return false;
             }
+            oldCardNum=cardNum;
            //再次刷卡时将检测费用和缴费金额清0
             if(reCardFlag==true){
                 $('#inspectionNum').val('');
@@ -310,6 +325,10 @@
          * 保存事件
          * */
         function saveOrUpdateHandler() {
+            let cardNum=$("#customerCardNo").val();
+            if(cardNum!=oldCardNum){
+                $("#customerCardNo").val(oldCardNum);
+            }
             // 提交保存
             if (!$('#saveForm').validate().form()) {
                 return false;
