@@ -7,7 +7,7 @@
                 <div class="form-group col">
                     <label for="">卡号<i class="red">*</i></label>
                     <div class="input-group">
-                        <input id="customerCardNo" class="form-control" name="customerCardNo" required="true"  maxlength="12">
+                        <input id="customerCardNo" onkeyup="this.value=this.value.replace(/\s/g,'')" class="form-control" name="customerCardNo" required="true"  maxlength="12">
                         <div class="input-group-append">
                            <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;" >刷卡</a></span>
                         </div>
