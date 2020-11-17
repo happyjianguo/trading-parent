@@ -129,10 +129,18 @@
                 let cardNum=$("#customerCardNo").val();
                 var reg=/^([0-9]+|0)$/;
                 if(cardNum.length!=12){
-                    bs4pop.alert("卡号必须为12位！", {type: 'error'});
+                    bs4pop.alert("卡号必须为12位！", {type: 'error'},function () {
+                        setTimeout(function(){
+                            $('#customerCardNo').focus();
+                        }, 500)
+                    });
                     return;
                 }else if(!reg.test(cardNum)){
-                    bs4pop.alert("卡号必须填写数字！", {type: 'error'});
+                    bs4pop.alert("卡号必须填写数字！", {type: 'error'},function () {
+                        setTimeout(function(){
+                            $('#customerCardNo').focus();
+                        }, 500)
+                    });
                     return;
                 }else{
                     oldCardNum=cardNum;
@@ -152,6 +160,7 @@
                         url: "/comprehensiveFee/listCustomerByCardNo.action",
                         async: true,
                         success: function (res) {
+                            bui.loading.hide();
                             if (res.code == "200") {
                                 reCardFlag=true;
                                 $("#saveBtn").attr('disabled', false);
@@ -188,10 +197,10 @@
                                             if(resulst.data!=null&&resulst.data.length>0){
                                                 for(var i=0;i<resulst.data.length;i++){
                                                     if(resulst.data[i].code!="200"){
-                                                        bs4pop.alert("未匹配到任何规则！", {type: 'error'},function () {
+                                                        bs4pop.alert("未匹配到任何规则！", {type: 'error'},function (){
                                                             setTimeout(function(){
                                                                 $('#customerCardNo').focus();
-                                                            }, 500)
+                                                            }, 1000)
                                                         });
                                                         $("#saveBtn").attr('disabled', true);
                                                         return
@@ -212,15 +221,22 @@
                                             }
                                         }else {
                                             $("#saveBtn").attr('disabled', true);
-                                            bs4pop.alert(resulst.result, {type: 'error'});
+                                            bs4pop.alert(resulst.result, {type: 'error'},function () {
+                                                setTimeout(function(){
+                                                    $('#customerCardNo').focus();
+                                                }, 500)
+                                            });
                                         }
                                     }
                                 });
-                                bui.loading.hide();
                             }else {
                                 $("#saveBtn").attr('disabled', true);
                                 bui.loading.hide();
-                                bs4pop.alert(res.result, {type: 'error'});
+                                bs4pop.alert(res.result, {type: 'error'},function () {
+                                    setTimeout(function(){
+                                        $('#customerCardNo').focus();
+                                    }, 500)
+                                });
                             }
                         }
                     });
