@@ -172,7 +172,7 @@ public class WeighingBillController {
 			ws = settlementOutput.getData();
 		}
 		if (WeighingStatementState.FROZEN.getValue().equals(ws.getState())) {
-			output = this.getWeighingBillPrintData(ws.getWeighingSerialNo(), false);
+			output = this.getWeighingBillPrintData(ws.getWeighingBillId(), false);
 			if (!output.isSuccess()) {
 				return output;
 			}
@@ -199,12 +199,12 @@ public class WeighingBillController {
 //	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/withdraw.action")
-	public BaseOutput<Object> withdraw(String serialNo, String buyerPassword, String sellerPassword) {
+	public BaseOutput<Object> withdraw(Long id, String buyerPassword, String sellerPassword) {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-		return this.weighingBillRpc.withdraw(serialNo, buyerPassword, sellerPassword, user.getId());
+		return this.weighingBillRpc.withdraw(id, buyerPassword, sellerPassword, user.getId());
 	}
 
 	/**
@@ -218,12 +218,12 @@ public class WeighingBillController {
 //	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/invalidate.action")
-	public BaseOutput<Object> invalidate(String serialNo, String buyerPassword, String sellerPassword) {
+	public BaseOutput<Object> invalidate(@RequestParam Long id, @RequestParam String buyerPassword, @RequestParam String sellerPassword) {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-		return this.weighingBillRpc.invalidate(serialNo, buyerPassword, sellerPassword, user.getId());
+		return this.weighingBillRpc.invalidate(id, buyerPassword, sellerPassword, user.getId());
 	}
 
 	/**
@@ -726,8 +726,8 @@ public class WeighingBillController {
 	 */
 	@ResponseBody
 	@RequestMapping("/getWeighingBillPrintData.action")
-	public BaseOutput<?> getWeighingBillPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) throws Exception {
-		BaseOutput<PrintTemplateDataDto<WeighingBillPrintDto>> output = this.weighingBillRpc.getWeighingBillPrintData(serialNo);
+	public BaseOutput<?> getWeighingBillPrintData(@RequestParam Long id, @RequestParam(defaultValue = "false") Boolean reprint) throws Exception {
+		BaseOutput<PrintTemplateDataDto<WeighingBillPrintDto>> output = this.weighingBillRpc.getWeighingBillPrintData(id);
 		if (!output.isSuccess()) {
 			return output;
 		}

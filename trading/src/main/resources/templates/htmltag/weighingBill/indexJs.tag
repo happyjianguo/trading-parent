@@ -7,104 +7,106 @@
 	 **************************************************************************/
 
 function clearQueryForm(){
-	$('#queryForm input').val('');
-	$('#statementStates').val(null).trigger('change');
-	$('#tradeType').val(null).trigger('change');
-	$('#goodsIds').val(null).trigger('change');
+    $('#queryForm input').val('');
+    $('#statementStates').val(null).trigger('change');
+    $('#tradeType').val(null).trigger('change');
+    $('#goodsIds').val(null).trigger('change');
 }
 
 function doPrintHandler(){
-	
-	var visibleColumns= $('#grid').bootstrapTable('getVisibleColumns');
-	
-	$.ajax({
+    
+    var visibleColumns= $('#grid').bootstrapTable('getVisibleColumns');
+    
+    $.ajax({
             type: "POST",
             url: "/weighingBill/listPage.action",
             data: JSON.stringify(queryParams({
-		        limit: 99999,   // 页面大小
-		        page: 1 // 页码
-		    })),
-		    dataType: "json",
+                limit: 99999,   // 页面大小
+                page: 1 // 页码
+            })),
+            dataType: "json",
             processData: false,
             contentType: "application/json",
             async: true,
             success: function (res) {
                 var printObj={
-		    		columns:[],
-		    		data:[]
-		    	};
-		    	$(visibleColumns).each(function(index,item){
-		    		printObj.columns.push({
-		    			field:item.field,
-		    			title:item.title
-		    		});
-		    	});
-		    	$(res.rows).each(function(index,item){
-		    		var obj={};
-		    		for(var key in item){
-	    				if (item[key] instanceof Object) {
-		    				for(var k in item[key]){
-		    					if(typeof item[key+'.'+k] !== "undefined" && item[key+'.'+k] !== null){
-		    						continue;
-		    					}
-		    					obj[key+'.'+k]=item[key][k];
-		    				}
-		    			}else{
-		    				obj[key]=item[key];
-		    			}
-		    		}
-		    		printObj.data.push(obj);
-		    	});
-		    	var createdStart=$('#operationStartTime').val();
-		    	var createdEnd=$('#operationEndTime').val();
-		    	
-		    	debugger;
-		    	
-		    	if (createdStart && createdEnd) {
-		    		createdStart=new Date(createdStart);
-		    		createdEnd=new Date(createdEnd);
-		    	}
-		    	
-		    	if (!createdStart && !createdEnd) {
+                    columns:[],
+                    data:[]
+                };
+                $(visibleColumns).each(function(index,item){
+                    printObj.columns.push({
+                        field:item.field,
+                        title:item.title
+                    });
+                });
+                $(res.rows).each(function(index,item){
+                    var obj={};
+                    for(var key in item){
+                        if (item[key] instanceof Object) {
+                            for(var k in item[key]){
+                                if(typeof item[key+'.'+k] !== "undefined" && item[key+'.'+k] !== null){
+                                    continue;
+                                }
+                                obj[key+'.'+k]=item[key][k];
+                            }
+                        }else{
+                            obj[key]=item[key];
+                        }
+                    }
+                    printObj.data.push(obj);
+                });
+                var createdStart=$('#operationStartTime').val();
+                var createdEnd=$('#operationEndTime').val();
+                
+                if (createdStart && createdEnd) {
+                    createdStart=new Date(createdStart);
+                    createdEnd=new Date(createdEnd);
+                }
+                
+                if (!createdStart && !createdEnd) {
                     createdStart= new Date();
                     createdStart.setHours(0);
                     createdStart.setMinutes(0);
                     createdStart.setSeconds(0);
                     createdEnd= new Date();
                 }
-		    	
-		    	if (createdStart && !createdEnd) {
-		    		createdStart=new Date(createdStart);
+                
+                if (createdStart && !createdEnd) {
+                	createdStart=new Date(createdStart);
                     createdEnd=new Date(createdStart);
-                    createdEnd.setFullYear(createdEnd.getFullYear()+1);
-                    createdEnd.setDate(createdEnd.getDate()+1);
+                    createdEnd.setDate(createdEnd.getDate()+366);
+                    createdEnd.setHours(23);
+                    createdEnd.setMinutes(59);
+                    createdEnd.setSeconds(59);
                 }
         
                 if (!createdStart && createdEnd) {
                 	createdEnd=new Date(createdEnd);
                     createdStart=new Date(createdEnd);
-                    createdStart.setFullYear(createdStart.getFullYear()-1);
-                    createdStart.setDate(createdStart.getDate()-1);
+                    createdStart.setDate(createdStart.getDate()-366);
+                    createdStart.setHours(0);
+                    createdStart.setMinutes(0);
+                    createdStart.setSeconds(0);
                 }
-                if (daysDistance(createdStart,createdEnd) > 367) {
+                if (daysDistance(createdStart,createdEnd) > 367|| daysDistance(new Date(),createdEnd)>0) {
                     createdEnd=new Date();
                 }
                 
                 createdStart= moment(createdStart).format("YYYY-MM-DD HH:mm:ss");
                 createdEnd= moment(createdEnd).format("YYYY-MM-DD HH:mm:ss");
-		    	printObj.startDate=createdStart;
-		    	printObj.endDate=createdEnd;
-		    	callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
+                printObj.startDate=createdStart;
+                printObj.endDate=createdEnd;
+                callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
             },
             error: function (error) {
                 bs4pop.alert(error.message, {type: 'error'});
             }
         });
-	
+    
 }
 
 
-//date1和date2是2019-06-18格式 
+// date1和date2是2019-06-18格式
 function daysDistance(startDate, endDate) {     
     if (startDate>endDate){
         return 0;
@@ -154,40 +156,41 @@ function daysDistance(startDate, endDate) {
         }
         var url='';
         var serialNo=null;
+        var id=null;
         if (rows[0].statement.state==4) {
-        	url='/weighingBill/getWeighingBillPrintData.action'
-        	serialNo=rows[0].serialNo;
+            url='/weighingBill/getWeighingBillPrintData.action'
+            id=rows[0].id;
         }else if (rows[0].statement.state==2) {
-        	url='/weighingBill/getWeighingStatementPrintData.action'
-        	serialNo= rows[0].statement.serialNo;
+            url='/weighingBill/getWeighingStatementPrintData.action'
+            serialNo= rows[0].statement.serialNo;
         }else{
-        	bs4pop.alert("当前单据状态不能补打单据!", {type: 'error'});
-        	return;
+            bs4pop.alert("当前单据状态不能补打单据!", {type: 'error'});
+            return;
         }
         // 先拿到票据信息，在调用c端打印
         $.ajax({
             type: "POST",
             dataType: "json",
             url: url,
-            data: {serialNo: serialNo,reprint:true},
+            data: {id:id,serialNo: serialNo,reprint:true},
             success: function (data) {
                 bui.loading.hide();
                 if (data.code == '200') {
-	                // 调用c端打印
-	                if (rows[0].statement.state==4) {
+                    // 调用c端打印
+                    if (rows[0].statement.state==4) {
 // callbackObj.printDirect(JSON.stringify(data.data),"WeighingDocument");
-	        			callbackObj.printPreview(JSON.stringify(data.data),"1","WeighingDocument",0);
-	        		}else if (rows[0].statement.state==2) {
-	        			// 冻结单打印过磅单数据
-	        			if(rows[0].measureType==1){
+                        callbackObj.printPreview(JSON.stringify(data.data),"1","WeighingDocument",0);
+                    }else if (rows[0].statement.state==2) {
+                        // 冻结单打印过磅单数据
+                        if(rows[0].measureType==1){
 // callbackObj.printDirect(JSON.stringify(data.data),"SettlementDocument");
-	        				callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementDocument",0);
-	                	}else{
+                            callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementDocument",0);
+                        }else{
 // callbackObj.printDirect(JSON.stringify(data.data),"SettlementPieceDocument");
-	        				callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementPieceDocument",0);
-	                	}
-	                }
-                }     		
+                            callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementPieceDocument",0);
+                        }
+                    }
+                }           
             },
             error: function () {
             bui.loading.hide();
@@ -290,7 +293,7 @@ function daysDistance(startDate, endDate) {
     };
 
     function swipeCard(){
- 		let cardNum;
+        let cardNum;
         let json = JSON.parse(callbackObj.readCardNumber());
          if (json.code == 0) {
             cardNum = json.data;
@@ -314,7 +317,7 @@ function daysDistance(startDate, endDate) {
                                 $('#show_seller_name_by_card_name').val(result.data.customerName);
                             }
                         }else{
-                        	 bs4pop.alert(result.message, {type: "error"});
+                             bs4pop.alert(result.message, {type: "error"});
                             $('#buyerCardNo').val('');
                             $('#show_buyer_name_by_card_name').val('');
                             $('#sellerCardNo').val('');
@@ -471,20 +474,20 @@ function daysDistance(startDate, endDate) {
 	 * 打开新增窗口
 	 */
     function invalidate() {
-    	let rows = _grid.bootstrapTable('getSelections');
+        let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
             return;
         }
         if (rows[0].state!=1&&rows[0].state!=2) {
-        	bs4pop.alert('该单据当前状态不能进行作废操作！');
-        	return;
+            bs4pop.alert('该单据当前状态不能进行作废操作！');
+            return;
         }
-    	bs4pop.confirm(" 确定作废当前单据吗？", {title: "确认提示"}, function (sure) {
+        bs4pop.confirm(" 确定作废当前单据吗？", {title: "确认提示"}, function (sure) {
             if (sure) {
-		        $('#_modal .modal-body').load("/weighingBill/operatorInvalidate.html?id="+rows[0].id);
-		        _modal.find('.modal-title').text('信息确认');
-            	$("#_modal").modal();
+                $('#_modal .modal-body').load("/weighingBill/operatorInvalidate.html?id="+rows[0].id);
+                _modal.find('.modal-title').text('信息确认');
+                $("#_modal").modal();
             }
         });
     }
@@ -502,7 +505,7 @@ function daysDistance(startDate, endDate) {
                         if (data.code != '200') {
                             bs4pop.alert(data.message, {type: 'error'});
                             if (data.data&&data.data.locked) {
-                            	window.location.reload();
+                                window.location.reload();
                             }
                             return;
                         }
@@ -516,20 +519,20 @@ function daysDistance(startDate, endDate) {
     }
 
      function withdraw() {
-    	let rows = _grid.bootstrapTable('getSelections');
+        let rows = _grid.bootstrapTable('getSelections');
         if (null == rows || rows.length == 0) {
             bs4pop.alert('请选中一条数据');
             return;
         }
         if (rows[0].state!=4) {
-        	bs4pop.alert('该单据当前状态不能进行撤销操作！');
-        	return;
+            bs4pop.alert('该单据当前状态不能进行撤销操作！');
+            return;
         }
-    	bs4pop.confirm(" 确定撤销当前单据吗？", {title: "确认提示"}, function (sure) {
+        bs4pop.confirm(" 确定撤销当前单据吗？", {title: "确认提示"}, function (sure) {
             if (sure) {
-		        $('#_modal .modal-body').load("/weighingBill/operatorWithdraw.html?id="+rows[0].id);
-		        _modal.find('.modal-title').text('信息确认');
-            	$("#_modal").modal();
+                $('#_modal .modal-body').load("/weighingBill/operatorWithdraw.html?id="+rows[0].id);
+                _modal.find('.modal-title').text('信息确认');
+                $("#_modal").modal();
             }
         });
     }
@@ -545,7 +548,7 @@ function daysDistance(startDate, endDate) {
                         if (data.code != '200') {
                             bs4pop.alert(data.message, {type: 'error'});
                             if (data.data&&data.data.locked) {
-                            	window.location.reload();
+                                window.location.reload();
                             }
                             return;
                         }
@@ -701,7 +704,7 @@ function daysDistance(startDate, endDate) {
                 $("#btn_reprint").attr("disabled", "disabled");
                 $("#btn_reprint").addClass("btn_css_disabled");
             }else if(row.statement.state == ${@com.dili.orders.domain.WeighingStatementState.PAID.getValue()}){
-               	$("#btn_invalidate").attr("disabled", "disabled");
+                $("#btn_invalidate").attr("disabled", "disabled");
                 $("#btn_invalidate").addClass("btn_css_disabled");
                 $("#btn_withdraw").attr("disabled", false);
                 $("#btn_withdraw").removeClass("btn_css_disabled");
@@ -715,7 +718,7 @@ function daysDistance(startDate, endDate) {
                 $("#btn_reprint").attr("disabled", false);
                 $("#btn_reprint").removeClass("btn_css_disabled");
             }else {
-            	$("#btn_invalidate").attr("disabled", "disabled");
+                $("#btn_invalidate").attr("disabled", "disabled");
                 $("#btn_invalidate").addClass("btn_css_disabled");
                 $("#btn_withdraw").attr("disabled", "disabled");
                 $("#btn_withdraw").addClass("btn_css_disabled");

@@ -35,11 +35,11 @@ public interface WeighingBillRpc {
 			@RequestParam(value = "marketId") Long marketId);
 
 	@RequestMapping(value = "/api/weighingBill/withdraw")
-	BaseOutput<Object> withdraw(@RequestParam(value = "serialNo") String serialNo, @RequestParam(value = "buyerPassword") String buyerPassword,
+	BaseOutput<Object> withdraw(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword,
 			@RequestParam(value = "sellerPassword") String sellerPassword, @RequestParam(value = "operatorId") Long operatorId);
 
 	@RequestMapping(value = "/api/weighingBill/invalidate")
-	BaseOutput<Object> invalidate(@RequestParam(value = "serialNo") String serialNo, @RequestParam(value = "buyerPassword") String buyerPassword,
+	BaseOutput<Object> invalidate(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword,
 			@RequestParam(value = "sellerPassword") String sellerPassword, @RequestParam(value = "operatorId") Long operatorId);
 
 	@RequestMapping(value = "/api/weighingBill/autoClose")
@@ -61,7 +61,7 @@ public interface WeighingBillRpc {
 	BaseOutput<Object> operatorWithdraw(@RequestParam(value = "id") Long id, @RequestParam(value = "operatorId") Long operatorId);
 
 	@RequestMapping(value = "/api/weighingBill/getWeighingBillPrintData")
-	BaseOutput<PrintTemplateDataDto<WeighingBillPrintDto>> getWeighingBillPrintData(@RequestParam(value = "serialNo") String serialNo);
+	BaseOutput<PrintTemplateDataDto<WeighingBillPrintDto>> getWeighingBillPrintData(@RequestParam(value = "id") Long id);
 
 	@RequestMapping(value = "/api/weighingBill/getWeighingStatementPrintData")
 	BaseOutput<PrintTemplateDataDto<WeighingStatementPrintDto>> getWeighingStatementPrintData(@RequestParam(value = "serialNo") String serialNo);
