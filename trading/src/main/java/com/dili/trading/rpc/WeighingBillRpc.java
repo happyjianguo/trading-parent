@@ -31,7 +31,7 @@ public interface WeighingBillRpc {
 	BaseOutput<WeighingStatement> update(@RequestBody WeighingBill weighingBill);
 
 	@RequestMapping(value = "/api/weighingBill/settle")
-	BaseOutput<WeighingStatement> settle(@RequestParam(value = "serialNo") String serialNo, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "operatorId") Long operatorId,
+	BaseOutput<WeighingStatement> settle(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "operatorId") Long operatorId,
 			@RequestParam(value = "marketId") Long marketId);
 
 	@RequestMapping(value = "/api/weighingBill/withdraw")
