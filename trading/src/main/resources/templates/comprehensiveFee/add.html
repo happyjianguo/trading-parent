@@ -7,11 +7,12 @@
                 <div class="form-group col">
                     <label for="">卡号<i class="red">*</i></label>
                     <div class="input-group">
-                        <input id="customerCardNo" readonly="true"  class="form-control" name="customerCardNo" required="true"  maxlength="20">
+                        <input id="customerCardNo" onkeyup="this.value=this.value.replace(/\s/g,'')" class="form-control" name="customerCardNo" required="true"  maxlength="12">
                         <div class="input-group-append">
                            <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;" >刷卡</a></span>
                         </div>
                     </div>
+                    <label for="" class="red">请输入正确的卡号按'Enter'键或者刷卡</label>
                 </div>
                 <div class="form-group col">
                     <label for="">客户名称</label>
@@ -74,6 +75,17 @@
         var fee=0.00;
         //记录是否重新刷卡
         var reCardFlag=false;
+        //记录成功的卡号
+        var oldCardNum="";
+
+        //初始化
+        $(function () {
+            $("#customerCardNo").val("8888");
+            setTimeout(function(){
+                $('#customerCardNo').focus();
+            }, 500);
+            $("#saveBtn").attr('disabled', true);
+        })
 
         // 商品
         var assetsNamesAutoCompleteOption = {
@@ -113,6 +125,126 @@
             $('#chargeAmount').val(chargeAmount*100);
         });
 
+        $("#customerCardNo").keypress(function (even) {
+            if (even.which == 13) {
+                let cardNum=$("#customerCardNo").val();
+                var reg=/^([0-9]+|0)$/;
+                if(cardNum.length!=12){
+                    bs4pop.alert("卡号必须为12位！", {type: 'error'},function () {
+                        setTimeout(function(){
+                            $('#customerCardNo').focus();
+                        }, 500)
+                    });
+                    return;
+                }else if(!reg.test(cardNum)){
+                    bs4pop.alert("卡号必须填写数字！", {type: 'error'},function () {
+                        setTimeout(function(){
+                            $('#customerCardNo').focus();
+                        }, 500)
+                    });
+                    return;
+                }else{
+                    oldCardNum=cardNum;
+                    //再次回车时将检测费用和缴费金额清0
+                    if(reCardFlag==true){
+                        $('#inspectionNum').val('');
+                        $('#chargeAmountView').val('');
+                        $('#chargeAmount').val('');
+                        $('#inspectionItem').val(null).trigger('change');
+                        fee=0.00;
+                    }
+                    bui.loading.show('努力获取数据中，请稍候。。。');
+                    $.ajax({
+                        type: "POST",
+                        data:{cardNo:cardNum},
+                        dataType:"json",
+                        url: "/comprehensiveFee/listCustomerByCardNo.action",
+                        async: true,
+                        success: function (res) {
+                            bui.loading.hide();
+                            if (res.code == "200") {
+                                reCardFlag=true;
+                                $("#saveBtn").attr('disabled', false);
+                                //赋值
+                                $('#customerType').val(res.data[0].customerMarket.type);
+                                $('#customerCardNo').val(cardNum);
+                                $('#customerCode').val(res.data[0].code);
+                                $('#customerId').val(res.data[0].id);
+                                $('#customerName').val(res.data[0].name);
+                                //存的临时翻译字段
+                                $('#customerTypeView').val(res.data[0].customerMarket.notes);
+                                //查询客户余额
+                                $.ajax({
+                                    type: "POST",
+                                    data: {customerCardNo: cardNum},
+                                    dataType: "json",
+                                    url: "/comprehensiveFee/queryAccountBalance.action",
+                                    async: false,
+                                    success: function (resulst) {
+                                        if (resulst.code == "200") {
+                                            $('#availableBalance').val((resulst.data.accountFund.availableAmount/100).toFixed(2));
+                                        }
+                                    }
+                                });
+                                //查询计费规则
+                                $.ajax({
+                                    type: "POST",
+                                    data: {customerId: res.data[0].id, type: res.data[0].customerMarket.type},
+                                    dataType: "json",
+                                    url: "/comprehensiveFee/fee.action",
+                                    async: false,
+                                    success: function (resulst) {
+                                        if (resulst.code == "200") {
+                                            if(resulst.data!=null&&resulst.data.length>0){
+                                                for(var i=0;i<resulst.data.length;i++){
+                                                    if(resulst.data[i].code!="200"){
+                                                        bs4pop.alert("未匹配到任何规则！", {type: 'error'},function (){
+                                                            setTimeout(function(){
+                                                                $('#customerCardNo').focus();
+                                                            }, 1000)
+                                                        });
+                                                        $("#saveBtn").attr('disabled', true);
+                                                        return
+                                                    }
+                                                    fee+=resulst.data[i].totalFee;
+                                                }
+                                                //获取计费规则成功后才可以输入商品
+                                                $("#saveBtn").attr('disabled', false);
+                                                $('#inspectionItem').attr('disabled',false);
+                                            }else{
+                                                $("#saveBtn").attr('disabled', true);
+                                                bs4pop.alert("未匹配到任何规则！", {type: 'error'},function () {
+                                                    setTimeout(function(){
+                                                        $('#customerCardNo').focus();
+                                                    }, 500)
+                                                });
+                                                return;
+                                            }
+                                        }else {
+                                            $("#saveBtn").attr('disabled', true);
+                                            bs4pop.alert(resulst.result, {type: 'error'},function () {
+                                                setTimeout(function(){
+                                                    $('#customerCardNo').focus();
+                                                }, 500)
+                                            });
+                                        }
+                                    }
+                                });
+                            }else {
+                                $("#saveBtn").attr('disabled', true);
+                                bui.loading.hide();
+                                bs4pop.alert(res.result, {type: 'error'},function () {
+                                    setTimeout(function(){
+                                        $('#customerCardNo').focus();
+                                    }, 500)
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
         //刷卡监听
         $('#payByCard').on('click',function (e) {
             let cardNum;
@@ -123,6 +255,7 @@
                 parent.bs4pop.alert(json.message, {type: "error"});
                 return false;
             }
+            oldCardNum=cardNum;
            //再次刷卡时将检测费用和缴费金额清0
             if(reCardFlag==true){
                 $('#inspectionNum').val('');
@@ -141,6 +274,8 @@
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
+                        //预防回车查询失败锁住
+                        $("#saveBtn").attr('disabled', false);
                         //赋值
                         $('#customerType').val(res.data[0].customerMarket.type);
                         $('#customerCardNo').val(cardNum);
@@ -207,6 +342,10 @@
          * 保存事件
          * */
         function saveOrUpdateHandler() {
+            let cardNum=$("#customerCardNo").val();
+            if(cardNum!=oldCardNum){
+                $("#customerCardNo").val(oldCardNum);
+            }
             // 提交保存
             if (!$('#saveForm').validate().form()) {
                 return false;

@@ -84,7 +84,7 @@ public class TransitionDepartureSettlementServiceImpl implements TransitionDepar
         //设置撤销人员相关信息
         transitionDepartureSettlement.setRevocatorId(userTicket.getId());
         transitionDepartureSettlement.setRevocatorName(userTicket.getRealName());
-        transitionDepartureSettlement.setRevocatorTime(LocalDateTime.now());
+//        transitionDepartureSettlement.setRevocatorTime(LocalDateTime.now());
         BaseOutput<TransitionDepartureSettlement> revocator = transitionDepartureSettlementRpc.revocator(transitionDepartureSettlement, userTicket.getId(), password);
         if (revocator.isSuccess()) {
             TransitionDepartureSettlement data = revocator.getData();

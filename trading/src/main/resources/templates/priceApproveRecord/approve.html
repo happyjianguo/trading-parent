@@ -117,7 +117,11 @@
 		if (!$('#saveForm').validate().form()) {
 			return false;
 		}
-		parent.bui.loading.show('努力提交中，请稍候。。。');
+		<%if(modal){%>
+        parent.bui.loading.show('努力提交中，请稍候。。。');
+        <%}else{%>
+        bui.loading.show('努力提交中，请稍候。。。');
+        <%}%>
 		let _formData = new FormData($('#saveForm')[0]);
 		$.ajax({
 			type : "POST",
@@ -127,7 +131,11 @@
 			contentType : false,
 			async : true,
 			success : function(res) {
-				parent.bui.loading.hide();
+				<%if(modal){%>
+                parent.bui.loading.hide();
+                <%}else{%>
+                bui.loading.hide();
+                <%}%>
 				if (res.code == "200") {
 					parent.dia.hide();
 					parent.location.reload();

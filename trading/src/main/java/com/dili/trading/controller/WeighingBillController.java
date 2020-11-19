@@ -172,7 +172,7 @@ public class WeighingBillController {
 			ws = settlementOutput.getData();
 		}
 		if (WeighingStatementState.FROZEN.getValue().equals(ws.getState())) {
-			output = this.getWeighingBillPrintData(ws.getWeighingSerialNo(), false);
+			output = this.getWeighingBillPrintData(ws.getWeighingBillId(), false);
 			if (!output.isSuccess()) {
 				return output;
 			}
@@ -199,12 +199,12 @@ public class WeighingBillController {
 //	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/withdraw.action")
-	public BaseOutput<Object> withdraw(String serialNo, String buyerPassword, String sellerPassword) {
+	public BaseOutput<Object> withdraw(Long id, String buyerPassword, String sellerPassword) {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-		return this.weighingBillRpc.withdraw(serialNo, buyerPassword, sellerPassword, user.getId());
+		return this.weighingBillRpc.withdraw(id, buyerPassword, sellerPassword, user.getId());
 	}
 
 	/**
@@ -218,12 +218,12 @@ public class WeighingBillController {
 //	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/invalidate.action")
-	public BaseOutput<Object> invalidate(String serialNo, String buyerPassword, String sellerPassword) {
+	public BaseOutput<Object> invalidate(@RequestParam Long id, @RequestParam String buyerPassword, @RequestParam String sellerPassword) {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-		return this.weighingBillRpc.invalidate(serialNo, buyerPassword, sellerPassword, user.getId());
+		return this.weighingBillRpc.invalidate(id, buyerPassword, sellerPassword, user.getId());
 	}
 
 	/**
@@ -357,10 +357,8 @@ public class WeighingBillController {
 			return null;
 		}
 		List<WeighingBillListPageDto> result = output.getData();
-		List<Long> orderIds = result.stream()
-				.map(WeighingBillListPageDto::getId)
-				.collect(Collectors.toList());
-		//获取并拼装检测数据
+		List<Long> orderIds = result.stream().map(WeighingBillListPageDto::getId).collect(Collectors.toList());
+		// 获取并拼装检测数据
 		this.getQualityTrace(result, orderIds);
 
 //		Map<Object, Object> metadata = new HashMap<Object, Object>();
@@ -394,8 +392,6 @@ public class WeighingBillController {
 			return null;
 		}
 	}
-
-
 
 	/**
 	 * 查询列表
@@ -535,6 +531,7 @@ public class WeighingBillController {
 			LOGGER.error(output.getMessage());
 			return this.index(modelMap);
 		}
+		this.getQualityTrace(output.getData());
 		Map<Object, Object> metadata = new HashMap<Object, Object>();
 		metadata.put("netWeight", "weightProvider");
 		metadata.put("unitWeight", "weightProvider");
@@ -729,8 +726,8 @@ public class WeighingBillController {
 	 */
 	@ResponseBody
 	@RequestMapping("/getWeighingBillPrintData.action")
-	public BaseOutput<?> getWeighingBillPrintData(@RequestParam String serialNo, @RequestParam(defaultValue = "false") Boolean reprint) throws Exception {
-		BaseOutput<PrintTemplateDataDto<WeighingBillPrintDto>> output = this.weighingBillRpc.getWeighingBillPrintData(serialNo);
+	public BaseOutput<?> getWeighingBillPrintData(@RequestParam Long id, @RequestParam(defaultValue = "false") Boolean reprint) throws Exception {
+		BaseOutput<PrintTemplateDataDto<WeighingBillPrintDto>> output = this.weighingBillRpc.getWeighingBillPrintData(id);
 		if (!output.isSuccess()) {
 			return output;
 		}
@@ -771,17 +768,16 @@ public class WeighingBillController {
 	}
 
 	/**
-	*  获取检测结果
-	* @author miaoguoxin
-	* @date 2020/11/6
-	*/
+	 * 获取检测结果
+	 * 
+	 * @author miaoguoxin
+	 * @date 2020/11/6
+	 */
 	private void getQualityTrace(List<WeighingBillListPageDto> result, List<Long> orderIds) {
 		BaseOutput<List<TraceTradeBillResponseDto>> listBaseOutput = qualityTraceRpc.queryByOrderIdList(orderIds);
 		if (listBaseOutput.isSuccess() && CollectionUtil.isNotEmpty(listBaseOutput.getData())) {
 			Map<Long, TraceTradeBillResponseDto> traceMap = listBaseOutput.getData().stream()
-					.collect(Collectors.toMap(TraceTradeBillResponseDto::getBuild,
-							Function.identity(),
-							(key1, key2) -> key2));
+					.collect(Collectors.toMap(TraceTradeBillResponseDto::getBillId, Function.identity(), (key1, key2) -> key2));
 			result.forEach(dto -> {
 				TraceTradeBillResponseDto resDto = traceMap.get(dto.getId());
 				if (resDto != null) {
@@ -789,6 +785,23 @@ public class WeighingBillController {
 					dto.setLatestPdResult(resDto.getLatestPdResult());
 				}
 			});
+		}
+	}
+
+	/**
+	 * 获取详情页结果
+	 * 
+	 * @author miaoguoxin
+	 * @date 2020/11/6
+	 */
+	private void getQualityTrace(WeighingBillDetailDto dto) {
+		BaseOutput<List<TraceTradeBillResponseDto>> listBaseOutput = qualityTraceRpc.queryByOrderIdList(Arrays.asList(dto.getId()));
+		if (listBaseOutput.isSuccess() && CollectionUtil.isNotEmpty(listBaseOutput.getData())) {
+			TraceTradeBillResponseDto resDto = listBaseOutput.getData().get(0);
+			if (resDto != null) {
+				dto.setDetectStateDesc(resDto.getDetectStateDesc());
+				dto.setLatestPdResult(resDto.getLatestPdResult());
+			}
 		}
 	}
 }

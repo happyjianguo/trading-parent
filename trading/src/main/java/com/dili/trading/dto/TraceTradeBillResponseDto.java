@@ -13,57 +13,57 @@ import java.time.LocalDateTime;
  * @Description:
  */
 public class TraceTradeBillResponseDto implements Serializable {
-    /**订单id*/
-    private Long build;
-    /**检测记录时间*/
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime latestDetectTime;
-    /**检测人员*/
-    private String latestDetectOperator;
-    /**检测数值*/
-    private String latestPdResult;
-    /**检测结果描述*/
-    private String detectStateDesc;
+	/** 订单id */
+	private Long billId;
+	/** 检测记录时间 */
+	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime latestDetectTime;
+	/** 检测人员 */
+	private String latestDetectOperator;
+	/** 检测数值 */
+	private String latestPdResult;
+	/** 检测结果描述 */
+	private String detectStateDesc;
 
-    public String getDetectStateDesc() {
-        return detectStateDesc;
-    }
+	public String getDetectStateDesc() {
+		return detectStateDesc;
+	}
 
-    public void setDetectStateDesc(String detectStateDesc) {
-        this.detectStateDesc = detectStateDesc;
-    }
+	public void setDetectStateDesc(String detectStateDesc) {
+		this.detectStateDesc = detectStateDesc;
+	}
 
-    public Long getBuild() {
-        return build;
-    }
+	public Long getBillId() {
+		return billId;
+	}
 
-    public void setBuild(Long build) {
-        this.build = build;
-    }
+	public void setBillId(Long billId) {
+		this.billId = billId;
+	}
 
-    public LocalDateTime getLatestDetectTime() {
-        return latestDetectTime;
-    }
+	public LocalDateTime getLatestDetectTime() {
+		return latestDetectTime;
+	}
 
-    public void setLatestDetectTime(LocalDateTime latestDetectTime) {
-        this.latestDetectTime = latestDetectTime;
-    }
+	public void setLatestDetectTime(LocalDateTime latestDetectTime) {
+		this.latestDetectTime = latestDetectTime;
+	}
 
-    public String getLatestDetectOperator() {
-        return latestDetectOperator;
-    }
+	public String getLatestDetectOperator() {
+		return latestDetectOperator;
+	}
 
-    public void setLatestDetectOperator(String latestDetectOperator) {
-        this.latestDetectOperator = latestDetectOperator;
-    }
+	public void setLatestDetectOperator(String latestDetectOperator) {
+		this.latestDetectOperator = latestDetectOperator;
+	}
 
-    public String getLatestPdResult() {
-        return latestPdResult;
-    }
+	public String getLatestPdResult() {
+		return latestPdResult;
+	}
 
-    public void setLatestPdResult(String latestPdResult) {
-        this.latestPdResult = latestPdResult;
-    }
+	public void setLatestPdResult(String latestPdResult) {
+		this.latestPdResult = latestPdResult;
+	}
 }
