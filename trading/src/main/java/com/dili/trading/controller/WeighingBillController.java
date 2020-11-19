@@ -153,7 +153,7 @@ public class WeighingBillController {
 				return wsOutput;
 			}
 			ws = wsOutput.getData();
-			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
 			if (!settlementOutput.isSuccess()) {
 				return settlementOutput;
 			}
@@ -165,7 +165,7 @@ public class WeighingBillController {
 				return wsOutput;
 			}
 			ws = wsOutput.getData();
-			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(weighingBill.getSerialNo(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
 			if (!settlementOutput.isSuccess()) {
 				return settlementOutput;
 			}
@@ -769,7 +769,7 @@ public class WeighingBillController {
 
 	/**
 	 * 获取检测结果
-	 * 
+	 *
 	 * @author miaoguoxin
 	 * @date 2020/11/6
 	 */
@@ -790,7 +790,7 @@ public class WeighingBillController {
 
 	/**
 	 * 获取详情页结果
-	 * 
+	 *
 	 * @author miaoguoxin
 	 * @date 2020/11/6
 	 */
