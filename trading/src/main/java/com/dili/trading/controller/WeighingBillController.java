@@ -144,7 +144,7 @@ public class WeighingBillController {
 			return output;
 		}
 		WeighingStatement ws = null;
-		if (StringUtils.isBlank(weighingBill.getSerialNo())) {
+		if (weighingBill.getId() == null) {
 			weighingBill.setCreatorId(user.getId());
 			// 设置市场id
 			weighingBill.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
