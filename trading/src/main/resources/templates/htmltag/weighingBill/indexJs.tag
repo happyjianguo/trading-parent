@@ -413,13 +413,22 @@ function doPrintHandler(){
 
     /** ****************************驱动执行区 begin************************** */
     $(function () {
+        // 获取表格显示列
+        localStorage.setItem('weightingBillGridVisibleColumns', JSON.stringify({data: getVisibleColumnsDataHandler('weightingBillGrid', _grid)}));
         $(window).resize(function () {
             _grid.bootstrapTable('resetView')
         });
         let size = ($(window).height() - $('#queryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
-        _grid.bootstrapTable('refreshOptions', {url: '/weighingBill/listPage.action', pageSize: parseInt(size)});
+        _grid.bootstrapTable('refreshOptions', {url: '/weighingBill/listPage.action', pageSize: parseInt(size), columns: JSON.parse(localStorage.getItem('weightingBillGridVisibleColumns')).data});
     });
+
+    //-------------切换列显隐时保存隐藏列列头
+    _grid.on('column-switch.bs.table', function(){
+        // 保存隐藏列头
+        saveHiddenColumnsHandler('weightingBillGrid', _grid);
+    })
+
 
     /** ****************************驱动执行区 end*************************** */
 
