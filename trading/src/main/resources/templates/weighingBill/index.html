@@ -150,7 +150,7 @@
 					<tr>
 						<th data-radio="true"></th>
 						<th data-field="serialNo" data-sort-name="serial_no" data-align="center" data-sortable="true">过磅单号</th>
-						<th data-field="operationRecord.operationTime" data-align="center" data-sort-name="operation_time" data-sortable="true" data-provider="datetimeProviderPlus">操作时间</th>
+						<th data-field="ws.lastOperationTime" data-align="center" data-sort-name="operation_time" data-sortable="true" data-provider="datetimeProviderPlus">操作时间</th>
 						<th data-field="statement.serialNo" data-sort-name="serial_no"  data-align="center" data-sortable="true">结算单号</th>
 						<th data-field="buyerCode" data-align="center" data-sort-name="buyer_code" data-sortable="true">买方编号</th>
 						<th data-field="buyerName" data-align="center" data-sort-name="CONVERT(buyer_name using gbk)" data-sortable="true">买方名称</th>
@@ -174,8 +174,8 @@
 						<th data-field="tradeType" data-align="center" data-sort-name="trade_type" data-sortable="true" data-provider="tradeTypeCodeProvider">交易类型</th>
 						<th data-field="plateNumber" data-align="center" data-sort-name="plate_number" data-sortable="true">车牌号</th>
 						<th data-field="statement.state" data-align="center" data-sort-name="ws_state" data-sortable="true" data-provider="weighingStatementStateProvider">单据状态</th>
-						<th data-field="operationRecord.operatorUserName" data-sort-name="operator_user_name" data-align="center" data-sortable="true">操作员工号</th>
-						<th data-field="operationRecord.operatorName" data-sort-name="CONVERT(operator_name using gbk)" data-align="center" data-sortable="true">操作员名称</th>
+						<th data-field="statement.lastOperationUserName" data-sort-name="operator_user_name" data-align="center" data-sortable="true">操作员工号</th>
+						<th data-field="statement.lastOIperatorName" data-sort-name="CONVERT(operator_name using gbk)" data-align="center" data-sortable="true">操作员名称</th>
 						<th data-field="latestPdResult"  data-align="center" data-sortable="true">检测数值</th>
 						<th data-field="detectStateDesc" data-align="center" data-sortable="true">检测结果</th>
 					</tr>
