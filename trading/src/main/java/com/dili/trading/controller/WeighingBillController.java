@@ -784,23 +784,6 @@ public class WeighingBillController {
 	 * @return
 	 */
 	@ResponseBody
-	@PostMapping("/cacheTableHeader.action")
-	public BaseOutput<Object> cacheTableHeader(@RequestBody String json) {
-		UserTicket user = SessionContext.getSessionContext().getUserTicket();
-		if (user == null) {
-			return BaseOutput.failure("用户未登录");
-		}
-		this.redisUtil.set(HEADER_CACHE_KEY + user.getId(), json);
-		return BaseOutput.success();
-	}
-
-	/**
-	 * 缓存过磅单显示的列头配置
-	 * 
-	 * @param json 列头数组
-	 * @return
-	 */
-	@ResponseBody
 	@PostMapping("/getTableHeader.action")
 	public BaseOutput<Object> getTableHeader() {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
