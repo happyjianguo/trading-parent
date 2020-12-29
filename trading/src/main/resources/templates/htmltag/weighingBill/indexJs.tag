@@ -21,6 +21,7 @@ function doPrintHandler(){
             type: "POST",
             url: "/weighingBill/listPage.action",
             data: JSON.stringify(queryParams({
+            	exportData:true,
                 limit: 99999,   // 页面大小
                 page: 1 // 页码
             })),
@@ -30,31 +31,52 @@ function doPrintHandler(){
             async: true,
             success: function (res) {
                 var printObj={
-                    columns:[],
                     data:[]
                 };
-                $(visibleColumns).each(function(index,item){
-                    printObj.columns.push({
-                        field:item.field,
-                        title:item.title
-                    });
-                });
                 $(res.rows).each(function(index,item){
-                    var obj={};
                     for(var key in item){
                         if (item[key] instanceof Object) {
                             for(var k in item[key]){
                                 if(typeof item[key+'.'+k] !== "undefined" && item[key+'.'+k] !== null){
                                     continue;
                                 }
-                                obj[key+'.'+k]=item[key][k];
+                                var flag=false;
+                                for(var i=0;i<visibleColumns.length;i++){
+                                    if(visibleColumns[i].field==(key+'.'+k)){
+                                       flag=true;
+                                       break;
+                                    }
+                                }
+                                if (!flag) {
+                                    continue;
+                                }
+                                printObj.data.push({
+                                    rowIndex:index,
+                                    column:key+'.'+k,
+                                    value:item[key][k]
+                                });
                             }
                         }else{
-                            obj[key]=item[key];
+                            var flag=false;
+                            for(var i=0;i<visibleColumns.length;i++){
+                                if(visibleColumns[i].field==key){
+                                   flag=true;
+                                   break;
+                                }
+                            }
+                            if (!flag) {
+                                continue;
+                            }
+                            printObj.data.push({
+                                    rowIndex:index,
+                                    column:key,
+                                    value:item[key]
+                                });                            
                         }
+                        
                     }
-                    printObj.data.push(obj);
                 });
+                debugger;
                 var createdStart=$('#operationStartTime').val();
                 var createdEnd=$('#operationEndTime').val();
                 
@@ -72,7 +94,7 @@ function doPrintHandler(){
                 }
                 
                 if (createdStart && !createdEnd) {
-                	createdStart=new Date(createdStart);
+                    createdStart=new Date(createdStart);
                     createdEnd=new Date(createdStart);
                     createdEnd.setDate(createdEnd.getDate()+366);
                     createdEnd.setHours(23);
@@ -81,7 +103,7 @@ function doPrintHandler(){
                 }
         
                 if (!createdStart && createdEnd) {
-                	createdEnd=new Date(createdEnd);
+                    createdEnd=new Date(createdEnd);
                     createdStart=new Date(createdEnd);
                     createdStart.setDate(createdStart.getDate()-366);
                     createdStart.setHours(0);
@@ -466,7 +488,7 @@ function daysDistance(startDate, endDate) {
         _grid.bootstrapTable('refreshOptions', {url: '/weighingBill/listPage.action', pageSize: parseInt(size), columns: JSON.parse(localStorage.getItem('weightingBillGridVisibleColumns')).data});
     });
 
-    //-------------切换列显隐时保存隐藏列列头
+    // -------------切换列显隐时保存隐藏列列头
     _grid.on('column-switch.bs.table', function(){
         // 保存隐藏列头
         saveHiddenColumnsHandler('weightingBillGrid', _grid);
@@ -672,11 +694,20 @@ function daysDistance(startDate, endDate) {
 	 */
     function queryParams(params) {
         let temp = {
+        	exportData:params.exportData,
             rows: params.limit,   // 页面大小
             page: ((params.offset / params.limit) + 1) || 1, // 页码
-            sort: params.sort,
-            order: params.order
         };
+        if (params.sort) {
+        	temp.sort=params.sort;
+        }else{
+        	temp.sort = sortMap[_grid.bootstrapTable('getOptions').sortName];
+        }
+        if(params.order){
+        	temp.order=params.order;
+        }else{
+        	temp.order=_grid.bootstrapTable('getOptions').sortOrder;
+        }
         var aaa=$.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
         return aaa;
     }
@@ -703,6 +734,15 @@ function daysDistance(startDate, endDate) {
         $("input[name=status]").val(status);
         queryDataHandler();
     }
+    
+    var tableSortName,tableSortOrder;
+    var sortMap={};
+    $('#grid th').each(function(index,item){
+       if($(item).attr('data-field')&&$(item).attr('data-sort-name')){
+           sortMap[$(item).attr('data-field')]=$(item).attr('data-sort-name');
+       }
+    });
+    
     $(function(){
         $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
             if(row.statement.state == ${@com.dili.orders.domain.WeighingStatementState.UNPAID.getValue()}){
