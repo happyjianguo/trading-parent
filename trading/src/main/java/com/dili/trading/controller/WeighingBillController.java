@@ -25,6 +25,7 @@ import com.dili.orders.dto.WeighingBillClientListDto;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
 import com.dili.orders.dto.WeighingBillPrintDto;
+import com.dili.orders.dto.WeighingBillPrintListDto;
 import com.dili.orders.dto.WeighingBillQueryDto;
 import com.dili.orders.dto.WeighingStatementPrintDto;
 import com.dili.orders.rpc.CardRpc;
@@ -73,6 +74,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -361,7 +363,17 @@ public class WeighingBillController {
 				query.setOperatorId(SessionContext.getSessionContext().getUserTicket().getId());
 			}
 		}
-		PageOutput<List<WeighingBillListPageDto>> output = this.weighingBillRpc.listPage(query);
+
+		PageOutput<List<WeighingBillListPageDto>> output = null;
+		BaseOutput<WeighingBillPrintListDto> printListOutput = null;
+
+		if (query.isExportData()) {
+			printListOutput = this.weighingBillRpc.printList(query);
+			output = PageOutput.success().setData(printListOutput.getData().getPageList()).setTotal((long) printListOutput.getData().getPageList().size())
+					.setPageNum(printListOutput.getData().getPageList().getPageNum()).setPageSize(printListOutput.getData().getPageList().getPageSize());
+		} else {
+			output = this.weighingBillRpc.listPage(query);
+		}
 
 		if (!output.isSuccess()) {
 			return null;
@@ -395,6 +407,12 @@ public class WeighingBillController {
 //		query.setMetadata(metadata);
 		try {
 			List<Map> list = ValueProviderUtils.buildDataByProvider(query, result);
+
+			if (printListOutput != null) {
+				List<Map> statisticMap = ValueProviderUtils.buildDataByProvider(query, Arrays.asList(printListOutput.getData().getStatisticsDto()));
+				list.add(statisticMap.get(0));
+				return new EasyuiPageOutput(output.getTotal() + 1, list).toString();
+			}
 
 			return new EasyuiPageOutput(output.getTotal(), list).toString();
 		} catch (Exception e) {
