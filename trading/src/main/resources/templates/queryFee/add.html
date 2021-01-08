@@ -19,6 +19,7 @@
                     <input id="customerName" readonly="true" class="form-control" name="customerName"  maxlength="40">
                     <input id="customerCode" hidden="true" class="form-control" name="customerCode">
                     <input id="customerId" class="form-control" name="customerId" hidden="true">
+                    <input id="holdName" class="form-control" name="holdName" hidden="true">
                 </div>
                 <div class="form-group col">
                     <label for="">可用余额</label>
@@ -73,6 +74,7 @@
                         $('#customerCode').val(res.data.code);
                         $('#customerId').val(res.data.id);
                         $('#customerName').val(res.data.name);
+                        $('#holdName').val(res.data.holdName);
 
                         //查询客户余额
                         $.ajax({

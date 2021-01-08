@@ -376,6 +376,7 @@ public class ComprehensiveFeeController {
             return cardOutput;
         }
         CustomerView customerView=new CustomerView();
+        customerView.setHoldName(cardOutput.getData().getAccountInfo().getHoldName());
         CustomerQueryInput cq = new CustomerQueryInput();
         cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
         //获取当前登录人的市场，和客户市场进行对比
