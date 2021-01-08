@@ -166,13 +166,13 @@
                                 reCardFlag=true;
                                 $("#saveBtn").attr('disabled', false);
                                 //赋值
-                                $('#customerType').val(res.data[0].customerMarket.type);
+                                $('#customerType').val(res.data.subType);
                                 $('#customerCardNo').val(cardNum);
-                                $('#customerCode').val(res.data[0].code);
-                                $('#customerId').val(res.data[0].id);
-                                $('#customerName').val(res.data[0].name);
+                                $('#customerCode').val(res.data.code);
+                                $('#customerId').val(res.data.id);
+                                $('#customerName').val(res.data.name);
                                 //存的临时翻译字段
-                                $('#customerTypeView').val(res.data[0].customerMarket.notes);
+                                $('#customerTypeView').val(res.data.subTypeTranslate);
                                 //查询客户余额
                                 $.ajax({
                                     type: "POST",
@@ -189,7 +189,7 @@
                                 //查询计费规则
                                 $.ajax({
                                     type: "POST",
-                                    data: {customerId: res.data[0].id, type: res.data[0].customerMarket.type},
+                                    data: {customerId: res.data.id, type: res.data.subType},
                                     dataType: "json",
                                     url: "/comprehensiveFee/fee.action",
                                     async: false,
@@ -277,13 +277,13 @@
                         //预防回车查询失败锁住
                         $("#saveBtn").attr('disabled', false);
                         //赋值
-                        $('#customerType').val(res.data[0].customerMarket.type);
+                        $('#customerType').val(res.data.subType);
                         $('#customerCardNo').val(cardNum);
-                        $('#customerCode').val(res.data[0].code);
-                        $('#customerId').val(res.data[0].id);
-                        $('#customerName').val(res.data[0].name);
+                        $('#customerCode').val(res.data.code);
+                        $('#customerId').val(res.data.id);
+                        $('#customerName').val(res.data.name);
                         //存的临时翻译字段
-                        $('#customerTypeView').val(res.data[0].customerMarket.notes);
+                        $('#customerTypeView').val(res.data.subTypeTranslate);
                         //查询客户余额
                         $.ajax({
                             type: "POST",
@@ -300,7 +300,7 @@
                         //查询计费规则
                         $.ajax({
                             type: "POST",
-                            data: {customerId: res.data[0].id, type: res.data[0].customerMarket.type},
+                            data: {customerId: res.data.id, type: res.data.subType},
                             dataType: "json",
                             url: "/comprehensiveFee/fee.action",
                             async: false,

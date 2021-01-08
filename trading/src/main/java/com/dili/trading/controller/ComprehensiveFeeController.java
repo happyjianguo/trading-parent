@@ -1,22 +1,23 @@
 package com.dili.trading.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CusCategoryDTO;
 import com.dili.assets.sdk.dto.CusCategoryQuery;
 import com.dili.assets.sdk.rpc.AssetsRpc;
-import com.dili.customer.sdk.domain.Customer;
-import com.dili.customer.sdk.domain.CustomerMarket;
+import com.dili.customer.sdk.domain.CharacterType;
+import com.dili.customer.sdk.domain.dto.CustomerExtendDto;
 import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.domain.ComprehensiveFeeType;
+import com.dili.orders.domain.CustomerView;
 import com.dili.orders.dto.AccountSimpleResponseDto;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.dto.DTOUtils;
-import com.dili.ss.exception.AppException;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.util.MoneyUtils;
@@ -127,10 +128,6 @@ public class ComprehensiveFeeController {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         comprehensiveFee.setMarketId(userTicket.getFirmId());
         comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
-        JSONObject ddProvider = new JSONObject();
-        ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-        ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\",\"firm_code\":\""+userTicket.getFirmCode()+"\"}");
-		comprehensiveFee.getMetadata().put("customerType", ddProvider);
         PageOutput<List<ComprehensiveFee>> output = comprehensiveFeeRpc.listByQueryParams(comprehensiveFee);
         return new EasyuiPageOutput(output.getTotal(), ValueProviderUtils.buildDataByProvider(comprehensiveFee, output.getData())).toString();
     }
@@ -241,7 +238,6 @@ public class ComprehensiveFeeController {
      */
     @RequestMapping(value = "/view.html", method = {RequestMethod.GET, RequestMethod.POST})
     public String getOneByID(ModelMap modelMap, ComprehensiveFee comprehensiveFee) throws Exception {
-        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         if (comprehensiveFee.getId() == null) {
             return "查询失败，检测收费单主键不能为空";
         }
@@ -249,13 +245,10 @@ public class ComprehensiveFeeController {
         //设置单据状态提供者
         map.put("orderStatus", getProvider("payStatusProvider", "orderStatus"));
         map.put("chargeAmount", getProvider("moneyProvider", "chargeAmount"));
-        JSONObject ddProvider = new JSONObject();
-        ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-        ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\",\"firm_code\":\""+userTicket.getFirmCode()+"\"}");
-        map.put("customerType", ddProvider);
         comprehensiveFee.setMetadata(map);
         BaseOutput<ComprehensiveFee> oneByID = comprehensiveFeeRpc.getOneById(comprehensiveFee.getId());
         if (oneByID.isSuccess()) {
+            oneByID.getData().setCustomerType(getCustomerTypeAndName(oneByID.getData().getCustomerType()).getSubTypeTranslate());
             if (Objects.nonNull(oneByID.getData())) {
                 modelMap.put("comprehensiveFee", ValueProviderUtils.buildDataByProvider(comprehensiveFee, Lists.newArrayList(oneByID.getData())).get(0));
             }
@@ -382,6 +375,7 @@ public class ComprehensiveFeeController {
         if (!cardOutput.isSuccess() || Objects.isNull(cardOutput.getData()) || Objects.isNull(cardOutput.getData().getAccountInfo())) {
             return cardOutput;
         }
+        CustomerView customerView=new CustomerView();
         CustomerQueryInput cq = new CustomerQueryInput();
         cq.setId(cardOutput.getData().getAccountInfo().getCustomerId());
         //获取当前登录人的市场，和客户市场进行对比
@@ -390,26 +384,53 @@ public class ComprehensiveFeeController {
             return BaseOutput.failure("未查询到相关客户信息");
         }
         cq.setMarketId(cardOutput.getData().getAccountInfo().getFirmId());
-        BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
-        List<CustomerMarket> list=new ArrayList<>();
-        if(output!=null&&output.getData()!=null&&output.getData().size()>0){
+        BaseOutput<CustomerExtendDto> output = this.customerRpc.get(cardOutput.getData().getAccountInfo().getCustomerId(),cardOutput.getData().getAccountInfo().getFirmId());
+        if(output!=null&&output.getData()!=null){
+            List<CharacterType> characterTypes=output.getData().getCharacterTypeList();
             Map<String, Object> map = new HashMap<>();
             //设置单据状态提供者
             JSONObject ddProvider = new JSONObject();
             ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
             ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\",\"firm_code\":\""+userTicket.getFirmCode()+"\"}");
-            CustomerMarket customerMarket=output.getData().get(0).getCustomerMarket();
-            map.put("type", ddProvider);
-            customerMarket.setMetadata(map);
-            list.add(customerMarket);
-            List<Map> result=ValueProviderUtils.buildDataByProvider(customerMarket, list);
-            if(result!=null&&result.size()>0){
-                String type=(String) result.get(0).get("type");
-                //随便个String类型存翻译
-                customerMarket.setNotes(type);
+            map.put("subType", ddProvider);
+            customerView.setMetadata(map);
+            //存下所有身份类型
+            List<String> subTypeCodeList=new ArrayList<>(characterTypes.size());
+            List<CustomerView> list=new ArrayList<>(characterTypes.size());
+            List<Map> jsonObjList=new ArrayList<>(characterTypes.size());
+            String subTypeTranslate="";
+            if(characterTypes!=null&&characterTypes.size()>0){
+                for (CharacterType characterType:characterTypes) {
+                    if(characterType.getSubType()!=null && !"".equals(characterType.getSubType())){
+                        CustomerView customerTransObj=new CustomerView();
+                        subTypeCodeList.add(characterType.getSubType());
+                        customerTransObj.setSubType(characterType.getSubType());
+                        list.add(customerTransObj);
+                    }
+                }
+                List<Map> result=ValueProviderUtils.buildDataByProvider(customerView, list);
+                if(result!=null&&result.size()>0){
+                    String slpit=",";
+                    for (Map resultMap:result) {
+                        Map<String,String> mapObj=new HashMap<>(4);
+                        mapObj.put("subType",resultMap.get("$_subType").toString());
+                        mapObj.put("subTypeTranslate",resultMap.get("subType").toString());
+                        subTypeTranslate+=resultMap.get("subType").toString()+slpit;
+                        jsonObjList.add(mapObj);
+                    }
+                }
             }
+            customerView.setId(output.getData().getId());
+            customerView.setCode(output.getData().getCode());
+            customerView.setName(output.getData().getName());
+            customerView.setSubType(JSONObject.toJSONString(jsonObjList));
+            if(subTypeTranslate.length()>0){
+                customerView.setSubTypeTranslate(subTypeTranslate.substring(0,subTypeTranslate.length()-1));
+            }
+            return BaseOutput.successData(customerView);
+        }else {
+            return BaseOutput.failure("未查询到相关客户信息");
         }
-        return output;
     }
 
     /**
@@ -481,5 +502,35 @@ public class ComprehensiveFeeController {
             }
         }
         return returnName;
+    }
+
+    /**
+     * 将json数据转换成以逗号相隔
+     * @param customerType
+     * @return
+     */
+    private CustomerView getCustomerTypeAndName(String customerType) {
+        CustomerView customerView= new CustomerView();
+        if(customerType!=null&&!"".equals(customerType)){
+            List<Map<String,String>> customerTypeJsonInfo= JSON.parseObject(customerType,List.class);
+            StringBuffer subType=new StringBuffer();
+            StringBuffer subTypeTranslate=new StringBuffer();
+            String sliptStr=",";
+            for (Map map:customerTypeJsonInfo) {
+                subType.append(map.get("subType"));
+                subType.append(sliptStr);
+                subTypeTranslate.append(map.get("subTypeTranslate"));
+                subTypeTranslate.append(sliptStr);
+            }
+            int length=subType.length();
+            if(length>0){
+                customerType=subType.substring(0,length-1);
+            }
+            if(subTypeTranslate.length()>0){
+                customerView.setSubTypeTranslate(subTypeTranslate.substring(0,subTypeTranslate.length()-1));
+            }
+            customerView.setSubType(customerType);
+        }
+        return customerView;
     }
 }
