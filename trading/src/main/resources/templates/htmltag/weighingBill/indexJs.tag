@@ -52,7 +52,7 @@ function doPrintHandler(){
                                 }
                                 printObj.data.push({
                                     rowIndex:index,
-                                    column:key+'.'+k,
+                                    column:displayMap[key+'.'+k],
                                     value:item[key][k]
                                 });
                             }
@@ -69,14 +69,13 @@ function doPrintHandler(){
                             }
                             printObj.data.push({
                                     rowIndex:index,
-                                    column:key,
+                                    column:displayMap[key],
                                     value:item[key]
                                 });                            
                         }
                         
                     }
                 });
-                debugger;
                 var createdStart=$('#operationStartTime').val();
                 var createdEnd=$('#operationEndTime').val();
                 
@@ -118,6 +117,7 @@ function doPrintHandler(){
                 createdEnd= moment(createdEnd).format("YYYY-MM-DD HH:mm:ss");
                 printObj.startDate=createdStart;
                 printObj.endDate=createdEnd;
+                console.log(printObj);
                 callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
             },
             error: function (error) {
@@ -737,11 +737,14 @@ function daysDistance(startDate, endDate) {
     
     var tableSortName,tableSortOrder;
     var sortMap={};
+    var displayMap={};
     $('#grid th').each(function(index,item){
        if($(item).attr('data-field')&&$(item).attr('data-sort-name')){
-           sortMap[$(item).attr('data-field')]=$(item).attr('data-sort-name');
+            sortMap[$(item).attr('data-field')]=$(item).attr('data-sort-name');
+            displayMap[$(item).attr('data-field')]=$(item).text();
        }
     });
+    console.log(sortMap);
     
     $(function(){
         $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
