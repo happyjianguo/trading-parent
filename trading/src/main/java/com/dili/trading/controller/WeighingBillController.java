@@ -35,6 +35,7 @@ import com.dili.assets.sdk.dto.TradeTypeDto;
 import com.dili.assets.sdk.dto.TradeTypeQuery;
 import com.dili.assets.sdk.rpc.TradeTypeRpc;
 import com.dili.customer.sdk.domain.Customer;
+import com.dili.customer.sdk.domain.dto.CustomerExtendDto;
 import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
@@ -63,6 +64,7 @@ import com.dili.ss.idempotent.annotation.Idempotent;
 import com.dili.ss.idempotent.annotation.Token;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.ss.redis.service.RedisDistributedLock;
 import com.dili.ss.redis.service.RedisUtil;
 import com.dili.trading.dto.TraceTradeBillResponseDto;
 import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
@@ -120,6 +122,8 @@ public class WeighingBillController {
 	private QualityTraceRpc qualityTraceRpc;
 	@Autowired
 	private RedisUtil redisUtil;
+	@Autowired
+	private RedisDistributedLock redisDistributedLock;
 
 	/**
 	 * 列表页
@@ -497,7 +501,7 @@ public class WeighingBillController {
 		CustomerQueryInput cq = new CustomerQueryInput();
 		cq.setKeyword(name);
 		cq.setMarketId(user.getFirmId());
-		BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
+		BaseOutput<List<CustomerExtendDto>> output = this.customerRpc.list(cq);
 		return output;
 	}
 
@@ -522,7 +526,7 @@ public class WeighingBillController {
 			return firmOutput;
 		}
 		cq.setMarketId(firmOutput.getData().getId());
-		BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
+		BaseOutput<List<CustomerExtendDto>> output = this.customerRpc.list(cq);
 		if (!output.isSuccess()) {
 			return output;
 		}
