@@ -373,7 +373,7 @@ public class WeighingBillController {
 		}
 		List<Long> departmentIds = new ArrayList<Long>(deptDataAuths.size());
 		deptDataAuths.forEach(da -> departmentIds.add(Long.valueOf(da.get("value").toString())));
-//		query.setDepartmentIds(departmentIds);
+		query.setDepartmentIds(departmentIds);
 		
 		if (query.isExportData()) {
 			printListOutput = this.weighingBillRpc.printList(query);
