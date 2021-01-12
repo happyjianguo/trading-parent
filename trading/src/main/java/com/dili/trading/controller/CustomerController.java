@@ -1,6 +1,7 @@
 package com.dili.trading.controller;
 
 import com.dili.customer.sdk.domain.Customer;
+import com.dili.customer.sdk.domain.dto.CustomerExtendDto;
 import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.TradingConstans;
@@ -96,7 +97,7 @@ public class CustomerController {
             return BaseOutput.failure("未查询到相关客户信息");
         }
         cq.setMarketId(cardOutput.getData().getAccountInfo().getFirmId());
-        BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
+        BaseOutput<List<CustomerExtendDto>> output = this.customerRpc.list(cq);
         return output;
     }
 
