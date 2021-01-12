@@ -16,12 +16,13 @@ import com.dili.orders.dto.WeighingBillClientListDto;
 import com.dili.orders.dto.WeighingBillDetailDto;
 import com.dili.orders.dto.WeighingBillListPageDto;
 import com.dili.orders.dto.WeighingBillPrintDto;
+import com.dili.orders.dto.WeighingBillPrintListDto;
 import com.dili.orders.dto.WeighingBillQueryDto;
 import com.dili.orders.dto.WeighingStatementPrintDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 
-@FeignClient(name = "order-service", contextId = "weighingBill", url = "${orderService.url:}",configuration = FeignHeaderConfig.class)
+@FeignClient(name = "order-service", contextId = "weighingBill", url = "http://localhost:8185", configuration = FeignHeaderConfig.class)
 public interface WeighingBillRpc {
 
 	@RequestMapping(value = "/api/weighingBill/insert")
@@ -35,12 +36,12 @@ public interface WeighingBillRpc {
 			@RequestParam(value = "marketId") Long marketId);
 
 	@RequestMapping(value = "/api/weighingBill/withdraw")
-	BaseOutput<Object> withdraw(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword,
-			@RequestParam(value = "sellerPassword") String sellerPassword, @RequestParam(value = "operatorId") Long operatorId);
+	BaseOutput<Object> withdraw(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "sellerPassword") String sellerPassword,
+			@RequestParam(value = "operatorId") Long operatorId);
 
 	@RequestMapping(value = "/api/weighingBill/invalidate")
-	BaseOutput<Object> invalidate(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword,
-			@RequestParam(value = "sellerPassword") String sellerPassword, @RequestParam(value = "operatorId") Long operatorId);
+	BaseOutput<Object> invalidate(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "sellerPassword") String sellerPassword,
+			@RequestParam(value = "operatorId") Long operatorId);
 
 	@RequestMapping(value = "/api/weighingBill/autoClose")
 	BaseOutput<Object> autoClose();
@@ -50,6 +51,9 @@ public interface WeighingBillRpc {
 
 	@RequestMapping(value = "/api/weighingBill/listPage", method = RequestMethod.POST)
 	PageOutput<List<WeighingBillListPageDto>> listPage(@RequestBody WeighingBillQueryDto query);
+
+	@RequestMapping(value = "/api/weighingBill/printList", method = RequestMethod.POST)
+	BaseOutput<WeighingBillPrintListDto> printList(@RequestBody WeighingBillQueryDto query);
 
 	@RequestMapping(value = "/api/weighingStatement/detail")
 	BaseOutput<WeighingBillDetailDto> findDetailDtoByStatementId(@RequestParam(value = "id") Long id);
