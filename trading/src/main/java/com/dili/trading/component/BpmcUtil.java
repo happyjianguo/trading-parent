@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.dili.bpmc.sdk.dto.GroupUserDto;
 import com.dili.bpmc.sdk.dto.TaskIdentityDto;
-import com.dili.bpmc.sdk.rpc.TaskRpc;
+import com.dili.bpmc.sdk.rpc.restful.TaskRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.uap.sdk.domain.dto.RoleUserDto;
 import com.dili.uap.sdk.rpc.RoleRpc;

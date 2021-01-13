@@ -373,15 +373,15 @@ public class WeighingBillController {
 
 		List<Map> deptDataAuths = SessionContext.getSessionContext().dataAuth(DataAuthType.DEPARTMENT.getCode());
 		if (CollectionUtils.isEmpty(deptDataAuths)) {
-			return new EasyuiPageOutput(0L, new ArrayList<>(0)).toString();
+			return new EasyuiPageOutput(0, new ArrayList<>(0)).toString();
 		}
 		List<Long> departmentIds = new ArrayList<Long>(deptDataAuths.size());
 		deptDataAuths.forEach(da -> departmentIds.add(Long.valueOf(da.get("value").toString())));
 		query.setDepartmentIds(departmentIds);
-		
+
 		if (query.isExportData()) {
 			printListOutput = this.weighingBillRpc.printList(query);
-			output = PageOutput.success().setData(printListOutput.getData().getPageList()).setTotal((long) printListOutput.getData().getPageList().size())
+			output = PageOutput.success().setData(printListOutput.getData().getPageList()).setTotal(printListOutput.getData().getPageList().size())
 					.setPageNum(printListOutput.getData().getPageList().getPageNum()).setPageSize(printListOutput.getData().getPageList().getPageSize());
 		} else {
 			output = this.weighingBillRpc.listPage(query);
