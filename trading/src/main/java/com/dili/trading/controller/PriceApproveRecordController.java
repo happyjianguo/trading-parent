@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.dili.bpmc.sdk.domain.TaskMapping;
-import com.dili.bpmc.sdk.rpc.TaskRpc;
+import com.dili.bpmc.sdk.rpc.restful.TaskRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.domain.PriceApproveRecord;
 import com.dili.orders.dto.PriceApproveRecordQueryDto;
