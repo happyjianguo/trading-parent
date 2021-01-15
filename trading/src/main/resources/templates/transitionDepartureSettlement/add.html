@@ -147,7 +147,7 @@
                         $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
                         $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
                         if (!isNaN(res.data.transitionDepartureSettlement.chargeAmount)) {
-                            $('#chargeAmount1').val(res.data.transitionDepartureSettlement.chargeAmount / 100);
+                            $('#chargeAmount1').val(parseFloat(res.data.transitionDepartureSettlement.chargeAmount / 100));
                             $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
                         }
                     } else {
