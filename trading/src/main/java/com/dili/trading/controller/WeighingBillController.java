@@ -96,6 +96,10 @@ public class WeighingBillController {
 
 	private static final String HEADER_CACHE_KEY = "trading_weighing_bill_header_cache:";
 
+	private static final String WEIGHING_BILL_ID_LOCK_KEY_PRIFIX = "weighing_bill_lock_";
+
+	private static final long WEIGHING_BILL_LOCK_EXPIRE = 60 * 10;
+
 	@Autowired
 	private WeighingBillRpc weighingBillRpc;
 	@Autowired
@@ -175,17 +179,31 @@ public class WeighingBillController {
 			}
 			ws = settlementOutput.getData();
 		} else {
-			weighingBill.setModifierId(user.getId());
-			BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.update(weighingBill);
-			if (!wsOutput.isSuccess()) {
-				return wsOutput;
+			String key = WEIGHING_BILL_ID_LOCK_KEY_PRIFIX + weighingBill.getId();
+			boolean success = false;
+			try {
+				success = this.redisDistributedLock.tryGetLock(key, weighingBill.getId().toString(), WEIGHING_BILL_LOCK_EXPIRE);
+				if (!success) {
+					return BaseOutput.failure("锁定过磅单失败");
+				}
+				weighingBill.setModifierId(user.getId());
+				BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.update(weighingBill);
+				if (!wsOutput.isSuccess()) {
+					return wsOutput;
+				}
+				ws = wsOutput.getData();
+				BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+				if (!settlementOutput.isSuccess()) {
+					return settlementOutput;
+				}
+				ws = settlementOutput.getData();
+			} catch (Exception e) {
+				return BaseOutput.failure(e.getMessage());
+			} finally {
+				if (success) {
+					this.redisDistributedLock.releaseLock(key, weighingBill.getId().toString());
+				}
 			}
-			ws = wsOutput.getData();
-			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (!settlementOutput.isSuccess()) {
-				return settlementOutput;
-			}
-			ws = settlementOutput.getData();
 		}
 		if (WeighingStatementState.FROZEN.getValue().equals(ws.getState())) {
 			output = this.getWeighingBillPrintData(ws.getWeighingBillId(), false);
@@ -373,7 +391,7 @@ public class WeighingBillController {
 
 		List<Map> deptDataAuths = SessionContext.getSessionContext().dataAuth(DataAuthType.DEPARTMENT.getCode());
 		if (CollectionUtils.isEmpty(deptDataAuths)) {
-			return new EasyuiPageOutput(0, new ArrayList<>(0)).toString();
+			return new EasyuiPageOutput(0L, new ArrayList<>(0)).toString();
 		}
 		List<Long> departmentIds = new ArrayList<Long>(deptDataAuths.size());
 		deptDataAuths.forEach(da -> departmentIds.add(Long.valueOf(da.get("value").toString())));
@@ -381,7 +399,7 @@ public class WeighingBillController {
 
 		if (query.isExportData()) {
 			printListOutput = this.weighingBillRpc.printList(query);
-			output = PageOutput.success().setData(printListOutput.getData().getPageList()).setTotal(printListOutput.getData().getPageList().size())
+			output = PageOutput.success().setData(printListOutput.getData().getPageList()).setTotal((long) printListOutput.getData().getPageList().size())
 					.setPageNum(printListOutput.getData().getPageList().getPageNum()).setPageSize(printListOutput.getData().getPageList().getPageSize());
 		} else {
 			output = this.weighingBillRpc.listPage(query);

@@ -414,10 +414,12 @@ public class ComprehensiveFeeController {
                     String slpit=",";
                     for (Map resultMap:result) {
                         Map<String,String> mapObj=new HashMap<>(4);
-                        mapObj.put("subType",resultMap.get("$_subType").toString());
-                        mapObj.put("subTypeTranslate",resultMap.get("subType").toString());
-                        subTypeTranslate+=resultMap.get("subType").toString()+slpit;
-                        jsonObjList.add(mapObj);
+                        if(resultMap.get("$_subType")!=null&&resultMap.get("subType")!=null){
+                            mapObj.put("subType",resultMap.get("$_subType").toString());
+                            mapObj.put("subTypeTranslate",resultMap.get("subType").toString());
+                            subTypeTranslate+=resultMap.get("subType").toString()+slpit;
+                            jsonObjList.add(mapObj);
+                        }
                     }
                 }
             }
