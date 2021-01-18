@@ -403,11 +403,13 @@ public class ComprehensiveFeeController {
                 List<CharacterSubTypeDto> characterSubTypeDtos=characterTypeGroupDto.getSubTypeList();
                 if(characterSubTypeDtos != null && characterSubTypeDtos.size()>0){
                     for (CharacterSubTypeDto characterSubTypeDto: characterSubTypeDtos) {
-                        Map<String,String> mapObj=new HashMap<>(4);
-                        mapObj.put("subType",characterSubTypeDto.getCode());
-                        mapObj.put("subTypeTranslate",characterSubTypeDto.getName());
-                        subTypeTranslate+=characterSubTypeDto.getName()+slpit;
-                        jsonObjList.add(mapObj);
+                        if(characterSubTypeDto.getSelected() && characterSubTypeDto.getCode() != null && !"".equals(characterSubTypeDto.getCode())){
+                            Map<String,String> mapObj=new HashMap<>(4);
+                            mapObj.put("subType",characterSubTypeDto.getCode());
+                            mapObj.put("subTypeTranslate",characterSubTypeDto.getName());
+                            subTypeTranslate+=characterSubTypeDto.getName()+slpit;
+                            jsonObjList.add(mapObj);
+                        }
                     }
                 }
             }
