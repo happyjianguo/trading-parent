@@ -6,6 +6,8 @@ import com.dili.assets.sdk.dto.CusCategoryDTO;
 import com.dili.assets.sdk.dto.CusCategoryQuery;
 import com.dili.assets.sdk.rpc.AssetsRpc;
 import com.dili.customer.sdk.domain.CharacterType;
+import com.dili.customer.sdk.domain.dto.CharacterSubTypeDto;
+import com.dili.customer.sdk.domain.dto.CharacterTypeGroupDto;
 import com.dili.customer.sdk.domain.dto.CustomerExtendDto;
 import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
@@ -386,54 +388,41 @@ public class ComprehensiveFeeController {
         }
         cq.setMarketId(cardOutput.getData().getAccountInfo().getFirmId());
         BaseOutput<CustomerExtendDto> output = this.customerRpc.get(cardOutput.getData().getAccountInfo().getCustomerId(),cardOutput.getData().getAccountInfo().getFirmId());
-        if(output!=null&&output.getData()!=null){
-            List<CharacterType> characterTypes=output.getData().getCharacterTypeList();
-            Map<String, Object> map = new HashMap<>();
-            //设置单据状态提供者
-            JSONObject ddProvider = new JSONObject();
-            ddProvider.put(ValueProvider.PROVIDER_KEY, "dataDictionaryValueProvider");
-            ddProvider.put(ValueProvider.QUERY_PARAMS_KEY, "{\"dd_code\":\"cus_customer_type\",\"firm_code\":\""+userTicket.getFirmCode()+"\"}");
-            map.put("subType", ddProvider);
-            customerView.setMetadata(map);
-            //存下所有身份类型
-            List<String> subTypeCodeList=new ArrayList<>(characterTypes.size());
-            List<CustomerView> list=new ArrayList<>(characterTypes.size());
-            List<Map> jsonObjList=new ArrayList<>(characterTypes.size());
-            String subTypeTranslate="";
-            if(characterTypes!=null&&characterTypes.size()>0){
-                for (CharacterType characterType:characterTypes) {
-                    if(characterType.getSubType()!=null && !"".equals(characterType.getSubType())){
-                        CustomerView customerTransObj=new CustomerView();
-                        subTypeCodeList.add(characterType.getSubType());
-                        customerTransObj.setSubType(characterType.getSubType());
-                        list.add(customerTransObj);
-                    }
-                }
-                List<Map> result=ValueProviderUtils.buildDataByProvider(customerView, list);
-                if(result!=null&&result.size()>0){
-                    String slpit=",";
-                    for (Map resultMap:result) {
-                        Map<String,String> mapObj=new HashMap<>(4);
-                        if(resultMap.get("$_subType")!=null&&resultMap.get("subType")!=null){
-                            mapObj.put("subType",resultMap.get("$_subType").toString());
-                            mapObj.put("subTypeTranslate",resultMap.get("subType").toString());
-                            subTypeTranslate+=resultMap.get("subType").toString()+slpit;
-                            jsonObjList.add(mapObj);
-                        }
-                    }
-                }
-            }
-            customerView.setId(output.getData().getId());
-            customerView.setCode(output.getData().getCode());
-            customerView.setName(output.getData().getName());
-            customerView.setSubType(JSONObject.toJSONString(jsonObjList));
-            if(subTypeTranslate.length()>0){
-                customerView.setSubTypeTranslate(subTypeTranslate.substring(0,subTypeTranslate.length()-1));
-            }
-            return BaseOutput.successData(customerView);
-        }else {
+        if(output ==null || output.getData()==null){
             return BaseOutput.failure("未查询到相关客户信息");
         }
+        List<CharacterTypeGroupDto> characterTypeGroups=output.getData().getCharacterTypeGroupList();
+        if(characterTypeGroups == null || characterTypeGroups.size() == 0){
+            return BaseOutput.failure("顾客不存在身份类型！");
+        }
+        List<Map> jsonObjList=new ArrayList<>(characterTypeGroups.size());
+        String subTypeTranslate="";
+        String slpit=",";
+        for (CharacterTypeGroupDto characterTypeGroupDto:characterTypeGroups) {
+            if(characterTypeGroupDto.getSubTypeList()!=null && characterTypeGroupDto.getSubTypeList().size()>0){
+                List<CharacterSubTypeDto> characterSubTypeDtos=characterTypeGroupDto.getSubTypeList();
+                if(characterSubTypeDtos != null && characterSubTypeDtos.size()>0){
+                    for (CharacterSubTypeDto characterSubTypeDto: characterSubTypeDtos) {
+                        Map<String,String> mapObj=new HashMap<>(4);
+                        mapObj.put("subType",characterSubTypeDto.getCode());
+                        mapObj.put("subTypeTranslate",characterSubTypeDto.getName());
+                        subTypeTranslate+=characterSubTypeDto.getName()+slpit;
+                        jsonObjList.add(mapObj);
+                    }
+                }
+            }
+        }
+        if(jsonObjList.size() == 0){
+            return BaseOutput.failure("顾客不存在身份类型！");
+        }
+        customerView.setId(output.getData().getId());
+        customerView.setCode(output.getData().getCode());
+        customerView.setName(output.getData().getName());
+        customerView.setSubType(JSONObject.toJSONString(jsonObjList));
+        if(subTypeTranslate.length()>0){
+            customerView.setSubTypeTranslate(subTypeTranslate.substring(0,subTypeTranslate.length()-1));
+        }
+        return BaseOutput.successData(customerView);
     }
 
     /**
