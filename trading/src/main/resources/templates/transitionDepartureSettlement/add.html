@@ -101,6 +101,7 @@
     $(function () {
 
         $('#id').on("change", function (e) {
+            debugger
             if ($(this).val() == undefined || $(this).val() == null || $(this).val() == '') {
                 bs4pop.alert("请选择申请单号", {type: 'error'});
                 $('#code').val('');
@@ -147,7 +148,8 @@
                         $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
                         $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
                         if (!isNaN(res.data.transitionDepartureSettlement.chargeAmount)) {
-                            $('#chargeAmount1').val(parseFloat(res.data.transitionDepartureSettlement.chargeAmount / 100));
+                            debugger
+                            $('#chargeAmount1').val(parseFloat(res.data.transitionDepartureSettlement.chargeAmount / 100).toFixed(2));
                             $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
                         }
                     } else {
@@ -182,7 +184,7 @@
                     async: true,
                     success: function (res) {
                         if (res.code == "200") {
-                            $('#chargeAmount1').val(res.data.totalFee);
+                            $('#chargeAmount1').val(parseFloat(res.data.totalFee).toFixed(2));
                             $('#chargeAmount').val(parseInt(res.data.totalFee * 100));
                         } else {
                             bui.loading.hide();
@@ -218,7 +220,7 @@
                     async: true,
                     success: function (res) {
                         if (res.code == "200") {
-                            $('#chargeAmount1').val(res.data.totalFee);
+                            $('#chargeAmount1').val(parseFloat(res.data.totalFee).toFixed(2));
                             $('#chargeAmount').val(parseInt(res.data.totalFee * 100));
                         } else {
                             bui.loading.hide();
@@ -355,7 +357,7 @@
                         $('#tareWeight').val(res.data.transitionDepartureSettlement.tareWeight);
                         $('#netWeight').val(res.data.transitionDepartureSettlement.netWeight);
                         if (!isNaN(res.data.transitionDepartureSettlement.chargeAmount)) {
-                            $('#chargeAmount1').val(res.data.transitionDepartureSettlement.chargeAmount / 100);
+                            $('#chargeAmount1').val(parseFloat(res.data.transitionDepartureSettlement.chargeAmount / 100).toFixed(2));
                             $('#chargeAmount').val(res.data.transitionDepartureSettlement.chargeAmount);
                         }
                     } else {

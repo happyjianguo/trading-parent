@@ -147,6 +147,9 @@ public class ComprehensiveFeeController {
         comprehensiveFee.setMarketId(userTicket.getFirmId());
         comprehensiveFee.setOrderType(ComprehensiveFeeType.TESTING_CHARGE.getValue());
         BaseOutput<ComprehensiveFee> res = comprehensiveFeeRpc.selectCountAndTotal(comprehensiveFee);
+        if(res == null || !res.isSuccess() || res.getData()==null){
+           return BaseOutput.failure("查询计数失败！");
+        }
         if(res.getData().getTransactionsTotal()==null){
             res.getData().setTransactionsTotal(0L);
         }
