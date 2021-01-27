@@ -332,9 +332,24 @@
     _grid.on('click-cell.bs.table', function(field, value, row, $element){
         debugger;
         if (value === 'cnt' && row !== undefined){
-            let ids=$element.ids;
+            let ids = $element.ids;
+            openViewHandler("${contextPath}/collectionRecord/weighingBillList.html?ids="+ids);
         }
     })
+    function openViewHandler(url) {
+        dia = bs4pop.dialog({
+            title: '关联结算单',
+            content: url,
+            width: '100%',//宽度
+            height: '100%',//高度
+            isIframe: true,
+            btns: [{
+                label: '关闭', className: 'btn btn-secondary', onClick(e, $iframe) {
 
+                }
+            }]
+
+        });
+    }
 
 </script>

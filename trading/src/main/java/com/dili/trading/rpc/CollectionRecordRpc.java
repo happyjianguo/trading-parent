@@ -1,6 +1,7 @@
 package com.dili.trading.rpc;
 
 import com.dili.orders.domain.CollectionRecord;
+import com.dili.orders.dto.WeighingCollectionStatementDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -27,7 +28,21 @@ public interface CollectionRecordRpc {
     @RequestMapping(value = "/api/collectionRecord/listByQueryParams", method = {RequestMethod.POST})
     PageOutput<List<CollectionRecord>> listByQueryParams(@RequestBody CollectionRecord collectionRecord);
 
-
+    /**
+     * 回款总和
+     *
+     * @param collectionRecord
+     * @return
+     */
     @PostMapping("/api/collectionRecord/groupListForDetail")
     BaseOutput<List<Map<String, String>>> groupListForDetail(@RequestBody CollectionRecord collectionRecord);
+
+    /**
+     * 回款下钻
+     *
+     * @param collectionRecord
+     * @return
+     */
+    @RequestMapping(value = "/api/collectionRecord/weighingBills", method = {RequestMethod.POST})
+    BaseOutput<List<WeighingCollectionStatementDto>> weighingBills(@RequestBody CollectionRecord collectionRecord);
 }

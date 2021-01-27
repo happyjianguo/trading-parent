@@ -1,6 +1,7 @@
 package com.dili.trading.controller;
 
 import com.dili.orders.domain.CollectionRecord;
+import com.dili.orders.dto.WeighingCollectionStatementDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
@@ -12,10 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +46,31 @@ public class CollectionRecordController {
     @RequestMapping(value = "/groupList.html", method = RequestMethod.GET)
     public String groupList(ModelMap modelMap) {
         return "collectionRecord/groupList";
+    }
+
+    /**
+     * 跳转页面
+     */
+    @RequestMapping(value = "/weighingBillList.html", method = RequestMethod.GET)
+    public String weighingBillList(ModelMap modelMap, String ids) {
+        modelMap.put("ids", ids);
+        return "collectionRecord/detail";
+    }
+
+    /**
+     * 获取数据
+     */
+    @PostMapping(value = "/weighingBillListQuery.action")
+    @ResponseBody
+    public String weighingBillListQuery(@RequestBody CollectionRecord collectionRecord) throws Exception {
+        if (CollectionUtils.isEmpty(collectionRecord.getCollectionRecordIds())) {
+            return "id不能为空";
+        }
+        BaseOutput<List<WeighingCollectionStatementDto>> listBaseOutput = collectionRecordRpc.weighingBills(collectionRecord);
+        if (!listBaseOutput.isSuccess()) {
+            return "查询失败";
+        }
+        return new EasyuiPageOutput(Long.valueOf(listBaseOutput.getData().size()), ValueProviderUtils.buildDataByProvider(collectionRecord, listBaseOutput.getData())).toString();
     }
 
     /**
