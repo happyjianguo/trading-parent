@@ -331,10 +331,10 @@ function daysDistance(startDate, endDate) {
                     success:function(result) {
                         if (result.success) {
                             // 1-买家 2-卖家
-                            if(result.data.accountType==1){
+                            if(result.data.customerCharacterType=='buyer_character_type'){
                                 $('#buyerCardNo').val(cardNum);
                                 $('#show_buyer_name_by_card_name').val(result.data.customerName);
-                            }else if(result.data.accountType==2){
+                            }else if(result.data.customerCharacterType=='business_user_character_type'){
                                 $('#sellerCardNo').val(cardNum);
                                 $('#show_seller_name_by_card_name').val(result.data.customerName);
                             }
