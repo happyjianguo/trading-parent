@@ -277,6 +277,15 @@ public class WeighingBillController {
 		if (Objects.isNull(dto.getMarketId())) {
 			dto.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
 		}
+		if (CollectionUtils.isEmpty(dto.getDepartmentIds())) {
+			List<Map> deptDataAuths = SessionContext.getSessionContext().dataAuth(DataAuthType.DEPARTMENT.getCode());
+			if (CollectionUtils.isEmpty(deptDataAuths)) {
+				return BaseOutput.success();
+			}
+			List<Long> departmentIds = new ArrayList<Long>(deptDataAuths.size());
+			deptDataAuths.forEach(da -> departmentIds.add(Long.valueOf(da.get("value").toString())));
+			dto.setDepartmentIds(departmentIds);
+		}
 		BaseOutput<List<WeighingBillClientListDto>> output = this.weighingBillRpc.listByExample(dto);
 		if (!output.isSuccess()) {
 			return output;
