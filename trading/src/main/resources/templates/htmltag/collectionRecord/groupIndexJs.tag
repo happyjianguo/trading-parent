@@ -332,8 +332,9 @@
     _grid.on('click-cell.bs.table', function(field, value, row, $element){
         debugger;
         if (value === 'cnt' && row !== undefined){
-            let ids = $element.ids;
-            openViewHandler("${contextPath}/collectionRecord/weighingBillList.html?ids="+ids);
+            let collectionRecordIds = "["+$element.ids+"]";
+            localStorage.setItem("collectionRecordIds",collectionRecordIds);
+            openViewHandler("${contextPath}/collectionRecord/weighingBillList.html");
         }
     })
     function openViewHandler(url) {

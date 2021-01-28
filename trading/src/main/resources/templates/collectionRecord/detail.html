@@ -1,20 +1,17 @@
 <#bs4Body>
 
 <div class="container-fluid">
-    <form class="form" id="queryForm" role="form" data-method="POST">
-        <input id="ids" hidden name="collectionRecordIds" value="${ids!}">
-    </form>
 <div class="row">
     <div class="col-12">
             <table id="grid" data-toggle="table" data-title="关联结算单" class="table"
                    data-pagination="true" data-query-params="queryParams"
                    data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
-                   data-icons="bui.variable.icons"
+                   data-icons="bui.variable.icons" data-content-type="application/json; charset=utf-8"
                    data-buttons-class="primary" data-method="POST"
             >
             <thead>
             <tr>
-                <th data-align="center" data-field="lastOperationTime">结算时间</th>
+                <th data-align="center" data-field="lastOperationTime" data-provider="datetimeProvider">结算时间</th>
                 <th data-align="center" data-field="weighingStatementCode">结算单号</th>
                 <th data-align="center" data-field="goodsName">商品</th>
                 <th data-align="center" data-field="netWeight">净重</th>
@@ -32,5 +29,10 @@
         </div>
     </div>
 </div>
+<script>
+
+    let ids = localStorage.getItem("ids");
+    localStorage.removeItem("ids");
+</script>
 </#bs4Body>
 <#collectionRecord_detail />

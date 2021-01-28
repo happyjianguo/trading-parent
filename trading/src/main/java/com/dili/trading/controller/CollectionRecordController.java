@@ -52,8 +52,7 @@ public class CollectionRecordController {
      * 跳转页面
      */
     @RequestMapping(value = "/weighingBillList.html", method = RequestMethod.GET)
-    public String weighingBillList(ModelMap modelMap, String ids) {
-        modelMap.put("ids", ids);
+    public String weighingBillList() {
         return "collectionRecord/detail";
     }
 

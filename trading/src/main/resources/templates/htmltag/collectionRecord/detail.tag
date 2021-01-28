@@ -4,6 +4,8 @@
         //如 let itemIndex = 0;
     let _grid = $('#grid');
     var dia;
+    let collectionRecordIds = localStorage.getItem("collectionRecordIds");
+    localStorage.removeItem("collectionRecordIds");
 
     function openViewHandler(url) {
         dia = bs4pop.dialog({
@@ -66,7 +68,8 @@
             sort: params.sort,
             order: params.order
         };
-        return JSON.stringify($.extend({}, temp, bui.util.bindGridMeta2Form('grid', 'queryForm')))
+
+        return JSON.stringify($.extend({}, temp, bui.util.bindGridMeta2Form('grid', ''),{"collectionRecordIds":JSON.parse(collectionRecordIds)}));
     }
 
 </script>
