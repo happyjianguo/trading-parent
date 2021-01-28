@@ -4,7 +4,7 @@
         //如 let itemIndex = 0;
     let _grid = $('#grid');
     let _form = $('#_form');
-    var dia;
+    var dia, diaPay;
 
 
     var buyerNameQueryAutoCompleteOption = {
@@ -20,7 +20,7 @@
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
-                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone
+                                value: dataItem.code + ' | ' + dataItem.name + ' | ' + dataItem.contactsPhone + ' | '+dataItem.id
                             }
                         );
                     })
@@ -32,8 +32,64 @@
         },
         selectFn: function (suggestion) {
             $('#show_buyer_name').val(suggestion.name);
+            $('#buyerName').val(suggestion.name);
+            $('#buyerIdI').val(suggestion.id);
+            let targetId = $('#id');
+            targetId.empty();
+            $.ajax({
+                type : "POST",
+                dataType : "json",
+                url : '/orderCommon/cardList.action',
+                data : {customerId : suggestion.id},
+                success : function(res) {
+                    let data = res.data;
+                    if (data.length == 1) {
+                        targetId.html('<option value="'+ data[0].cardNo  +'" selected>' + data[0].cardNo + '</option>');
+                        getAccount(data[0].cardNo);
+                    } else {
+                        let str = '<option value="">请选择</option>';
+                        $.each(data, function (i, item) {
+                            str += '<option value="'+ item.cardNo  +'">' + item.cardNo + '</option>'
+                        });
+                        targetId.html(str);
+                    }
+                },
+                error : function() {
+                    bui.loading.hide();
+                    bs4pop.alert("客户卡获取失败!", {
+                        type : 'error'
+                    });
+                }
+            });
         }
     };
+
+    $('#id').on('change', function () {
+        getAccount($(this).val());
+    })
+
+    function getAccount(cardNo){
+        $.ajax({
+            type: "POST",
+            data: {cardNo: cardNo},
+            dataType: "json",
+            url: "/orderCommon/oneByCardNo.action",
+            async: true,
+            success: function (res) {
+                if (res.code == "200") {
+                    $('#accountBuyerIdI').val(res.data.accountFund.availableAmount);
+                    $('#buyerBalance').val(res.data.accountInfo.accountId);
+                } else {
+                    bui.loading.hide();
+                    bs4pop.alert(res.result, {type: 'error'});
+                }
+            },
+            error: function () {
+                bui.loading.hide();
+                bs4pop.alert("根据卡号获取账户信息失败!", {type: 'error'});
+            }
+        });
+    }
 
     function swipeCard(){
         let cardNum;
@@ -351,6 +407,21 @@
             }]
 
         });
+    }
+
+    /**
+     * 打开新增窗口
+     */
+    function openInsertHandler() {
+        diaPay = bs4pop.dialog({
+            title: '回款',//对话框title
+            content: '${contextPath}/collectionRecord/add.html', //对话框内容，可以是 string、element，$object
+            width: '500px',//宽度
+            height: '700px',//高度
+            isIframe: true,//默认是页面层，非iframe
+            backdrop: 'static'
+        });
+
     }
 
 </script>

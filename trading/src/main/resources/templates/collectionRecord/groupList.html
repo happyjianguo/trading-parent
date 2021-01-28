@@ -48,13 +48,62 @@
                 </button>
             </div>
         </div>
+        <hr>
+        <h6  class="font-weight-bold mt-5">
+            客户信息
+        </h6>
+        <div class="row  row-cols-6">
+            <div class="form-group col-auto">
+                <label for="" class="">买方客户</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="buyerName" name="buyerName" />
+                    <input type="text" hidden class="form-control" id="buyerIdI" name="buyerIdI" />
+                    <input id="buyerCardNoI" hidden class="form-control" name="buyerCardNoI">
+                    <input id="accountBuyerIdI" hidden class="form-control" name="accountBuyerIdI">
+                </div>
+            </div>
+
+            <div class="form-group col">
+                <label for="">买方卡号</label>
+                <select id="id" name="applyId" class="form-control" required focus-shift>
+                    <option value="">-- 请选择 --</option>
+                </select>
+            </div>
+            <div class="form-group col-auto">
+                <label for="" class="">账户余额</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="buyerBalance" name="buyerBalance" />
+                </div>
+            </div>
+            <div class="form-group col-auto">
+                <label for="" class="">卖方客户</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="sellerName" name="sellerName" />
+                    <input type="text" hidden class="form-control" id="sellerIdI" name="sellerIdI" />
+                    <input id="sellerCardNoI" hidden class="form-control" name="sellerCardNoI">
+                    <input id="accountsellerIdI" hidden class="form-control" name="accountsellerIdI">
+                </div>
+            </div>
+            <div class="form-group col">
+                <label for="">卖方卡号</label>
+                <select id="sellerCard" name="applyId" class="form-control" required focus-shift>
+                    <option value="">-- 请选择 --</option>
+                </select>
+            </div>
+        </div>
     </form>
 <hr>
-
+    <h6  class="font-weight-bold mt-5">
+        待回款统计
+    </h6>
     <div class="row">
         <div class="col-12">
             <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
-
+                <#resource code="collectionRecord_add">
+                <button id="btn_add" type="button" class="btn btn-primary" onclick="openInsertHandler()"><i
+                        class="fa fa-plus"></i> 回款
+                </button>
+                </#resource>
             </div>
                 <table id="grid" data-toggle="table"
                        data-title="回款单据"  data-toolbar="#toolbar"
@@ -152,7 +201,6 @@
                 });
             })
     })
-
     function clearQueryForm(){
         $('#queryForm input').val('');
         // $('#buyerId').val('');

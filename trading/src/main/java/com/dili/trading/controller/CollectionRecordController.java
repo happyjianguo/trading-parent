@@ -57,6 +57,14 @@ public class CollectionRecordController {
     }
 
     /**
+     * 跳转到新增页面
+     */
+    @RequestMapping(value = "/add.html", method = RequestMethod.GET)
+    public String add() {
+        return "collectionRecord/add";
+    }
+
+    /**
      * 获取数据
      */
     @PostMapping(value = "/weighingBillListQuery.action")
