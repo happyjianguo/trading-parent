@@ -148,7 +148,7 @@ public class WeighingBillController {
 	 * @return
 	 * @throws Exception
 	 */
-	@Idempotent(Idempotent.HEADER)
+//	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/saveAndSettle.action")
 	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) throws Exception {
@@ -174,6 +174,9 @@ public class WeighingBillController {
 			}
 			ws = wsOutput.getData();
 			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+			if (settlementOutput==null) {
+				return BaseOutput.failure("请求服务器失败");
+			}
 			if (!settlementOutput.isSuccess()) {
 				return settlementOutput;
 			}
