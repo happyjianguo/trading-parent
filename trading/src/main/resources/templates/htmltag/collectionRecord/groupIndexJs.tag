@@ -138,17 +138,34 @@
                         // 1-买家 2-卖家
                         if(result.data.customerCharacterType=='buyer_character_type'){
                             $('#buyerCardNo').val(cardNum);
+                            $('#buyerName').val(result.data.customerName);
                             $('#accountBuyerId').val(result.data.accountId);
+                            $('#accountBuyerIdI').val(result.data.accountId);
                             $('#show_buyer_name_by_card_name').val(result.data.customerName);
+
+                            let targetId = $('#buyerCardNoI');
+                            targetId.empty();
+                            targetId.html('<option value="'+ cardNum  +'" selected>' + cardNum + '</option>');
+                            getBuyerAccount(cardNum);
+
                         }else if(result.data.customerCharacterType=='business_user_character_type'){
                             $('#sellerCardNo').val(cardNum);
+                            $('#sellerName').val(result.data.customerName);
                             $('#accountSellerId').val(result.data.accountId);
+                            $('#accountSellerIdI').val(result.data.accountId);
                             $('#show_seller_name_by_card_name').val(result.data.customerName);
+
+                            let targetId = $('#sellerCardNoI');
+                            targetId.empty();
+                            targetId.html('<option value="'+ cardNum  +'" selected>' + cardNum + '</option>');
+                            getSellerAccount(cardNum);
                         }
                     }else{
                         bs4pop.alert(result.message, {type: "error"});
                         $('#buyerCardNo').val('');
                         $('#accountBuyerId').val('');
+                        $("#buyerCardNoI").empty();
+                        $("#sellerCardNoI").empty();
                         $('#show_buyer_name_by_card_name').val('');
                         $('#sellerCardNo').val('');
                         $('#accountSellerId').val('');
@@ -253,38 +270,6 @@
             $('#customerCardNo').val(suggestion.cardNo);
         }
     };
-
-    function swipeCard(el) {
-        let cardNo;
-        let json = JSON.parse(callbackObj.readCardNumber());
-        if (json.code == 0) {
-            cardNo = json.data;
-        } else {
-            bs4pop.alert(json.message, {type: "error"});
-            return false;
-        }
-        $('#show_customer_card').val(cardNo);
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: '/customer/listCustomerByCardNo.action',
-            data: {cardNo: cardNo},
-            success: function (data) {
-                if (data.code == '200') {
-                    $('#show_customer_name').val(data.data[0].name);
-                    $('#accountId').val(data.data[0].id);
-                } else {
-                    $('#show_customer_name').val('');
-                    bs4pop.alert(data.result, {type: 'error'});
-                }
-            },
-            error: function () {
-                bui.loading.hide();
-                bs4pop.alert("客户获取失败!", {type: 'error'});
-            }
-        });
-
-    }
 
     // 时间范围
     lay('.settletime').each(function () {
