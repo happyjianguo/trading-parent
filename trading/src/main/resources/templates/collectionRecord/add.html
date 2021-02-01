@@ -49,6 +49,9 @@
                 <div class="form-group col" id="paymentCardNumberDiv" hidden>
                     <label for="paymentCardNumber">代付卡号</label>
                     <input id="paymentCardNumber" class="form-control" name="paymentCardNumber">
+                    <div class="input-group-append">
+                        <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;" style=" text-decoration: none;">刷卡</a></span>
+                    </div>
                 </div>
                 <div class="form-group col">
                     <label for="">输入密码</label>
@@ -182,6 +185,17 @@
             $('#paymentCardNumberDiv').attr("hidden",true);
         }
     });
+    $('#payByCard').on('click', function (e) {
 
+        let cardNum;
+        let json = JSON.parse(callbackObj.readCardNumber());
+        if (json.code == 0) {
+            cardNum = json.data;
+            $('#paymentCardNumber').val(cardNum);
+        } else {
+            bs4pop.alert(json.message, {type: "error"});
+            return false;
+        }
+    });
 
 </script>

@@ -140,7 +140,7 @@
                             $('#buyerCardNo').val(cardNum);
                             $('#buyerName').val(result.data.customerName);
                             $('#accountBuyerId').val(result.data.accountId);
-                            $('#accountBuyerIdI').val(result.data.accountId);
+                            $('#buyerIdI').val(result.data.customerId);
                             $('#show_buyer_name_by_card_name').val(result.data.customerName);
 
                             let targetId = $('#buyerCardNoI');
@@ -153,6 +153,7 @@
                             $('#sellerName').val(result.data.customerName);
                             $('#accountSellerId').val(result.data.accountId);
                             $('#accountSellerIdI').val(result.data.accountId);
+                            $('#sellerIdI').val(result.data.customerId);
                             $('#show_seller_name_by_card_name').val(result.data.customerName);
 
                             let targetId = $('#sellerCardNoI');
