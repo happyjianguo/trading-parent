@@ -34,7 +34,8 @@
             $('#show_buyer_name').val(suggestion.name);
             $('#buyerName').val(suggestion.name);
             $('#buyerIdI').val(suggestion.id);
-            let targetId = $('#id');
+
+            let targetId = $('#buyerCardNoI');
             targetId.empty();
             $.ajax({
                 type : "POST",
@@ -45,7 +46,7 @@
                     let data = res.data;
                     if (data.length == 1) {
                         targetId.html('<option value="'+ data[0].cardNo  +'" selected>' + data[0].cardNo + '</option>');
-                        getAccount(data[0].cardNo);
+                        getBuyerAccount(data[0].cardNo);
                     } else {
                         let str = '<option value="">请选择</option>';
                         $.each(data, function (i, item) {
@@ -64,11 +65,15 @@
         }
     };
 
-    $('#id').on('change', function () {
-        getAccount($(this).val());
+    $('#buyerCardNoI').on('change', function () {
+        getBuyerAccount($(this).val());
     })
 
-    function getAccount(cardNo){
+    $('#sellerCardNoI').on('change', function () {
+        getSellerAccount($(this).val());
+    })
+
+    function getBuyerAccount(cardNo){
         $.ajax({
             type: "POST",
             data: {cardNo: cardNo},
@@ -77,8 +82,31 @@
             async: true,
             success: function (res) {
                 if (res.code == "200") {
-                    $('#accountBuyerIdI').val(res.data.accountFund.availableAmount);
-                    $('#buyerBalance').val(res.data.accountInfo.accountId);
+                    $('#accountBuyerIdI').val(res.data.accountInfo.accountId);
+                    $('#buyerBalance').val(res.data.accountFund.availableAmount);
+                    $('#buyerBalanceYuan').val(parseFloat(res.data.accountFund.availableAmount / 100).toFixed(2));
+                } else {
+                    bui.loading.hide();
+                    bs4pop.alert(res.result, {type: 'error'});
+                }
+            },
+            error: function () {
+                bui.loading.hide();
+                bs4pop.alert("根据卡号获取账户信息失败!", {type: 'error'});
+            }
+        });
+    }
+    function getSellerAccount(cardNo){
+        $.ajax({
+            type: "POST",
+            data: {cardNo: cardNo},
+            dataType: "json",
+            url: "/orderCommon/oneByCardNo.action",
+            async: true,
+            success: function (res) {
+                if (res.code == "200") {
+                    $('#sellerName').val(res.data.accountInfo.customerName);
+                    $('#accountsellerIdI').val(res.data.accountInfo.accountId);
                 } else {
                     bui.loading.hide();
                     bs4pop.alert(res.result, {type: 'error'});
@@ -161,6 +189,37 @@
         },
         selectFn: function (suggestion) {
             $('#show_seller_name').val(suggestion.name);
+            $('#sellerName').val(suggestion.name);
+            $('#sellerIdI').val(suggestion.id);
+
+            let targetId = $('#sellerCardNoI');
+            targetId.empty();
+            $.ajax({
+                type : "POST",
+                dataType : "json",
+                url : '/orderCommon/cardList.action',
+                data : {customerId : suggestion.id},
+                success : function(res) {
+                    let data = res.data;
+                    if (data.length == 1) {
+                        targetId.html('<option value="'+ data[0].cardNo  +'" selected>' + data[0].cardNo + '</option>');
+                        getSellerAccount(data[0].cardNo);
+
+                    } else {
+                        let str = '<option value="">请选择</option>';
+                        $.each(data, function (i, item) {
+                            str += '<option value="'+ item.cardNo  +'">' + item.cardNo + '</option>'
+                        });
+                        targetId.html(str);
+                    }
+                },
+                error : function() {
+                    bui.loading.hide();
+                    bs4pop.alert("客户卡获取失败!", {
+                        type : 'error'
+                    });
+                }
+            });
         }
     };
 
@@ -330,6 +389,7 @@
             // url: '/collectionRecord/groupListByQueryParams.action',
             pageSize: parseInt(size)
         });
+        showOrHiddenColumn();
     });
 
     /******************************驱动执行区 end****************************/
@@ -413,6 +473,51 @@
      * 打开新增窗口
      */
     function openInsertHandler() {
+        //获取选则了的项
+        let rows = _grid.bootstrapTable('getSelections');
+        if(null == rows || rows.length == 0){
+            bs4pop.alert("请选择一条或多条数据进行回款!", {type: 'error'});
+            return false;
+        }
+        let fundItems = [];
+        if (null != rows && rows.length > 0) {
+            for (let i = 0; i < rows.length; i++) {
+                fundItems.push(rows[i].ids);
+            }
+        }
+        let money = parseFloat(0);
+        if (null != rows && rows.length > 0) {
+            for (let i = 0; i < rows.length; i++) {
+                money+=parseFloat(rows[i].amount);
+            }
+        }
+
+        let dateStr = [];
+        if (null != rows && rows.length > 0) {
+            for (let i = 0; i < rows.length; i++) {
+                dateStr.push(rows[i].time);
+            }
+        }
+
+
+        localStorage.setItem("idList",fundItems.toString());
+        localStorage.setItem("amount",money.toFixed(2));
+
+        //设置买家相关信息
+        localStorage.setItem("buyerName",$('#buyerName').val());
+        localStorage.setItem("buyerIdI",$('#buyerIdI').val());
+        localStorage.setItem("accountBuyerIdI",$('#accountBuyerIdI').val());
+        localStorage.setItem("buyerCardNoI",$("#buyerCardNoI option:selected").val());
+        localStorage.setItem("buyerBalance",$('#buyerBalance').val())
+
+        //设置卖家相关信息
+        localStorage.setItem("sellerName",$('#sellerName').val());
+        localStorage.setItem("sellerIdI",$('#sellerIdI').val());
+        localStorage.setItem("accountsellerIdI",$('#accountsellerIdI').val());
+        localStorage.setItem("sellerCardNoI",$("#sellerCardNoI option:selected").val());
+
+        localStorage.setItem("dateStr",dateStr.toString());
+
         diaPay = bs4pop.dialog({
             title: '回款',//对话框title
             content: '${contextPath}/collectionRecord/add.html', //对话框内容，可以是 string、element，$object

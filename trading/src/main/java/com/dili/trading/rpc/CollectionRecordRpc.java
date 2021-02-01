@@ -1,15 +1,15 @@
 package com.dili.trading.rpc;
 
+import com.dili.logger.sdk.annotation.BusinessLogger;
+import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.domain.CollectionRecord;
 import com.dili.orders.dto.WeighingCollectionStatementDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -45,4 +45,13 @@ public interface CollectionRecordRpc {
      */
     @RequestMapping(value = "/api/collectionRecord/weighingBills", method = {RequestMethod.POST})
     BaseOutput<List<WeighingCollectionStatementDto>> weighingBills(@RequestBody CollectionRecord collectionRecord);
+
+    /**
+     * 根据数据插入，并且支付
+     *
+     * @param collectionRecord
+     * @return
+     */
+    @PostMapping("/api/collectionRecord/insertAndPay")
+    BaseOutput insertAndPay(@RequestBody CollectionRecord collectionRecord, @RequestParam(value = "password") String password);
 }

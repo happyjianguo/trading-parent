@@ -56,37 +56,36 @@
             <div class="form-group col-auto">
                 <label for="" class="">买方客户</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="buyerName" name="buyerName" />
-                    <input type="text" hidden class="form-control" id="buyerIdI" name="buyerIdI" />
-                    <input id="buyerCardNoI" hidden class="form-control" name="buyerCardNoI">
-                    <input id="accountBuyerIdI" hidden class="form-control" name="accountBuyerIdI">
+                    <input type="text" class="form-control" id="buyerName" readonly name="buyerName" />
+                    <input type="text" hidden class="form-control" id="buyerIdI" readonly name="buyerIdI" />
+                    <input id="accountBuyerIdI" hidden class="form-control" readonly name="accountBuyerIdI">
                 </div>
             </div>
 
             <div class="form-group col">
                 <label for="">买方卡号</label>
-                <select id="id" name="applyId" class="form-control" required focus-shift>
+                <select id="buyerCardNoI" name="buyerCardNoI" class="form-control" required focus-shift>
                     <option value="">-- 请选择 --</option>
                 </select>
             </div>
             <div class="form-group col-auto">
                 <label for="" class="">账户余额</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="buyerBalance" name="buyerBalance" />
+                    <input type="text" class="form-control" readonly id="buyerBalanceYuan" name="buyerBalanceYuan" />
+                    <input type="text" class="form-control" readonly id="buyerBalance" name="buyerBalance" hidden/>
                 </div>
             </div>
             <div class="form-group col-auto">
                 <label for="" class="">卖方客户</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="sellerName" name="sellerName" />
-                    <input type="text" hidden class="form-control" id="sellerIdI" name="sellerIdI" />
-                    <input id="sellerCardNoI" hidden class="form-control" name="sellerCardNoI">
-                    <input id="accountsellerIdI" hidden class="form-control" name="accountsellerIdI">
+                    <input type="text" class="form-control" readonly id="sellerName" name="sellerName" />
+                    <input type="text" hidden class="form-control" readonly id="sellerIdI" name="sellerIdI" />
+                    <input id="accountsellerIdI" hidden class="form-control" readonly name="accountsellerIdI">
                 </div>
             </div>
             <div class="form-group col">
                 <label for="">卖方卡号</label>
-                <select id="sellerCard" name="applyId" class="form-control" required focus-shift>
+                <select id="sellerCardNoI" name="sellerCardNoI" class="form-control" required focus-shift>
                     <option value="">-- 请选择 --</option>
                 </select>
             </div>
@@ -122,7 +121,7 @@
                         <th data-field="time" data-align="center">
                             日期
                         </th>
-                        <th data-field="amount" data-align="center">
+                        <th data-field="amount" data-align="center" data-format="0.00" data-type="number">
                             应回款金额
                         </th>
                         <th data-field="cnt" data-align="center" data-formatter="agentFormatter">

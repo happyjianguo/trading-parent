@@ -95,7 +95,6 @@
                        data-buttons-class="primary" data-show-refresh="true" data-show-fullscreen="true" data-show-columns="true">
                 <thead>
                     <tr>
-                        <th data-radio="true"></th>
                         <th data-field="operationTime" data-align="center" data-provider="datetimeProvider" data-sortable="true" data-sort-name="operation_time">
                             回款操作时间
                         </th>
@@ -114,13 +113,13 @@
                         <th data-field="sellerCardNo" data-align="center"  data-sortable="true" data-sort-name="seller_card_no">
                            卖方卡号
                         </th>
-                        <th data-field="amountReceivables" data-align="center"  data-sortable="true" data-sort-name="amount_receivables" data-type="number" data-format="0.00">
+                        <th data-field="amountReceivables" data-provider="moneyYuanProvider" data-align="center"  data-sortable="true" data-sort-name="amount_receivables" data-type="number" data-format="0.00">
                            应回款金额
                         </th>
-                        <th data-field="amountActually" data-align="center"  data-sortable="true" data-sort-name="amount_actually" data-type="number" data-format="0.00">
+                        <th data-field="amountActually" data-align="center" data-provider="moneyYuanProvider"  data-sortable="true" data-sort-name="amount_actually" data-type="number" data-format="0.00">
                            实回款金额
                         </th>
-                        <th data-field="paymentWays" data-align="center"  data-sortable="true" data-sort-name="payment_ways">
+                        <th data-field="paymentWays" data-provider="paymentWaysProvider" data-align="center"  data-sortable="true" data-sort-name="payment_ways">
                            回款途径
                         </th>
                         <th data-field="paymentCardNumber" data-align="center" data-sortable="true" data-sort-name="payment_card_number">
