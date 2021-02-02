@@ -132,7 +132,7 @@
     })
     $('#inputPassword').on('click', function (e) {
         CefSharp.BindObjectAsync("callbackObj");
-        callbackObj.readPasswordKeyboardAsync()
+        callbackObj.readPasswordKeyboardAsync('23');
     });
 
     function pay() {
@@ -214,7 +214,7 @@
                 bs4pop.alert('代付卡号不能和卖家卡号相同', {width:'350px',type: "error"});
                 return false;
             }
-            $('#password').val(cardNo);
+            $('#paymentCardNumber').val(cardNo);
         } else {
             bs4pop.alert(json.message, {width:'350px',type: "error"});
             return false;
