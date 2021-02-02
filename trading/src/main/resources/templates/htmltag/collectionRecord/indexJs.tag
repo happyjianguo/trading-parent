@@ -139,38 +139,6 @@
         }
     };
 
-    function swipeCard(el) {
-        let cardNo;
-        let json = JSON.parse(callbackObj.readCardNumber());
-        if (json.code == 0) {
-            cardNo = json.data;
-        } else {
-            bs4pop.alert(json.message, {type: "error"});
-            return false;
-        }
-        $('#show_customer_card').val(cardNo);
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: '/customer/listCustomerByCardNo.action',
-            data: {cardNo: cardNo},
-            success: function (data) {
-                if (data.code == '200') {
-                    $('#show_customer_name').val(data.data[0].name);
-                    $('#accountId').val(data.data[0].id);
-                } else {
-                    $('#show_customer_name').val('');
-                    bs4pop.alert(data.result, {type: 'error'});
-                }
-            },
-            error: function () {
-                bui.loading.hide();
-                bs4pop.alert("客户获取失败!", {type: 'error'});
-            }
-        });
-
-    }
-
     // 时间范围
     lay('.settletime').each(function () {
         laydate.render({
