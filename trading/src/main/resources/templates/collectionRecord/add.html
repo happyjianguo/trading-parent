@@ -136,7 +136,6 @@
     });
 
     function pay() {
-        debugger;
         let _formData = new FormData($('#saveForm')[0]);
         if (!$('#saveForm').validate().form()) {
             $('#password').val('');
@@ -154,10 +153,14 @@
             $('#password').val('');
             return false;
         }
-        if(buyerBalance<amountActuallyYuan){
-            bs4pop.alert("余额不足请充值", {width:'350px',height:"200px",type: 'error'});
-            $('#password').val('');
-            return false;
+        //如果为代付的情况下，不需要验证余额
+        let checkValue = $('input:radio[name="paymentWays"]:checked').val();
+        if(checkValue==1){
+            if(buyerBalance<amountActuallyYuan){
+                bs4pop.alert("余额不足请充值", {width:'350px',height:"200px",type: 'error'});
+                $('#password').val('');
+                return false;
+            }
         }
 
         parent.bui.loading.show('努力提交中，请稍候。。。');
