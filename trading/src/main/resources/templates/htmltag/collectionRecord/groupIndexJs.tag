@@ -519,7 +519,7 @@
         cnt+=1;
         moneyAmountSpan+=parseFloat($element.amount);
         $('#days').text(cnt);
-        $('#moneySpan').text(moneyAmountSpan);
+        $('#moneySpan').text("￥："+moneyAmountSpan.toFixed(2));
 
 
     })
@@ -532,7 +532,7 @@
             }
             cnt=rowsBefore.length;
             $('#days').text(cnt);
-            $('#moneySpan').text(moneyAmountSpan);
+            $('#moneySpan').text("￥："+moneyAmountSpan.toFixed(2));
         }
     })
 
@@ -541,14 +541,14 @@
         moneyAmountSpan-=parseFloat($element.amount);
         moneyAmountSpan=parseFloat(parseFloat(moneyAmountSpan).toFixed(2));
         $('#days').text(cnt);
-        $('#moneySpan').text(moneyAmountSpan.toFixed(2));
+        $('#moneySpan').text("￥："+moneyAmountSpan.toFixed(2));
     })
 
     _grid.on('uncheck-all.bs.table', function (rowsAfter, rowsBefore) {
         moneyAmountSpan=0;
         cnt=0;
         $('#days').text('0');
-        $('#moneySpan').text('0.00');
+        $('#moneySpan').text("￥："+'0.00');
     })
 
 
