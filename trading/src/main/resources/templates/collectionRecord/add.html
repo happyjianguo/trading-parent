@@ -48,23 +48,25 @@
                 </div>
                 <div class="form-group col" id="paymentCardNumberDiv" hidden>
                     <label for="paymentCardNumber">代付卡号</label>
-                    <input id="paymentCardNumber" class="form-control" name="paymentCardNumber">
-                    <div class="input-group-append">
-                        <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;" style=" text-decoration: none;">刷卡</a></span>
+                    <div class="input-group">
+                        <input id="paymentCardNumber" class="form-control" name="paymentCardNumber" maxlength="12" minlength="12">
+                        <div class="input-group-append">
+                            <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;" style=" text-decoration: none;">刷卡</a></span>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group col">
-                    <label for="">输入密码</label>
+                    <label for="password">输入密码</label>
                     <div class="input-group">
                         <input id="password" type="password" class="form-control digits" required name="password" maxlength="6" minlength="6" />
                         <div class="input-group-append">
-                            <span class="input-group-text card-bt text-primary" id="inputPassword"><a href="javascript:;"  style="text-decoration: none;" data-hotkey="{key: 'Alt+A'}">输入密码</a></span>
+                            <span class="input-group-text card-bt text-primary" id="inputPassword"><a href="javascript:;"  style="text-decoration: none;">输入密码</a></span>
                         </div>
                     </div>
                 </div>
                 <div class="form-group col-12">
                     <label for="remark">备注</label>
-                    <textarea id="remark" class="form-control" name="remark" rows="3" focus-shift maxlength="30" required></textarea>
+                    <textarea id="remark" class="form-control" name="remark" rows="3" focus-shift maxlength="30"></textarea>
                 </div>
             </div>
         </div>
@@ -79,7 +81,6 @@
 </#bs4Body>
 
 <script>
-    debugger;
     let idList=localStorage.getItem("idList");
     let amount=localStorage.getItem("amount");
     let dateStr=localStorage.getItem("dateStr");
@@ -132,17 +133,6 @@
         callbackObj.readPasswordKeyboardAsync()
     });
 
-    // 客户端调用
-    function pswClientHandler(data){
-        var json = JSON.parse(data);
-        if (json.code == 0) {
-            $('#password').val(json.data);
-        } else {
-            bs4pop.alert(json.message, {width:'350px',type: "error"});
-            return false;
-        }
-    }
-
     function pay() {
         let _formData = new FormData($('#saveForm')[0]);
         if (!$('#saveForm').validate().form()) {
@@ -181,19 +171,29 @@
         var checkValue = $('input:radio[name="paymentWays"]:checked').val();
         if(checkValue==2){
             $('#paymentCardNumberDiv').attr("hidden",false);
+            $('#paymentCardNumber').attr("required",true);
         }else {
             $('#paymentCardNumberDiv').attr("hidden",true);
+            $('#paymentCardNumber').attr("required",false);
         }
     });
-    $('#payByCard').on('click', function (e) {
-
-        let cardNum;
+    $('#payByCard').on('click', function () {
         let json = JSON.parse(callbackObj.readCardNumber());
+        let buyerCardNo = $('#buyerCardNo').val();
+        let sellerCardNo = $('#sellerCardNo').val();
+        let cardNo;
         if (json.code == 0) {
-            cardNum = json.data;
-            $('#paymentCardNumber').val(cardNum);
+            cardNo=json.data;
+            if(cardNo == buyerCardNo){
+                bs4pop.alert('代付卡号不能和买家卡号相同', {width:'350px',type: "error"});
+                return false;
+            }else if (cardNo == sellerCardNo){
+                bs4pop.alert('代付卡号不能和卖家卡号相同', {width:'350px',type: "error"});
+                return false;
+            }
+            $('#password').val(cardNo);
         } else {
-            bs4pop.alert(json.message, {type: "error"});
+            bs4pop.alert(json.message, {width:'350px',type: "error"});
             return false;
         }
     });
