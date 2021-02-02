@@ -134,8 +134,26 @@
     });
 
     function pay() {
+        debugger;
         let _formData = new FormData($('#saveForm')[0]);
         if (!$('#saveForm').validate().form()) {
+            $('#password').val('');
+            return false;
+        }
+        let amountActuallyYuan =parseFloat($('#amountActuallyYuan').val());
+        let amountReceivablesYuan =parseFloat($('#amountReceivablesYuan').val());
+        if (amountActuallyYuan<0) {
+            bs4pop.alert("实际回款金额不能小于0", {width:'350px',height:"200px",type: 'error'});
+            $('#password').val('');
+            return false;
+        }
+        if (amountActuallyYuan>amountReceivablesYuan) {
+            bs4pop.alert("实际回款金额不能大于应回款金额", {width:'350px',height:"200px",type: 'error'});
+            $('#password').val('');
+            return false;
+        }
+        if(buyerBalance<amountActuallyYuan){
+            bs4pop.alert("余额不足请充值", {width:'350px',height:"200px",type: 'error'});
             $('#password').val('');
             return false;
         }
