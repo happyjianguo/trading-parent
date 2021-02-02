@@ -29,7 +29,7 @@
                 </div>
                 <div class="form-group col">
                     <label for="">实回款金额</label>
-                    <input id="amountActuallyYuan" required class="form-control" name="amountActuallyYuan">
+                    <input id="amountActuallyYuan" required class="form-control floatReserve" name="amountActuallyYuan">
                 </div>
                 <div class="form-group col">
                     <label for="">回款途径</label>
@@ -101,6 +101,8 @@
     $('#buyerCardNo').val(buyerCardNoI);
     $('#amountReceivablesYuan').val(amount);
     $('#amountReceivables').val(amount*100);
+    $('#amountActuallyYuan').attr("range","0.00 "+parseFloat(amount).toFixed(2));
+
     $('#ids').val(idList);
 
     $('#sellerName').val(sellerName);
