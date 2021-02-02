@@ -432,7 +432,6 @@
 
     // 列点击事件
     _grid.on('click-cell.bs.table', function(field, value, row, $element){
-        debugger;
         if (value === 'cnt' && row !== undefined){
             let collectionRecordIds = "["+$element.ids+"]";
             localStorage.setItem("collectionRecordIds",collectionRecordIds);

@@ -271,7 +271,6 @@
         let size = ($(window).height() - $('#queryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
         _grid.bootstrapTable('refreshOptions', {
-            url: '/collectionRecord/listByQueryParams.action',
             pageSize: parseInt(size)
         });
     });
@@ -288,7 +287,12 @@
         // if (!$('#queryForm').validate().form()) {
         //     return false;
         // }
-        _grid.bootstrapTable('refresh');
+        _grid.bootstrapTable('refreshOptions', {
+            url: '/collectionRecord/listByQueryParams.action',
+            // pageSize: parseInt(size)
+            pageNum:1
+        });
+
     }
 
     /**
