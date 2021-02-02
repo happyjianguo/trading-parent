@@ -493,7 +493,7 @@
         localStorage.setItem("buyerIdI",$('#buyerIdI').val());
         localStorage.setItem("accountBuyerIdI",$('#accountBuyerIdI').val());
         localStorage.setItem("buyerCardNoI",$("#buyerCardNoI option:selected").val());
-        localStorage.setItem("buyerBalance",$('#buyerBalance').val())
+        localStorage.setItem("buyerBalance",$('#buyerBalanceYuan').val())
 
         //设置卖家相关信息
         localStorage.setItem("sellerName",$('#sellerName').val());
