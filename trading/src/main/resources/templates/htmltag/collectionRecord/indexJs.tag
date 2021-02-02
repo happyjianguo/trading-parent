@@ -310,5 +310,11 @@
         return $.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
     }
     /*****************************************函数区 end**************************************/
-
+    function dataFormatterTip(value,row,index) {
+        if (value) {
+            return "<span data-toggle='tooltip' data-placement='left' title='" + value + "'>" + value + "</span>";
+        } else {
+            return "";
+        }
+    }
 </script>
