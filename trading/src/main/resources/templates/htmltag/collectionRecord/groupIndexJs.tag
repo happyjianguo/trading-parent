@@ -513,5 +513,44 @@
         });
 
     }
+    let cnt=0;
+    let moneyAmountSpan=0;
+    _grid.on('check.bs.table', function (row, $element) {
+        cnt+=1;
+        moneyAmountSpan+=parseFloat($element.amount);
+        $('#days').text(cnt);
+        $('#moneySpan').text(moneyAmountSpan);
+
+
+    })
+
+    _grid.on('check-all.bs.table', function (rowsAfter, rowsBefore) {
+        moneyAmountSpan=0;
+        if (null != rowsBefore && rowsBefore.length > 0) {
+            for (let i = 0; i < rowsBefore.length; i++) {
+                moneyAmountSpan+=parseFloat(rowsBefore[i].amount);
+            }
+            cnt=rowsBefore.length;
+            $('#days').text(cnt);
+            $('#moneySpan').text(moneyAmountSpan);
+        }
+    })
+
+    _grid.on('uncheck.bs.table', function (row, $element) {
+        cnt-=1;
+        moneyAmountSpan-=parseFloat($element.amount);
+        moneyAmountSpan=parseFloat(parseFloat(moneyAmountSpan).toFixed(2));
+        $('#days').text(cnt);
+        $('#moneySpan').text(moneyAmountSpan.toFixed(2));
+    })
+
+    _grid.on('uncheck-all.bs.table', function (rowsAfter, rowsBefore) {
+        moneyAmountSpan=0;
+        cnt=0;
+        $('#days').text('0');
+        $('#moneySpan').text('0.00');
+    })
+
+
 
 </script>
