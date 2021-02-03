@@ -534,6 +534,11 @@
             $('#days').text(cnt);
             $('#moneySpan').text("￥："+moneyAmountSpan.toFixed(2));
         }
+        if(cnt>0){
+            $('#btn_add').attr('disabled',false);
+        }else{
+            $('#btn_add').attr('disabled',true);
+        }
     })
 
     _grid.on('uncheck.bs.table', function (row, $element) {
@@ -542,6 +547,11 @@
         moneyAmountSpan=parseFloat(parseFloat(moneyAmountSpan).toFixed(2));
         $('#days').text(cnt);
         $('#moneySpan').text("￥："+moneyAmountSpan.toFixed(2));
+        if(cnt>0){
+            $('#btn_add').attr('disabled',false);
+        }else{
+            $('#btn_add').attr('disabled',true);
+        }
     })
 
     _grid.on('uncheck-all.bs.table', function (rowsAfter, rowsBefore) {
@@ -549,6 +559,7 @@
         cnt=0;
         $('#days').text('0');
         $('#moneySpan').text("￥："+'0.00');
+        $('#btn_add').attr('disabled',true);
     })
 
 
