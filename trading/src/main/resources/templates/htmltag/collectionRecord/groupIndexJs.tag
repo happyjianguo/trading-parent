@@ -520,7 +520,11 @@
         moneyAmountSpan+=parseFloat($element.amount);
         $('#days').text(cnt);
         $('#moneySpan').text("￥："+moneyAmountSpan.toFixed(2));
-
+        if(cnt>0){
+            $('#btn_add').attr('disabled',false);
+        }else{
+            $('#btn_add').attr('disabled',true);
+        }
 
     })
 
