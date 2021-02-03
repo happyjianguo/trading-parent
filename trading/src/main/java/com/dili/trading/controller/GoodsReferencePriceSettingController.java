@@ -7,11 +7,14 @@ import com.dili.assets.sdk.rpc.AssetsRpc;
 import com.dili.commons.glossary.EnabledStateEnum;
 import com.dili.orders.domain.GoodsReferencePriceSetting;
 import com.dili.orders.domain.ReferenceRule;
+import com.dili.orders.dto.ReferencePriceSettingRequestDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.dto.GoodsReferencePriceQueryDto;
+import com.dili.trading.dto.ReferenceSettingResponseDto;
 import com.dili.trading.rpc.GoodsReferencePriceSettingRpc;
 import com.dili.trading.service.GoodsReferencePriceSettingService;
+import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.session.SessionContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,11 +22,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,14 +103,10 @@ public class GoodsReferencePriceSettingController {
      */
     @RequestMapping(value = "/getGoodsByParentId.action", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public String getGoodsByParentId(GoodsReferencePriceQueryDto params) throws Exception {
-        Map<Object, Object> metadata = new HashMap<>();
-        metadata.put(REFERENCE_RULE, REFERENCE_RULE_PROVIDER);
-
+    public BaseOutput<List<ReferenceSettingResponseDto>> getGoodsByParentId(GoodsReferencePriceQueryDto params) throws Exception {
         params.setFirmId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-        List<GoodsReferencePriceSetting> result = goodsReferencePriceSettingService.getListByParent(params);
-        List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, result);
-        return JSON.toJSON(list).toString();
+        List<ReferenceSettingResponseDto> result = goodsReferencePriceSettingService.getListByParentV2(params);
+        return BaseOutput.successData(result);
     }
 
     /**
@@ -114,65 +115,41 @@ public class GoodsReferencePriceSettingController {
      * @return
      */
     @RequestMapping(value = "/add.html", method = RequestMethod.GET)
-    public String add(Long goodsId, String goodsName, Long parentGoodsId, Integer referenceRule, ModelMap modelMap) {
-        GoodsReferencePriceSetting goodsReferencePriceSetting = new GoodsReferencePriceSetting();
-        goodsReferencePriceSetting.setGoodsId(goodsId);
-        goodsReferencePriceSetting.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-        BaseOutput<GoodsReferencePriceSetting> output = goodsReferencePriceSettingRpc.findDetailDtoById(goodsReferencePriceSetting);
-        if (!output.isSuccess()) {
-            LOGGER.error(output.getMessage());
-            return this.index();
-        }
-        Map<Object, Object> metadata = new HashMap<Object, Object>();
-        metadata.put(REFERENCE_RULE, REFERENCE_RULE_PROVIDER);
-        try {
-            if (output.getData() == null) {
-                goodsReferencePriceSetting = new GoodsReferencePriceSetting();
-                goodsReferencePriceSetting.setGoodsId(goodsId);
-                goodsReferencePriceSetting.setGoodsName(goodsName);
-                goodsReferencePriceSetting.setParentGoodsId(parentGoodsId);
-                goodsReferencePriceSetting.setReferenceRule(referenceRule);
-                output.setData(goodsReferencePriceSetting);
-            }
-            List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData()));
-
-            modelMap.addAttribute("model", list.get(0));
-            return "goodsReferencePriceSetting/add";
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            return this.index();
-        }
+    public String add(Long goodsId, ModelMap modelMap) {
+        modelMap.put("goodsId", goodsId);
+        return "goodsReferencePriceSetting/add";
     }
 
     /**
-     * 新增/编辑品类参考价（如果数据库不存在数据，则新增，否则修改）
-     *
-     * @return BaseOutput
-     */
-    @RequestMapping(value = "/insert.action", method = {RequestMethod.GET, RequestMethod.POST})
+    * 详情
+    * @author miaoguoxin
+    * @date 2021/2/3
+    */
+    @GetMapping("/detail.action")
     @ResponseBody
-    public BaseOutput<GoodsReferencePriceSetting> insert(GoodsReferencePriceSetting goodsReferencePriceSetting) {
-        goodsReferencePriceSetting.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-        BaseOutput<GoodsReferencePriceSetting> output = goodsReferencePriceSettingRpc.findDetailDtoById(goodsReferencePriceSetting);
-        if (!output.isSuccess()) {
-            LOGGER.error(output.getMessage());
-            return output;
-        }
+    public BaseOutput<ReferenceSettingResponseDto> getDetail(Long goodsId){
+        ReferenceSettingResponseDto detail = goodsReferencePriceSettingService.getDetail(goodsId);
+        return BaseOutput.successData(detail);
+    }
 
-        String tips = checkUpDate(goodsReferencePriceSetting);
-        if (StringUtils.isNotBlank(tips)) {
-            return BaseOutput.failure(tips);
-        }
 
-        if (output.getData() == null) {
-            return goodsReferencePriceSettingService.insertGoodsReferencePriceSetting(goodsReferencePriceSetting);
-        } else {
-            goodsReferencePriceSetting.setId(output.getData().getId());
-            goodsReferencePriceSetting.setVersion(output.getData().getVersion());
-            goodsReferencePriceSetting.setCreatedTime(output.getData().getCreatedTime());
-            goodsReferencePriceSetting.setCreatorId(output.getData().getCreatorId());
-            return goodsReferencePriceSettingService.updateGoodsReferencePriceSetting(goodsReferencePriceSetting);
-        }
+    /**
+    * 新增/编辑
+    * @author miaoguoxin
+    * @date 2021/2/1
+    */
+    @PostMapping("/saveOrEdit.action")
+    @ResponseBody
+    public BaseOutput<?> saveOrEdit(@RequestBody ReferencePriceSettingRequestDto requestDto){
+        LOGGER.info("参考价编辑参数：{}",JSON.toJSONString(requestDto));
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        requestDto.setMarketId(userTicket.getFirmId());
+        requestDto.getItems().forEach(itemDto -> {
+            itemDto.setModifierId(userTicket.getId());
+            itemDto.setCreatorId(userTicket.getId());
+        });
+        goodsReferencePriceSettingService.saveOrEdit(requestDto);
+        return BaseOutput.success();
     }
 
 
@@ -183,34 +160,10 @@ public class GoodsReferencePriceSettingController {
      */
     @ResponseBody
     @RequestMapping("/getGoodsByKeyword.action")
-    public String getGoodsByKeyword(GoodsReferencePriceQueryDto params) throws Exception {
-        Map<Object, Object> metadata = new HashMap<>();
-        metadata.put(REFERENCE_RULE, REFERENCE_RULE_PROVIDER);
-
+    public BaseOutput<List<ReferenceSettingResponseDto>> getGoodsByKeyword(GoodsReferencePriceQueryDto params) throws Exception {
         params.setFirmId(SessionContext.getSessionContext().getUserTicket().getFirmId());
-        List<GoodsReferencePriceSetting> result = goodsReferencePriceSettingService.getList(params);
-        List<Map> list = ValueProviderUtils.buildDataByProvider(metadata, result);
-        return JSON.toJSON(list).toString();
-    }
+        List<ReferenceSettingResponseDto> result = goodsReferencePriceSettingService.getListV2(params);
 
-    /**
-     * 校验goodsReferencePriceSetting
-     * @param goodsReferencePriceSetting
-     * @return
-     */
-    public String checkUpDate(GoodsReferencePriceSetting goodsReferencePriceSetting) {
-        StringBuilder tips = new StringBuilder();
-        if (ReferenceRule.RESCINDED.getCode().equals(goodsReferencePriceSetting.getReferenceRule())) {
-            Long fixedPrice = goodsReferencePriceSetting.getFixedPrice();
-            String regex = "^\\+?[1-9]\\d{0,4}(\\.\\d*)?$";
-            if (fixedPrice == null || !Pattern.matches(regex, String.valueOf(fixedPrice))) {
-                tips.append(",固定价格必须是0.01-999.99之间的数字且最多两位小数");
-            }
-        }
-        if (tips.length() != 0) {
-            tips.append("!");
-            return tips.substring(1);
-        }
-        return "";
+        return BaseOutput.successData(result);
     }
 }

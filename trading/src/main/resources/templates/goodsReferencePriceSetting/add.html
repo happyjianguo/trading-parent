@@ -1,8 +1,8 @@
 <#bs4Body>
-
+<#vueElm/>
 <style type="text/css">
     ul{list-style:none;}
-    li{width:48%;;float:left;}
+    li{width:48%;}
     .td{
         height: 45px;
         line-height: 45px;
@@ -11,126 +11,220 @@
     .operator{
         padding: 4px;
     }
+    .title-column{
+        text-align: right;
+        width: 150px;
+        padding: 5px;
+    }
+    .content-column{
+        padding:5px
+    }
 </style>
-<div class="container-fluid">
-        <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
+<div class="container-fluid" id ="v">
         <form id="saveForm" role="form" novalidate>
-            <input type="hidden" class="form-control" name="goodsId" value="${model.goodsId}" placeholder="">
-            <input type="hidden" class="form-control" name="goodsName" value="${model.goodsName}" placeholder="">
-            <input type="hidden" class="form-control" name="parentGoodsId" value="${model.parentGoodsId}" placeholder="">
-            <input type="hidden" class="form-control" name="referenceRuleView" value="${model.$_referenceRule}" placeholder="">
-            <div   id= "menu ">
-                <ul>
-                    <li>
-                        <div class="td" style="border: 1px solid black;text-align: right;"><label for="" style="padding-right:6px;">商品品类</label></div>
-                        <div class="td" style="border: 1px solid black;text-align: right;"><label for="" style="padding-right:6px;">匹配规则</label></div>
-                        <div class="td" id="priceTitleDiv" Style="display: none;border: 1px solid black;text-align: right;"><label for="" style="padding-right:6px;">固定价格</label></div>
-                    </li>
-                    <li>
-                        <div class="td " style="border: 1px solid black;">
-                           <!-- <input type="text" name="goodsName" class="form-control" readonly="readonly" value="${model.goodsName}" placeholder="">-->
-                            <label style="float: left;width:80%;padding-left:4px;" >${model.goodsName}</label>
-                        </div>
-                        <div class="td operator" style="border: 1px solid black;">
-                            <select style="width:80%" id="referenceRule" onchange="changeDivDisplay();" name="referenceRule" class="form-control"></select>
-                            <#bcomboProvider _id="referenceRule" _provider="referenceRuleProvider" _queryParams='{}' _value="${model.$_referenceRule}"/>
-                        </div>
-                        <div  class="td operator input-group" id="priceValueDiv" Style="display: none;border: 1px solid black;">
-                            <input style="float: left;width:80%" type="number" id="fixedPriceView"  class="form-control" value="${model.fixedPrice}"  maxlength="100">
-                            <input type="number" hidden="true"  id="fixedPrice"  class="form-control" name="fixedPrice"  maxlength="100">
-                            <label style="float: left;width:20%" >元/斤</label>
-                        </div>
-                    </li>
-                </ul>
+            <div id= "menu ">
+                <div style="padding: 20px">
+                    <table width="100%" border="1" >
+                        <tr>
+                            <td class="title-column">商品品类</td>
+                            <td class="content-column" v-text="requestData.goodsName"></td>
+                        </tr>
+                        <tr>
+                            <td class="title-column">常规交易匹配规则</td>
+                            <td class="content-column" >
+                                <div class="form-inline" style="justify-content: space-around;">
+                                    <select style="width:50%" id="genericRule" v-model="selectedGenericRule.referenceRule" class="form-control">
+                                        <option v-for='item in ruleOptions' :value="item.value" v-text="item.text">
+                                        </option>
+                                    </select>
+                                    <input type="text" class="form-control" v-model="selectedGenericRule.fixedPrice">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title-column">老农交易匹配规则</td>
+                            <td class="content-column" >
+                                <div class="form-inline" style="justify-content: space-around;">
+                                    <select style="width:50%" id="traditionFarmerRule" v-model="selectedTraditionFarmerRule.referenceRule" class="form-control">
+                                        <option v-for='item in ruleOptions' :value="item.value" v-text="item.text">
+                                        </option>
+                                    </select>
+                                    <input type="text" class="form-control" v-model="selectedTraditionFarmerRule.fixedPrice">
+                                </div>
 
-                <ul>
-                    <li><br/></li>
-                    <li><br/></li>
-                    <li><br/></li>
-                    <li><br/></li>
-                    <div ><label for="">说明：</label></div>
-                    <div ><label for="">规则1：去掉前一日交易最高和最低价格的交易数据后，用剩余的交易数据的总交易额除以总交易量得出前一日平均价格，作为当日前n笔交易价格的参考价；</label></div>
-                    <div ><label for="">规则2：前一日总交易额除以总交易量，作为当日前n笔交易价格的参考价</label></div>
-                    <div ><label for="">规则3：固定价格</label></div>
-                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="title-column">自营交易匹配规则</td>
+                            <td class="content-column" >
+                                <div class="form-inline" style="justify-content: space-around;">
+                                    <select style="width:50%" id="selfRule" v-model="selectedSelfRule.referenceRule" class="form-control">
+                                        <option v-for='item in ruleOptions' :value="item.value" v-text="item.text">
+                                        </option>
+                                    </select>
+                                    <input type="text" class="form-control" v-model="selectedSelfRule.fixedPrice">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <ul>
+                        <div ><label for="">说明：</label></div>
+                        <div ><label for="">规则1：去掉前一日交易最高和最低价格的交易数据后，用剩余的交易数据的总交易额除以总交易量得出前一日平均价格，作为当日前n笔交易价格的参考价；</label></div>
+                        <div ><label for="">规则2：前一日总交易额除以总交易量，作为当日前n笔交易价格的参考价</label></div>
+                        <div ><label for="">规则3：固定价格</label></div>
+                    </ul>
+                </div>
             </div>
         </form>
     </div>
 </#bs4Body>
-
-
-    <script>
-        $(function(){
-            var fixedPrice = $('#fixedPriceView').val();
-            $('#fixedPriceView').val((fixedPrice/100).toFixed(2));
-
-            var referenceRule = $("input[name='referenceRuleView']").val();
-            changeDivDisplay(referenceRule);
-        });
-
-        function changeDivDisplay(referenceRule){
-            if(referenceRule == null){
-                referenceRule = $("#referenceRule").val();
+<script>
+    let vue = new Vue({
+        el: '#v',
+        data() {
+            return {
+                selectedGenericRule: {
+                    tradeType: 1,
+                    referenceRule: "",
+                    fixedPrice: ""
+                },
+                selectedTraditionFarmerRule: {
+                    tradeType: 2,
+                    referenceRule: "",
+                    fixedPrice: ""
+                },
+                selectedSelfRule: {
+                    tradeType: 3,
+                    referenceRule: "",
+                    fixedPrice: ""
+                },
+                requestData: {
+                    goodsId: "",
+                    goodsName: "",
+                    parentGoodsId: "",
+                    items: [],
+                },
+                detailInfo: {},
+                ruleOptions: [],
             }
-            if(referenceRule == '3'){
-                document.getElementById("priceTitleDiv").style.display = "block";
-                document.getElementById("priceValueDiv").style.display = "block";
-            }
-            else {
-                document.getElementById("priceTitleDiv").style.display = "none";
-                document.getElementById("priceValueDiv").style.display = "none";
-            }
-        }
+        },
+        mounted: function(){
+            this.getDetail();
+            this.getRuleOptions();
+        },
+        methods: {
+            getRuleOptions(){
+                let that = this;
+                $.ajax({
+                    type: "POST",
+                    data: {
+                        provider : "referenceRuleProvider"
+                    },
+                    url: '${contextPath}/provider/getLookupList.action',
+                    success: function (ret) {
+                        that.ruleOptions = ret;
+                    }
+                });
+            },
+            getDetail(){
+                let that = this;
+                let goodsId = ${goodsId};
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        goodsId : goodsId
+                    },
+                    url: '${contextPath}/goodsReferencePriceSetting/detail.action',
+                    success: function (ret) {
+                        if (ret.success){
+                            that.detailInfo = ret.data;
+                            that.selectedGenericRule.referenceRule =  that.detailInfo.genericItem.referenceRule == undefined?"":that.detailInfo.genericItem.referenceRule;
+                            that.selectedTraditionFarmerRule.referenceRule = that.detailInfo.traditionFarmerItem.referenceRule == undefined ? "" : that.detailInfo.traditionFarmerItem.referenceRule;
+                            that.selectedSelfRule.referenceRule = that.detailInfo.selfItem.referenceRule == undefined ? "" : that.detailInfo.selfItem.referenceRule;
+                            that.requestData.goodsId = that.detailInfo.goodsId;
+                            that.requestData.goodsName = that.detailInfo.goodsName;
+                            that.requestData.parentGoodsId = that.detailInfo.parentGoodsId;
+                        } else {
+                            bs4pop.alert(ret.message, {type: 'error'});
+                        }
+                    }
+                });
+            },
+            saveOrEdit(){
+                if (!this.validateRequestData()) {
+                    return;
+                }
+                this.mergeRule2RequestData();
 
-        function saveOrUpdateHandler() {
-            //固定金额校验
-            var referenceRule = $("#referenceRule").val();
-            var num = $('#fixedPriceView').val();
-            var exp = /^\d{1,3}(\.\d{1,2})?$/;
-            if(referenceRule == '3' && (!exp.test(num) || num == 0)){
-                parent.bs4pop.alert("固定价格必须是0.01-999.99之间的数字且最多两位小数", {type: 'error'});
-                return;
-            }
-            // 提交保存
-            if (!$('#saveForm').validate().form()) {
-                return false;
-            }
-            //将固定金额转成整数存入
-            if(referenceRule == '3'){
-                var fixedPrice=parseFloat($('#fixedPriceView').val());
-                fixedPrice=fixedPrice.toFixed(2)*100;
-                $('#fixedPrice').val(Math.round(fixedPrice));
-            } else{
-                $('#fixedPrice').val(null);
-            }
-
-            bui.loading.show('努力提交中，请稍候。。。');
-            var obj=$('#saveForm')[0];
-            let _formData = new FormData($('#saveForm')[0]);
-            $.ajax({
-                type: "POST",
-                url: "/goodsReferencePriceSetting/insert.action",
-                data: _formData,
-                processData: false,
-                contentType: false,
-                async: true,
-                success: function (res) {
-                    bui.loading.hide();
-                    if (res.code == "200") {
-                        parent.bs4pop.alert('成功', {type: 'success'}, function () {
+                bui.loading.show('努力提交中，请稍候。。。');
+                $.ajax({
+                    type: "POST",
+                    data: JSON.stringify(this.requestData),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    url: '${contextPath}/goodsReferencePriceSetting/saveOrEdit.action',
+                    success: function (ret) {
+                        bui.loading.hide();
+                        if (ret.success){
+                            parent.bs4pop.alert("编辑成功", {type: 'success'});
                             /* 应该要带条件刷新 */
                             parent.dia.hide();
                             parent.location.reload();
-                        });
-                    } else {
+                        } else {
+                            bui.loading.hide();
+                            parent.bs4pop.alert(ret.message, {type: 'error'});
+                        }
+                    },
+                    error: function (error) {
                         bui.loading.hide();
-                        parent.bs4pop.alert(res.message, {type: 'error'});
+                        parent.bs4pop.alert(error.message, {type: 'error'});
                     }
-                },
-                error: function (error) {
-                    bui.loading.hide();
-                    parent.bs4pop.alert(error.message, {type: 'error'});
+                });
+            },
+            validateRequestData() {
+                let exp = /^\d{1,3}(\.\d{1,2})?$/;
+                if (this.selectedGenericRule.referenceRule == ""
+                    && this.selectedTraditionFarmerRule.referenceRule == ""
+                    && this.selectedSelfRule.referenceRule == "") {
+                    parent.bs4pop.alert("至少选择一条规则", {type: 'error'});
+                    return false;
                 }
-            });
-        }
-    </script>
+                let genericFixedPrice = this.selectedGenericRule.fixedPrice;
+                if (this.selectedGenericRule.referenceRule == 3 && (!exp.test(genericFixedPrice) || genericFixedPrice == 0)){
+                    parent.bs4pop.alert("常规规则固定价格必须是0.01-999.99之间的数字且最多两位小数", {type: 'error'});
+                    return false;
+                }
+                let farmerFixedPrice = this.selectedTraditionFarmerRule.fixedPrice;
+                if (this.selectedTraditionFarmerRule.referenceRule == 3 && (!exp.test(farmerFixedPrice) || farmerFixedPrice == 0)){
+                    parent.bs4pop.alert("老农规则固定价格必须是0.01-999.99之间的数字且最多两位小数", {type: 'error'});
+                    return false;
+                }
+                let selfFixedPrice = this.selectedSelfRule.fixedPrice;
+                if (this.selectedSelfRule.referenceRule == 3 && (!exp.test(selfFixedPrice) || selfFixedPrice == 0)){
+                    parent.bs4pop.alert("自营规则固定价格必须是0.01-999.99之间的数字且最多两位小数", {type: 'error'});
+                    return false;
+                }
+                return true;
+            },
+            mergeRule2RequestData() {
+                this.requestData.items = [];
+                if (this.selectedGenericRule.referenceRule != ""){
+                    this.requestData.items.push(this.selectedGenericRule);
+                }
+                if (this.selectedTraditionFarmerRule.referenceRule != ""){
+                    this.requestData.items.push(this.selectedTraditionFarmerRule);
+                }
+                if (this.selectedSelfRule.referenceRule != ""){
+                    this.requestData.items.push(this.selectedSelfRule);
+                }
+            }
+        },
+
+    });
+
+    function saveOrUpdateHandler() {
+        vue.saveOrEdit();
+    }
+</script>

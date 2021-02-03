@@ -9,10 +9,15 @@ import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.glossary.LoggerConstant;
 import com.dili.orders.domain.GoodsReferencePriceSetting;
+import com.dili.orders.domain.ReferencePriceSettingTradeType;
+import com.dili.orders.domain.TradingBillType;
+import com.dili.orders.dto.ReferencePriceSettingItemDto;
+import com.dili.orders.dto.ReferencePriceSettingRequestDto;
 import com.dili.ss.constant.ResultCode;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.exception.BusinessException;
 import com.dili.trading.dto.GoodsReferencePriceQueryDto;
+import com.dili.trading.dto.ReferenceSettingResponseDto;
 import com.dili.trading.rpc.GenericRpcResolver;
 import com.dili.trading.rpc.GoodsReferencePriceSettingRpc;
 import com.dili.trading.service.GoodsReferencePriceSettingService;
@@ -25,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,65 +51,35 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
     @Autowired
     private AssetsRpc assetsRpc;
 
-
-    /**
-     * 新增
-     *
-     * @param goodsReferencePriceSetting
-     * @return
-     */
     @Override
-    @BusinessLogger(businessType = "trading_orders", content = "品类参考价新增", operationType = "add", systemCode = "ORDERS")
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public BaseOutput<GoodsReferencePriceSetting> insertGoodsReferencePriceSetting(GoodsReferencePriceSetting goodsReferencePriceSetting) {
+    @BusinessLogger(businessType = "trading_orders", content = "品类参考价新增/修改", operationType = "add", systemCode = "ORDERS")
+    public void saveOrEdit(ReferencePriceSettingRequestDto requestDto) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        //设置创建人id
-        goodsReferencePriceSetting.setCreatorId(userTicket.getId());
-        //设置数据创建时间
-        goodsReferencePriceSetting.setCreatedTime(LocalDateTime.now());
-        //设置修改人id
-        goodsReferencePriceSetting.setModifierId(userTicket.getId());
-        //设置数据修改时间
-        goodsReferencePriceSetting.setModifiedTime(LocalDateTime.now());
-
-        BaseOutput<GoodsReferencePriceSetting> goodsReferencePriceSettingBaseOutput = goodsReferencePriceSettingRpc.insert(goodsReferencePriceSetting);
+        BaseOutput<?> goodsReferencePriceSettingBaseOutput = goodsReferencePriceSettingRpc.saveOrEdit(requestDto);
         if (goodsReferencePriceSettingBaseOutput.isSuccess()) {
-            GoodsReferencePriceSetting data = goodsReferencePriceSettingBaseOutput.getData();
-            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
+           // GoodsReferencePriceSetting data = goodsReferencePriceSettingBaseOutput.getData();
+          //  LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
             LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
             LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
         }
-        return goodsReferencePriceSettingBaseOutput;
     }
 
-    /**
-     * 修改
-     *
-     * @param goodsReferencePriceSetting
-     * @return
-     */
     @Override
-    @BusinessLogger(businessType = "trading_orders", content = "品类参考价修改", operationType = "update", systemCode = "ORDERS")
-    @Transactional(propagation = Propagation.REQUIRED)
-    public BaseOutput<GoodsReferencePriceSetting> updateGoodsReferencePriceSetting(GoodsReferencePriceSetting goodsReferencePriceSetting) {
+    public ReferenceSettingResponseDto getDetail(Long goodId) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
-        //设置修改人id
-        goodsReferencePriceSetting.setModifierId(userTicket.getId());
-        //设置数据修改时间
-        goodsReferencePriceSetting.setModifiedTime(LocalDateTime.now());
-
-        BaseOutput<GoodsReferencePriceSetting> goodsReferencePriceSettingBaseOutput = goodsReferencePriceSettingRpc.update(goodsReferencePriceSetting);
-        if (goodsReferencePriceSettingBaseOutput.isSuccess()) {
-            GoodsReferencePriceSetting data = goodsReferencePriceSettingBaseOutput.getData();
-            LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
-            LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
-            LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
+        GoodsReferencePriceSetting queryParam = new GoodsReferencePriceSetting();
+        queryParam.setMarketId(userTicket.getFirmId());
+        queryParam.setGoodsId(goodId);
+        List<GoodsReferencePriceSetting> settings = goodsReferencePriceSettingRpc.getAllGoods(queryParam);
+        if (CollectionUtil.isEmpty(settings)) {
+            CusCategoryDTO categoryDTO = GenericRpcResolver.resolver(assetsRpc.getCusCategory(goodId), "assert-service");
+            return this.buildEmptySettingV2(categoryDTO);
         }
-        return goodsReferencePriceSettingBaseOutput;
+        return this.convert2SettingDto(settings);
     }
 
     @Override
-    public List<GoodsReferencePriceSetting> getListByParent(GoodsReferencePriceQueryDto params) {
+    public List<ReferenceSettingResponseDto> getListByParentV2(GoodsReferencePriceQueryDto params) {
         CusCategoryQuery categoryDTO = new CusCategoryQuery();
         categoryDTO.setMarketId(params.getFirmId());
         categoryDTO.setParent(params.getParentGoodsId());
@@ -131,15 +105,14 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
         GoodsReferencePriceSetting childrenNodeParams = new GoodsReferencePriceSetting();
         childrenNodeParams.setParentGoodsId(params.getParentGoodsId());
         childrenNodeParams.setMarketId(params.getFirmId());
-        List<GoodsReferencePriceSetting> childrenNodeSettings =  goodsReferencePriceSettingRpc.getAllGoods(childrenNodeParams);
-        Map<Long, GoodsReferencePriceSetting> referencePriceSettingMap = this.concatSetting2Map(curNodeSetting, childrenNodeSettings);
+        List<GoodsReferencePriceSetting> childrenNodeSettings = goodsReferencePriceSettingRpc.getAllGoods(childrenNodeParams);
+        Map<Long, List<GoodsReferencePriceSetting>> listMap = this.concatSetting2MapList(curNodeSetting, childrenNodeSettings);
 
-        return this.combineSettingList(params.getOnlyExistReferencePrice(), categoryList, referencePriceSettingMap);
+        return this.combineSettingListV2(params.getOnlyExistReferencePrice(), categoryList, listMap);
     }
 
-
     @Override
-    public List<GoodsReferencePriceSetting>  getList(GoodsReferencePriceQueryDto params) {
+    public List<ReferenceSettingResponseDto> getListV2(GoodsReferencePriceQueryDto params) {
         CusCategoryQuery query = new CusCategoryQuery();
         query.setMarketId(params.getFirmId());
         query.setKeyword(params.getGoodsName());
@@ -150,29 +123,24 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
         GoodsReferencePriceSetting settingQuery = new GoodsReferencePriceSetting();
         settingQuery.setMarketId(params.getFirmId());
         List<GoodsReferencePriceSetting> referencePriceSettings = goodsReferencePriceSettingRpc.getAllGoods(settingQuery);
-        Map<Long, GoodsReferencePriceSetting> referencePriceSettingMap = this.concatSetting2Map(new ArrayList<>(), referencePriceSettings);
-        return this.combineSettingList(params.getOnlyExistReferencePrice(), categoryList, referencePriceSettingMap);
+        Map<Long, List<GoodsReferencePriceSetting>> listMap = this.concatSetting2MapList(new ArrayList<>(), referencePriceSettings);
+        return this.combineSettingListV2(params.getOnlyExistReferencePrice(), categoryList, listMap);
     }
 
-
-    private GoodsReferencePriceSetting createEmptySetting(CusCategoryDTO category){
-        GoodsReferencePriceSetting tempSetting = new GoodsReferencePriceSetting();
-        tempSetting.setGoodsId(category.getId());
-        tempSetting.setGoodsName(category.getName());
-        tempSetting.setParentGoodsId(category.getParent());
-        tempSetting.setReferenceRule(null);
-        return tempSetting;
+    private ReferenceSettingResponseDto buildEmptySettingV2(CusCategoryDTO category) {
+        ReferenceSettingResponseDto settingResponseDto = new ReferenceSettingResponseDto();
+        settingResponseDto.setGoodsId(category.getId());
+        settingResponseDto.setGoodsName(category.getName());
+        settingResponseDto.setParentGoodsId(category.getParent());
+        return settingResponseDto;
     }
 
-    private Map<Long,GoodsReferencePriceSetting> concatSetting2Map(List<GoodsReferencePriceSetting> curNodeSetting,
-                                                                   List<GoodsReferencePriceSetting> childrenNodeSettings){
+    private Map<Long,List<GoodsReferencePriceSetting>> concatSetting2MapList(List<GoodsReferencePriceSetting> curNodeSetting,
+                                                                             List<GoodsReferencePriceSetting> childrenNodeSettings){
         //合并当前节点和子节点
         curNodeSetting.addAll(childrenNodeSettings);
-        return curNodeSetting.stream().collect(
-                Collectors.toMap(GoodsReferencePriceSetting::getGoodsId, Function.identity(),
-                        (key1, key2) -> key2, LinkedHashMap::new));
+        return curNodeSetting.stream().collect(Collectors.groupingBy(GoodsReferencePriceSetting::getGoodsId));
     }
-
 
     private List<CusCategoryDTO> concatCategory2List(CusCategoryDTO category, List<CusCategoryDTO> list) {
         List<CusCategoryDTO> categoryList = new ArrayList<>();
@@ -185,20 +153,45 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
         return categoryList;
     }
 
-    private List<GoodsReferencePriceSetting> combineSettingList(Integer onlyFlag, List<CusCategoryDTO> categoryList, Map<Long, GoodsReferencePriceSetting> referencePriceSettingMap) {
-        List<GoodsReferencePriceSetting> result = new ArrayList<>();
+    private List<ReferenceSettingResponseDto> combineSettingListV2(Integer onlyFlag, List<CusCategoryDTO> categoryList, Map<Long, List<GoodsReferencePriceSetting>> listMap){
+        List<ReferenceSettingResponseDto> result = new ArrayList<>();
         for (CusCategoryDTO cusCategoryDTO : categoryList) {
-            GoodsReferencePriceSetting setting = referencePriceSettingMap.get(cusCategoryDTO.getId());
-            if (setting == null) {
+            List<GoodsReferencePriceSetting> settings = listMap.get(cusCategoryDTO.getId());
+            if (CollectionUtil.isEmpty(settings)) {
                 //只查询有规则的项目
                 if (onlyFlag != null && onlyFlag == 1) {
                     continue;
                 }
-                setting = this.createEmptySetting(cusCategoryDTO);
+                ReferenceSettingResponseDto responseDto = this.buildEmptySettingV2(cusCategoryDTO);
+                result.add(responseDto);
+            } else {
+                ReferenceSettingResponseDto responseDto = this.convert2SettingDto(settings);
+                result.add(responseDto);
             }
-            result.add(setting);
         }
         return result;
     }
 
+    private ReferenceSettingResponseDto convert2SettingDto(List<GoodsReferencePriceSetting> settings) {
+        ReferenceSettingResponseDto settingResponseDto = new ReferenceSettingResponseDto();
+        for (GoodsReferencePriceSetting setting : settings) {
+            settingResponseDto.setGoodsId(setting.getGoodsId());
+            settingResponseDto.setGoodsName(setting.getGoodsName());
+            settingResponseDto.setParentGoodsId(setting.getParentGoodsId());
+            ReferencePriceSettingItemDto itemDto = new ReferencePriceSettingItemDto();
+            itemDto.setTradeType(setting.getTradeType());
+            itemDto.setCreatorId(setting.getCreatorId());
+            itemDto.setModifierId(setting.getModifierId());
+            itemDto.setFixedPrice(setting.getFixedPrice());
+            itemDto.setReferenceRule(setting.getReferenceRule());
+            if (TradingBillType.WEIGHING.getValue().equals(setting.getTradeType())){
+                settingResponseDto.setGenericItem(itemDto);
+            }else if (TradingBillType.FARMER.getValue().equals(setting.getTradeType())){
+                settingResponseDto.setTraditionFarmerItem(itemDto);
+            }else {
+                settingResponseDto.setSelfItem(itemDto);
+            }
+        }
+        return settingResponseDto;
+    }
 }
