@@ -61,7 +61,6 @@
      * @param params
      */
     function queryParams(params) {
-        debugger;
         let temp = {
             rows: params.limit,   //页面大小
             page: ((params.offset / params.limit) + 1) || 1, //页码

@@ -139,38 +139,6 @@
         }
     };
 
-    function swipeCard(el) {
-        let cardNo;
-        let json = JSON.parse(callbackObj.readCardNumber());
-        if (json.code == 0) {
-            cardNo = json.data;
-        } else {
-            bs4pop.alert(json.message, {type: "error"});
-            return false;
-        }
-        $('#show_customer_card').val(cardNo);
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: '/customer/listCustomerByCardNo.action',
-            data: {cardNo: cardNo},
-            success: function (data) {
-                if (data.code == '200') {
-                    $('#show_customer_name').val(data.data[0].name);
-                    $('#accountId').val(data.data[0].id);
-                } else {
-                    $('#show_customer_name').val('');
-                    bs4pop.alert(data.result, {type: 'error'});
-                }
-            },
-            error: function () {
-                bui.loading.hide();
-                bs4pop.alert("客户获取失败!", {type: 'error'});
-            }
-        });
-
-    }
-
     // 时间范围
     lay('.settletime').each(function () {
         laydate.render({
@@ -271,7 +239,6 @@
         let size = ($(window).height() - $('#queryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
         _grid.bootstrapTable('refreshOptions', {
-            url: '/collectionRecord/listByQueryParams.action',
             pageSize: parseInt(size)
         });
     });
@@ -288,7 +255,12 @@
         // if (!$('#queryForm').validate().form()) {
         //     return false;
         // }
-        _grid.bootstrapTable('refresh');
+        _grid.bootstrapTable('refreshOptions', {
+            url: '/collectionRecord/listByQueryParams.action',
+            // pageSize: parseInt(size)
+            pageNum:1
+        });
+
     }
 
     /**
@@ -306,5 +278,11 @@
         return $.extend(temp, bui.util.bindGridMeta2Form('grid', 'queryForm'));
     }
     /*****************************************函数区 end**************************************/
-
+    function dataFormatterTip(value,row,index) {
+        if (value) {
+            return "<span data-toggle='tooltip' data-placement='left' title='" + value + "'>" + value + "</span>";
+        } else {
+            return "";
+        }
+    }
 </script>

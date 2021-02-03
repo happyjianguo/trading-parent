@@ -7,7 +7,10 @@ import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.trading.rpc.CollectionRecordRpc;
+import com.dili.uap.sdk.domain.Department;
+import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.glossary.DataAuthType;
+import com.dili.uap.sdk.rpc.DepartmentRpc;
 import com.dili.uap.sdk.session.SessionContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,9 @@ public class CollectionRecordController {
 
     @Autowired
     private CollectionRecordRpc collectionRecordRpc;
+
+    @Autowired
+    private DepartmentRpc departmentRpc;
 
     /**
      * 跳转页面
@@ -133,5 +139,34 @@ public class CollectionRecordController {
             return "查询失败";
         }
         return new EasyuiPageOutput(Long.valueOf(baseOutput.getData().size()), baseOutput.getData()).toString();
+    }
+
+    /**
+     * 根据数据插入并且支付
+     *
+     * @param collectionRecord
+     * @param password
+     * @return
+     */
+    @RequestMapping("/insertAndPay.action")
+    @ResponseBody
+    public BaseOutput insertAndPay(CollectionRecord collectionRecord, String password) {
+        UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
+        //设置操作员id
+        collectionRecord.setOperationId(userTicket.getId());
+        //设置操作员真是姓名
+        collectionRecord.setOperationName(userTicket.getRealName());
+        //设置操作员用户名
+        collectionRecord.setOperationUserName(userTicket.getUserName());
+        //设置操作员所属部门id
+        collectionRecord.setOperationDepartmentId(userTicket.getDepartmentId());
+
+        BaseOutput<Department> departmentBaseOutput = departmentRpc.get(userTicket.getDepartmentId());
+        if (!departmentBaseOutput.isSuccess()) {
+            return departmentBaseOutput;
+        }
+        //设置部门名称
+        collectionRecord.setOperationDepartmentName(departmentBaseOutput.getData().getName());
+        return collectionRecordRpc.insertAndPay(collectionRecord, password);
     }
 }
