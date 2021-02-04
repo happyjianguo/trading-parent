@@ -9,7 +9,6 @@ import com.dili.logger.sdk.annotation.BusinessLogger;
 import com.dili.logger.sdk.base.LoggerContext;
 import com.dili.logger.sdk.glossary.LoggerConstant;
 import com.dili.orders.domain.GoodsReferencePriceSetting;
-import com.dili.orders.domain.ReferencePriceSettingTradeType;
 import com.dili.orders.domain.TradingBillType;
 import com.dili.orders.dto.ReferencePriceSettingItemDto;
 import com.dili.orders.dto.ReferencePriceSettingRequestDto;
@@ -25,22 +24,17 @@ import com.dili.uap.sdk.domain.UserTicket;
 import com.dili.uap.sdk.session.SessionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * Description: 品类参考价接口实现GoodsReferencePriceSettingServiceImpl
  *
- * @date:    2020/8/21
- * @author:   Seabert.Zhan
+ * @date: 2020/8/21
+ * @author: Seabert.Zhan
  */
 @Service
 public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePriceSettingService {
@@ -57,8 +51,8 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         BaseOutput<?> goodsReferencePriceSettingBaseOutput = goodsReferencePriceSettingRpc.saveOrEdit(requestDto);
         if (goodsReferencePriceSettingBaseOutput.isSuccess()) {
-           // GoodsReferencePriceSetting data = goodsReferencePriceSettingBaseOutput.getData();
-          //  LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
+            // GoodsReferencePriceSetting data = goodsReferencePriceSettingBaseOutput.getData();
+            //  LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
             LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
             LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
         }
@@ -87,8 +81,8 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
         //获取当前节点本身的数据
         CusCategoryDTO categoryDTOOneSelf = GenericRpcResolver.resolver(
                 assetsRpc.getCusCategory(params.getParentGoodsId()), "assets-service");
-        if (categoryDTOOneSelf == null){
-            throw new BusinessException(ResultCode.DATA_ERROR,"未获取到当前节点的商品数据");
+        if (categoryDTOOneSelf == null) {
+            throw new BusinessException(ResultCode.DATA_ERROR, "未获取到当前节点的商品数据");
         }
         //获取节点下面子节点的数据
         List<CusCategoryDTO> categoryDTOList = GenericRpcResolver.resolver(
@@ -135,8 +129,8 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
         return settingResponseDto;
     }
 
-    private Map<Long,List<GoodsReferencePriceSetting>> concatSetting2MapList(List<GoodsReferencePriceSetting> curNodeSetting,
-                                                                             List<GoodsReferencePriceSetting> childrenNodeSettings){
+    private Map<Long, List<GoodsReferencePriceSetting>> concatSetting2MapList(List<GoodsReferencePriceSetting> curNodeSetting,
+                                                                              List<GoodsReferencePriceSetting> childrenNodeSettings) {
         //合并当前节点和子节点
         curNodeSetting.addAll(childrenNodeSettings);
         return curNodeSetting.stream().collect(Collectors.groupingBy(GoodsReferencePriceSetting::getGoodsId));
@@ -153,7 +147,7 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
         return categoryList;
     }
 
-    private List<ReferenceSettingResponseDto> combineSettingListV2(Integer onlyFlag, List<CusCategoryDTO> categoryList, Map<Long, List<GoodsReferencePriceSetting>> listMap){
+    private List<ReferenceSettingResponseDto> combineSettingListV2(Integer onlyFlag, List<CusCategoryDTO> categoryList, Map<Long, List<GoodsReferencePriceSetting>> listMap) {
         List<ReferenceSettingResponseDto> result = new ArrayList<>();
         for (CusCategoryDTO cusCategoryDTO : categoryList) {
             List<GoodsReferencePriceSetting> settings = listMap.get(cusCategoryDTO.getId());
@@ -184,11 +178,11 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
             itemDto.setModifierId(setting.getModifierId());
             itemDto.setFixedPrice(setting.getFixedPrice());
             itemDto.setReferenceRule(setting.getReferenceRule());
-            if (TradingBillType.WEIGHING.getValue().equals(setting.getTradeType())){
+            if (TradingBillType.WEIGHING.getValue().equals(setting.getTradeType())) {
                 settingResponseDto.setGenericItem(itemDto);
-            }else if (TradingBillType.FARMER.getValue().equals(setting.getTradeType())){
+            } else if (TradingBillType.FARMER.getValue().equals(setting.getTradeType())) {
                 settingResponseDto.setTraditionFarmerItem(itemDto);
-            }else {
+            } else {
                 settingResponseDto.setSelfItem(itemDto);
             }
         }
