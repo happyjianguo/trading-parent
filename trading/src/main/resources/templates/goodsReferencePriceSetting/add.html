@@ -32,24 +32,24 @@
                         <tr>
                             <td class="title-column">常规交易匹配规则</td>
                             <td class="content-column" >
-                                <div class="form-inline" style="justify-content: space-around;">
+                                <div class="form-inline" style="justify-content: space-between;">
                                     <select style="width:50%" id="genericRule" v-model="selectedGenericRule.referenceRule" class="form-control">
                                         <option v-for='item in ruleOptions' :value="item.value" v-text="item.text">
                                         </option>
                                     </select>
-                                    <input type="text" class="form-control" v-model="selectedGenericRule.fixedPrice">
+                                    <input  v-show="selectedGenericRule.referenceRule==3" type="text" class="form-control" v-model="selectedGenericRule.fixedPrice">
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td class="title-column">老农交易匹配规则</td>
                             <td class="content-column" >
-                                <div class="form-inline" style="justify-content: space-around;">
+                                <div class="form-inline" style="justify-content: space-between;">
                                     <select style="width:50%" id="traditionFarmerRule" v-model="selectedTraditionFarmerRule.referenceRule" class="form-control">
                                         <option v-for='item in ruleOptions' :value="item.value" v-text="item.text">
                                         </option>
                                     </select>
-                                    <input type="text" class="form-control" v-model="selectedTraditionFarmerRule.fixedPrice">
+                                    <input v-show="selectedTraditionFarmerRule.referenceRule==3" type="text" class="form-control" v-model="selectedTraditionFarmerRule.fixedPrice">
                                 </div>
 
                             </td>
@@ -57,12 +57,12 @@
                         <tr>
                             <td class="title-column">自营交易匹配规则</td>
                             <td class="content-column" >
-                                <div class="form-inline" style="justify-content: space-around;">
+                                <div class="form-inline" style="justify-content: space-between;">
                                     <select style="width:50%" id="selfRule" v-model="selectedSelfRule.referenceRule" class="form-control">
                                         <option v-for='item in ruleOptions' :value="item.value" v-text="item.text">
                                         </option>
                                     </select>
-                                    <input type="text" class="form-control" v-model="selectedSelfRule.fixedPrice">
+                                    <input v-show="selectedSelfRule.referenceRule==3" type="text" class="form-control" v-model="selectedSelfRule.fixedPrice">
                                 </div>
                             </td>
                         </tr>
