@@ -148,7 +148,7 @@ public class WeighingBillController {
 	 * @return
 	 * @throws Exception
 	 */
-//	@Idempotent(Idempotent.HEADER)
+	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/saveAndSettle.action")
 	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) throws Exception {
