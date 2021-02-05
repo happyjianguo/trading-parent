@@ -1,8 +1,10 @@
 package com.dili.trading.service;
 
 import com.dili.orders.domain.GoodsReferencePriceSetting;
+import com.dili.orders.dto.ReferencePriceSettingRequestDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.trading.dto.GoodsReferencePriceQueryDto;
+import com.dili.trading.dto.ReferenceSettingResponseDto;
 
 import java.util.List;
 
@@ -15,32 +17,31 @@ import java.util.List;
 public interface GoodsReferencePriceSettingService {
 
 	/**
-	 * 新增品类参考价
-	 *
-	 * @param goodsReferencePriceSetting
-	 * @return BaseOutput<GoodsReferencePriceSetting>
-	 */
-	BaseOutput<GoodsReferencePriceSetting> insertGoodsReferencePriceSetting(GoodsReferencePriceSetting goodsReferencePriceSetting);
-
-	/**
-	 * 修改品类参考价
-	 *
-	 * @param goodsReferencePriceSetting
-	 * @return BaseOutput<GoodsReferencePriceSetting>
-	 */
-	BaseOutput<GoodsReferencePriceSetting> updateGoodsReferencePriceSetting(GoodsReferencePriceSetting goodsReferencePriceSetting);
-
-	/**
-	* 根据父节点查询列表
+	* 保存/编辑设置
 	* @author miaoguoxin
-	* @date 2020/10/15
+	* @date 2021/2/1
 	*/
-	List<GoodsReferencePriceSetting> getListByParent(GoodsReferencePriceQueryDto params);
+	void saveOrEdit(ReferencePriceSettingRequestDto requestDto);
+
+	/**
+	* 详情
+	* @author miaoguoxin
+	* @date 2021/2/1
+	*/
+	ReferenceSettingResponseDto getDetail(Long goodId);
+
+	/**
+	*  根据父节点查询列表
+	* @author miaoguoxin
+	* @date 2021/2/2
+	*/
+	List<ReferenceSettingResponseDto> getListByParentV2(GoodsReferencePriceQueryDto params);
 
 	/**
 	* 条件查询列表
 	* @author miaoguoxin
-	* @date 2020/10/15
+	* @date 2021/2/2
 	*/
-	List<GoodsReferencePriceSetting> getList(GoodsReferencePriceQueryDto params);
+	List<ReferenceSettingResponseDto> getListV2(GoodsReferencePriceQueryDto params);
+
 }
