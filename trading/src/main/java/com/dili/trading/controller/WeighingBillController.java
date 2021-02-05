@@ -24,6 +24,7 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.dto.DTOUtils;
+import com.dili.ss.idempotent.annotation.Idempotent;
 import com.dili.ss.idempotent.annotation.Token;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
@@ -124,7 +125,7 @@ public class WeighingBillController {
 	 * @return
 	 * @throws Exception
 	 */
-//	@Idempotent(Idempotent.HEADER)
+	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/saveAndSettle.action")
 	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) throws Exception {
