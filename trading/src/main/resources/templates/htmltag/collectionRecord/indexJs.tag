@@ -35,7 +35,7 @@
         }
     };
 
-    function swipeCard(){
+    function swipeBuyerCard(){
         let cardNum;
         let json = JSON.parse(callbackObj.readCardNumber());
         if (json.code == 0) {
@@ -52,20 +52,46 @@
                 success:function(result) {
                     if (result.success) {
                         // 1-买家 2-卖家
-                        if(result.data.customerCharacterType=='buyer_character_type'){
-                            $('#buyerCardNo').val(cardNum);
-                            $('#accountBuyerId').val(result.data.accountId);
-                            $('#show_buyer_name_by_card_name').val(result.data.customerName);
-                        }else if(result.data.customerCharacterType=='business_user_character_type'){
-                            $('#sellerCardNo').val(cardNum);
-                            $('#accountSellerId').val(result.data.accountId);
-                            $('#show_seller_name_by_card_name').val(result.data.customerName);
-                        }
+                        $('#buyerCardNo').val(cardNum);
+                        $('#accountBuyerId').val(result.data.accountId);
+                        $('#show_buyer_name_by_card_name').val(result.data.customerName);
                     }else{
                         bs4pop.alert(result.message, {type: "error"});
                         $('#buyerCardNo').val('');
                         $('#accountBuyerId').val('');
                         $('#show_buyer_name_by_card_name').val('');
+                    }
+                },
+                error:function(){
+
+                }
+            });
+        }else{
+            bs4pop.alert("未读取到卡号!", {type: 'error'});
+        }
+    }
+    function swipeSellerCard(){
+        let cardNum;
+        let json = JSON.parse(callbackObj.readCardNumber());
+        if (json.code == 0) {
+            cardNum = json.data;
+        } else {
+            bs4pop.alert(json.message, {type: "error"});
+            return false;
+        }
+        if (cardNum!=-1) {
+            $.ajax({
+                type:'GET',
+                url:'${contextPath!}/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
+                dataType:'json',
+                success:function(result) {
+                    if (result.success) {
+                        // 1-买家 2-卖家
+                        $('#sellerCardNo').val(cardNum);
+                        $('#accountSellerId').val(result.data.accountId);
+                        $('#show_seller_name_by_card_name').val(result.data.customerName);
+                    }else{
+                        bs4pop.alert(result.message, {type: "error"});
                         $('#sellerCardNo').val('');
                         $('#accountSellerId').val('');
                         $('#show_seller_name_by_card_name').val('');
