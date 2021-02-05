@@ -40,6 +40,8 @@ import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
+import com.dili.orders.domain.PaymentType;
+import com.dili.orders.domain.TradingBillType;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.AccountPasswordValidateDto;
@@ -60,6 +62,7 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.dto.DTOUtils;
+import com.dili.ss.idempotent.annotation.Idempotent;
 import com.dili.ss.idempotent.annotation.Token;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
@@ -88,7 +91,7 @@ import cn.hutool.core.collection.CollectionUtil;
  * WeighingBillController
  */
 @Controller
-@RequestMapping("/farmerWeighingBill")
+@RequestMapping("/farmerTradingBill")
 public class FarmerWeighingBillController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FarmerWeighingBillController.class);
@@ -147,7 +150,7 @@ public class FarmerWeighingBillController {
 	 * @return
 	 * @throws Exception
 	 */
-//	@Idempotent(Idempotent.HEADER)
+	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/saveAndSettle.action")
 	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) throws Exception {
@@ -155,12 +158,16 @@ public class FarmerWeighingBillController {
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-		AccountPasswordValidateDto dto = new AccountPasswordValidateDto();
-		dto.setAccountId(weighingBill.getBuyerAccount());
-		dto.setPassword(weighingBill.getBuyerPassword());
-		BaseOutput<?> output = this.payRpc.validateAccountPassword(dto);
-		if (!output.isSuccess()) {
-			return output;
+		weighingBill.setTradingBillType(TradingBillType.FARMER.getValue());
+		BaseOutput<?> output = null;
+		if (weighingBill.getPaymentType().equals(PaymentType.CARD.getValue())) {
+			AccountPasswordValidateDto dto = new AccountPasswordValidateDto();
+			dto.setAccountId(weighingBill.getBuyerAccount());
+			dto.setPassword(weighingBill.getBuyerPassword());
+			output = this.payRpc.validateAccountPassword(dto);
+			if (!output.isSuccess()) {
+				return output;
+			}
 		}
 		WeighingStatement ws = null;
 		if (weighingBill.getId() == null) {
@@ -173,7 +180,7 @@ public class FarmerWeighingBillController {
 			}
 			ws = wsOutput.getData();
 			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (settlementOutput==null) {
+			if (settlementOutput == null) {
 				return BaseOutput.failure("请求服务器失败");
 			}
 			if (!settlementOutput.isSuccess()) {
@@ -645,7 +652,7 @@ public class FarmerWeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
-	@Token(url = "/farmerWeighingBill/operatorInvalidate.action")
+	@Token(url = "/farmerTradingBill/operatorInvalidate.action")
 	@GetMapping("/operatorInvalidate.html")
 	public String validatePassword(Long id, ModelMap modelMap) {
 		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "invalidateHandler");
@@ -700,7 +707,7 @@ public class FarmerWeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
-	@Token(url = "/farmerWeighingBill/operatorWithdraw.action")
+	@Token(url = "/farmerTradingBill/operatorWithdraw.action")
 	@GetMapping("/operatorWithdraw.html")
 	public String operatorWithdraw(Long id, ModelMap modelMap) {
 		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "withdrawHandler");

@@ -6,8 +6,9 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.dili.orders.domain.MeasureType;
-import com.dili.orders.domain.TradingBillType;
+import com.dili.customer.sdk.enums.CustomerEnum.BusinessRegionTag;
+import com.dili.orders.domain.PriceState;
+import com.dili.orders.domain.WeighingBillState;
 import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.ValuePairImpl;
@@ -18,16 +19,13 @@ import com.dili.ss.metadata.ValueProvider;
  */
 
 @Component
-public class TradingBillTypeProvider implements ValueProvider {
+public class CustomerRegionTagProvider implements ValueProvider {
 
 	@Override
 	public List<ValuePair<?>> getLookupList(Object o, Map map, FieldMeta fieldMeta) {
 		List<ValuePair<?>> list = new ArrayList<ValuePair<?>>();
-		for (TradingBillType type : TradingBillType.values()) {
-			if (type.equals(TradingBillType.WEIGHING)) {
-				continue;
-			}
-			list.add(new ValuePairImpl<Integer>(type.getName(), type.getValue()));
+		for (BusinessRegionTag tag : BusinessRegionTag.values()) {
+			list.add(new ValuePairImpl<Integer>(tag.getValue(), tag.getCode()));
 		}
 		return list;
 	}
@@ -37,9 +35,9 @@ public class TradingBillTypeProvider implements ValueProvider {
 		if (null == object) {
 			return null;
 		}
-		for (TradingBillType type : TradingBillType.values()) {
-			if (type.getValue().equals(object)) {
-				return type.getName();
+		for (BusinessRegionTag tag : BusinessRegionTag.values()) {
+			if (tag.getCode().equals(object)) {
+				return tag.getValue();
 			}
 		}
 		return null;
