@@ -32,8 +32,8 @@ public interface ProprietaryWeighingBillRpc {
 	BaseOutput<WeighingStatement> update(@RequestBody WeighingBill weighingBill);
 
 	@RequestMapping(value = "/api/proprietaryWeighingBill/settle")
-	BaseOutput<WeighingStatement> settle(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "operatorId") Long operatorId,
-			@RequestParam(value = "marketId") Long marketId);
+	BaseOutput<WeighingStatement> settle(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword", required = false) String buyerPassword,
+			@RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "marketId") Long marketId);
 
 	@RequestMapping(value = "/api/proprietaryWeighingBill/withdraw")
 	BaseOutput<Object> withdraw(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "sellerPassword") String sellerPassword,

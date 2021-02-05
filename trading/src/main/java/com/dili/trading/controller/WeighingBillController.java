@@ -150,7 +150,7 @@ public class WeighingBillController {
 			}
 			ws = wsOutput.getData();
 			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (settlementOutput==null) {
+			if (settlementOutput == null) {
 				return BaseOutput.failure("请求服务器失败");
 			}
 			if (!settlementOutput.isSuccess()) {
@@ -321,6 +321,15 @@ public class WeighingBillController {
 		if (!output.getData().getAccountInfo().getFirmId().equals(user.getFirmId())) {
 			return BaseOutput.success();
 		}
+		BaseOutput<CustomerExtendDto> customerOutput = this.customerRpc.get(output.getData().getAccountInfo().getCustomerId(), user.getFirmId());
+		if (!customerOutput.isSuccess()) {
+			LOGGER.error(customerOutput.getMessage());
+			return BaseOutput.failure("查询客户信息失败");
+		}
+		if (customerOutput.getData() == null) {
+			return BaseOutput.failure("未查询到指定客户");
+		}
+		output.getData().setBuyerRegionTag(customerOutput.getData().getCustomerMarket().getBusinessRegionTag());
 		return output;
 	}
 

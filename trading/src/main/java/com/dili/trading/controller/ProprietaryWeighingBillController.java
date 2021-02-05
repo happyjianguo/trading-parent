@@ -8,12 +8,13 @@ import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.assets.sdk.dto.TradeTypeDto;
 import com.dili.assets.sdk.dto.TradeTypeQuery;
 import com.dili.assets.sdk.rpc.TradeTypeRpc;
-import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.domain.dto.CustomerExtendDto;
 import com.dili.customer.sdk.domain.query.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
+import com.dili.orders.domain.PaymentType;
+import com.dili.orders.domain.TradingBillType;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.*;
@@ -24,6 +25,7 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.dto.DTOUtils;
+import com.dili.ss.idempotent.annotation.Idempotent;
 import com.dili.ss.idempotent.annotation.Token;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
@@ -34,6 +36,7 @@ import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
 import com.dili.trading.rpc.AuthenticationRpc;
 import com.dili.trading.rpc.ProprietaryWeighingBillRpc;
 import com.dili.trading.rpc.QualityTraceRpc;
+import com.dili.trading.rpc.WeighingBillRpc;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.domain.Firm;
 import com.dili.uap.sdk.domain.UserTicket;
@@ -65,7 +68,7 @@ import java.util.stream.Collectors;
  * WeighingBillController
  */
 @Controller
-@RequestMapping("/proprietaryWeighingBill")
+@RequestMapping("/proprietaryTradingBill")
 public class ProprietaryWeighingBillController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProprietaryWeighingBillController.class);
@@ -104,6 +107,8 @@ public class ProprietaryWeighingBillController {
 	private RedisUtil redisUtil;
 	@Autowired
 	private RedisDistributedLock redisDistributedLock;
+	@Autowired
+	private WeighingBillRpc oweighingBillRpc;
 
 	/**
 	 * 列表页
@@ -124,7 +129,7 @@ public class ProprietaryWeighingBillController {
 	 * @return
 	 * @throws Exception
 	 */
-//	@Idempotent(Idempotent.HEADER)
+	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/saveAndSettle.action")
 	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) throws Exception {
@@ -132,12 +137,16 @@ public class ProprietaryWeighingBillController {
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-		AccountPasswordValidateDto dto = new AccountPasswordValidateDto();
-		dto.setAccountId(weighingBill.getBuyerAccount());
-		dto.setPassword(weighingBill.getBuyerPassword());
-		BaseOutput<?> output = this.payRpc.validateAccountPassword(dto);
-		if (!output.isSuccess()) {
-			return output;
+		BaseOutput<?> output = null;
+		weighingBill.setTradingBillType(TradingBillType.PROPRIETARY.getValue());
+		if (weighingBill.getPaymentType().equals(PaymentType.CARD.getValue())) {
+			AccountPasswordValidateDto dto = new AccountPasswordValidateDto();
+			dto.setAccountId(weighingBill.getBuyerAccount());
+			dto.setPassword(weighingBill.getBuyerPassword());
+			output = this.payRpc.validateAccountPassword(dto);
+			if (!output.isSuccess()) {
+				return output;
+			}
 		}
 		WeighingStatement ws = null;
 		if (weighingBill.getId() == null) {
@@ -150,7 +159,7 @@ public class ProprietaryWeighingBillController {
 			}
 			ws = wsOutput.getData();
 			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (settlementOutput==null) {
+			if (settlementOutput == null) {
 				return BaseOutput.failure("请求服务器失败");
 			}
 			if (!settlementOutput.isSuccess()) {
@@ -302,6 +311,21 @@ public class ProprietaryWeighingBillController {
 	}
 
 	/**
+	 * 查询包装类型
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/listPackingType.action")
+	public BaseOutput<?> listPackingType() {
+		DataDictionaryValue query = DTOUtils.newInstance(DataDictionaryValue.class);
+		query.setDdCode(OrdersConstant.PACKING_TYPE_DD_CODE);
+		query.setFirmCode(OrdersConstant.SHOUGUANG_FIRM_CODE);
+		return this.dataDictionaryRpc.listDataDictionaryValue(query);
+
+	}
+
+	/**
 	 * 根据卡号查询客户信息
 	 *
 	 * @param cardNo 卡号
@@ -321,6 +345,15 @@ public class ProprietaryWeighingBillController {
 		if (!output.getData().getAccountInfo().getFirmId().equals(user.getFirmId())) {
 			return BaseOutput.success();
 		}
+		BaseOutput<CustomerExtendDto> customerOutput = this.customerRpc.get(output.getData().getAccountInfo().getCustomerId(), user.getFirmId());
+		if (!customerOutput.isSuccess()) {
+			LOGGER.error(customerOutput.getMessage());
+			return BaseOutput.failure("查询客户信息失败");
+		}
+		if (customerOutput.getData() == null) {
+			return BaseOutput.failure("未查询到指定客户");
+		}
+		output.getData().setBuyerRegionTag(customerOutput.getData().getCustomerMarket().getBusinessRegionTag());
 		return output;
 	}
 
@@ -344,6 +377,9 @@ public class ProprietaryWeighingBillController {
 	@ResponseBody
 	@PostMapping("/listPage.action")
 	public String listPage(@RequestBody WeighingBillQueryDto query) {
+		if (query.getTradeType() == null) {
+			query.setTradingBillTypeList(Arrays.asList(TradingBillType.FARMER.getValue(), TradingBillType.PROPRIETARY.getValue()));
+		}
 		// 如果市场id为空，则加入
 		if (Objects.isNull(query.getMarketId())) {
 			query.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
@@ -386,11 +422,11 @@ public class ProprietaryWeighingBillController {
 		query.setDepartmentIds(departmentIds);
 
 		if (query.isExportData()) {
-			printListOutput = this.weighingBillRpc.printList(query);
+			printListOutput = this.oweighingBillRpc.printList(query);
 			output = PageOutput.success().setData(printListOutput.getData().getPageList()).setTotal((long) printListOutput.getData().getPageList().size())
 					.setPageNum(printListOutput.getData().getPageList().getPageNum()).setPageSize(printListOutput.getData().getPageList().getPageSize());
 		} else {
-			output = this.weighingBillRpc.listPage(query);
+			output = this.oweighingBillRpc.listPage(query);
 		}
 
 		if (!output.isSuccess()) {
@@ -537,7 +573,7 @@ public class ProprietaryWeighingBillController {
 			return output;
 		}
 		// 获取到客户
-		Customer customer = output.getData().get(0);
+		CustomerExtendDto customer = output.getData().get(0);
 		UserAccountCardResponseDto accountInfo = cardOutput.getData().getAccountInfo();
 		accountInfo.setCustomerName(customer.getName());
 		return BaseOutput.successData(accountInfo);
@@ -622,7 +658,7 @@ public class ProprietaryWeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
-	@Token(url = "/proprietaryWeighingBill/operatorInvalidate.action")
+	@Token(url = "/proprietaryTradingBill/operatorInvalidate.action")
 	@GetMapping("/operatorInvalidate.html")
 	public String validatePassword(Long id, ModelMap modelMap) {
 		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "invalidateHandler");
@@ -677,7 +713,7 @@ public class ProprietaryWeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
-	@Token(url = "/proprietaryWeighingBill/operatorWithdraw.action")
+	@Token(url = "/proprietaryTradingBill/operatorWithdraw.action")
 	@GetMapping("/operatorWithdraw.html")
 	public String operatorWithdraw(Long id, ModelMap modelMap) {
 		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "withdrawHandler");
