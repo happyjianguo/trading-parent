@@ -91,10 +91,11 @@ public interface ComprehensiveFeeRpc {
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/fee", method = {RequestMethod.POST})
-    BaseOutput<?> getFee(@RequestParam(value = "marketId") Long marketId, @RequestParam(value = "customerId") Long customerId,@RequestParam(value = "type") String type);
+    BaseOutput<?> getFee(@RequestParam(value = "marketId") Long marketId, @RequestParam(value = "customerId") Long customerId, @RequestParam(value = "type") String type);
 
     /**
-     *撤销调用
+     * 撤销调用
+     *
      * @param comprehensiveFee
      * @param realName
      * @param operatorId
@@ -103,7 +104,7 @@ public interface ComprehensiveFeeRpc {
      * @return
      */
     @RequestMapping(value = "/api/comprehensiveFee/revocator", method = {RequestMethod.POST})
-    BaseOutput<ComprehensiveFee> revocator(@RequestBody ComprehensiveFee comprehensiveFee, @RequestParam String realName, @RequestParam Long operatorId, @RequestParam String operatorPassword, @RequestParam String userName);
+    BaseOutput<ComprehensiveFee> revocator(@RequestBody ComprehensiveFee comprehensiveFee, @RequestParam(value = "realName") String realName, @RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "operatorPassword") String operatorPassword, @RequestParam(value = "userName") String userName);
 
     /**
      * 获取费用信息

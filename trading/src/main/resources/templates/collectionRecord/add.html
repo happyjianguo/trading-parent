@@ -1,0 +1,224 @@
+<#bs4Body>
+
+<div class="container-fluid">
+    <input type="hidden" id="_sourceChannel" value="<#config name='ia.source.channel.earnest_order'/>">
+    <form id="saveForm" role="form" novalidate>
+        <input id="collectionRecordIdList" hidden class="form-control" name="collectionRecordIdList">
+        <div class="row row-cols-1">
+            <div class="row row-cols-1">
+                <div class="form-group col">
+                    <label for="">买方客户</label>
+                    <input id="buyerName" required readonly="true" class="form-control" name="buyerName">
+                    <input id="buyerId" required hidden class="form-control" name="buyerId">
+                    <input id="buyerCardNo" required hidden class="form-control" name="buyerCardNo">
+                    <input id="accountBuyerId" required hidden class="form-control" name="accountBuyerId">
+                    <input id="ids" required hidden class="form-control" name="ids">
+                    <input id="settlementDate" required hidden class="form-control" name="settlementDate">
+                </div>
+                <div class="form-group col">
+                    <label for="">卖方客户</label>
+                    <input id="sellerName" required readonly="true" class="form-control" name="sellerName" maxlength="100">
+                    <input id="sellerId" required hidden class="form-control" name="sellerId">
+                    <input id="sellerCardNo" required hidden class="form-control" name="sellerCardNo">
+                    <input id="accountSellerId" required hidden class="form-control" name="accountSellerId">
+                </div>
+                <div class="form-group col">
+                    <label for="">应回款金额</label>
+                    <input id="amountReceivablesYuan" required readonly="true" class="form-control" maxlength="100">
+                    <input id="amountReceivables" required readonly="true" class="form-control" name="amountReceivables" maxlength="100" hidden>
+                </div>
+                <div class="form-group col">
+                    <label for="">实回款金额</label>
+                    <input id="amountActuallyYuan" required class="form-control floatReserve" name="amountActuallyYuan">
+                </div>
+                <div class="form-group col">
+                    <label for="">回款途径</label>
+                    <div class="mt-2" id="stateRadioDiv">
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="r_stateRadioDiv1" value="1" name="paymentWays" required
+                                   class="custom-control-input">
+                            <label class="custom-control-label" for="r_stateRadioDiv1">自付</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="r_stateRadioDiv2" value="2" name="paymentWays" required
+                                   class="custom-control-input">
+                            <label class="custom-control-label" for="r_stateRadioDiv2">代付</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col" id="paymentCardNumberDiv" hidden>
+                    <label for="paymentCardNumber">代付卡号</label>
+                    <div class="input-group">
+                        <input id="paymentCardNumber" class="form-control" name="paymentCardNumber" maxlength="12" minlength="12">
+                        <div class="input-group-append">
+                            <span class="input-group-text card-bt text-primary" id="payByCard"><a href="javascript:;" style=" text-decoration: none;">刷卡</a></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col">
+                    <label for="password">输入密码</label>
+                    <div class="input-group">
+                        <input id="password" type="password" class="form-control digits" required name="password" maxlength="6" minlength="6" />
+                        <div class="input-group-append">
+                            <span class="input-group-text card-bt text-primary" id="inputPassword"><a href="javascript:;"  style="text-decoration: none;">输入密码</a></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-12">
+                    <label for="remark">备注</label>
+                    <textarea id="remark" class="form-control" name="remark" rows="3" focus-shift maxlength="30"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer-wrap">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary px-5" onclick="bui.util.debounce(pay,1000,true)()" id="formSubmit" data-hotkey="{key: 'Ctrl+O'}">回款</button>
+                <button type="button" class="btn btn-secondary px-5" onclick="javascript: parent.diaPay.hide()" data-hotkey="{key: 'Ctrl+E'}">取消</button>
+            </div>
+        </div>
+    </form>
+</div>
+</#bs4Body>
+
+<script>
+    let idList=localStorage.getItem("idList");
+    let amount=localStorage.getItem("amount");
+    let dateStr=localStorage.getItem("dateStr");
+
+    let buyerName=localStorage.getItem("buyerName");
+    let buyerIdI=localStorage.getItem("buyerIdI");
+    let accountBuyerIdI=localStorage.getItem("accountBuyerIdI");
+    let buyerCardNoI=localStorage.getItem("buyerCardNoI");
+    let buyerBalance=localStorage.getItem("buyerBalance");
+    let sellerName=localStorage.getItem("sellerName");
+    let sellerIdI=localStorage.getItem("sellerIdI");
+    let sellerCardNoI=localStorage.getItem("sellerCardNoI");
+    let accountsellerIdI=localStorage.getItem("accountsellerIdI");
+
+    $('#buyerName').val(buyerName);
+    $('#buyerId').val(buyerIdI);
+    $('#accountBuyerId').val(accountBuyerIdI);
+    $('#buyerCardNo').val(buyerCardNoI);
+    $('#amountReceivablesYuan').val(amount);
+    $('#amountReceivables').val(amount*100);
+    $('#amountActuallyYuan').attr("range","0.00 "+parseFloat(amount).toFixed(2));
+
+    $('#ids').val(idList);
+
+    $('#sellerName').val(sellerName);
+    $('#sellerId').val(sellerIdI);
+    $('#sellerCardNo').val(sellerCardNoI);
+    $('#accountSellerId').val(accountsellerIdI);
+    $('#settlementDate').val(dateStr);
+
+
+    localStorage.removeItem("idList");
+    localStorage.removeItem("buyerName");
+    localStorage.removeItem("buyerIdI");
+    localStorage.removeItem("accountBuyerIdI");
+    localStorage.removeItem("buyerCardNoI");
+    localStorage.removeItem("buyerBalance");
+    localStorage.removeItem("sellerName");
+    localStorage.removeItem("sellerIdI");
+    localStorage.removeItem("accountsellerIdI");
+    localStorage.removeItem("sellerCardNoI");
+    localStorage.removeItem("amount");
+    localStorage.removeItem("dateStr");
+
+    $(function(){
+        setTimeout(function(){
+            $('#password').focus();
+        }, 500)
+    })
+    $('#inputPassword').on('click', function (e) {
+        CefSharp.BindObjectAsync("callbackObj");
+        callbackObj.readPasswordKeyboardAsync('23');
+    });
+
+    function pay() {
+        let _formData = new FormData($('#saveForm')[0]);
+        if (!$('#saveForm').validate().form()) {
+            $('#password').val('');
+            return false;
+        }
+        let amountActuallyYuan =parseFloat($('#amountActuallyYuan').val());
+        let amountReceivablesYuan =parseFloat($('#amountReceivablesYuan').val());
+        if (amountActuallyYuan<0) {
+            bs4pop.alert("实际回款金额不能小于0", {width:'350px',height:"200px",type: 'error'});
+            $('#password').val('');
+            return false;
+        }
+        if (amountActuallyYuan>amountReceivablesYuan) {
+            bs4pop.alert("实际回款金额不能大于应回款金额", {width:'350px',height:"200px",type: 'error'});
+            $('#password').val('');
+            return false;
+        }
+        //如果为代付的情况下，不需要验证余额
+        let checkValue = $('input:radio[name="paymentWays"]:checked').val();
+        if(checkValue==1){
+            if(buyerBalance<amountActuallyYuan){
+                bs4pop.alert("余额不足请充值", {width:'350px',height:"200px",type: 'error'});
+                $('#password').val('');
+                return false;
+            }
+        }
+
+        parent.bui.loading.show('努力提交中，请稍候。。。');
+        $.ajax({
+            type: "POST",
+            url: "/collectionRecord/insertAndPay.action",
+            data: _formData,
+            processData: false,
+            contentType: false,
+            async: true,
+            success: function (res) {
+                parent.bui.loading.hide();
+                if (res.code == "200") {
+                    parent.diaPay.hide();
+                    parent.location.reload();
+                } else {
+                    parent.bui.loading.hide();
+                    bs4pop.alert(res.message, {width:'350px',height:"200px",type: 'error'});
+                    $('#password').val('');
+                }
+            },
+            error: function (error) {
+                parent.bui.loading.hide();
+                bs4pop.alert(res.message, {width:'350px',height:"200px",type: 'error'});
+                $('#password').val('');
+            }
+        });
+    }
+
+    $('input:radio[name="paymentWays"]').click(function(){
+        var checkValue = $('input:radio[name="paymentWays"]:checked').val();
+        if(checkValue==2){
+            $('#paymentCardNumberDiv').attr("hidden",false);
+            $('#paymentCardNumber').attr("required",true);
+        }else {
+            $('#paymentCardNumberDiv').attr("hidden",true);
+            $('#paymentCardNumber').attr("required",false);
+        }
+    });
+    $('#payByCard').on('click', function () {
+        let json = JSON.parse(callbackObj.readCardNumber());
+        let buyerCardNo = $('#buyerCardNo').val();
+        let sellerCardNo = $('#sellerCardNo').val();
+        let cardNo;
+        if (json.code == 0) {
+            cardNo=json.data;
+            if(cardNo == buyerCardNo){
+                bs4pop.alert('代付卡号不能和买家卡号相同', {width:'350px',type: "error"});
+                return false;
+            }else if (cardNo == sellerCardNo){
+                bs4pop.alert('代付卡号不能和卖家卡号相同', {width:'350px',type: "error"});
+                return false;
+            }
+            $('#paymentCardNumber').val(cardNo);
+        } else {
+            bs4pop.alert(json.message, {width:'350px',type: "error"});
+            return false;
+        }
+    });
+
+</script>

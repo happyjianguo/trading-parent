@@ -2,6 +2,7 @@ package com.dili.trading.rpc;
 
 
 import com.dili.orders.domain.GoodsReferencePriceSetting;
+import com.dili.orders.dto.ReferencePriceSettingRequestDto;
 import com.dili.ss.domain.BaseOutput;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,4 +57,12 @@ public interface GoodsReferencePriceSettingRpc {
      */
     @RequestMapping(value = "/api/goodsReferencePriceSetting/update", method = {RequestMethod.POST})
     BaseOutput<GoodsReferencePriceSetting> update(@RequestBody GoodsReferencePriceSetting goodsReferencePriceSetting);
+
+    /**
+     * 修改品类参考价
+     *
+     * @return BaseOutput
+     */
+    @RequestMapping(value = "/api/goodsReferencePriceSetting/saveOrEdit", method = {RequestMethod.POST})
+    BaseOutput<?> saveOrEdit(@RequestBody ReferencePriceSettingRequestDto requestDto);
 }

@@ -34,12 +34,13 @@ import com.dili.assets.sdk.dto.CategoryDTO;
 import com.dili.assets.sdk.dto.TradeTypeDto;
 import com.dili.assets.sdk.dto.TradeTypeQuery;
 import com.dili.assets.sdk.rpc.TradeTypeRpc;
-import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.domain.dto.CustomerExtendDto;
 import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
+import com.dili.orders.domain.PaymentType;
+import com.dili.orders.domain.TradingBillType;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.AccountPasswordValidateDto;
@@ -69,6 +70,7 @@ import com.dili.ss.redis.service.RedisUtil;
 import com.dili.trading.dto.TraceTradeBillResponseDto;
 import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
 import com.dili.trading.rpc.AuthenticationRpc;
+import com.dili.trading.rpc.ProprietaryWeighingBillRpc;
 import com.dili.trading.rpc.QualityTraceRpc;
 import com.dili.trading.rpc.WeighingBillRpc;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
@@ -89,10 +91,10 @@ import cn.hutool.core.collection.CollectionUtil;
  * WeighingBillController
  */
 @Controller
-@RequestMapping("/weighingBill")
-public class WeighingBillController {
+@RequestMapping("/proprietaryTradingBill")
+public class ProprietaryWeighingBillController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(WeighingBillController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProprietaryWeighingBillController.class);
 
 	private static final String HEADER_CACHE_KEY = "trading_weighing_bill_header_cache:";
 
@@ -101,7 +103,7 @@ public class WeighingBillController {
 	private static final long WEIGHING_BILL_LOCK_EXPIRE = 60 * 10;
 
 	@Autowired
-	private WeighingBillRpc weighingBillRpc;
+	private ProprietaryWeighingBillRpc weighingBillRpc;
 	@Autowired
 	private CategoryRpc categoryRpc;
 	@Autowired
@@ -128,6 +130,8 @@ public class WeighingBillController {
 	private RedisUtil redisUtil;
 	@Autowired
 	private RedisDistributedLock redisDistributedLock;
+	@Autowired
+	private WeighingBillRpc oweighingBillRpc;
 
 	/**
 	 * 列表页
@@ -138,7 +142,7 @@ public class WeighingBillController {
 	public String index(ModelMap modelMap) {
 		modelMap.put("operationStartTime", LocalDate.now() + " 00:00:00");
 		modelMap.put("operationEndTime", LocalDate.now() + " 23:59:59");
-		return "weighingBill/index";
+		return "proprietaryWeighingBill/index";
 	}
 
 	/**
@@ -148,7 +152,7 @@ public class WeighingBillController {
 	 * @return
 	 * @throws Exception
 	 */
-//	@Idempotent(Idempotent.HEADER)
+	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/saveAndSettle.action")
 	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) throws Exception {
@@ -156,12 +160,16 @@ public class WeighingBillController {
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-		AccountPasswordValidateDto dto = new AccountPasswordValidateDto();
-		dto.setAccountId(weighingBill.getBuyerAccount());
-		dto.setPassword(weighingBill.getBuyerPassword());
-		BaseOutput<?> output = this.payRpc.validateAccountPassword(dto);
-		if (!output.isSuccess()) {
-			return output;
+		BaseOutput<?> output = null;
+		weighingBill.setTradingBillType(TradingBillType.PROPRIETARY.getValue());
+		if (weighingBill.getPaymentType().equals(PaymentType.CARD.getValue())) {
+			AccountPasswordValidateDto dto = new AccountPasswordValidateDto();
+			dto.setAccountId(weighingBill.getBuyerAccount());
+			dto.setPassword(weighingBill.getBuyerPassword());
+			output = this.payRpc.validateAccountPassword(dto);
+			if (!output.isSuccess()) {
+				return output;
+			}
 		}
 		WeighingStatement ws = null;
 		if (weighingBill.getId() == null) {
@@ -326,6 +334,21 @@ public class WeighingBillController {
 	}
 
 	/**
+	 * 查询包装类型
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/listPackingType.action")
+	public BaseOutput<?> listPackingType() {
+		DataDictionaryValue query = DTOUtils.newInstance(DataDictionaryValue.class);
+		query.setDdCode(OrdersConstant.PACKING_TYPE_DD_CODE);
+		query.setFirmCode(OrdersConstant.SHOUGUANG_FIRM_CODE);
+		return this.dataDictionaryRpc.listDataDictionaryValue(query);
+
+	}
+
+	/**
 	 * 根据卡号查询客户信息
 	 *
 	 * @param cardNo 卡号
@@ -377,6 +400,9 @@ public class WeighingBillController {
 	@ResponseBody
 	@PostMapping("/listPage.action")
 	public String listPage(@RequestBody WeighingBillQueryDto query) {
+		if (query.getTradeType() == null) {
+			query.setTradingBillTypeList(Arrays.asList(TradingBillType.FARMER.getValue(), TradingBillType.PROPRIETARY.getValue()));
+		}
 		// 如果市场id为空，则加入
 		if (Objects.isNull(query.getMarketId())) {
 			query.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
@@ -419,11 +445,11 @@ public class WeighingBillController {
 		query.setDepartmentIds(departmentIds);
 
 		if (query.isExportData()) {
-			printListOutput = this.weighingBillRpc.printList(query);
+			printListOutput = this.oweighingBillRpc.printList(query);
 			output = PageOutput.success().setData(printListOutput.getData().getPageList()).setTotal((long) printListOutput.getData().getPageList().size())
 					.setPageNum(printListOutput.getData().getPageList().getPageNum()).setPageSize(printListOutput.getData().getPageList().getPageSize());
 		} else {
-			output = this.weighingBillRpc.listPage(query);
+			output = this.oweighingBillRpc.listPage(query);
 		}
 
 		if (!output.isSuccess()) {
@@ -570,7 +596,7 @@ public class WeighingBillController {
 			return output;
 		}
 		// 获取到客户
-		Customer customer = output.getData().get(0);
+		CustomerExtendDto customer = output.getData().get(0);
 		UserAccountCardResponseDto accountInfo = cardOutput.getData().getAccountInfo();
 		accountInfo.setCustomerName(customer.getName());
 		return BaseOutput.successData(accountInfo);
@@ -640,7 +666,7 @@ public class WeighingBillController {
 			List<Map> recordsListMap = ValueProviderUtils.buildDataByProvider(metadata, output.getData().getRecords());
 			list.get(0).put("records", recordsListMap);
 			modelMap.addAttribute("model", list.get(0));
-			return "weighingBill/detail";
+			return "proprietaryWeighingBill/detail";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.index(modelMap);
@@ -655,11 +681,11 @@ public class WeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
-	@Token(url = "/weighingBill/operatorInvalidate.action")
+	@Token(url = "/proprietaryTradingBill/operatorInvalidate.action")
 	@GetMapping("/operatorInvalidate.html")
 	public String validatePassword(Long id, ModelMap modelMap) {
 		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "invalidateHandler");
-		return "weighingBill/validatePassword";
+		return "proprietaryWeighingBill/validatePassword";
 	}
 
 	/**
@@ -710,11 +736,11 @@ public class WeighingBillController {
 	 * @param modelMap
 	 * @return
 	 */
-	@Token(url = "/weighingBill/operatorWithdraw.action")
+	@Token(url = "/proprietaryTradingBill/operatorWithdraw.action")
 	@GetMapping("/operatorWithdraw.html")
 	public String operatorWithdraw(Long id, ModelMap modelMap) {
 		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "withdrawHandler");
-		return "weighingBill/validatePassword";
+		return "proprietaryWeighingBill/validatePassword";
 	}
 
 	/**
