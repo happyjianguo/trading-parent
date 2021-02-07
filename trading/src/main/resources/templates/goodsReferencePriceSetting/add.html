@@ -37,7 +37,7 @@
                                         <option v-for='item in ruleOptions' :value="item.value" v-text="item.text">
                                         </option>
                                     </select>
-                                    <input  v-show="selectedGenericRule.referenceRule==3" type="text" class="form-control" v-model="selectedGenericRule.fixedPrice">
+                                    <input  v-show="selectedGenericRule.referenceRule==3" type="text" class="form-control" v-model="selectedGenericRule.fixedPriceText">
                                 </div>
                             </td>
                         </tr>
@@ -49,7 +49,7 @@
                                         <option v-for='item in ruleOptions' :value="item.value" v-text="item.text">
                                         </option>
                                     </select>
-                                    <input v-show="selectedTraditionFarmerRule.referenceRule==3" type="text" class="form-control" v-model="selectedTraditionFarmerRule.fixedPrice">
+                                    <input v-show="selectedTraditionFarmerRule.referenceRule==3" type="text" class="form-control" v-model="selectedTraditionFarmerRule.fixedPriceText">
                                 </div>
 
                             </td>
@@ -62,7 +62,7 @@
                                         <option v-for='item in ruleOptions' :value="item.value" v-text="item.text">
                                         </option>
                                     </select>
-                                    <input v-show="selectedSelfRule.referenceRule==3" type="text" class="form-control" v-model="selectedSelfRule.fixedPrice">
+                                    <input v-show="selectedSelfRule.referenceRule==3" type="text" class="form-control" v-model="selectedSelfRule.fixedPriceText">
                                 </div>
                             </td>
                         </tr>
@@ -88,17 +88,20 @@
                 selectedGenericRule: {
                     tradeType: 1,
                     referenceRule: "",
-                    fixedPrice: ""
+                    fixedPrice: "",
+                    fixedPriceText:""
                 },
                 selectedTraditionFarmerRule: {
                     tradeType: 2,
                     referenceRule: "",
-                    fixedPrice: ""
+                    fixedPrice: "",
+                    fixedPriceText:""
                 },
                 selectedSelfRule: {
                     tradeType: 3,
                     referenceRule: "",
-                    fixedPrice: ""
+                    fixedPrice: "",
+                    fixedPriceText:""
                 },
                 requestData: {
                     goodsId: "",
@@ -140,9 +143,9 @@
                     success: function (ret) {
                         if (ret.success){
                             that.detailInfo = ret.data;
-                            that.selectedGenericRule.referenceRule =  that.detailInfo.genericItem.referenceRule == undefined?"":that.detailInfo.genericItem.referenceRule;
-                            that.selectedTraditionFarmerRule.referenceRule = that.detailInfo.traditionFarmerItem.referenceRule == undefined ? "" : that.detailInfo.traditionFarmerItem.referenceRule;
-                            that.selectedSelfRule.referenceRule = that.detailInfo.selfItem.referenceRule == undefined ? "" : that.detailInfo.selfItem.referenceRule;
+                            that.selectedGenericRule=  that.detailInfo.genericItem;
+                            that.selectedTraditionFarmerRule = that.detailInfo.traditionFarmerItem;
+                            that.selectedSelfRule = that.detailInfo.selfItem;
                             that.requestData.goodsId = that.detailInfo.goodsId;
                             that.requestData.goodsName = that.detailInfo.goodsName;
                             that.requestData.parentGoodsId = that.detailInfo.parentGoodsId;
@@ -211,13 +214,19 @@
             mergeRule2RequestData() {
                 this.requestData.items = [];
                 if (this.selectedGenericRule.referenceRule != ""){
-                    this.requestData.items.push(this.selectedGenericRule);
+                    let selectedGenericRule = this.selectedGenericRule;
+                    selectedGenericRule.fixedPrice = parseFloat(selectedGenericRule.fixedPriceText) * 100;
+                    this.requestData.items.push(selectedGenericRule);
                 }
                 if (this.selectedTraditionFarmerRule.referenceRule != ""){
-                    this.requestData.items.push(this.selectedTraditionFarmerRule);
+                    let selectedTraditionFarmerRule = this.selectedTraditionFarmerRule;
+                    selectedTraditionFarmerRule.fixedPrice = parseFloat(selectedTraditionFarmerRule.fixedPriceText) * 100;
+                    this.requestData.items.push(selectedTraditionFarmerRule);
                 }
                 if (this.selectedSelfRule.referenceRule != ""){
-                    this.requestData.items.push(this.selectedSelfRule);
+                    let selectedSelfRule = this.selectedSelfRule;
+                    selectedSelfRule.fixedPrice = parseFloat(selectedSelfRule.fixedPriceText) * 100;
+                    this.requestData.items.push(selectedSelfRule);
                 }
             }
         },
