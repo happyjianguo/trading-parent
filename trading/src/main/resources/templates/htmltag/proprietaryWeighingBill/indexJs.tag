@@ -19,7 +19,7 @@ function doPrintHandler(){
     
     $.ajax({
             type: "POST",
-            url: "/proprietaryWeighingBill/listPage.action",
+            url: "/proprietaryTradingBill/listPage.action",
             data: JSON.stringify(queryParams({
             	exportData:true,
                 limit: 99999,   // 页面大小
@@ -141,7 +141,7 @@ function daysDistance(startDate, endDate) {
 }
 
   var buyerNameQueryAutoCompleteOption = {
-        serviceUrl: '/proprietaryWeighingBill/listCustomerByKeyword.action',
+        serviceUrl: '/proprietaryTradingBill/listCustomerByKeyword.action',
         paramName: 'keyword',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
@@ -180,10 +180,10 @@ function daysDistance(startDate, endDate) {
         var serialNo=null;
         var id=null;
         if (rows[0].statement.state==4) {
-            url='/proprietaryWeighingBill/getWeighingBillPrintData.action'
+            url='/proprietaryTradingBill/getWeighingBillPrintData.action'
             id=rows[0].id;
         }else if (rows[0].statement.state==2) {
-            url='/proprietaryWeighingBill/getWeighingStatementPrintData.action'
+            url='/proprietaryTradingBill/getWeighingStatementPrintData.action'
             serialNo= rows[0].statement.serialNo;
         }else{
             bs4pop.alert("当前单据状态不能补打单据!", {type: 'error'});
@@ -224,7 +224,7 @@ function daysDistance(startDate, endDate) {
     }
 
   var sellerNameQueryAutoCompleteOption = {
-        serviceUrl: '/proprietaryWeighingBill/listCustomerByKeyword.action',
+        serviceUrl: '/proprietaryTradingBill/listCustomerByKeyword.action',
         paramName: 'keyword',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
@@ -256,7 +256,7 @@ function daysDistance(startDate, endDate) {
 
 
     var buyerCardQueryAutoCompleteOption = {
-        serviceUrl: '/proprietaryWeighingBill/listCustomerByCardNo.action',
+        serviceUrl: '/proprietaryTradingBill/listCustomerByCardNo.action',
         paramName: 'cardNo',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
@@ -285,7 +285,7 @@ function daysDistance(startDate, endDate) {
         }
     };
     var sellerCardQueryAutoCompleteOption = {
-        serviceUrl: '/proprietaryWeighingBill/listCustomerByCardNo.action',
+        serviceUrl: '/proprietaryTradingBill/listCustomerByCardNo.action',
         paramName: 'cardNo',
         displayFieldName: 'code',
         showNoSuggestionNotice: true,
@@ -326,7 +326,7 @@ function daysDistance(startDate, endDate) {
             if (cardNum!=-1) {
                 $.ajax({
                     type:'GET',
-                    url:'${contextPath!}/proprietaryWeighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
+                    url:'${contextPath!}/proprietaryTradingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
                     dataType:'json',
                     success:function(result) {
                         if (result.success) {
@@ -380,7 +380,7 @@ function daysDistance(startDate, endDate) {
 
     // 结算员名称
     var operatorNameAutoCompleteOption = {
-        serviceUrl: '/proprietaryWeighingBill/listOperatorByKeyword.action',
+        serviceUrl: '/proprietaryTradingBill/listOperatorByKeyword.action',
         paramName: 'keyword',
         displayFieldName: 'realName',
         showNoSuggestionNotice: true,
@@ -485,7 +485,7 @@ function daysDistance(startDate, endDate) {
         });
         let size = ($(window).height() - $('#queryForm').height() - 210) / 40;
         size = size > 10 ? size : 10;
-        _grid.bootstrapTable('refreshOptions', {url: '/proprietaryWeighingBill/listPage.action', pageSize: parseInt(size), columns: JSON.parse(localStorage.getItem('weightingBillGridVisibleColumns')).data});
+        _grid.bootstrapTable('refreshOptions', {url: '/proprietaryTradingBill/listPage.action', pageSize: parseInt(size), columns: JSON.parse(localStorage.getItem('weightingBillGridVisibleColumns')).data});
     });
 
     // -------------切换列显隐时保存隐藏列列头
@@ -516,7 +516,7 @@ function daysDistance(startDate, endDate) {
         }
         bs4pop.confirm(" 确定作废当前单据吗？", {title: "确认提示"}, function (sure) {
             if (sure) {
-                $('#_modal .modal-body').load("/proprietaryWeighingBill/operatorInvalidate.html?id="+rows[0].id);
+                $('#_modal .modal-body').load("/proprietaryTradingBill/operatorInvalidate.html?id="+rows[0].id);
                 _modal.find('.modal-title').text('信息确认');
                 $("#_modal").modal();
             }
@@ -529,7 +529,7 @@ function daysDistance(startDate, endDate) {
                     $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url:'/proprietaryWeighingBill/operatorInvalidate.action',
+                    url:'/proprietaryTradingBill/operatorInvalidate.action',
                     data: $('#validatePasswordForm').serialize(),
                     success: function (data) {
                         bui.loading.hide();
@@ -561,7 +561,7 @@ function daysDistance(startDate, endDate) {
         }
         bs4pop.confirm(" 确定撤销当前单据吗？", {title: "确认提示"}, function (sure) {
             if (sure) {
-                $('#_modal .modal-body').load("/proprietaryWeighingBill/operatorWithdraw.html?id="+rows[0].id);
+                $('#_modal .modal-body').load("/proprietaryTradingBill/operatorWithdraw.html?id="+rows[0].id);
                 _modal.find('.modal-title').text('信息确认');
                 $("#_modal").modal();
             }
@@ -572,7 +572,7 @@ function daysDistance(startDate, endDate) {
                     $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url:'/proprietaryWeighingBill/operatorWithdraw.action',
+                    url:'/proprietaryTradingBill/operatorWithdraw.action',
                     data: $('#validatePasswordForm').serialize(),
                     success: function (data) {
                         bui.loading.hide();
@@ -629,7 +629,7 @@ function daysDistance(startDate, endDate) {
         }
         dia = bs4pop.dialog({
             title: '过磅单详情',// 对话框title
-            content: '${contextPath}/proprietaryWeighingBill/weighingStatement/detail.html?id='+rows[0].statement.id, // 对话框内容，可以是
+            content: '${contextPath}/proprietaryTradingBill/weighingStatement/detail.html?id='+rows[0].statement.id, // 对话框内容，可以是
             width: '98%',// 宽度
             height: '95%',// 高度
             isIframe: true,// 默认是页面层，非iframe

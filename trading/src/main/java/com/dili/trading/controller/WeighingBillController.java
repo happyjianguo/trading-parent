@@ -1,32 +1,6 @@
 package com.dili.trading.controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
@@ -36,23 +10,13 @@ import com.dili.assets.sdk.dto.TradeTypeQuery;
 import com.dili.assets.sdk.rpc.TradeTypeRpc;
 import com.dili.customer.sdk.domain.Customer;
 import com.dili.customer.sdk.domain.dto.CustomerExtendDto;
-import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
+import com.dili.customer.sdk.domain.query.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
-import com.dili.orders.dto.AccountPasswordValidateDto;
-import com.dili.orders.dto.AccountSimpleResponseDto;
-import com.dili.orders.dto.PrintTemplateDataDto;
-import com.dili.orders.dto.UserAccountCardResponseDto;
-import com.dili.orders.dto.WeighingBillClientListDto;
-import com.dili.orders.dto.WeighingBillDetailDto;
-import com.dili.orders.dto.WeighingBillListPageDto;
-import com.dili.orders.dto.WeighingBillPrintDto;
-import com.dili.orders.dto.WeighingBillPrintListDto;
-import com.dili.orders.dto.WeighingBillQueryDto;
-import com.dili.orders.dto.WeighingStatementPrintDto;
+import com.dili.orders.dto.*;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.orders.rpc.CategoryRpc;
 import com.dili.orders.rpc.PayRpc;
@@ -82,8 +46,21 @@ import com.dili.uap.sdk.rpc.UserRpc;
 import com.dili.uap.sdk.session.SessionConstants;
 import com.dili.uap.sdk.session.SessionContext;
 import com.dili.uap.sdk.util.WebContent;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
 
-import cn.hutool.core.collection.CollectionUtil;
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * WeighingBillController
@@ -148,7 +125,7 @@ public class WeighingBillController {
 	 * @return
 	 * @throws Exception
 	 */
-//	@Idempotent(Idempotent.HEADER)
+	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/saveAndSettle.action")
 	public BaseOutput<?> saveAndSettle(@RequestBody WeighingBillSaveAndSettleDto weighingBill) throws Exception {
@@ -174,7 +151,7 @@ public class WeighingBillController {
 			}
 			ws = wsOutput.getData();
 			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (settlementOutput==null) {
+			if (settlementOutput == null) {
 				return BaseOutput.failure("请求服务器失败");
 			}
 			if (!settlementOutput.isSuccess()) {
@@ -345,6 +322,15 @@ public class WeighingBillController {
 		if (!output.getData().getAccountInfo().getFirmId().equals(user.getFirmId())) {
 			return BaseOutput.success();
 		}
+		BaseOutput<CustomerExtendDto> customerOutput = this.customerRpc.get(output.getData().getAccountInfo().getCustomerId(), user.getFirmId());
+		if (!customerOutput.isSuccess()) {
+			LOGGER.error(customerOutput.getMessage());
+			return BaseOutput.failure("查询客户信息失败");
+		}
+		if (customerOutput.getData() == null) {
+			return BaseOutput.failure("未查询到指定客户");
+		}
+		output.getData().setBuyerRegionTag(customerOutput.getData().getCustomerMarket().getBusinessRegionTag());
 		return output;
 	}
 
@@ -528,7 +514,7 @@ public class WeighingBillController {
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-		CustomerQueryInput cq = new CustomerQueryInput();
+        CustomerQueryInput cq = new CustomerQueryInput();
 		cq.setKeyword(name);
 		cq.setMarketId(user.getFirmId());
 		BaseOutput<List<CustomerExtendDto>> output = this.customerRpc.list(cq);
