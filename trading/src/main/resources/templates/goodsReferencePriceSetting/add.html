@@ -194,17 +194,17 @@
                     parent.bs4pop.alert("至少选择一条规则", {type: 'error'});
                     return false;
                 }
-                let genericFixedPrice = this.selectedGenericRule.fixedPrice;
+                let genericFixedPrice = this.selectedGenericRule.fixedPriceText;
                 if (this.selectedGenericRule.referenceRule == 3 && (!exp.test(genericFixedPrice) || genericFixedPrice == 0)){
                     parent.bs4pop.alert("常规规则固定价格必须是0.01-999.99之间的数字且最多两位小数", {type: 'error'});
                     return false;
                 }
-                let farmerFixedPrice = this.selectedTraditionFarmerRule.fixedPrice;
+                let farmerFixedPrice = this.selectedTraditionFarmerRule.fixedPriceText;
                 if (this.selectedTraditionFarmerRule.referenceRule == 3 && (!exp.test(farmerFixedPrice) || farmerFixedPrice == 0)){
                     parent.bs4pop.alert("老农规则固定价格必须是0.01-999.99之间的数字且最多两位小数", {type: 'error'});
                     return false;
                 }
-                let selfFixedPrice = this.selectedSelfRule.fixedPrice;
+                let selfFixedPrice = this.selectedSelfRule.fixedPriceText;
                 if (this.selectedSelfRule.referenceRule == 3 && (!exp.test(selfFixedPrice) || selfFixedPrice == 0)){
                     parent.bs4pop.alert("自营规则固定价格必须是0.01-999.99之间的数字且最多两位小数", {type: 'error'});
                     return false;
