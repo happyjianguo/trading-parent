@@ -211,19 +211,22 @@
                 }
                 return true;
             },
+            isEmpty(str){
+                return str == null || str == undefined || str == "";
+            },
             mergeRule2RequestData() {
                 this.requestData.items = [];
-                if (this.selectedGenericRule.referenceRule != ""){
+                if (!this.isEmpty(this.selectedGenericRule.referenceRule)){
                     let selectedGenericRule = this.selectedGenericRule;
                     selectedGenericRule.fixedPrice = parseFloat(selectedGenericRule.fixedPriceText) * 100;
                     this.requestData.items.push(selectedGenericRule);
                 }
-                if (this.selectedTraditionFarmerRule.referenceRule != ""){
+                if (!this.isEmpty(this.selectedTraditionFarmerRule.referenceRule)){
                     let selectedTraditionFarmerRule = this.selectedTraditionFarmerRule;
                     selectedTraditionFarmerRule.fixedPrice = parseFloat(selectedTraditionFarmerRule.fixedPriceText) * 100;
                     this.requestData.items.push(selectedTraditionFarmerRule);
                 }
-                if (this.selectedSelfRule.referenceRule != ""){
+                if (!this.isEmpty(this.selectedSelfRule.referenceRule)){
                     let selectedSelfRule = this.selectedSelfRule;
                     selectedSelfRule.fixedPrice = parseFloat(selectedSelfRule.fixedPriceText) * 100;
                     this.requestData.items.push(selectedSelfRule);
