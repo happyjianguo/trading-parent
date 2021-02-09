@@ -151,15 +151,24 @@
                 }, {
                     field: 'genericItem.referenceRuleText',
                     title: '常规交易参考价规则',
-                    align: 'center'
+                    align: 'center',
+                    formatter: function (value, row) {
+                        return formatReferenceRule(value, row)
+                    }
                 }, {
                     field: 'traditionFarmerItem.referenceRuleText',
                     title: '老农交易参考价规则',
-                    align: 'center'
+                    align: 'center',
+                    formatter: function (value, row) {
+                        return formatReferenceRule(value, row)
+                    }
                 }, {
                     field: 'selfItem.referenceRuleText',
                     title: '自营交易参考价',
-                    align: 'center'
+                    align: 'center',
+                    formatter: function (value, row) {
+                        return formatReferenceRule(value, row)
+                    }
                 }, {
                     field: 'oid',
                     title: '操作',
@@ -180,5 +189,16 @@
                 }
             }
         };
+    }
+
+    function formatReferenceRule(value, row) {
+        if (value == undefined) {
+            return null;
+        }
+        let val = value.split("：");
+        if (row.referenceRule == 3) {
+            return val[0] + "：" + row.fixedPriceText
+        }
+        return val[0];
     }
 </script>

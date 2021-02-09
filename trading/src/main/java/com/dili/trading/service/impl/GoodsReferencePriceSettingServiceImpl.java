@@ -50,12 +50,13 @@ public class GoodsReferencePriceSettingServiceImpl implements GoodsReferencePric
     public void saveOrEdit(ReferencePriceSettingRequestDto requestDto) {
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
         BaseOutput<?> goodsReferencePriceSettingBaseOutput = goodsReferencePriceSettingRpc.saveOrEdit(requestDto);
-        if (goodsReferencePriceSettingBaseOutput.isSuccess()) {
-            // GoodsReferencePriceSetting data = goodsReferencePriceSettingBaseOutput.getData();
-            //  LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
-            LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
-            LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
+        if (!goodsReferencePriceSettingBaseOutput.isSuccess()) {
+            throw new BusinessException(ResultCode.DATA_ERROR, goodsReferencePriceSettingBaseOutput.getMessage());
         }
+        // GoodsReferencePriceSetting data = goodsReferencePriceSettingBaseOutput.getData();
+        //  LoggerContext.put(LoggerConstant.LOG_BUSINESS_ID_KEY, data.getId());
+        LoggerContext.put(LoggerConstant.LOG_OPERATOR_ID_KEY, userTicket.getId());
+        LoggerContext.put(LoggerConstant.LOG_MARKET_ID_KEY, userTicket.getFirmId());
     }
 
     @Override
