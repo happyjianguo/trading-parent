@@ -780,6 +780,75 @@ function daysDistance(startDate, endDate) {
         })
     });
     
+    
+    function swipeBuyerCard(){
+        let cardNum;
+        let json = JSON.parse(callbackObj.readCardNumber());
+        if (json.code == 0) {
+            cardNum = json.data;
+        } else {
+            bs4pop.alert(json.message, {type: "error"});
+            return false;
+        }
+        if (cardNum!=-1) {
+            $.ajax({
+                type:'GET',
+                url:'${contextPath!}/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
+                dataType:'json',
+                success:function(result) {
+                    if (result.success) {
+                        // 1-买家 2-卖家
+                        $('#buyerCardNo').val(cardNum);
+                        $('#show_buyer_name_by_card_name').val(result.data.customerName);
+                    }else{
+                        bs4pop.alert(result.message, {type: "error"});
+                        $('#buyerCardNo').val('');
+                        $('#show_buyer_name_by_card_name').val('');
+                    }
+                },
+                error:function(){
+
+                }
+            });
+        }else{
+            bs4pop.alert("未读取到卡号!", {type: 'error'});
+        }
+    }
+    function swipeSellerCard(){
+        let cardNum;
+        let json = JSON.parse(callbackObj.readCardNumber());
+        if (json.code == 0) {
+            cardNum = json.data;
+        } else {
+            bs4pop.alert(json.message, {type: "error"});
+            return false;
+        }
+        if (cardNum!=-1) {
+            $.ajax({
+                type:'GET',
+                url:'${contextPath!}/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
+                dataType:'json',
+                success:function(result) {
+                    if (result.success) {
+                        // 1-买家 2-卖家
+                        $('#sellerCardNo').val(cardNum);
+                        $('#show_seller_name_by_card_name').val(result.data.customerName);
+                    }else{
+                        bs4pop.alert(result.message, {type: "error"});
+                        $("#sellerCardNo").empty();
+                        $('#show_seller_name_by_card_name').val('');
+                    }
+                },
+                error:function(){
+
+                }
+            });
+        }else{
+            bs4pop.alert("未读取到卡号!", {type: 'error'});
+        }
+    }
+    
+    
     /**
 	 * ***************************************自定义事件区
 	 * end*************************************
