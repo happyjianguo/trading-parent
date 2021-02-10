@@ -15,6 +15,7 @@ import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
 import com.dili.orders.domain.PaymentType;
 import com.dili.orders.domain.TradingBillType;
+import com.dili.orders.domain.WeighingBill;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.*;
@@ -25,6 +26,7 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
 import com.dili.ss.dto.DTOUtils;
+import com.dili.ss.exception.AppException;
 import com.dili.ss.idempotent.annotation.Idempotent;
 import com.dili.ss.idempotent.annotation.Token;
 import com.dili.ss.metadata.ValueProvider;
@@ -34,6 +36,7 @@ import com.dili.ss.redis.service.RedisUtil;
 import com.dili.trading.dto.TraceTradeBillResponseDto;
 import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
 import com.dili.trading.rpc.AuthenticationRpc;
+import com.dili.trading.rpc.FarmerWeghingBillRpc;
 import com.dili.trading.rpc.ProprietaryWeighingBillRpc;
 import com.dili.trading.rpc.QualityTraceRpc;
 import com.dili.trading.rpc.WeighingBillRpc;
@@ -109,6 +112,8 @@ public class ProprietaryWeighingBillController {
 	private RedisDistributedLock redisDistributedLock;
 	@Autowired
 	private WeighingBillRpc oweighingBillRpc;
+	@Autowired
+	private FarmerWeghingBillRpc farmerWeighingBillRpc;
 
 	/**
 	 * 列表页
@@ -540,7 +545,7 @@ public class ProprietaryWeighingBillController {
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-        CustomerQueryInput cq = new CustomerQueryInput();
+		CustomerQueryInput cq = new CustomerQueryInput();
 		cq.setKeyword(name);
 		cq.setMarketId(user.getFirmId());
 		BaseOutput<List<CustomerExtendDto>> output = this.customerRpc.list(cq);
@@ -661,7 +666,14 @@ public class ProprietaryWeighingBillController {
 	@Token(url = "/proprietaryTradingBill/operatorInvalidate.action")
 	@GetMapping("/operatorInvalidate.html")
 	public String validatePassword(Long id, ModelMap modelMap) {
-		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "invalidateHandler");
+		WeighingBillQueryDto queryDto = new WeighingBillQueryDto();
+		queryDto.setId(id);
+		BaseOutput<WeighingBill> output = this.oweighingBillRpc.findById(id);
+		if (!output.isSuccess()) {
+			throw new AppException(output.getMessage());
+		}
+		modelMap.addAttribute("weighingBillId", id).addAttribute("tradingBillType", output.getData().getTradingBillType()).addAttribute("model", SessionContext.getSessionContext().getUserTicket())
+				.addAttribute("submitHandler", "invalidateHandler");
 		return "proprietaryWeighingBill/validatePassword";
 	}
 
@@ -676,7 +688,7 @@ public class ProprietaryWeighingBillController {
 //	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/operatorInvalidate.action")
-	public BaseOutput<Object> operatorInvalidate(Long id, String operatorPassword, HttpServletRequest request, ModelMap modelMap) {
+	public BaseOutput<Object> operatorInvalidate(@RequestParam Long id, @RequestParam String operatorPassword, @RequestParam Integer tradingBillType, HttpServletRequest request, ModelMap modelMap) {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		// 校验操作员密码
 		BaseOutput<Object> pwdOutput = this.userRpc.validatePassword(user.getId(), operatorPassword);
@@ -702,8 +714,13 @@ public class ProprietaryWeighingBillController {
 			}
 			return pwdOutput;
 		}
-		BaseOutput<Object> output = this.weighingBillRpc.operatorInvalidate(id, user.getId());
-		return output;
+		if (tradingBillType.equals(TradingBillType.FARMER.getValue())) {
+			return this.farmerWeighingBillRpc.operatorInvalidate(id, user.getId());
+		} else if (tradingBillType.equals(TradingBillType.PROPRIETARY.getValue())) {
+			return this.weighingBillRpc.operatorInvalidate(id, user.getId());
+		} else {
+			return BaseOutput.failure("未知的单据类型");
+		}
 	}
 
 	/**
@@ -716,7 +733,14 @@ public class ProprietaryWeighingBillController {
 	@Token(url = "/proprietaryTradingBill/operatorWithdraw.action")
 	@GetMapping("/operatorWithdraw.html")
 	public String operatorWithdraw(Long id, ModelMap modelMap) {
-		modelMap.addAttribute("weighingBillId", id).addAttribute("model", SessionContext.getSessionContext().getUserTicket()).addAttribute("submitHandler", "withdrawHandler");
+		WeighingBillQueryDto queryDto = new WeighingBillQueryDto();
+		queryDto.setId(id);
+		BaseOutput<WeighingBill> output = this.oweighingBillRpc.findById(id);
+		if (!output.isSuccess()) {
+			throw new AppException(output.getMessage());
+		}
+		modelMap.addAttribute("weighingBillId", id).addAttribute("tradingBillType", output.getData().getTradingBillType()).addAttribute("model", SessionContext.getSessionContext().getUserTicket())
+				.addAttribute("submitHandler", "withdrawHandler");
 		return "proprietaryWeighingBill/validatePassword";
 	}
 
@@ -731,7 +755,7 @@ public class ProprietaryWeighingBillController {
 //	@Idempotent(Idempotent.HEADER)
 	@ResponseBody
 	@PostMapping("/operatorWithdraw.action")
-	public BaseOutput<Object> operatorWithdraw(Long id, String operatorPassword, HttpServletRequest request, ModelMap modelMap) {
+	public BaseOutput<Object> operatorWithdraw(@RequestParam Long id, @RequestParam String operatorPassword, @RequestParam Integer tradingBillType, HttpServletRequest request, ModelMap modelMap) {
 		UserTicket user = SessionContext.getSessionContext().getUserTicket();
 		// 校验操作员密码
 		BaseOutput<Object> pwdOutput = this.userRpc.validatePassword(user.getId(), operatorPassword);
