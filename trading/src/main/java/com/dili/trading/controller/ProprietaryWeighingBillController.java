@@ -358,6 +358,9 @@ public class ProprietaryWeighingBillController {
 		if (customerOutput.getData() == null) {
 			return BaseOutput.failure("未查询到指定客户");
 		}
+		List<String> characterTypes = new ArrayList<String>(customerOutput.getData().getCharacterTypeList().size());
+		customerOutput.getData().getCharacterTypeList().forEach(c -> characterTypes.add(c.getCharacterType()));
+		output.getData().setCustomerCharacterTypes(characterTypes);
 		output.getData().setBuyerRegionTag(customerOutput.getData().getCustomerMarket().getBusinessRegionTag());
 		return output;
 	}

@@ -328,6 +328,18 @@ public class FarmerWeighingBillController {
 		if (!output.getData().getAccountInfo().getFirmId().equals(user.getFirmId())) {
 			return BaseOutput.success();
 		}
+		BaseOutput<CustomerExtendDto> customerOutput = this.customerRpc.get(output.getData().getAccountInfo().getCustomerId(), user.getFirmId());
+		if (!customerOutput.isSuccess()) {
+			LOGGER.error(customerOutput.getMessage());
+			return BaseOutput.failure("查询客户信息失败");
+		}
+		if (customerOutput.getData() == null) {
+			return BaseOutput.failure("未查询到指定客户");
+		}
+		List<String> characterTypes = new ArrayList<String>(customerOutput.getData().getCharacterTypeList().size());
+		customerOutput.getData().getCharacterTypeList().forEach(c -> characterTypes.add(c.getCharacterType()));
+		output.getData().setCustomerCharacterTypes(characterTypes);
+		output.getData().setBuyerRegionTag(customerOutput.getData().getCustomerMarket().getBusinessRegionTag());
 		return output;
 	}
 
@@ -511,7 +523,7 @@ public class FarmerWeighingBillController {
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-        CustomerQueryInput cq = new CustomerQueryInput();
+		CustomerQueryInput cq = new CustomerQueryInput();
 		cq.setKeyword(name);
 		cq.setMarketId(user.getFirmId());
 		BaseOutput<List<CustomerExtendDto>> output = this.customerRpc.list(cq);
