@@ -268,15 +268,15 @@ function daysDistance(startDate, endDate) {
                     // 调用c端打印
                     if (rows[0].statement.state==4) {
 // callbackObj.printDirect(JSON.stringify(data.data),"WeighingDocument");
-                        callbackObj.printPreview(JSON.stringify(data.data),"1","WeighingDocument",0);
+                        callbackObj.printPreview(JSON.stringify(data.data),"1","ProprietarySettlementDocument",0);
                     }else if (rows[0].statement.state==2) {
                         // 冻结单打印过磅单数据
                         if(rows[0].measureType==1){
 // callbackObj.printDirect(JSON.stringify(data.data),"SettlementDocument");
-                            callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementDocument",0);
+                            callbackObj.printPreview(JSON.stringify(data.data),"1","ProprietarySettlementDocument",0);
                         }else{
 // callbackObj.printDirect(JSON.stringify(data.data),"SettlementPieceDocument");
-                            callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementPieceDocument",0);
+                            callbackObj.printPreview(JSON.stringify(data.data),"1","ProprietarySettlementPieceDocument",0);
                         }
                     }
                 }           
