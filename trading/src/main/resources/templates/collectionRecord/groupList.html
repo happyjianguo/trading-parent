@@ -153,6 +153,7 @@
         $('#buyerCardNo').on(
             'input',
             function(cardNo) {
+                let that = $(this);
                 $.ajax({
                     type : "POST",
                     dataType : "json",
@@ -162,13 +163,23 @@
                     },
                     success : function(data) {
                         if (data.code == '200') {
+                            debugger
                             $('#show_buyer_name_by_card_name').val(
                                 data.data.customerName);
                             $('#accountBuyerId').val(data.data.accountId);
+                            $('#buyerName').val(data.data.customerName);
+                            $('#buyerIdI').val(data.data.customerId);
+                            $('#show_buyer_name_by_card_name').val(data.data.customerName);
+
+                            let targetId = $('#buyerCardNoI');
+                            targetId.empty();
+                            targetId.html('<option value="'+ that.val()  +'" selected>' + that.val() + '</option>');
+                            getBuyerAccount(that.val());
                         } else {
                             $('#show_buyer_name_by_card_name').val('');
-                            // bs4pop.alert("客户获取失败!", {type: 'error'});
                             $('#accountBuyerId').val('');
+                            $("#buyerCardNoI").empty();
+                            $('#show_buyer_name_by_card_name').val('');
                         }
                     },
                     error : function() {
@@ -182,6 +193,7 @@
         $('#sellerCardNo').on(
             'input',
             function(cardNo) {
+                let that = $(this);
                 $.ajax({
                     type : "POST",
                     dataType : "json",
@@ -191,13 +203,20 @@
                     },
                     success : function(data) {
                         if (data.code == '200') {
-                            $('#show_seller_name_by_card_name').val(
-                                data.data.customerName);
+                            $('#show_seller_name_by_card_name').val(data.data.customerName);
                             $('#accountSellerId').val(data.data.accountId);
+
+                            $('#sellerName').val(data.data.customerName);
+                            let targetId = $('#sellerCardNoI');
+                            targetId.empty();
+                            targetId.html('<option value="'+ that.val()  +'" selected>' +that.val() + '</option>');
+                            getSellerAccount(that.val());
                         } else {
                             $('#show_seller_name_by_card_name').val('');
                             // bs4pop.alert("客户获取失败!", {type: 'error'});
                             $('#accountSellerId').val('');
+                            $("#sellerCardNoI").empty();
+                            $('#show_seller_name_by_card_name').val('');
                         }
                     },
                     error : function() {
