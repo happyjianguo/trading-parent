@@ -2,6 +2,7 @@
 <div class="container-fluid">
 
 	<form class="form" id="queryForm" role="form">
+		<input type="hidden" name="tradingBillType" id="tradingBillType" value="1">
 		<div class="row  row-cols-6">
 			<div class="form-group col">
 				<label for="">单据状态</label> <select id="statementStates" name="statementStates" class="form-control">
@@ -15,10 +16,9 @@
 			</div>
 			<div class="form-group col-auto" style="width: 350px">
 				<div class="form-group col">
-                    <label tlog  for="inspectionItem">商品名称</label>
-                    <select id="goodsIds" name="goodsIds" class="form-control" required="true"  multiple="multiple"></select>
-                    <#bselect2 _id="goodsIds" _mode="remote" _value="" _option="" _text=""  _optionVariable="assetsNamesAutoCompleteOption" _required="true"/>
-                </div>
+					<label tlog for="inspectionItem">商品名称</label> <select id="goodsIds" name="goodsIds" class="form-control" required="true" multiple="multiple"></select>
+					<#bselect2 _id="goodsIds" _mode="remote" _value="" _option="" _text="" _optionVariable="assetsNamesAutoCompleteOption" _required="true" />
+				</div>
 			</div>
 			<div class="form-group col-auto" style="width: 350px">
 				<label for="buyerName" class="">买方</label>
@@ -53,12 +53,14 @@
 				<label for="buyerName" class="">买方卡</label>
 				<div class="input-group">
 					<input type="text" class="form-control" id="buyerCardNo" name="buyerCardNo" /> <input type="text" class="form-control" id="show_buyer_name_by_card_name" readonly />
+					<button type="button" class="btn btn-outline-primary" onclick="javascript:swipeBuyerCard();">刷卡</button>
 				</div>
 			</div>
 			<div class="form-group col-auto" style="width: 350px">
 				<label for="sellerName" class="">卖方卡</label>
 				<div class="input-group">
 					<input type="text" class="form-control" id="sellerCardNo" name="sellerCardNo" /> <input type="text" class="form-control" id="show_seller_name_by_card_name" readonly />
+					<button type="button" class="btn btn-outline-primary" onclick="javascript:swipeSellerCard();">刷卡</button>
 				</div>
 			</div>
 			<div class="form-group col">
@@ -101,9 +103,9 @@
 				<button type="button" class="btn btn-outline-primary mr-2" onclick="queryDataHandler()">
 					<i class="fa fa-search"></i> 查询
 				</button>
-				<button type="button" class="btn btn-outline-primary" onclick="javascript:swipeCard();">
+				<!-- <button type="button" class="btn btn-outline-primary" onclick="javascript:swipeCard();">
 					<i class="fa fa-credit-card-alt"></i> 刷卡
-				</button>
+				</button> -->
 			</div>
 		</div>
 	</form>
@@ -135,23 +137,15 @@
 					<i class="fa fa-download"></i> 导出
 				</button>
 			</div>
-			<table id="grid" data-toggle="table"
-				data-title="过磅单列表"  data-toolbar="#toolbar"
-				data-pagination="true" data-page-number="1"
-				data-method="post"
-                       data-page-size="10" data-query-params="queryParams"
-                       data-side-pagination="server"
-                       data-content-type="application/json"
-                       data-single-select="true" data-click-to-select="true" data-checkbox-header="true"
-                       data-unique-id="serialNo" data-sort-name="serial_no" data-sort-order="desc"
-                       data-icons="bui.variable.icons"
-				   		data-buttons-class="primary" data-show-refresh="true" data-show-fullscreen="true" data-show-columns="true">
+			<table id="grid" data-toggle="table" data-title="过磅单列表" data-toolbar="#toolbar" data-pagination="true" data-page-number="1" data-method="post" data-page-size="10" data-query-params="queryParams"
+				data-side-pagination="server" data-content-type="application/json" data-single-select="true" data-click-to-select="true" data-checkbox-header="true" data-unique-id="serialNo"
+				data-sort-name="serial_no" data-sort-order="desc" data-icons="bui.variable.icons" data-buttons-class="primary" data-show-refresh="true" data-show-fullscreen="true" data-show-columns="true">
 				<thead>
 					<tr>
 						<th data-radio="true"></th>
 						<th data-field="serialNo" data-sort-name="serial_no" data-align="center" data-sortable="true">过磅单号</th>
 						<th data-field="statement.lastOperationTime" data-align="center" data-sort-name="last_operation_time" data-sortable="true" data-provider="datetimeProviderPlus">操作时间</th>
-						<th data-field="statement.serialNo" data-sort-name="serial_no"  data-align="center" data-sortable="true">结算单号</th>
+						<th data-field="statement.serialNo" data-sort-name="serial_no" data-align="center" data-sortable="true">结算单号</th>
 						<th data-field="buyerCode" data-align="center" data-sort-name="buyer_code" data-sortable="true">买方编号</th>
 						<th data-field="buyerName" data-align="center" data-sort-name="CONVERT(buyer_name using gbk)" data-sortable="true">买方名称</th>
 						<th data-field="buyerCardNo" data-align="center" data-sort-name="buyer_card_no" data-sortable="true">买方卡号</th>
@@ -176,7 +170,7 @@
 						<th data-field="statement.state" data-align="center" data-sort-name="ws_state" data-sortable="true" data-provider="weighingStatementStateProvider">单据状态</th>
 						<th data-field="statement.lastOperatorUserName" data-sort-name="last_operator_user_name" data-align="center" data-sortable="true">操作员工号</th>
 						<th data-field="statement.lastOperatorName" data-sort-name="CONVERT(last_operator_name using gbk)" data-align="center" data-sortable="true">操作员名称</th>
-						<th data-field="latestPdResult"  data-align="center" data-sortable="false">检测数值</th>
+						<th data-field="latestPdResult" data-align="center" data-sortable="false">检测数值</th>
 						<th data-field="detectStateDesc" data-align="center" data-sortable="false">检测结果</th>
 					</tr>
 				</thead>
@@ -204,37 +198,36 @@
 </div>
 
 <script>
+	window.gatewayUrl = '<#config name="gatewayUrl"/>';
 
-window.gatewayUrl='<#config name="gatewayUrl"/>';
-
-// 商品
-var assetsNamesAutoCompleteOption = {
-    width: '100%',
-    language: 'zh-CN',
-    minimumInputLength:1,
-    maximumSelectionLength: 20,
-    allowClear : true,
-    placeholder: '',
-    ajax: {
-        type:'post',
-        url: '/assets/listNormal.action',
-            data: function (params) {
-            return {
-                keyword: params.term,
-            }
-        },
-        processResults: function (data) {
-            if(data.length){
-                return {
-                    results: $.map(data, function (item) {
-                        item.text =item.name ;
-                        return item;
-                    })
-                };
-            }
-        }
-    }
-}
+	// 商品
+	var assetsNamesAutoCompleteOption = {
+		width : '100%',
+		language : 'zh-CN',
+		minimumInputLength : 1,
+		maximumSelectionLength : 20,
+		allowClear : true,
+		placeholder : '',
+		ajax : {
+			type : 'post',
+			url : '/assets/listNormal.action',
+			data : function(params) {
+				return {
+					keyword : params.term,
+				}
+			},
+			processResults : function(data) {
+				if (data.length) {
+					return {
+						results : $.map(data, function(item) {
+							item.text = item.name;
+							return item;
+						})
+					};
+				}
+			}
+		}
+	}
 
 	$(function() {
 		$('#buyerCardNo').on(

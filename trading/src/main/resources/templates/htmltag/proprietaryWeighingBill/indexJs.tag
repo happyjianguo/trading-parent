@@ -13,6 +13,73 @@ function clearQueryForm(){
     $('#goodsIds').val(null).trigger('change');
 }
 
+function swipeBuyerCard(){
+        let cardNum;
+        let json = JSON.parse(callbackObj.readCardNumber());
+        if (json.code == 0) {
+            cardNum = json.data;
+        } else {
+            bs4pop.alert(json.message, {type: "error"});
+            return false;
+        }
+        if (cardNum!=-1) {
+            $.ajax({
+                type:'GET',
+                url:'${contextPath!}/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
+                dataType:'json',
+                success:function(result) {
+                    if (result.success) {
+                        // 1-买家 2-卖家
+                        $('#buyerCardNo').val(cardNum);
+                        $('#show_buyer_name_by_card_name').val(result.data.customerName);
+                    }else{
+                        bs4pop.alert(result.message, {type: "error"});
+                        $('#buyerCardNo').val('');
+                        $('#show_buyer_name_by_card_name').val('');
+                    }
+                },
+                error:function(){
+
+                }
+            });
+        }else{
+            bs4pop.alert("未读取到卡号!", {type: 'error'});
+        }
+    }
+    function swipeSellerCard(){
+        let cardNum;
+        let json = JSON.parse(callbackObj.readCardNumber());
+        if (json.code == 0) {
+            cardNum = json.data;
+        } else {
+            bs4pop.alert(json.message, {type: "error"});
+            return false;
+        }
+        if (cardNum!=-1) {
+            $.ajax({
+                type:'GET',
+                url:'${contextPath!}/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
+                dataType:'json',
+                success:function(result) {
+                    if (result.success) {
+                        // 1-买家 2-卖家
+                        $('#sellerCardNo').val(cardNum);
+                        $('#show_seller_name_by_card_name').val(result.data.customerName);
+                    }else{
+                        bs4pop.alert(result.message, {type: "error"});
+                        $("#sellerCardNo").empty();
+                        $('#show_seller_name_by_card_name').val('');
+                    }
+                },
+                error:function(){
+
+                }
+            });
+        }else{
+            bs4pop.alert("未读取到卡号!", {type: 'error'});
+        }
+    }
+
 function doPrintHandler(){
     
     var visibleColumns= $('#grid').bootstrapTable('getVisibleColumns');
@@ -201,15 +268,15 @@ function daysDistance(startDate, endDate) {
                     // 调用c端打印
                     if (rows[0].statement.state==4) {
 // callbackObj.printDirect(JSON.stringify(data.data),"WeighingDocument");
-                        callbackObj.printPreview(JSON.stringify(data.data),"1","WeighingDocument",0);
+                        callbackObj.printPreview(JSON.stringify(data.data),"1","ProprietarySettlementDocument",0);
                     }else if (rows[0].statement.state==2) {
                         // 冻结单打印过磅单数据
                         if(rows[0].measureType==1){
 // callbackObj.printDirect(JSON.stringify(data.data),"SettlementDocument");
-                            callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementDocument",0);
+                            callbackObj.printPreview(JSON.stringify(data.data),"1","ProprietarySettlementDocument",0);
                         }else{
 // callbackObj.printDirect(JSON.stringify(data.data),"SettlementPieceDocument");
-                            callbackObj.printPreview(JSON.stringify(data.data),"1","SettlementPieceDocument",0);
+                            callbackObj.printPreview(JSON.stringify(data.data),"1","ProprietarySettlementPieceDocument",0);
                         }
                     }
                 }           

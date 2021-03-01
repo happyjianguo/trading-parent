@@ -56,13 +56,17 @@
 			<div class="form-group col-auto" style="width: 350px">
 				<label for="buyerName" class="">买方卡</label>
 				<div class="input-group">
-					<input type="text" class="form-control" id="buyerCardNo" name="buyerCardNo" /> <input type="text" class="form-control" id="show_buyer_name_by_card_name" readonly />
+					<input type="text" class="form-control" id="buyerCardNo" name="buyerCardNo" /> 
+					<input type="text" class="form-control" id="show_buyer_name_by_card_name" readonly />
+					<button type="button" class="btn btn-outline-primary" onclick="javascript:swipeBuyerCard();">刷卡</button>
 				</div>
 			</div>
 			<div class="form-group col-auto" style="width: 350px">
 				<label for="sellerName" class="">卖方卡</label>
 				<div class="input-group">
-					<input type="text" class="form-control" id="sellerCardNo" name="sellerCardNo" /> <input type="text" class="form-control" id="show_seller_name_by_card_name" readonly />
+					<input type="text" class="form-control" id="sellerCardNo" name="sellerCardNo" /> 
+					<input type="text" class="form-control" id="show_seller_name_by_card_name" readonly />
+					<button type="button" class="btn btn-outline-primary" onclick="javascript:swipeSellerCard();">刷卡</button>
 				</div>
 			</div>
 			<div class="form-group col">
@@ -110,9 +114,9 @@
 				<button type="button" class="btn btn-outline-primary mr-2" onclick="queryDataHandler()">
 					<i class="fa fa-search"></i> 查询
 				</button>
-				<button type="button" class="btn btn-outline-primary" onclick="javascript:swipeCard();">
+				<!-- <button type="button" class="btn btn-outline-primary" onclick="javascript:swipeCard();">
 					<i class="fa fa-credit-card-alt"></i> 刷卡
-				</button>
+				</button> -->
 			</div>
 		</div>
 	</form>
@@ -131,9 +135,9 @@
 					<i class="fa fa-pencil-square-o"></i> 撤销
 				</button>
 				</#resource>
-				<button type="button" class="btn btn-primary" onclick="openDetailHandler()">
+				<!-- <button type="button" class="btn btn-primary" onclick="openDetailHandler()">
 					<i class="fa fa-eye"></i> 查看
-				</button>
+				</button> -->
 				<button id="btn_reprint" type="button" class="btn btn-primary" onclick="doReprintHandler()">
 					<i class="fa fa-print"></i> 补打
 				</button>

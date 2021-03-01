@@ -220,5 +220,21 @@
             return false;
         }
     });
+    
+ // 客户端调用
+    function pswClientHandler(data){
+        var json = JSON.parse(data);
+        if (json.code == 0) {
+            $('#password').val(json.data);
+        } else {
+            bs4pop.alert(json.message, {width:'350px',height:"200px",type: "error"},function () {
+                $('#password').val('');
+                setTimeout(function(){
+                    $('#password').focus();
+                }, 500)
+            });
+            return false;
+        }
+    }
 
 </script>

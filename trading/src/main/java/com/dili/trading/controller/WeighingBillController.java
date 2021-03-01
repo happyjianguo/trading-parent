@@ -330,6 +330,9 @@ public class WeighingBillController {
 		if (customerOutput.getData() == null) {
 			return BaseOutput.failure("未查询到指定客户");
 		}
+		List<String> characterTypes = new ArrayList<String>(customerOutput.getData().getCharacterTypeList().size());
+		customerOutput.getData().getCharacterTypeList().forEach(c -> characterTypes.add(c.getCharacterType()));
+		output.getData().setCustomerCharacterTypes(characterTypes);
 		output.getData().setBuyerRegionTag(customerOutput.getData().getCustomerMarket().getBusinessRegionTag());
 		return output;
 	}
@@ -514,7 +517,7 @@ public class WeighingBillController {
 		if (user == null) {
 			return BaseOutput.failure("用户未登录");
 		}
-        CustomerQueryInput cq = new CustomerQueryInput();
+		CustomerQueryInput cq = new CustomerQueryInput();
 		cq.setKeyword(name);
 		cq.setMarketId(user.getFirmId());
 		BaseOutput<List<CustomerExtendDto>> output = this.customerRpc.list(cq);
