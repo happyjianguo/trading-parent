@@ -385,7 +385,7 @@ public class ProprietaryWeighingBillController {
 	@ResponseBody
 	@PostMapping("/listPage.action")
 	public String listPage(@RequestBody WeighingBillQueryDto query) {
-		if (query.getTradeType() == null) {
+		if (query.getTradingBillType() == null) {
 			query.setTradingBillTypeList(Arrays.asList(TradingBillType.FARMER.getValue(), TradingBillType.PROPRIETARY.getValue()));
 		}
 		// 如果市场id为空，则加入
