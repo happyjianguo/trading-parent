@@ -143,9 +143,12 @@
                     success: function (ret) {
                         if (ret.success){
                             that.detailInfo = ret.data;
-                            that.selectedGenericRule=  that.detailInfo.genericItem;
+                            that.selectedGenericRule = that.detailInfo.genericItem;
+                            that.selectedGenericRule.tradeType = 1;
                             that.selectedTraditionFarmerRule = that.detailInfo.traditionFarmerItem;
+                            that.selectedTraditionFarmerRule.tradeType = 2;
                             that.selectedSelfRule = that.detailInfo.selfItem;
+                            that.selectedSelfRule.tradeType = 3;
                             that.requestData.goodsId = that.detailInfo.goodsId;
                             that.requestData.goodsName = that.detailInfo.goodsName;
                             that.requestData.parentGoodsId = that.detailInfo.parentGoodsId;
