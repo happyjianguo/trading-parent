@@ -11,6 +11,7 @@ function clearQueryForm(){
     $('#statementStates').val(null).trigger('change');
     $('#tradeType').val(null).trigger('change');
     $('#goodsIds').val(null).trigger('change');
+    $('#departmentId').val(null).trigger('change');
 }
 
 function swipeBuyerCard(){
