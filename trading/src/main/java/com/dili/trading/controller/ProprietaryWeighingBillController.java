@@ -414,7 +414,13 @@ public class ProprietaryWeighingBillController {
 			String value = (String) ranges.get(0).get("value");
 			// 如果value为0，则为个人
 			if (value.equals("0")) {
-				query.setOperatorId(SessionContext.getSessionContext().getUserTicket().getId());
+				if (query.getOperatorId() == null) {
+					query.setOperatorId(SessionContext.getSessionContext().getUserTicket().getId());
+				} else {
+					if (!query.getOperatorId().equals(SessionContext.getSessionContext().getUserTicket().getId())) {
+						return new EasyuiPageOutput(0L, new ArrayList<Object>(0)).toString();
+					}
+				}
 			}
 		}
 
