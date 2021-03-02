@@ -5,8 +5,8 @@
     let _grid = $('#grid');
     let _form = $('#_form');
     var dia, diaPay;
-
-
+    let cnt=0;
+    let moneyAmountSpan=0;
     var buyerNameQueryAutoCompleteOption = {
         serviceUrl: '/weighingBill/listCustomerByKeyword.action',
         paramName: 'keyword',
@@ -420,6 +420,8 @@
         // size = size > 10 ? size : 10;
         $('#days').text('');
         $('#moneySpan').text('');
+        cnt=0;
+        moneyAmountSpan=0;
         _grid.bootstrapTable('refreshOptions', {
             url: '/collectionRecord/groupListByQueryParams.action',
             // pageSize: parseInt(size)
@@ -540,8 +542,6 @@
         });
 
     }
-    let cnt=0;
-    let moneyAmountSpan=0;
     _grid.on('check.bs.table', function (row, $element) {
         cnt+=1;
         moneyAmountSpan+=parseFloat($element.amount);
