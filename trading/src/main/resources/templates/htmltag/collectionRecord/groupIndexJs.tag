@@ -418,9 +418,8 @@
         // _grid.bootstrapTable('refresh');
         // let size = ($(window).height() - $('#queryForm').height() - 210) / 40;
         // size = size > 10 ? size : 10;
-        $('#days').val('');
-        $('#moneySpan').val(
-            '');
+        $('#days').text('');
+        $('#moneySpan').text('');
         _grid.bootstrapTable('refreshOptions', {
             url: '/collectionRecord/groupListByQueryParams.action',
             // pageSize: parseInt(size)
