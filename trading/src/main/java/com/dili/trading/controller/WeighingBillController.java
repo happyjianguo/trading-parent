@@ -14,6 +14,7 @@ import com.dili.customer.sdk.domain.query.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
+import com.dili.orders.domain.TradingBillType;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.*;
@@ -256,6 +257,9 @@ public class WeighingBillController {
 		// 需要加入市场
 		if (Objects.isNull(dto.getMarketId())) {
 			dto.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
+		}
+		if (dto.getTradingBillType() == null) {
+			dto.setTradingBillType(TradingBillType.WEIGHING.getValue());
 		}
 		if (CollectionUtils.isEmpty(dto.getDepartmentIds())) {
 			List<Map> deptDataAuths = SessionContext.getSessionContext().dataAuth(DataAuthType.DEPARTMENT.getCode());
