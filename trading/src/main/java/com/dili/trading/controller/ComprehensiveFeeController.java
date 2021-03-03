@@ -5,11 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.dili.assets.sdk.dto.CusCategoryDTO;
 import com.dili.assets.sdk.dto.CusCategoryQuery;
 import com.dili.assets.sdk.rpc.AssetsRpc;
-import com.dili.customer.sdk.domain.CharacterType;
 import com.dili.customer.sdk.domain.dto.CharacterSubTypeDto;
 import com.dili.customer.sdk.domain.dto.CharacterTypeGroupDto;
 import com.dili.customer.sdk.domain.dto.CustomerExtendDto;
-import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
+import com.dili.customer.sdk.domain.query.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.domain.ComprehensiveFee;
 import com.dili.orders.domain.ComprehensiveFeeType;
@@ -38,18 +37,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.*;
-import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 检测收费controller

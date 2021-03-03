@@ -77,55 +77,18 @@
         $(window).resize(function () {
             _grid.bootstrapTable('resetView')
         });
-        _grid.bootstrapTable('refreshOptions', {
-            url: '/goodsReferencePriceSetting/getGoodsByParentId.action',
-            columns: [
-                {
-                    field: 'goodsName',
-                    title: '品类名称 ',
-                    align: 'center'
-                },   {
-                    field: 'referenceRule',
-                    title: '参考价规则',
-                    align: 'center'
-                },{
-                    field: 'oid',
-                    title: '操作',
-                    align: 'center',
-                    formatter: function (value, row, index) {
-                        var actions = [];
-                        actions.push('<a href="#" onclick="edit(\'' + row.goodsId + '\',\'' + row.goodsName + '\',\'' + row.parentGoodsId + '\',\'' + row.referenceRule + '\')"><i class="fa fa-edit"></i>编辑</a> ');
-                        return actions.join('');
-                    }
-                }
-            ],
-        });
+        let tableOptions = createTableOptions('/goodsReferencePriceSetting/getGoodsByParentId.action');
+        _grid.bootstrapTable('refreshOptions', tableOptions);
     }
 
 
     /**
      * 打开新增/修改窗口
      */
-    function edit(goodsId, goodsName, parentGoodsId, referenceRule) {
-        if(referenceRule == "undefined" || referenceRule == "" || referenceRule == "规则1")
-        {
-            referenceRule = 1;
-        }
-        else if(referenceRule == "规则2")
-        {
-            referenceRule = 2;
-        }
-        else if(referenceRule == "规则3")
-        {
-            referenceRule = 3;
-        }
-        else if(referenceRule == "无")
-        {
-            referenceRule = 4;
-        }
+    function edit(goodsId) {
         dia = bs4pop.dialog({
             title: '新增价格预警',//对话框title
-            content: '${contextPath}/goodsReferencePriceSetting/add.html?goodsId=' + goodsId + '&goodsName=' + goodsName + '&parentGoodsId='+ parentGoodsId +'&referenceRule=' + referenceRule, //对话框内容，可以是 string、element，$object
+            content: '${contextPath}/goodsReferencePriceSetting/add.html?goodsId=' + goodsId,
             width: '60%',//宽度
             height: '85%',//高度
             isIframe: true,//默认是页面层，非iframe
@@ -171,31 +134,71 @@
         $(window).resize(function () {
             _grid.bootstrapTable('resetView')
         });
-        _grid.bootstrapTable('refreshOptions', {
-            url: '/goodsReferencePriceSetting/getGoodsByKeyword.action',
+        let tableOptions = createTableOptions('/goodsReferencePriceSetting/getGoodsByKeyword.action');
+        _grid.bootstrapTable('refreshOptions', tableOptions);
+        _grid.bootstrapTable('refresh');
+    }
+    /*****************************************函数区 end**************************************/
+
+    function createTableOptions(url) {
+        return {
+            url: url,
             columns: [
                 {
                     field: 'goodsName',
                     title: '品类名称 ',
                     align: 'center'
-                },   {
-                    field: 'referenceRule',
-                    title: '参考价规则',
-                    align: 'center'
-                },{
+                }, {
+                    field: 'genericItem.referenceRuleText',
+                    title: '常规交易参考价规则',
+                    align: 'center',
+                    formatter: function (value, row) {
+                        return formatReferenceRule(value, row)
+                    }
+                }, {
+                    field: 'traditionFarmerItem.referenceRuleText',
+                    title: '老农交易参考价规则',
+                    align: 'center',
+                    formatter: function (value, row) {
+                        return formatReferenceRule(value, row)
+                    }
+                }, {
+                    field: 'selfItem.referenceRuleText',
+                    title: '自营交易参考价',
+                    align: 'center',
+                    formatter: function (value, row) {
+                        return formatReferenceRule(value, row)
+                    }
+                }, {
                     field: 'oid',
                     title: '操作',
                     align: 'center',
                     formatter: function (value, row, index) {
                         var actions = [];
-                        actions.push('<a href="#" onclick="edit(\'' + row.goodsId + '\',\'' + row.goodsName + '\',\'' + row.parentGoodsId + '\',\'' + row.referenceRule + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a href="#" onclick="edit(\'' + row.goodsId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
                         return actions.join('');
                     }
                 }
             ],
-        });
-        _grid.bootstrapTable('refresh');
+            responseHandler: function (res) {
+                if (res.success) {
+                    return res.data;
+                } else {
+                    bs4pop.alert(res.message, {type: 'error'});
+                    return null;
+                }
+            }
+        };
     }
-    /*****************************************函数区 end**************************************/
 
+    function formatReferenceRule(value, row) {
+        if (value == undefined) {
+            return null;
+        }
+        let val = value.split("：");
+        if (row.referenceRule == 3) {
+            return val[0] + "：" + row.fixedPriceText
+        }
+        return val[0];
+    }
 </script>

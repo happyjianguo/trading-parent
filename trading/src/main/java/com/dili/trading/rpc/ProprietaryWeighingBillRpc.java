@@ -22,54 +22,51 @@ import com.dili.orders.dto.WeighingStatementPrintDto;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.PageOutput;
 
-@FeignClient(name = "order-service", contextId = "weighingBill", url = "${orderService.url:}", configuration = FeignHeaderConfig.class)
-public interface WeighingBillRpc {
+@FeignClient(name = "order-service", contextId = "proprietaryWeighingBill", url = "${orderService.url:}", configuration = FeignHeaderConfig.class)
+public interface ProprietaryWeighingBillRpc {
 
-	@RequestMapping("/api/weighingBill/findById")
-	BaseOutput<WeighingBill> findById(@RequestParam("id") Long id);
-
-	@RequestMapping(value = "/api/weighingBill/insert")
+	@RequestMapping(value = "/api/proprietaryWeighingBill/insert")
 	BaseOutput<WeighingStatement> add(@RequestBody WeighingBill weighingBill);
 
-	@RequestMapping(value = "/api/weighingBill/update")
+	@RequestMapping(value = "/api/proprietaryWeighingBill/update")
 	BaseOutput<WeighingStatement> update(@RequestBody WeighingBill weighingBill);
 
-	@RequestMapping(value = "/api/weighingBill/settle")
-	BaseOutput<WeighingStatement> settle(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "operatorId") Long operatorId,
-			@RequestParam(value = "marketId") Long marketId);
+	@RequestMapping(value = "/api/proprietaryWeighingBill/settle")
+	BaseOutput<WeighingStatement> settle(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword", required = false) String buyerPassword,
+			@RequestParam(value = "operatorId") Long operatorId, @RequestParam(value = "marketId") Long marketId);
 
-	@RequestMapping(value = "/api/weighingBill/withdraw")
+	@RequestMapping(value = "/api/proprietaryWeighingBill/withdraw")
 	BaseOutput<Object> withdraw(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "sellerPassword") String sellerPassword,
 			@RequestParam(value = "operatorId") Long operatorId);
 
-	@RequestMapping(value = "/api/weighingBill/invalidate")
+	@RequestMapping(value = "/api/proprietaryWeighingBill/invalidate")
 	BaseOutput<Object> invalidate(@RequestParam(value = "id") Long id, @RequestParam(value = "buyerPassword") String buyerPassword, @RequestParam(value = "sellerPassword") String sellerPassword,
 			@RequestParam(value = "operatorId") Long operatorId);
 
-	@RequestMapping(value = "/api/weighingBill/autoClose")
+	@RequestMapping(value = "/api/proprietaryWeighingBill/autoClose")
 	BaseOutput<Object> autoClose();
 
-	@RequestMapping(value = "/api/weighingBill/listByExample", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/proprietaryWeighingBill/listByExample", method = RequestMethod.POST)
 	BaseOutput<List<WeighingBillClientListDto>> listByExample(@RequestBody WeighingBillQueryDto queryDto);
 
-	@RequestMapping(value = "/api/weighingBill/listPage", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/proprietaryWeighingBill/listPage", method = RequestMethod.POST)
 	PageOutput<List<WeighingBillListPageDto>> listPage(@RequestBody WeighingBillQueryDto query);
 
-	@RequestMapping(value = "/api/weighingBill/printList", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/proprietaryWeighingBill/printList", method = RequestMethod.POST)
 	BaseOutput<WeighingBillPrintListDto> printList(@RequestBody WeighingBillQueryDto query);
 
 	@RequestMapping(value = "/api/weighingStatement/detail")
 	BaseOutput<WeighingBillDetailDto> findDetailDtoByStatementId(@RequestParam(value = "id") Long id);
 
-	@RequestMapping(value = "/api/weighingBill/operatorInvalidate")
+	@RequestMapping(value = "/api/proprietaryWeighingBill/operatorInvalidate")
 	BaseOutput<Object> operatorInvalidate(@RequestParam(value = "id") Long id, @RequestParam(value = "operatorId") Long operatorId);
 
-	@RequestMapping(value = "/api/weighingBill/operatorWithdraw")
+	@RequestMapping(value = "/api/proprietaryWeighingBill/operatorWithdraw")
 	BaseOutput<Object> operatorWithdraw(@RequestParam(value = "id") Long id, @RequestParam(value = "operatorId") Long operatorId);
 
-	@RequestMapping(value = "/api/weighingBill/getWeighingBillPrintData")
+	@RequestMapping(value = "/api/proprietaryWeighingBill/getWeighingBillPrintData")
 	BaseOutput<PrintTemplateDataDto<WeighingBillPrintDto>> getWeighingBillPrintData(@RequestParam(value = "id") Long id);
 
-	@RequestMapping(value = "/api/weighingBill/getWeighingStatementPrintData")
+	@RequestMapping(value = "/api/proprietaryWeighingBill/getWeighingStatementPrintData")
 	BaseOutput<PrintTemplateDataDto<WeighingStatementPrintDto>> getWeighingStatementPrintData(@RequestParam(value = "serialNo") String serialNo);
 }
