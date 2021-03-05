@@ -449,7 +449,7 @@ public class WeighingBillController {
 		try {
 			List<Map> list = ValueProviderUtils.buildDataByProvider(query, result);
 
-			if (printListOutput != null) {
+			if (printListOutput != null && printListOutput.getData().getStatisticsDto() != null) {
 				List<Map> statisticMap = ValueProviderUtils.buildDataByProvider(query, Arrays.asList(printListOutput.getData().getStatisticsDto()));
 				list.add(statisticMap.get(0));
 				return new EasyuiPageOutput(output.getTotal() + 1, list).toString();
