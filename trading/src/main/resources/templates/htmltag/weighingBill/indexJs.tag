@@ -32,6 +32,7 @@ function doPrintHandler(){
             async: true,
             success: function (res) {
             	if (res.rows.length<=0) {
+            		bs4pop.alert('当前条件无打印数据');
             		return;
             	}
             	if (res.rows[res.rows.length-1]['statement.lastOperationTime']) {
