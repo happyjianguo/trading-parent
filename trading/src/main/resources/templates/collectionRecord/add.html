@@ -100,7 +100,7 @@
     $('#accountBuyerId').val(accountBuyerIdI);
     $('#buyerCardNo').val(buyerCardNoI);
     $('#amountReceivablesYuan').val(amount);
-    $('#amountReceivables').val(amount*100);
+    $('#amountReceivables').val((amount*100).toFixed(0));
     $('#amountActuallyYuan').attr("range","0.00 "+parseFloat(amount).toFixed(2));
 
     $('#ids').val(idList);

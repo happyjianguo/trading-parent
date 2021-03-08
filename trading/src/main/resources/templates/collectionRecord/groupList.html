@@ -163,7 +163,6 @@
                     },
                     success : function(data) {
                         if (data.code == '200') {
-                            debugger
                             $('#show_buyer_name_by_card_name').val(
                                 data.data.customerName);
                             $('#accountBuyerId').val(data.data.accountId);
@@ -177,9 +176,13 @@
                             getBuyerAccount(that.val());
                         } else {
                             $('#show_buyer_name_by_card_name').val('');
+                            $('#buyerName').val('');
                             $('#accountBuyerId').val('');
+                            $('#accountBuyerIdI').val('');
                             $("#buyerCardNoI").empty();
+                            $("#buyerIdI").empty();
                             $('#show_buyer_name_by_card_name').val('');
+                            $('#buyerBalanceYuan').val('');
                         }
                     },
                     error : function() {
@@ -213,10 +216,12 @@
                             getSellerAccount(that.val());
                         } else {
                             $('#show_seller_name_by_card_name').val('');
-                            // bs4pop.alert("客户获取失败!", {type: 'error'});
                             $('#accountSellerId').val('');
                             $("#sellerCardNoI").empty();
                             $('#show_seller_name_by_card_name').val('');
+                            $('#sellerName').val('');
+                            $('#sellerIdI').val('');
+                            $('#accountsellerIdI').val('');
                         }
                     },
                     error : function() {
