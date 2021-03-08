@@ -2,6 +2,7 @@ package com.dili.trading.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dili.customer.sdk.domain.Customer;
+import com.dili.customer.sdk.domain.dto.CustomerExtendDto;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.domain.TransitionDepartureApply;
 import com.dili.orders.domain.TransitionDepartureSettlement;
@@ -305,7 +306,7 @@ public class TransitionDepartureApplyController {
     @RequestMapping("/getCustomerByCardNo.action")
     @ResponseBody
     public BaseOutput getCustomerByCardNo(String cardNo) {
-        BaseOutput<Customer> customerBaseOutput = null;
+        BaseOutput<CustomerExtendDto> customerBaseOutput = null;
         if (StringUtils.isBlank(cardNo)) {
             return BaseOutput.failure("卡号不能为空");
         }

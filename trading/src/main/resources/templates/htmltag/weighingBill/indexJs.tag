@@ -11,6 +11,7 @@ function clearQueryForm(){
     $('#statementStates').val(null).trigger('change');
     $('#tradeType').val(null).trigger('change');
     $('#goodsIds').val(null).trigger('change');
+    $('#tradingBillType').val(1);
 }
 
 function doPrintHandler(){
@@ -30,53 +31,30 @@ function doPrintHandler(){
             contentType: "application/json",
             async: true,
             success: function (res) {
+            	if (res.rows.length<=0) {
+            		bs4pop.alert('当前条件无打印数据');
+            		return;
+            	}
+            	if (res.rows[res.rows.length-1]['statement.lastOperationTime']) {
+            		res.rows[res.rows.length-1]['statement.lastOperationTime']=undefined;
+            	}
                 var printObj={
                     data:[]
                 };
                 $(res.rows).each(function(index,item){
-                    for(var key in item){
-                        if (item[key] instanceof Object) {
-                            for(var k in item[key]){
-                                if(typeof item[key+'.'+k] !== "undefined" && item[key+'.'+k] !== null){
-                                    continue;
-                                }
-                                var flag=false;
-                                for(var i=0;i<visibleColumns.length;i++){
-                                    if(visibleColumns[i].field==(key+'.'+k)){
-                                       flag=true;
-                                       break;
-                                    }
-                                }
-                                if (!flag) {
-                                    continue;
-                                }
+                    $(visibleColumns).each(function(i,col){
+                    	      var strs= col.field.split('.');
+                    	      var value=item[col.field];
+                    	      if (!value&&strs.length==2) {
+                    	      	value=item[strs[0]][strs[1]];
+                    	      }
                                 printObj.data.push({
-                                    rowIndex:index,
-                                    column:key+'.'+k,
-                                    value:item[key][k]
-                                });
-                            }
-                        }else{
-                            var flag=false;
-                            for(var i=0;i<visibleColumns.length;i++){
-                                if(visibleColumns[i].field==key){
-                                   flag=true;
-                                   break;
-                                }
-                            }
-                            if (!flag) {
-                                continue;
-                            }
-                            printObj.data.push({
-                                    rowIndex:index,
-                                    column:key,
-                                    value:item[key]
-                                });                            
-                        }
-                        
-                    }
+                                        rowIndex:index,
+                                        column:col.title,
+                                        value:value
+                                    });
+                         });
                 });
-                debugger;
                 var createdStart=$('#operationStartTime').val();
                 var createdEnd=$('#operationEndTime').val();
                 
@@ -331,10 +309,10 @@ function daysDistance(startDate, endDate) {
                     success:function(result) {
                         if (result.success) {
                             // 1-买家 2-卖家
-                            if(result.data.accountType==1){
+                            if(result.data.customerCharacterType=='buyer_character_type'){
                                 $('#buyerCardNo').val(cardNum);
                                 $('#show_buyer_name_by_card_name').val(result.data.customerName);
-                            }else if(result.data.accountType==2){
+                            }else if(result.data.customerCharacterType=='business_user_character_type'){
                                 $('#sellerCardNo').val(cardNum);
                                 $('#show_seller_name_by_card_name').val(result.data.customerName);
                             }
@@ -737,11 +715,14 @@ function daysDistance(startDate, endDate) {
     
     var tableSortName,tableSortOrder;
     var sortMap={};
+    var displayMap={};
     $('#grid th').each(function(index,item){
        if($(item).attr('data-field')&&$(item).attr('data-sort-name')){
-           sortMap[$(item).attr('data-field')]=$(item).attr('data-sort-name');
+            sortMap[$(item).attr('data-field')]=$(item).attr('data-sort-name');
+            displayMap[$(item).attr('data-field')]=$(item).text();
        }
     });
+    console.log(sortMap);
     
     $(function(){
         $('#grid').on('click-row.bs.table', function (e, row, $element, field) {
@@ -776,6 +757,75 @@ function daysDistance(startDate, endDate) {
             }
         })
     });
+    
+    
+    function swipeBuyerCard(){
+        let cardNum;
+        let json = JSON.parse(callbackObj.readCardNumber());
+        if (json.code == 0) {
+            cardNum = json.data;
+        } else {
+            bs4pop.alert(json.message, {type: "error"});
+            return false;
+        }
+        if (cardNum!=-1) {
+            $.ajax({
+                type:'GET',
+                url:'${contextPath!}/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
+                dataType:'json',
+                success:function(result) {
+                    if (result.success) {
+                        // 1-买家 2-卖家
+                        $('#buyerCardNo').val(cardNum);
+                        $('#show_buyer_name_by_card_name').val(result.data.customerName);
+                    }else{
+                        bs4pop.alert(result.message, {type: "error"});
+                        $('#buyerCardNo').val('');
+                        $('#show_buyer_name_by_card_name').val('');
+                    }
+                },
+                error:function(){
+
+                }
+            });
+        }else{
+            bs4pop.alert("未读取到卡号!", {type: 'error'});
+        }
+    }
+    function swipeSellerCard(){
+        let cardNum;
+        let json = JSON.parse(callbackObj.readCardNumber());
+        if (json.code == 0) {
+            cardNum = json.data;
+        } else {
+            bs4pop.alert(json.message, {type: "error"});
+            return false;
+        }
+        if (cardNum!=-1) {
+            $.ajax({
+                type:'GET',
+                url:'${contextPath!}/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
+                dataType:'json',
+                success:function(result) {
+                    if (result.success) {
+                        // 1-买家 2-卖家
+                        $('#sellerCardNo').val(cardNum);
+                        $('#show_seller_name_by_card_name').val(result.data.customerName);
+                    }else{
+                        bs4pop.alert(result.message, {type: "error"});
+                        $("#sellerCardNo").empty();
+                        $('#show_seller_name_by_card_name').val('');
+                    }
+                },
+                error:function(){
+
+                }
+            });
+        }else{
+            bs4pop.alert("未读取到卡号!", {type: 'error'});
+        }
+    }
+    
     
     /**
 	 * ***************************************自定义事件区

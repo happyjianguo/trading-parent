@@ -35,10 +35,12 @@ import com.dili.assets.sdk.dto.TradeTypeDto;
 import com.dili.assets.sdk.dto.TradeTypeQuery;
 import com.dili.assets.sdk.rpc.TradeTypeRpc;
 import com.dili.customer.sdk.domain.Customer;
-import com.dili.customer.sdk.domain.dto.CustomerQueryInput;
+import com.dili.customer.sdk.domain.dto.CustomerExtendDto;
+import com.dili.customer.sdk.domain.query.CustomerQueryInput;
 import com.dili.customer.sdk.rpc.CustomerRpc;
 import com.dili.orders.constants.OrdersConstant;
 import com.dili.orders.constants.TradingConstans;
+import com.dili.orders.domain.TradingBillType;
 import com.dili.orders.domain.WeighingStatement;
 import com.dili.orders.domain.WeighingStatementState;
 import com.dili.orders.dto.AccountPasswordValidateDto;
@@ -63,6 +65,7 @@ import com.dili.ss.idempotent.annotation.Idempotent;
 import com.dili.ss.idempotent.annotation.Token;
 import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
+import com.dili.ss.redis.service.RedisDistributedLock;
 import com.dili.ss.redis.service.RedisUtil;
 import com.dili.trading.dto.TraceTradeBillResponseDto;
 import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
@@ -94,6 +97,10 @@ public class WeighingBillController {
 
 	private static final String HEADER_CACHE_KEY = "trading_weighing_bill_header_cache:";
 
+	private static final String WEIGHING_BILL_ID_LOCK_KEY_PRIFIX = "weighing_bill_lock_";
+
+	private static final long WEIGHING_BILL_LOCK_EXPIRE = 60 * 10;
+
 	@Autowired
 	private WeighingBillRpc weighingBillRpc;
 	@Autowired
@@ -120,6 +127,8 @@ public class WeighingBillController {
 	private QualityTraceRpc qualityTraceRpc;
 	@Autowired
 	private RedisUtil redisUtil;
+	@Autowired
+	private RedisDistributedLock redisDistributedLock;
 
 	/**
 	 * 列表页
@@ -166,22 +175,39 @@ public class WeighingBillController {
 			}
 			ws = wsOutput.getData();
 			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+			if (settlementOutput == null) {
+				return BaseOutput.failure("请求服务器失败");
+			}
 			if (!settlementOutput.isSuccess()) {
 				return settlementOutput;
 			}
 			ws = settlementOutput.getData();
 		} else {
-			weighingBill.setModifierId(user.getId());
-			BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.update(weighingBill);
-			if (!wsOutput.isSuccess()) {
-				return wsOutput;
+			String key = WEIGHING_BILL_ID_LOCK_KEY_PRIFIX + weighingBill.getId();
+			boolean success = false;
+			try {
+				success = this.redisDistributedLock.tryGetLock(key, weighingBill.getId().toString(), WEIGHING_BILL_LOCK_EXPIRE);
+				if (!success) {
+					return BaseOutput.failure("锁定过磅单失败");
+				}
+				weighingBill.setModifierId(user.getId());
+				BaseOutput<WeighingStatement> wsOutput = this.weighingBillRpc.update(weighingBill);
+				if (!wsOutput.isSuccess()) {
+					return wsOutput;
+				}
+				ws = wsOutput.getData();
+				BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+				if (!settlementOutput.isSuccess()) {
+					return settlementOutput;
+				}
+				ws = settlementOutput.getData();
+			} catch (Exception e) {
+				return BaseOutput.failure(e.getMessage());
+			} finally {
+				if (success) {
+					this.redisDistributedLock.releaseLock(key, weighingBill.getId().toString());
+				}
 			}
-			ws = wsOutput.getData();
-			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
-			if (!settlementOutput.isSuccess()) {
-				return settlementOutput;
-			}
-			ws = settlementOutput.getData();
 		}
 		if (WeighingStatementState.FROZEN.getValue().equals(ws.getState())) {
 			output = this.getWeighingBillPrintData(ws.getWeighingBillId(), false);
@@ -255,6 +281,18 @@ public class WeighingBillController {
 		if (Objects.isNull(dto.getMarketId())) {
 			dto.setMarketId(SessionContext.getSessionContext().getUserTicket().getFirmId());
 		}
+		if (dto.getTradingBillType() == null) {
+			dto.setTradingBillType(TradingBillType.WEIGHING.getValue());
+		}
+		if (CollectionUtils.isEmpty(dto.getDepartmentIds())) {
+			List<Map> deptDataAuths = SessionContext.getSessionContext().dataAuth(DataAuthType.DEPARTMENT.getCode());
+			if (CollectionUtils.isEmpty(deptDataAuths)) {
+				return BaseOutput.success();
+			}
+			List<Long> departmentIds = new ArrayList<Long>(deptDataAuths.size());
+			deptDataAuths.forEach(da -> departmentIds.add(Long.valueOf(da.get("value").toString())));
+			dto.setDepartmentIds(departmentIds);
+		}
 		BaseOutput<List<WeighingBillClientListDto>> output = this.weighingBillRpc.listByExample(dto);
 		if (!output.isSuccess()) {
 			return output;
@@ -311,6 +349,18 @@ public class WeighingBillController {
 		if (!output.getData().getAccountInfo().getFirmId().equals(user.getFirmId())) {
 			return BaseOutput.success();
 		}
+		BaseOutput<CustomerExtendDto> customerOutput = this.customerRpc.get(output.getData().getAccountInfo().getCustomerId(), user.getFirmId());
+		if (!customerOutput.isSuccess()) {
+			LOGGER.error(customerOutput.getMessage());
+			return BaseOutput.failure("查询客户信息失败");
+		}
+		if (customerOutput.getData() == null) {
+			return BaseOutput.failure("未查询到指定客户");
+		}
+		List<String> characterTypes = new ArrayList<String>(customerOutput.getData().getCharacterTypeList().size());
+		customerOutput.getData().getCharacterTypeList().forEach(c -> characterTypes.add(c.getCharacterType()));
+		output.getData().setCustomerCharacterTypes(characterTypes);
+		output.getData().setBuyerRegionTag(customerOutput.getData().getCustomerMarket().getBusinessRegionTag());
 		return output;
 	}
 
@@ -360,9 +410,18 @@ public class WeighingBillController {
 			String value = (String) ranges.get(0).get("value");
 			// 如果value为0，则为个人
 			if (value.equals("0")) {
-				query.setOperatorId(SessionContext.getSessionContext().getUserTicket().getId());
+				if (query.getOperatorId() == null) {
+					query.setOperatorId(SessionContext.getSessionContext().getUserTicket().getId());
+				} else {
+					if (!query.getOperatorId().equals(SessionContext.getSessionContext().getUserTicket().getId())) {
+						return new EasyuiPageOutput(0L, new ArrayList<Object>(0)).toString();
+					}
+				}
 			}
 		}
+
+		PageOutput<List<WeighingBillListPageDto>> output = null;
+		BaseOutput<WeighingBillPrintListDto> printListOutput = null;
 
 		List<Map> deptDataAuths = SessionContext.getSessionContext().dataAuth(DataAuthType.DEPARTMENT.getCode());
 		if (CollectionUtils.isEmpty(deptDataAuths)) {
@@ -371,9 +430,6 @@ public class WeighingBillController {
 		List<Long> departmentIds = new ArrayList<Long>(deptDataAuths.size());
 		deptDataAuths.forEach(da -> departmentIds.add(Long.valueOf(da.get("value").toString())));
 		query.setDepartmentIds(departmentIds);
-
-		PageOutput<List<WeighingBillListPageDto>> output = null;
-		BaseOutput<WeighingBillPrintListDto> printListOutput = null;
 
 		if (query.isExportData()) {
 			printListOutput = this.weighingBillRpc.printList(query);
@@ -416,7 +472,7 @@ public class WeighingBillController {
 		try {
 			List<Map> list = ValueProviderUtils.buildDataByProvider(query, result);
 
-			if (printListOutput != null) {
+			if (printListOutput != null && printListOutput.getData().getStatisticsDto() != null) {
 				List<Map> statisticMap = ValueProviderUtils.buildDataByProvider(query, Arrays.asList(printListOutput.getData().getStatisticsDto()));
 				list.add(statisticMap.get(0));
 				return new EasyuiPageOutput(output.getTotal() + 1, list).toString();
@@ -497,7 +553,7 @@ public class WeighingBillController {
 		CustomerQueryInput cq = new CustomerQueryInput();
 		cq.setKeyword(name);
 		cq.setMarketId(user.getFirmId());
-		BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
+		BaseOutput<List<CustomerExtendDto>> output = this.customerRpc.list(cq);
 		return output;
 	}
 
@@ -522,7 +578,7 @@ public class WeighingBillController {
 			return firmOutput;
 		}
 		cq.setMarketId(firmOutput.getData().getId());
-		BaseOutput<List<Customer>> output = this.customerRpc.list(cq);
+		BaseOutput<List<CustomerExtendDto>> output = this.customerRpc.list(cq);
 		if (!output.isSuccess()) {
 			return output;
 		}

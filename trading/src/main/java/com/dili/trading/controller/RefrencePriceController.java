@@ -4,13 +4,15 @@ import com.dili.ss.domain.BaseOutput;
 import com.dili.trading.rpc.ReferencePriceRpc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 获取参考价controller
  *
  * @author Henry.Huang
- * @date   2020-08-18
+ * @date 2020-08-18
  */
 @Controller
 @RequestMapping("/refrencePrice")
@@ -28,8 +30,8 @@ public class RefrencePriceController {
      */
     @RequestMapping(value = "/getReferencePriceByGoodsId.action", method = {RequestMethod.POST})
     @ResponseBody
-    public BaseOutput<Object> getReferencePriceByGoodsId(Long goodsId, Long marketId, String tradeType) {
-        return referencePriceRpc.getReferencePriceByGoodsId(goodsId, marketId, tradeType);
+    public BaseOutput<Object> getReferencePriceByGoodsId(Long goodsId, Long marketId, String tradeType, Integer type) {
+        return referencePriceRpc.getReferencePriceByGoodsId(goodsId, marketId, tradeType, type);
     }
 
 

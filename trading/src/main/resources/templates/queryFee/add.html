@@ -19,6 +19,7 @@
                     <input id="customerName" readonly="true" class="form-control" name="customerName"  maxlength="40">
                     <input id="customerCode" hidden="true" class="form-control" name="customerCode">
                     <input id="customerId" class="form-control" name="customerId" hidden="true">
+                    <input id="holdName" class="form-control" name="holdName" hidden="true">
                 </div>
                 <div class="form-group col">
                     <label for="">可用余额</label>
@@ -64,15 +65,16 @@
                 type: "POST",
                 data:{cardNo:cardNum},
                 dataType:"json",
-                url: "/customer/listCustomerByCardNo.action",
+                url: "/comprehensiveFee/listCustomerByCardNo.action",
                 async: true,
                 success: function (res) {
                     if (res.code == "200") {
-                        $('#customerType').val(res.data[0].customerMarket.type);
+                        $('#customerType').val(res.data.subType);
                         $('#customerCardNo').val(cardNum);
-                        $('#customerCode').val(res.data[0].code);
-                        $('#customerId').val(res.data[0].id);
-                        $('#customerName').val(res.data[0].name);
+                        $('#customerCode').val(res.data.code);
+                        $('#customerId').val(res.data.id);
+                        $('#customerName').val(res.data.name);
+                        $('#holdName').val(res.data.holdName);
 
                         //查询客户余额
                         $.ajax({

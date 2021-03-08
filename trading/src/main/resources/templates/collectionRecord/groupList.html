@@ -1,0 +1,244 @@
+<#bs4Body>
+
+<div class="container-fluid">
+
+    <form class="form collapse show" id="queryForm" role="form" >
+        <div class="row  row-cols-6">
+            <div class="form-group col-auto" style="width: 350px">
+                <label for="" class="">买方</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider _hiddenDomainId="buyerId" _hiddenDomainName="buyerId" _displayDomainId="buyerCode" _displayDomainName="buyerCode" _placeholder=""
+                    _optionVariable="buyerNameQueryAutoCompleteOption" />
+                    <input type="text" class="form-control" id="show_buyer_name" readonly />
+                </div>
+            </div>
+            <div class="form-group col-auto" style="width: 350px">
+                <label for="" class="">卖方</label>
+                <div class="input-group">
+                    <#bautoCompleteProvider _hiddenDomainId="sellerId" _hiddenDomainName="sellerId" _displayDomainId="sellerCode" _displayDomainName="sellerCode" _placeholder=""
+                    _optionVariable="sellerNameQueryAutoCompleteOption" />
+                    <input type="text" class="form-control" id="show_seller_name" readonly />
+                </div>
+            </div>
+            <div class="form-group col-auto" style="width: 350px">
+                <label for="" class="">买方卡</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="buyerCardNo" name="" />
+                    <input type="text" class="form-control" id="accountBuyerId" name="accountBuyerId" hidden/>
+                    <input type="text" class="form-control" id="show_buyer_name_by_card_name" readonly />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-primary" onclick="javascript:swipeBuyerCard();">
+                            刷卡
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-auto" style="width: 350px">
+                <label for="" class="">卖方卡</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="sellerCardNo" name="" />
+                    <input type="text" class="form-control" id="accountSellerId" name="accountSellerId" hidden/>
+                    <input type="text" class="form-control" id="show_seller_name_by_card_name" readonly />
+                    <div class="input-group-append">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-primary" onclick="javascript:swipeSellerCard();">
+                                刷卡
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto align-self-center mt-3">
+                <button type="button" class="btn btn-outline-primary mr-2" onclick="javascript:clearQueryForm();">
+                    <i class="fa fa-refresh"></i> 清空
+                </button>
+                <button type="button" class="btn btn-outline-primary mr-2" onclick="queryDataHandler()">
+                    <i class="fa fa-search"></i> 查询
+                </button>
+            </div>
+        </div>
+        <hr>
+        <h6  class="font-weight-bold mt-5">
+            客户信息
+        </h6>
+        <div class="row  row-cols-6">
+            <div class="form-group col-auto">
+                <label for="" class="">买方客户</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="buyerName" readonly name="buyerName" />
+                    <input type="text" hidden class="form-control" id="buyerIdI" readonly name="buyerIdI" />
+                    <input id="accountBuyerIdI" hidden class="form-control" readonly name="accountBuyerIdI">
+                </div>
+            </div>
+
+            <div class="form-group col">
+                <label for="">买方卡号</label>
+                <select id="buyerCardNoI" name="buyerCardNoI" class="form-control" required focus-shift>
+                    <option value="">-- 请选择 --</option>
+                </select>
+            </div>
+            <div class="form-group col-auto">
+                <label for="" class="">账户余额</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" readonly id="buyerBalanceYuan" name="buyerBalanceYuan" />
+                </div>
+            </div>
+            <div class="form-group col-auto">
+                <label for="" class="">卖方客户</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" readonly id="sellerName" name="sellerName" />
+                    <input type="text" hidden class="form-control" readonly id="sellerIdI" name="sellerIdI" />
+                    <input id="accountsellerIdI" hidden class="form-control" readonly name="accountsellerIdI">
+                </div>
+            </div>
+            <div class="form-group col">
+                <label for="">卖方卡号</label>
+                <select id="sellerCardNoI" name="sellerCardNoI" class="form-control" required focus-shift>
+                    <option value="">-- 请选择 --</option>
+                </select>
+            </div>
+        </div>
+    </form>
+<hr>
+    <h6  class="font-weight-bold mt-5">
+        待回款统计
+        <span>已选择 <span id="days">0</span> 日，待回款额：<span id="moneySpan" class="red">0.00</span> </span>
+    </h6>
+    <div class="row">
+        <div class="col-12">
+            <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
+                <#resource code="collectionRecord_add">
+                <button id="btn_add" type="button" disabled class="btn btn-primary" onclick="openInsertHandler()"><i
+                        class="fa fa-plus"></i> 回款
+                </button>
+                </#resource>
+            </div>
+                <table id="grid" data-toggle="table"
+                       data-title="回款单据"  data-toolbar="#toolbar"
+                       data-page-number="1"
+                       data-method="post"
+                       data-page-size="10" data-query-params="queryParams"
+                       data-side-pagination="server"
+                       data-content-type="application/json"
+                       data-click-to-select="true" data-checkbox-header="true"
+                       data-unique-id="serialNo"
+                       data-icons="bui.variable.icons"
+                       data-buttons-class="primary">
+                <thead>
+                    <tr>
+                        <th data-checkbox="true"></th>
+                        <th data-field="time" data-align="center">
+                            日期
+                        </th>
+                        <th data-field="amount" data-align="center" data-format="0.00" data-type="number">
+                            应回款金额
+                        </th>
+                        <th data-field="cnt" data-align="center" data-formatter="agentFormatter">
+                            关联结算单笔数
+                        </th>
+                        <th data-field="ids" data-align="center">
+                            ids
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+</#bs4Body>
+
+<script>
+    $(function() {
+        $('#buyerCardNo').on(
+            'input',
+            function(cardNo) {
+                let that = $(this);
+                $.ajax({
+                    type : "POST",
+                    dataType : "json",
+                    url : '/weighingBill/listCustomerByCardNo.action',
+                    data : {
+                        cardNo : $(this).val()
+                    },
+                    success : function(data) {
+                        if (data.code == '200') {
+                            $('#show_buyer_name_by_card_name').val(
+                                data.data.customerName);
+                            $('#accountBuyerId').val(data.data.accountId);
+                            $('#buyerName').val(data.data.customerName);
+                            $('#buyerIdI').val(data.data.customerId);
+                            $('#show_buyer_name_by_card_name').val(data.data.customerName);
+
+                            let targetId = $('#buyerCardNoI');
+                            targetId.empty();
+                            targetId.html('<option value="'+ that.val()  +'" selected>' + that.val() + '</option>');
+                            getBuyerAccount(that.val());
+                        } else {
+                            $('#show_buyer_name_by_card_name').val('');
+                            $('#buyerName').val('');
+                            $('#accountBuyerId').val('');
+                            $('#accountBuyerIdI').val('');
+                            $("#buyerCardNoI").empty();
+                            $("#buyerIdI").empty();
+                            $('#show_buyer_name_by_card_name').val('');
+                            $('#buyerBalanceYuan').val('');
+                        }
+                    },
+                    error : function() {
+                        bui.loading.hide();
+                        bs4pop.alert("客户获取失败!", {
+                            type : 'error'
+                        });
+                    }
+                });
+            })
+        $('#sellerCardNo').on(
+            'input',
+            function(cardNo) {
+                let that = $(this);
+                $.ajax({
+                    type : "POST",
+                    dataType : "json",
+                    url : '/weighingBill/listCustomerByCardNo.action',
+                    data : {
+                        cardNo : $(this).val()
+                    },
+                    success : function(data) {
+                        if (data.code == '200') {
+                            $('#show_seller_name_by_card_name').val(data.data.customerName);
+                            $('#accountSellerId').val(data.data.accountId);
+
+                            $('#sellerName').val(data.data.customerName);
+                            let targetId = $('#sellerCardNoI');
+                            targetId.empty();
+                            targetId.html('<option value="'+ that.val()  +'" selected>' +that.val() + '</option>');
+                            getSellerAccount(that.val());
+                        } else {
+                            $('#show_seller_name_by_card_name').val('');
+                            $('#accountSellerId').val('');
+                            $("#sellerCardNoI").empty();
+                            $('#show_seller_name_by_card_name').val('');
+                            $('#sellerName').val('');
+                            $('#sellerIdI').val('');
+                            $('#accountsellerIdI').val('');
+                        }
+                    },
+                    error : function() {
+                        bui.loading.hide();
+                        bs4pop.alert("客户获取失败!", {
+                            type : 'error'
+                        });
+                    }
+                });
+            })
+    })
+    function clearQueryForm(){
+        $('#queryForm input').val('');
+        $("#buyerCardNoI").empty();
+        $("#sellerCardNoI").empty();
+        // $('#buyerId').val('');
+        // $('#sellerId').val('');
+    }
+</script>
+<#collectionRecord_groupIndexJs />
