@@ -82,7 +82,7 @@
         <div class="col-12">
             <div id="toolbar" class="btn-group" role="group" aria-label="Toolbar with button groups">
                 <#resource code="collectionRecord_export">
-                    <button id="export" type="button" class="btn btn-primary" onclick="clearQueryForm()"><i class="fa fa-download"></i> 导出</button>
+                    <button id="export" type="button" class="btn btn-primary" onclick="bui.util.doExport('grid','queryForm')"><i class="fa fa-download"></i> 导出</button>
                 </#resource>
             </div>
                 <table id="grid" data-toggle="table"
