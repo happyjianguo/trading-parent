@@ -418,6 +418,7 @@
         // _grid.bootstrapTable('refresh');
         // let size = ($(window).height() - $('#queryForm').height() - 210) / 40;
         // size = size > 10 ? size : 10;
+    	$('#buyerCardNo').trigger('input');
         $('#days').text('');
         $('#moneySpan').text('');
         cnt=0;
