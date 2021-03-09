@@ -51,14 +51,14 @@
                 <label for="operationStartTime">回款时间</label>
                 <div class="form-inline">
                     <div class="input-group">
-                        <input type="text" name="beginDateTime" id="operationStartTime" class="form-control settletime laystart" />
+                        <input type="text" value="${operationStartTime!}" name="beginDateTime" id="operationStartTime" class="form-control settletime laystart" />
                         <div class="input-group-append">
                             <label for="operationStartTime" class="input-group-text fa fa-calendar"></label>
                         </div>
                     </div>
                     &nbsp;&nbsp;至&nbsp;&nbsp;
                     <div class="input-group">
-                        <input type="text" name="endDateTime" id="operationEndTime" class="form-control settletimeEnd layend" value="" />
+                        <input type="text" value="${operationEndTime!}" name="endDateTime" id="operationEndTime" class="form-control settletimeEnd layend" value="" />
                         <div class="input-group-append">
                             <label for="operationEndTime" class="input-group-text fa fa-calendar"></label>
                         </div>
@@ -176,7 +176,7 @@
                         });
                     }
                 });
-            })
+            });
         $('#sellerCardNo').on(
             'input',
             function(cardNo) {
@@ -205,8 +205,10 @@
                         });
                     }
                 });
-            })
-    })
+            });
+        
+        queryDataHandler();
+    });
 
     function clearQueryForm(){
         $('#queryForm input').val('');
