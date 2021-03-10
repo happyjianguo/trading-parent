@@ -5,11 +5,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.JSON;
 import com.dili.assets.sdk.dto.TradeTypeDto;
 import com.dili.assets.sdk.dto.TradeTypeQuery;
 import com.dili.assets.sdk.rpc.TradeTypeRpc;
@@ -19,26 +19,34 @@ import com.dili.ss.metadata.FieldMeta;
 import com.dili.ss.metadata.ValuePair;
 import com.dili.ss.metadata.ValuePairImpl;
 import com.dili.ss.metadata.provider.BatchDisplayTextProviderSupport;
+import com.dili.uap.sdk.domain.UserTicket;
+import com.dili.uap.sdk.session.SessionContext;
 
 /**
  * 车类型模糊匹配
  */
 
 @Component
-@Scope("prototype")
 public class TradeTypeCodeProvider extends BatchDisplayTextProviderSupport {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(TradeTypeCodeProvider.class);
 	@Autowired
 	private TradeTypeRpc tradeTypeRpc;
 
 	@Override
 	public List<ValuePair<?>> getLookupList(Object obj, Map metaMap, FieldMeta fieldMeta) {
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		if (user == null) {
+			LOGGER.error("用户未登录");
+			return null;
+		}
 		TradeTypeQuery tradeTypeQuery = new TradeTypeQuery();
 		if (Objects.nonNull(obj)) {
 			tradeTypeQuery.setKeyword(obj.toString());
 		}
 		tradeTypeQuery.setPageNum(1);
 		tradeTypeQuery.setPageSize(Integer.MAX_VALUE);
+		tradeTypeQuery.setMarketId(user.getFirmId());
 		List<TradeTypeDto> rows = this.tradeTypeRpc.query(tradeTypeQuery).getRows();
 		return rows.stream().map(f -> {
 			return (ValuePair<?>) new ValuePairImpl(f.getName(), f.getCode());
@@ -61,9 +69,15 @@ public class TradeTypeCodeProvider extends BatchDisplayTextProviderSupport {
 
 	@Override
 	protected List getFkList(List<String> relationIds, Map metaMap) {
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		if (user == null) {
+			LOGGER.error("用户未登录");
+			return null;
+		}
 		TradeTypeQuery tradeTypeQuery = new TradeTypeQuery();
 		tradeTypeQuery.setPageNum(1);
 		tradeTypeQuery.setPageSize(Integer.MAX_VALUE);
+		tradeTypeQuery.setMarketId(user.getFirmId());
 		List<TradeTypeDto> rows = this.tradeTypeRpc.query(tradeTypeQuery).getRows();
 		return rows;
 	}
