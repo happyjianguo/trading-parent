@@ -98,51 +98,29 @@ function doPrintHandler(){
             contentType: "application/json",
             async: true,
             success: function (res) {
+                if (res.rows.length<=0) {
+                    bs4pop.alert('当前条件无打印数据');
+                    return;
+                }
+                if (res.rows[res.rows.length-1]['statement.lastOperationTime']) {
+                    res.rows[res.rows.length-1]['statement.lastOperationTime']=undefined;
+                }
                 var printObj={
                     data:[]
                 };
                 $(res.rows).each(function(index,item){
-                    for(var key in item){
-                        if (item[key] instanceof Object) {
-                            for(var k in item[key]){
-                                if(typeof item[key+'.'+k] !== "undefined" && item[key+'.'+k] !== null){
-                                    continue;
-                                }
-                                var flag=false;
-                                for(var i=0;i<visibleColumns.length;i++){
-                                    if(visibleColumns[i].field==(key+'.'+k)){
-                                       flag=true;
-                                       break;
-                                    }
-                                }
-                                if (!flag) {
-                                    continue;
-                                }
+                    $(visibleColumns).each(function(i,col){
+                              var strs= col.field.split('.');
+                              var value=item[col.field];
+                              if (!value&&strs.length==2) {
+                                value=item[strs[0]][strs[1]];
+                              }
                                 printObj.data.push({
-                                    rowIndex:index,
-                                    column:displayMap[key+'.'+k],
-                                    value:item[key][k]
-                                });
-                            }
-                        }else{
-                            var flag=false;
-                            for(var i=0;i<visibleColumns.length;i++){
-                                if(visibleColumns[i].field==key){
-                                   flag=true;
-                                   break;
-                                }
-                            }
-                            if (!flag) {
-                                continue;
-                            }
-                            printObj.data.push({
-                                    rowIndex:index,
-                                    column:displayMap[key],
-                                    value:item[key]
-                                });                            
-                        }
-                        
-                    }
+                                        rowIndex:index,
+                                        column:col.title,
+                                        value:value
+                                    });
+                         });
                 });
                 var createdStart=$('#operationStartTime').val();
                 var createdEnd=$('#operationEndTime').val();
@@ -185,7 +163,6 @@ function doPrintHandler(){
                 createdEnd= moment(createdEnd).format("YYYY-MM-DD HH:mm:ss");
                 printObj.startDate=createdStart;
                 printObj.endDate=createdEnd;
-                console.log(printObj);
                 callbackObj.printPreview(JSON.stringify(printObj),"1","SettlementListDocument",0);
             },
             error: function (error) {
