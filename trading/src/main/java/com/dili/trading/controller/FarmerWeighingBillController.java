@@ -255,6 +255,11 @@ public class FarmerWeighingBillController {
 	@ResponseBody
 	@PostMapping("/listByExample.action")
 	public BaseOutput<?> listByExample(@RequestBody WeighingBillQueryDto dto) {
+		UserTicket user = SessionContext.getSessionContext().getUserTicket();
+		if (user == null) {
+			LOGGER.error("用户未登录");
+			return null;
+		}
 		// 判断，如果是已结算的话，需要加入参数，操作员，如果是查询的结算的，只会有一个状态
 		if (CollectionUtils.isNotEmpty(dto.getStatementStates()) && Objects.equals(dto.getStatementStates().size(), 1)) {
 			dto.setOperatorId(SessionContext.getSessionContext().getUserTicket().getId());
@@ -279,6 +284,7 @@ public class FarmerWeighingBillController {
 		TradeTypeQuery tradeTypeQuery = new TradeTypeQuery();
 		tradeTypeQuery.setPageNum(1);
 		tradeTypeQuery.setPageSize(Integer.MAX_VALUE);
+		tradeTypeQuery.setMarketId(user.getFirmId());
 		List<TradeTypeDto> rows = this.tradeTypeRpc.query(tradeTypeQuery).getRows();
 		output.getData().forEach(wb -> {
 			TradeTypeDto target = rows.stream().filter(t -> t.getCode().equals(wb.getTradeType())).findFirst().orElse(null);
