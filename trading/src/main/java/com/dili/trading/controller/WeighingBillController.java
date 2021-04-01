@@ -174,7 +174,11 @@ public class WeighingBillController {
 				return wsOutput;
 			}
 			ws = wsOutput.getData();
+			LOGGER.debug("开始调用过磅单结算接口，订单id:[{}]", weighingBill.getId());
+			long start = System.currentTimeMillis();
 			BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+			long end = System.currentTimeMillis();
+			LOGGER.debug("结束调用过磅单结算接口，订单id:{}，耗时:{}毫秒", weighingBill.getId(), end - start);
 			if (settlementOutput == null) {
 				return BaseOutput.failure("请求服务器失败");
 			}
@@ -196,7 +200,11 @@ public class WeighingBillController {
 					return wsOutput;
 				}
 				ws = wsOutput.getData();
+				LOGGER.debug("开始调用过磅单结算接口，订单id:[{}]", weighingBill.getId());
+				long start = System.currentTimeMillis();
 				BaseOutput<WeighingStatement> settlementOutput = this.weighingBillRpc.settle(ws.getWeighingBillId(), weighingBill.getBuyerPassword(), user.getId(), user.getFirmId());
+				long end = System.currentTimeMillis();
+				LOGGER.debug("结束调用过磅单结算接口，订单id:{}，耗时:{}毫秒", weighingBill.getId(), end - start);
 				if (!settlementOutput.isSuccess()) {
 					return settlementOutput;
 				}
