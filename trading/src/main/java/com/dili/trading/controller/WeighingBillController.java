@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.dili.uap.sdk.constant.SessionConstants;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -80,7 +81,6 @@ import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.rpc.DataDictionaryRpc;
 import com.dili.uap.sdk.rpc.FirmRpc;
 import com.dili.uap.sdk.rpc.UserRpc;
-import com.dili.uap.sdk.session.SessionConstants;
 import com.dili.uap.sdk.session.SessionContext;
 import com.dili.uap.sdk.util.WebContent;
 
@@ -229,7 +229,7 @@ public class WeighingBillController {
 	/**
 	 * 撤销
 	 *
-	 * @param serialNo
+	 * @param id
 	 * @param buyerPassword
 	 * @param sellerPassword
 	 * @return
@@ -248,7 +248,7 @@ public class WeighingBillController {
 	/**
 	 * 作废
 	 *
-	 * @param serialNo
+	 * @param id
 	 * @param buyerPassword
 	 * @param sellerPassword
 	 * @return
@@ -701,11 +701,7 @@ public class WeighingBillController {
 				JSONObject jsonObj = JSON.parseObject(pwdOutput.getData().toString());
 				// 如果用户被锁定则强制下线
 				if (jsonObj.getBooleanValue("locked")) {
-					BaseOutput<Object> logoutOutput = this.authRpc.loginout(new HashMap<String, String>() {
-						{
-							put("sessionId", getSessionId(request));
-						}
-					});
+					BaseOutput<Object> logoutOutput = this.authRpc.logout(getRefreshToken(request));
 					if (!logoutOutput.isSuccess()) {
 						return BaseOutput.failure("密码错误次数超限，强制注销登录失败");
 					}
@@ -756,11 +752,7 @@ public class WeighingBillController {
 				JSONObject jsonObj = JSON.parseObject(pwdOutput.getData().toString());
 				// 如果用户被锁定则强制下线
 				if (jsonObj.getBooleanValue("locked")) {
-					BaseOutput<Object> logoutOutput = this.authRpc.loginout(new HashMap<String, String>() {
-						{
-							put("sessionId", getSessionId(request));
-						}
-					});
+					BaseOutput<Object> logoutOutput = this.authRpc.logout(getRefreshToken(request));
 					if (!logoutOutput.isSuccess()) {
 						return BaseOutput.failure("密码错误次数超限，强制注销登录失败");
 					}
@@ -778,23 +770,25 @@ public class WeighingBillController {
 	}
 
 	/**
-	 * 获取登录用户sessionId
-	 *
-	 * @param req
+	 * 从URL参数、header和Cookie中获取Token
+	 * 没有取到，返回null
 	 * @return
 	 */
-	private String getSessionId(HttpServletRequest req) {
-		// 首先读取链接中的session
-		String sessionId = req.getParameter(SessionConstants.SESSION_ID);
-		if (StringUtils.isBlank(sessionId)) {
-			sessionId = req.getHeader(SessionConstants.SESSION_ID);
+	public String getRefreshToken(HttpServletRequest req) {
+		// 首先读取链接中的token
+		String refreshToken = req.getParameter(SessionConstants.REFRESH_TOKEN_KEY);
+		if (StringUtils.isBlank(refreshToken)) {
+			refreshToken = req.getParameter(SessionConstants.OAUTH_REFRESH_TOKEN_KEY);
 		}
-		if (StringUtils.isNotBlank(sessionId)) {
-			WebContent.setCookie(SessionConstants.SESSION_ID, sessionId);
+		if (StringUtils.isBlank(refreshToken)) {
+			refreshToken = req.getHeader(SessionConstants.REFRESH_TOKEN_KEY);
+		}
+		if (StringUtils.isNotBlank(refreshToken)) {
+			WebContent.setCookie(SessionConstants.REFRESH_TOKEN_KEY, refreshToken);
 		} else {
-			sessionId = WebContent.getCookieVal(SessionConstants.SESSION_ID);
+			refreshToken = WebContent.getCookieVal(SessionConstants.REFRESH_TOKEN_KEY);
 		}
-		return sessionId;
+		return refreshToken;
 	}
 
 	/**
@@ -818,7 +812,8 @@ public class WeighingBillController {
 	/**
 	 * 获取过磅单打印数据
 	 *
-	 * @param serialNo 过磅单编号
+	 * @param id
+	 * @param reprint
 	 * @return
 	 * @throws Exception
 	 */
@@ -868,7 +863,6 @@ public class WeighingBillController {
 	/**
 	 * 缓存过磅单显示的列头配置
 	 * 
-	 * @param json 列头数组
 	 * @return
 	 */
 	@ResponseBody
