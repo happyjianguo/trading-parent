@@ -9,7 +9,7 @@
         width: 'flex',
         noSuggestionNotice: '无此客户, 请重新输入',
         transformResult: function (result) {
-            if(result.success){
+            if (result.success) {
                 let data = result.data;
                 return {
                     suggestions: $.map(data, function (dataItem) {
@@ -19,7 +19,7 @@
                         );
                     })
                 }
-            }else{
+            } else {
                 // bs4pop.alert(result.message, {type: 'error'});
                 return false;
             }
@@ -37,7 +37,7 @@
         showNoSuggestionNotice: true,
         noSuggestionNotice: '结算员不存在',
         transformResult: function (result) {
-            if(result.success){
+            if (result.success) {
                 let data = result.data;
                 return {
                     suggestions: $.map(data, function (dataItem) {
@@ -48,7 +48,7 @@
                         );
                     })
                 }
-            }else{
+            } else {
                 bs4pop.alert(result.message, {type: 'error'});
                 return false;
             }
@@ -68,18 +68,18 @@
         width: 'flex',
         noSuggestionNotice: '无此客户, 请重新输入',
         transformResult: function (result) {
-            if(result.success){
+            if (result.success) {
                 let data = result.data;
                 return {
                     suggestions: $.map(data, function (dataItem) {
                         return $.extend(dataItem, {
-                                value: dataItem.customerName +"|"+dataItem.cardNo
+                                value: dataItem.customerName + "|" + dataItem.cardNo
                             }
                         );
                     })
                     //888810054629
                 }
-            }else{
+            } else {
                 return false;
             }
         },
@@ -91,8 +91,8 @@
 
 
     /*********************变量定义区 begin*************/
-    //行索引计数器
-    //如 let itemIndex = 0;
+        //行索引计数器
+        //如 let itemIndex = 0;
     let _grid = $('#grid');
     let _form = $('#_form');
     var dia;
@@ -120,24 +120,58 @@
 
     /*执行前改变数据*/
     function toFixChargeAmount(data) {
-        var rows=data.rows;
-        for(var i=0;i<rows.length;i++){
-            var chargeAmount=rows[i].chargeAmount;
-            rows[i].chargeAmount=(chargeAmount/100).toFixed(2);
+        var rows = data.rows;
+        for (var i = 0; i < rows.length; i++) {
+            var chargeAmount = rows[i].chargeAmount;
+            rows[i].chargeAmount = (chargeAmount / 100).toFixed(2);
         }
-        _grid.bootstrapTable('load',data);
+        _grid.bootstrapTable('load', data);
     }
+
     /******************************驱动执行区 end****************************/
 
     /*****************************************函数区 begin************************************/
 
+    function reprintHandler() {
+        // 获取选中行的数据
+        let rows = _grid.bootstrapTable('getSelections');
+        if (null == rows || rows.length == 0) {
+            bs4pop.alert('请选中一条数据');
+            return false;
+        }
+        var url = '';
+        var serialNo = null;
+        var id = null;
+        url = '/queryFee/getPrintData.action'
+        id = rows[0].id;
+        // 先拿到票据信息，在调用c端打印
+        $.ajax({
+            type: "POST",
+            // dataType: "json",
+            url: url,
+            data: {id: id},
+            success: function (data) {
+                bui.loading.hide();
+                if (data.code == '200') {
+                    // 调用c端打印
+                    callbackObj.printPreview(JSON.stringify(data.data), "1", "ComprehensiveFeeDocument", 0);
+                }
+            },
+            error: function () {
+                bui.loading.hide();
+                bs4pop.alert("打印失败!", {type: 'error'});
+            }
+        });
+    }
+
+
     function initTotal() {
-        var obj={};
-        obj.customerId=$('#customerId').val();
-        obj.customerCardNo=$('#show_customer_card').val();
-        obj.operatorId=$('#operatorId').val();
-        obj.operatorTimeStart=$('#createdStart').val();
-        obj.operatorTimeEnd=$('#createdEnd').val();
+        var obj = {};
+        obj.customerId = $('#customerId').val();
+        obj.customerCardNo = $('#show_customer_card').val();
+        obj.operatorId = $('#operatorId').val();
+        obj.operatorTimeStart = $('#createdStart').val();
+        obj.operatorTimeEnd = $('#createdEnd').val();
         $.ajax({
             type: "POST",
             url: "/queryFee/selectCountAndTotal.action",
@@ -147,8 +181,8 @@
             async: true,
             success: function (res) {
                 if (res.code == "200") {
-                    $('#transactionsNumCount').html('<span>总笔数：'+res.data.transactionsNumCount+'</span>');
-                    $('#transactionsTotal').html('<span>总金额：'+((res.data.transactionsTotal)/100).toFixed(2)+'</span>');
+                    $('#transactionsNumCount').html('<span>总笔数：' + res.data.transactionsNumCount + '</span>');
+                    $('#transactionsTotal').html('<span>总金额：' + ((res.data.transactionsTotal) / 100).toFixed(2) + '</span>');
                 }
             },
             error: function (error) {
@@ -164,7 +198,7 @@
         diaAdd = bs4pop.dialog({
             title: '查询收费',//对话框title
             className: 'dialog-left',
-            onShowStart(){
+            onShowStart() {
                 $('.modal').attr('data-drag', 'draged');
             },
             content: '${contextPath}/queryFee/add.html', //对话框内容，可以是 string、element，$object
