@@ -16,6 +16,8 @@ import com.dili.uap.sdk.glossary.DataAuthType;
 import com.dili.uap.sdk.session.SessionContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -30,13 +32,14 @@ import java.util.regex.Pattern;
 /**
  * Description: 查询收费功能Controller类
  *
- * @date:    2020/8/21
- * @author:   Seabert.Zhan
+ * @date: 2020/8/21
+ * @author: Seabert.Zhan
  */
 @Controller
 @RequestMapping("/queryFee")
 public class QueryFeeController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryFeeController.class);
     @Autowired
     private ComprehensiveFeeRpc comprehensiveFeeRpc;
 
@@ -110,7 +113,7 @@ public class QueryFeeController {
         comprehensiveFee.setMarketId(userTicket.getFirmId());
         comprehensiveFee.setOrderType(ComprehensiveFeeType.QUERY_CHARGE.getValue());
         BaseOutput<ComprehensiveFee> res = comprehensiveFeeRpc.selectCountAndTotal(comprehensiveFee);
-        if(res.getData().getTransactionsTotal()==null){
+        if (res.getData().getTransactionsTotal() == null) {
             res.getData().setTransactionsTotal(0L);
         }
         return res;
@@ -175,7 +178,7 @@ public class QueryFeeController {
     @ResponseBody
     public BaseOutput<ComprehensiveFee> insert(ComprehensiveFee comprehensiveFee) {
         String tips = checkUpDate(comprehensiveFee);
-        if(StringUtils.isNotBlank(tips)){
+        if (StringUtils.isNotBlank(tips)) {
             return BaseOutput.failure(tips);
         }
         UserTicket userTicket = SessionContext.getSessionContext().getUserTicket();
@@ -186,10 +189,11 @@ public class QueryFeeController {
 
     /**
      * 校验comprehensiveFee
+     *
      * @param comprehensiveFee
      * @return
      */
-    public String  checkUpDate(ComprehensiveFee comprehensiveFee){
+    public String checkUpDate(ComprehensiveFee comprehensiveFee) {
         StringBuilder tips = new StringBuilder();
         if (StringUtils.isBlank(comprehensiveFee.getCustomerCardNo())) {
             tips.append(",卡号不能为空");
@@ -206,6 +210,32 @@ public class QueryFeeController {
             tips.append("!");
             return tips.substring(1);
         }
-        return  "";
+        return "";
+    }
+
+    /**
+     * 获取打印数据
+     *
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getPrintData.action")
+    public BaseOutput<?> getPrintData(@RequestParam Long id) {
+        BaseOutput<ComprehensiveFee> output = this.comprehensiveFeeRpc.getOneById(id);
+        if (!output.isSuccess()) {
+            LOGGER.error(output.getMessage());
+            return BaseOutput.failure("查询费用信息失败");
+        }
+        if (output.getData() == null) {
+            return BaseOutput.failure("缴费信息不存在");
+        }
+        BaseOutput<AccountSimpleResponseDto> oneAccountCard = cardRpc.getOneAccountCard(output.getData().getCustomerCardNo());
+        if (!oneAccountCard.isSuccess()) {
+            LOGGER.error(oneAccountCard.getMessage());
+            return BaseOutput.failure("查询客户信息失败");
+        }
+        output.getData().setBalance(oneAccountCard.getData().getAccountFund().getBalance());
+        return output;
     }
 }
