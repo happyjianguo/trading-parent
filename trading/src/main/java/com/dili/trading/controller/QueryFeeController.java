@@ -24,6 +24,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -221,7 +223,7 @@ public class QueryFeeController {
      */
     @ResponseBody
     @RequestMapping("/getPrintData.action")
-    public BaseOutput<?> getPrintData(@RequestParam Long id) {
+    public BaseOutput<?> getPrintData(@RequestParam Long id) throws Exception {
         BaseOutput<ComprehensiveFee> output = this.comprehensiveFeeRpc.getOneById(id);
         if (!output.isSuccess()) {
             LOGGER.error(output.getMessage());
@@ -236,6 +238,11 @@ public class QueryFeeController {
             return BaseOutput.failure("查询客户信息失败");
         }
         output.getData().setBalance(oneAccountCard.getData().getAccountFund().getBalance());
-        return output;
+        Map<Object, Object> metadata = new HashMap<Object, Object>();
+
+        metadata.put("balance", "moneyProvider");
+        metadata.put("chargeAmount", "moneyProvider");
+
+        return BaseOutput.successData(ValueProviderUtils.buildDataByProvider(metadata, Arrays.asList(output.getData())).get(0));
     }
 }
