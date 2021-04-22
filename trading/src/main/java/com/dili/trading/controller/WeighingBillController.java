@@ -306,10 +306,10 @@ public class WeighingBillController {
             deptDataAuths.forEach(da -> departmentIds.add(Long.valueOf(da.get("value").toString())));
             dto.setDepartmentIds(departmentIds);
         }
-        if (dto.getModifiedStart() == null) {
-            dto.setModifiedStart(LocalDateTime.now().minusDays(7));
+        if (dto.getModifiedStart() == null && StringUtils.isBlank(dto.getWsSerialNo()) && StringUtils.isBlank(dto.getSerialNo())) {
+            dto.setModifiedStart(LocalDateTime.now().minusDays(7).withHour(0).withMinute(0).withSecond(0));
         }
-        if (dto.getModifiedEnd() == null) {
+        if (dto.getModifiedEnd() == null && StringUtils.isBlank(dto.getWsSerialNo()) && StringUtils.isBlank(dto.getSerialNo())) {
             dto.setModifiedEnd(LocalDateTime.now());
         }
         BaseOutput<List<WeighingBillClientListDto>> output = this.weighingBillRpc.listByExample(dto);
