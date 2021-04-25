@@ -17,7 +17,6 @@
     function doPrintHandler() {
 
         var visibleColumns = $('#grid').bootstrapTable('getVisibleColumns');
-        console.log(visibleColumns);
 
         $.ajax({
             type: "POST",
