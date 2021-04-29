@@ -334,7 +334,7 @@
                                 $('#show_seller_name_by_card_name').val(result.data.accountInfo.customerName);
                             }
                         });
-                        if (!$('#buyerCardNo').val(cardNum) && !$('#sellerCardNo').val(cardNum)) {
+                        if (!$('#buyerCardNo').val() && !$('#sellerCardNo').val()) {
                             bs4pop.alert('客户身份类型不符', {type: "error"});
                         }
                     } else {
