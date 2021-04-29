@@ -317,17 +317,25 @@
         if (cardNum != -1) {
             $.ajax({
                 type: 'GET',
-                url: '${contextPath!}/weighingBill/listCustomerByCardNo.action?cardNo=' + cardNum,
+                url: '${contextPath!}/weighingBill/getCustomerInfoByCardNo.action?cardNo=' + cardNum,
                 dataType: 'json',
                 success: function (result) {
                     if (result.success) {
+                        console.log(result.data);
                         // 1-买家 2-卖家
-                        if (result.data.customerCharacterType == 'buyer_character_type') {
-                            $('#buyerCardNo').val(cardNum);
-                            $('#show_buyer_name_by_card_name').val(result.data.customerName);
-                        } else if (result.data.customerCharacterType == 'business_user_character_type') {
-                            $('#sellerCardNo').val(cardNum);
-                            $('#show_seller_name_by_card_name').val(result.data.customerName);
+                        $(result.data.customerCharacterTypes).each(function (index, item) {
+                            debugger;
+                            if (item == 'buyer_character_type') {
+                                $('#buyerCardNo').val(cardNum);
+                                $('#show_buyer_name_by_card_name').val(result.data.accountInfo.customerName);
+                            }
+                            if (item == 'business_user_character_type') {
+                                $('#sellerCardNo').val(cardNum);
+                                $('#show_seller_name_by_card_name').val(result.data.accountInfo.customerName);
+                            }
+                        });
+                        if (!$('#buyerCardNo').val(cardNum) && !$('#sellerCardNo').val(cardNum)) {
+                            bs4pop.alert('客户身份类型不符', {type: "error"});
                         }
                     } else {
                         bs4pop.alert(result.message, {type: "error"});
