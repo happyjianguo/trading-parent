@@ -22,6 +22,7 @@ import com.dili.orders.dto.*;
 import com.dili.orders.rpc.CardRpc;
 import com.dili.orders.rpc.CategoryRpc;
 import com.dili.orders.rpc.PayRpc;
+import com.dili.orders.rpc.QualityTraceRpc;
 import com.dili.ss.domain.BaseOutput;
 import com.dili.ss.domain.EasyuiPageOutput;
 import com.dili.ss.domain.PageOutput;
@@ -32,11 +33,9 @@ import com.dili.ss.metadata.ValueProvider;
 import com.dili.ss.metadata.ValueProviderUtils;
 import com.dili.ss.redis.service.RedisDistributedLock;
 import com.dili.ss.redis.service.RedisUtil;
-import com.dili.trading.dto.TraceTradeBillResponseDto;
 import com.dili.trading.dto.WeighingBillSaveAndSettleDto;
 import com.dili.trading.rpc.AuthenticationRpc;
 import com.dili.trading.rpc.FarmerWeghingBillRpc;
-import com.dili.trading.rpc.QualityTraceRpc;
 import com.dili.uap.sdk.constant.SessionConstants;
 import com.dili.uap.sdk.domain.DataDictionaryValue;
 import com.dili.uap.sdk.domain.Firm;
@@ -63,8 +62,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static org.springframework.web.util.WebUtils.getSessionId;
 
 /**
  * WeighingBillController
